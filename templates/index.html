@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+    <title>Web Chat</title>
+    <link rel="stylesheet" href="/static/styles/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+ <div class="wave-container">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+  </div>
+  
+<div id="updateModal" class="update-modal">
+    <div class="update-modal-content">
+        <!--<span class="update-close" onclick="closeUpdateModal()">&times;</span> -->
+        <div class="update-icon">
+            <i class="fas fa-refresh"></i>
+        </div>
+        <h2>Your Version is Outdated</h2>
+        <p>We have made some important updates to improve your experience. Please refresh the page to continue using the latest version.</p>
+        <button class="update-button" onclick="reloadSite()">UPDATE</button>
+    </div>
+</div>
+
+  
+ <div id="block-screen" class="block-screen hidden">
+    <div class="block-modal">
+        <img src="/static/icons/timer.svg" alt="Timer Icon" id="timer-icon" />
+        <h2>You are temporarily blocked</h2>
+        <p>Please wait</p>
+        <div class="timer-container">
+            <div class="timer-progress" id="timer-progress"></div>
+            <span class="timer-text" id="timer">00:15</span>
+        </div>
+    </div>
+</div>
+
+  <div id="toast-container"></div>
+ 
+    <div class="chat-container">
+        <!-- Header with logout button -->
+        <header class="chat-header">
+            <div class="account-icon-container">
+                <img src="/static/icons/account.svg" alt="Account" id="account-icon" class="account-icon">
+            </div>
+		<div id="ping-container" class="ping-container">
+    <i class="fas fa-signal" id="ping-icon" aria-hidden="true"></i>
+    <span id="ping-value" class="ping-value">- ms</span>
+</div>
+<div id="coinDisplay" class="coin-icon-container">
+    <img src="/static/icons/coin.svg" alt="Coin Icon" id="coinIcon" class="coin-icon" />
+    <img src="/static/icons/up.svg" alt="Going Up Icon" id="goingUpIcon" class="going-up-icon" style="display: none;" />
+    <div id="coinBalance" class="coin-balance">0</div> <!-- Используем div вместо span -->
+</div>
+
+            <!-- <button id="logout-button" class="logout-button">Logout</button> -->
+        </header>
+
+<div id="account-menu" class="account-menu" style="display: none;">
+    <ul>
+        <li id="personal-account-section">
+            Personal Account
+            <ul class="personal-account-options">
+                <li id="change-avatar-option">Change Avatar</li>
+                <li id="change-password-option">Change Password</li>
+            </ul>
+        </li>
+        <li id="sessionsButton">Sessions</li>
+        <li id="music-pack-option">Music Pack</li>
+        <li id="messages-themes-button">Themes</li>
+        <li id="my-ban-status-option">My Ban Status</li> 
+        <li id="time-option">
+            <a href="/apis/main" target="_blank">Namoz vaqtlari</a>
+        </li>
+        <li id="examTaskOption">Exam</li>
+        <li id="logout-option">Logout</li>
+    </ul>
+</div>
+
+<div id="examModal">
+    <h2 id="examTitle">Exam</h2>
+	<div id="exam-timer">
+    <i class="fas fa-clock"></i> 00:00 <!-- This will be updated dynamically -->
+	</div>
+    <span class="close-btn" id="closeExamModal">&times;</span>
+	<div id="loadingSpinner" class="lds-spinner">
+  <div></div><div></div><div></div><div></div><div></div><div></div>
+  <div></div><div></div><div></div><div></div><div></div><div></div>
+</div>
+    <div id="examQuestions" class="examQuestions-container"></div>
+	<div id="loadingFinishExam" class="lds-facebook-container" style="display: none;">
+    <div class="lds-facebook">
+        <div></div><div></div><div></div>
+    </div>
+</div>
+    <div id="finishExam" role="button" tabindex="0">Finish Task</div>
+    <div id="examResults" class="examResults"></div>
+</div>
+
+<div id="ExamResultsModal">
+    <div class="exam-results-content">
+        <span id="closeExamResults" class="close-btn">&times;</span>
+        <h2>Exam Results</h2>
+
+        <div class="result-icons">
+            <p><i class="fas fa-check-circle correct-icon"></i> Correct: <span id="correctAnswers"></span></p>
+            <p><i class="fas fa-times-circle incorrect-icon"></i> Incorrect: <span id="incorrectAnswers"></span></p>
+            <p><i class="fas fa-minus-circle skipped-icon"></i> Skipped: <span id="skippedAnswers"></span></p>
+            <p id="coinsReward" class="coins-reward">
+                <img src="/static/icons/exam_coin.svg" alt="coin" class="coin-icon" />
+                <span id="coinCount"></span>
+            </p>
+            <p id="examMotivation" class="motivation-text"></p>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+            <span id="progressText">0%</span>
+        </div>
+
+        <!-- Сворачиваемая секция ошибок -->
+		<div id="mistakesToggle" class="mistakes-toggle" onclick="toggleMistakes()">
+		<span id="toggleText">Do you want to see your mistakes?</span>
+		<i id="toggleIcon" class="fas fa-chevron-down"></i>
+		</div>
+
+        <div id="examResultsContainer" class="exam-results-container" style="display: none;">
+            <!-- Exam questions and results will be displayed here -->
+        </div>
+
+        <button id="ResultDone">Done</button>
+    </div>
+</div>
+
+
+
+<!-- Модальное окно "My Ban Status" -->
+<div id="ban-status-modal" class="modal-ban">
+    <div class="modal-ban-content">
+        <h2>My Ban Status</h2>
+        <p>Number of violations: <span id="violations-count">0</span></p>
+        <p>Remaining ban time: <span id="remaining-time">0</span> seconds</p>
+        <button id="pay-ban">Pay 100 coins to reduce violation count by 1</button>
+        <button id="close-ban-modal">Close</button>
+    </div>
+</div>
+
+
+<div id="messages-themes-modal" class="themes-modal" style="display: none;">
+    <div class="themes-modal-content">
+        <h3>Select a Premium Messages Theme</h3>
+        <ul>
+            <li class="theme-item" data-theme="dark-moon" onclick="applyMessagesTheme('dark-moon', 50)">Dark Moon (50 coins)</li>
+            <li class="theme-item" data-theme="neon-fantasy" onclick="applyMessagesTheme('neon-fantasy', 200)">Neon Fantasy (200 coins)</li>
+            <li class="theme-item" data-theme="crimson-wave" onclick="applyMessagesTheme('crimson-wave', 180)">Crimson Wave (180 coins)</li>
+			<li class="theme-item" data-theme="ocean-breeze" onclick="applyMessagesTheme('ocean-breeze', 200)">Ocean Breeze (200 coins)</li>
+			<li class="theme-item" data-theme="celestial-royale" onclick="applyMessagesTheme('celestial-royale', 1000)">Celestial Royale (1000 coins)</li>
+			<li class="theme-item" data-theme="ethereal-dream" onclick="applyMessagesTheme('ethereal-dream', 1200)">
+    Ethereal Dream (1200 coins)
+</li>
+<li class="theme-item" data-theme="cyber-inferno" onclick="applyMessagesTheme('cyber-inferno', 1500)">
+    Cyber Inferno (1500 coins)
+</li>
+<li class="theme-item" data-theme="neon-galaxy" onclick="applyMessagesTheme('neon-galaxy', 2000)">
+    Neon Galaxy (2000 coins)
+</li>
+
+        </ul>
+        <button onclick="closeMessagesThemesModal()">Close</button>
+    </div>
+</div>
+
+<div id="sessionsModal" class="sessions-modal">
+    <div class="sessions-modal-content">
+	 <i class="fa fa-users" aria-hidden="true"></i>
+        <h2>Your Active Sessions</h2>
+        <ul id="sessionsList">
+            <!-- Список сессий будет заполняться динамически -->
+        </ul>
+        <button class="close-modal" onclick="document.getElementById('sessionsModal').style.display='none'">
+            Close
+        </button>
+    </div>
+</div>
+
+<!-- Модальное окно для списка музыки -->
+<div id="music-modal" class="music-modal hidden">
+    <div class="music-modal-content">
+        <h2>Music Pack</h2>
+        <div id="music-list" class="music-list">
+            <!-- Анимация загрузки -->
+            <div class="skeleton-loader-Music">
+			<div class="track-item-music skeleton"></div>
+			<div class="track-item-music skeleton"></div>
+			<div class="track-item-music skeleton"></div>
+		</div>
+        </div>
+        <button id="close-music-modal" class="music-modal-close-button">Close</button>
+    </div>
+</div>
+
+<!-- Модальное окно аудиоплеера -->
+<div id="player-modal" class="modal-player hidden">
+    <div class="modal-content-player">
+        <h2 id="player-title">Now Playing</h2>
+        <div id="custom-player">
+            <audio id="audio-element"></audio>
+            <div id="player-controls">
+                <button id="prev-track-button"><i class="fas fa-step-backward"></i></button>
+                <button id="play-pause"><i class="fas fa-pause"></i></button>
+                <button id="next-track-button"><i class="fas fa-step-forward"></i></button>
+            </div>
+			<label class="toggle">
+			<input type="checkbox" id="autoplay-toggle">
+			<span class="slider"></span>
+			</label>
+            <div id="time-display">
+                <span id="current-time">0:00</span>
+                <span id="total-time">0:00</span>
+            </div>
+            <!-- Перемещаем прогресс-бар сюда, между временем и кнопкой закрытия -->
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+        <button id="close-player-modal">Close</button>
+    </div>
+</div>
+
+ <div id="passwordModal" class="passwordModal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>Change Password</h2>
+                <form id="password-form">
+                    <div>
+                        <label for="current-password">Current Password:</label>
+                        <input type="password" id="current-password" placeholder="Enter current password" required>
+                    </div>
+                    <div>
+                        <label for="new-password">New Password:</label>
+                        <input type="password" id="new-password" placeholder="Enter new password" required>
+                    </div>
+                    <div id="status-container" style="margin-top: 10px;">
+                        <!-- Status loading animation will go here -->
+                    </div>
+                    <button type="submit" id="update-password-button">Update Password</button>
+                </form>
+            </div>
+        </div>
+		
+		<!-- Modal for audio -->
+<div id="audioModal" class="audio-modal">
+    <div class="audio-modal-content">
+        <span class="audio-modal-close" id="closeAudioModal">&times;</span>
+        <h2 class="audio-modal-title">Now Playing</h2>
+        <div class="audio-track-info">
+            <span id="audioTrackName"></span> <!-- Название трека -->
+        </div>
+        <audio id="audioPlayer" controls>
+            <source id="audioSource" src="" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+</div>
+
+		
+        <!-- Messages section with skeleton loader -->
+        <div class="messages" id="messages">
+    <div class="skeleton-loader" id="skeleton-loader">
+    <div class="skeleton-message">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+    </div>
+    <div class="skeleton-message">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+    </div>
+	<div class="skeleton-message">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+    </div>
+		</div>
+		</div>
+
+
+<!-- Message input form -->
+<form id="message-form" class="message-form">
+    <div class="input-container">
+        <div class="input-wrapper">
+            <!-- Upload File button inside input -->
+            <button type="button" id="file-upload-button" class="file-upload-button" aria-label="Upload File">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="icon">
+                    <circle cx="24" cy="24" r="22" fill="black"/>
+                    <path d="M24 16v16M16 24h16" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <input type="file" id="file-input" style="display: none;">
+            <input type="text" class="message-input" id="message-input" placeholder="Type your message..." autocomplete="off">
+
+            <!-- Send button inside input -->
+            <button type="submit" id="send-button" aria-label="Send Message">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24" fill="none">
+                    <circle cx="24" cy="24" r="22" fill="black"/>
+                    <path d="M24 14L14 26h7v8h6v-8h7z" fill="#ffffff"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- Avatar Upload Modal -->
+<div id="avatar-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <button id="close-avatar-modal" class="close-btn">&times;</button> <!-- Кнопка закрытия -->
+        <h3>Change Avatar</h3>
+        <input type="file" id="avatar-upload-input" accept="image/*">
+        <button id="upload-avatar-button">Upload</button>
+    </div>
+</div>
+
+
+<div id="upload-status" class="upload-status hidden">
+    <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill">
+            <span id="progress-text" class="progress-text"></span>
+        </div>
+    </div>
+    <span id="progress-percent">0%</span>
+</div>
+
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="/static/js/chat.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.11/lottie.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,848 @@
+from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for, session 
+from flask_socketio import SocketIO, emit
+import os
+import json
+import platform
+import time
+from datetime import datetime , timedelta
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
+
+# Initialize app and socket
+app = Flask(__name__)
+app.secret_key = '15616481651'  # For session management
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'txt', 'pdf','mp3','wav'}
+socketio = SocketIO(app)
+CORS(app)
+
+# Ensure upload folder exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+# Initialize messages as an empty list, not a dictionary
+messages = []  # Store messages locally
+
+exam_duration = 1 * 60  # 30 minutes in seconds
+exam_start_time = None  # Global variable to store exam start time
+
+
+# Sample data for prayer times (replace with actual data or API integration)
+PRAYER_TIMES = {
+    "Bomdod": "06:15",
+    "Peshin": "12:36",
+    "Asr": "15:53",
+    "Shom": "17:39",
+    "Xufton": "18:54"
+}
+
+DUAS = {
+    "Azan": """Аллоҳу акбар! 
+Аллоҳу акбар!
+Аллоҳу акбар! 
+Аллоҳу акбар!
+Ашҳаду ал лаа илаҳа иллаллоҳ!
+Ашҳаду ал лаа илаҳа иллаллоҳ!
+Ашҳаду анна Муҳаммадар росулуллоҳ!
+Ашҳаду анна Муҳаммадар росулуллоҳ!
+Ҳайя ъалас-солаҳ!
+Ҳайя ъалас-солаҳ!
+Ҳайя ъалал фалаҳ!
+Ҳайя ъалал фалаҳ!
+Аллоҳу акбар!
+Аллоҳу акбар!
+Лаа илаҳа иллаллоҳ.""",
+    "Dua Before Prayer": "",
+    "Dua After Prayer": "",
+    "Dua for Patience": ""
+}
+tracks = [
+    {'title': 'Karina va Jambul Buxoro Yigitlari', 'url': '/static/music/BuxoroYigitlari.mp3'},
+    {'title': 'Ziyoda - Tor Kocha', 'url': '/static/music/Ziyoda_Tor_kocha.mp3'},
+    {'title': 'Ziyoda - Meni deb', 'url': '/static/music/Ziyoda_Menideb.mp3'},
+    {'title': 'Yulduz Usmonova Biyo Biyo', 'url': '/static/music/YulduzBiyo.mp3'},
+    {'title': 'Billie Eilish - WILDFLOWER ', 'url': '/static/music/Billie_Eilish_WILDFLOWER.mp3'},
+    {'title': 'Billie Eilish - BIRDS OF A FEATHER ', 'url': '/static/music/Billie_Eilish_BIRDS_OF_A_FEATHER.mp3'}, 
+    {'title': 'Lenka - Everything At Once', 'url': '/static/music/Lenka - Everything At Once.mp3'},
+    {'title': 'Jambul Madam', 'url': '/static/music/Jambul Madam.mp3'},
+    {'title': 'Ozoda - Dilbarim', 'url': '/static/music/Ozoda - Dilbarim.mp3'},
+    {'title': 'Dilnoza Hakimova, Shirin Zaitova va Aziza Nizamova - (Yulduz Usmonova -Sogintirib yashagim kelar)', 'url': '/static/music/Dilnoza Hakimova, Shirin Zaitova va Aziza Nizamova - (Yulduz Usmonova -Sogintirib yashagim kelar).mp3'},
+    {'title': 'Shawn Mendes - Señorita', 'url': '/static/music/Shawn Mendes Senorita.mp3'},
+]
+
+USER_DATA_FILE = "users.json"
+MESSAGE_DATA_FILE = "messages.json"
+banned_users = []
+exam_passed = []
+
+AVATAR_FOLDER = "static/avatars"
+USER_AVATAR_FILE = "users_avatar.json"
+
+app.config["AVATAR_FOLDER"] = AVATAR_FOLDER
+app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"png", "jpg", "jpeg", "gif"}
+
+if not os.path.exists(AVATAR_FOLDER):
+    os.makedirs(AVATAR_FOLDER)
+
+if not os.path.exists(USER_AVATAR_FILE):
+    with open(USER_AVATAR_FILE, "w") as f:
+        json.dump({}, f)
+
+def allowed_image(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in app.config["ALLOWED_IMAGE_EXTENSIONS"]
+    
+def initialize_users_data_file():
+    if not os.path.exists(USER_AVATAR_FILE):
+        with open(USER_AVATAR_FILE, "w") as f:
+            json.dump({}, f)
+    try:
+        with open(USER_AVATAR_FILE, "r") as f:
+            users = json.load(f)
+    except json.JSONDecodeError:  # Handle case if the file is corrupted or empty
+        with open(USER_AVATAR_FILE, "w") as f:
+            json.dump({}, f)  # Reset to an empty object
+        users = {}
+    return users
+
+@app.route("/upload_avatar", methods=["POST"])
+def upload_avatar():
+    if "file" not in request.files or "username" not in request.form:
+        return jsonify({"error": "No file or username provided"}), 400
+
+    file = request.files["file"]
+    username = request.form["username"]
+
+    if file and allowed_image(file.filename):
+        filename = secure_filename(f"{username}_{file.filename}")
+        filepath = os.path.join(app.config["AVATAR_FOLDER"], filename)
+        file.save(filepath)
+
+        # Load users data and update it
+        users = initialize_users_data_file()
+
+        # Update user data with new avatar
+        users[username] = f"/static/avatars/{filename}"
+
+        # Save the updated data
+        with open(USER_AVATAR_FILE, "w") as f:
+            json.dump(users, f, indent=4)
+
+        return jsonify({"message": "Avatar uploaded successfully", "avatar_url": users[username]})
+
+    return jsonify({"error": "Invalid file type"}), 400
+    
+@app.route("/get_avatar/<username>", methods=["GET"])
+def get_avatar(username):
+    if not os.path.exists(USER_AVATAR_FILE):
+        return jsonify({"avatar_url": None})  # Указываем, что аватарка не найдена
+
+    with open(USER_AVATAR_FILE, "r") as f:
+        users = json.load(f)
+
+    avatar_url = users.get(username)
+
+    if avatar_url:
+        # Возвращаем ссылку на аватар, если он есть
+        return jsonify({"avatar_url": avatar_url})
+    
+    # Если аватарки нет, возвращаем None
+    return jsonify({"avatar_url": None})
+
+
+@socketio.on('ban_user')
+def handle_ban_user(username):
+    if username:
+        if username not in banned_users:
+            banned_users.append(username)
+            emit('user_banned', {'success': True, 'username': username}, broadcast=True)  # Сообщение всем клиентам
+            print(f'User {username} has been banned')
+        else:
+            emit('user_banned', {'success': False, 'message': 'User is already banned'}, to=request.sid)  # Только отправителю
+    else:
+        emit('user_banned', {'success': False, 'message': 'Username is required'}, to=request.sid)  # Только отправителю
+
+@app.route('/api/check-ban-status', methods=['POST'])
+def check_ban_status():
+    try:
+        data = request.get_json()
+        username = data.get('username')
+
+        if not username:
+            return jsonify({'error': 'Username is required'}), 400
+
+        if username in banned_users:  # Проверяем, есть ли пользователь в списке
+            return jsonify({'banned': True}), 200
+        else:
+            return jsonify({'banned': False}), 200
+
+    except Exception as e:
+        print(f"Error checking ban status: {e}")
+        return jsonify({'error': 'An error occurred'}), 500
+        
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+def load_bought_themes():
+    try:
+        with open('bought.json', 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+# Функция для сохранения купленных тем
+def save_bought_themes(data):
+    with open('bought.json', 'w') as file:
+        json.dump(data, file)
+
+def load_file(file_path, default_value):
+    """Load a file or return default value if file is not found."""
+    if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
+        return default_value
+    with open(file_path, 'r') as file:
+        return json.load(file)
+        
+def save_file(file_path, data):
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
+        
+def get_next_prayer():
+    now = datetime.now()
+    for prayer, time_str in PRAYER_TIMES.items():
+        prayer_time = datetime.strptime(time_str, "%H:%M").replace(year=now.year, month=now.month, day=now.day)
+        if now < prayer_time:
+            time_remaining = prayer_time - now
+            return {
+                "name": prayer,
+                "time": time_str,
+                "remaining": str(time_remaining).split('.')[0]  # Remove microseconds
+            }
+    # If no prayers are left for today, return the first prayer for tomorrow
+    first_prayer = list(PRAYER_TIMES.items())[0]
+    prayer_time = datetime.strptime(first_prayer[1], "%H:%M").replace(year=now.year, month=now.month, day=now.day) + timedelta(days=1)
+    time_remaining = prayer_time - now
+    return {
+        "name": first_prayer[0],
+        "time": first_prayer[1],
+        "remaining": str(time_remaining).split('.')[0]
+    }
+
+@app.route('/apis/main')
+def main_page():
+    next_prayer = get_next_prayer()
+    return render_template('main.html', prayer_times=PRAYER_TIMES, next_prayer=next_prayer,duas=DUAS)
+
+@app.route('/apis/api/next_prayer')
+def api_next_prayer():
+    next_prayer = get_next_prayer()
+    return jsonify(next_prayer)
+
+# Initialize loggedUsers from file
+loggedUsers = load_file(USER_DATA_FILE, {})
+messages = load_file(MESSAGE_DATA_FILE, [])
+
+active_sessions = {}  # Track active sessions by username
+
+current_version = "2025-01-10-v1"
+
+exam_questions = [
+    # Listening (1-5)
+    {"id": 1, "type": "listening", "text": "Listen to the audio and write the missing word: 'The cat is ___ on the mat.'", "correct": "sleeping"},
+    {"id": 2, "type": "listening", "text": "Listen to the audio and choose the correct word: 'I ___ a phone call yesterday.'", "options": ["make", "made", "making"], "correct": "made"},
+    {"id": 3, "type": "listening", "text": "Listen to the audio and complete the sentence: 'She is ___ in the kitchen.'", "correct": "cooking"},
+    {"id": 4, "type": "listening", "text": "Listen to the audio and fill in the blank: 'They are ___ a movie right now.'", "correct": "watching"},
+    {"id": 5, "type": "listening", "text": "Listen to the audio and answer the question: 'Where is the boy going?'", "correct": "to the park"},
+    
+    # Reading (6-10)
+    {"id": 6, "type": "reading", "text": "Read the passage and answer the question: 'Mary is reading a book in the park. She enjoys the quiet and the fresh air.'", "correct": "reading a book"},
+    {"id": 7, "type": "reading", "text": "Read the passage and answer the question: 'Tom likes to play football every weekend.'", "correct": "football"},
+    {"id": 8, "type": "reading", "text": "Read the passage and answer the question: 'John is having lunch with his friends at a restaurant.'", "correct": "restaurant"},
+    {"id": 9, "type": "reading", "text": "Read the passage and answer the question: 'Sally is going to the gym after work to stay fit.'", "correct": "gym"},
+    {"id": 10, "type": "reading", "text": "Read the passage and answer the question: 'Lucy is watching TV in her living room.'", "correct": "living room"},
+    
+    # Beginner Grammar (11-25)
+    {"id": 11, "type": "fill_gaps", "text": "I ___ (go) to the store yesterday.", "correct": "went"},
+    {"id": 12, "type": "fill_gaps", "text": "She ___ (like) chocolate.", "correct": "likes"},
+    {"id": 13, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["He go to school.", "He goes to school.", "He going to school."], "correct": "He goes to school."},
+    {"id": 14, "type": "multiple_choice", "text": "What ___ she do?", "options": ["do", "does", "doing"], "correct": "does"},
+    {"id": 15, "type": "true_false", "text": "They plays football every day.", "correct": "False"},
+    {"id": 16, "type": "fill_gaps", "text": "I ___ (not/like) apples.", "correct": "don't like"},
+    {"id": 17, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["She has a car.", "She have a car.", "She having a car."], "correct": "She has a car."},
+    {"id": 18, "type": "multiple_choice", "text": "___ you like this book?", "options": ["Do", "Does", "Are"], "correct": "Do"},
+    {"id": 19, "type": "unscramble", "text": "rtitla", "correct": "little"},
+    {"id": 20, "type": "unscramble", "text": "lliw", "correct": "will"},
+    {"id": 21, "type": "fill_gaps", "text": "We ___ (go) to the park tomorrow.", "correct": "are going"},
+    {"id": 22, "type": "fill_gaps", "text": "I ___ (eat) lunch right now.", "correct": "am eating"},
+    {"id": 23, "type": "true_false", "text": "She have a dog.", "correct": "False"},
+    {"id": 24, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["I is happy.", "I am happy.", "I be happy."], "correct": "I am happy."},
+    {"id": 25, "type": "multiple_choice", "text": "What time ___ she wake up?", "options": ["do", "does", "is"], "correct": "does"}
+]
+
+
+# Путь к файлу с балансами
+BALANCE_FILE = 'balance.json'
+
+# Загрузка баланса из файла
+def load_balance():
+    if os.path.exists(BALANCE_FILE):
+        with open(BALANCE_FILE, 'r') as f:
+            return json.load(f)
+    else:
+        return {}
+
+# Сохранение баланса в файл
+def save_balance(balance):
+    with open(BALANCE_FILE, 'w') as f:
+        json.dump(balance, f)
+
+# Получение баланса для пользователя
+@socketio.on('get_balance')
+def get_balance(username):
+    balance = load_balance()
+    if username in balance:
+        emit('balance', {'success': True, 'coins': balance[username]})
+    else:
+        emit('balance', {'success': False, 'message': 'User not found'})
+
+@socketio.on('add_coins')
+def add_coins(data):
+    username = data['username']
+    coins = data['coins']
+    balance = load_balance()
+    
+    # Если пользователя нет в файле, создаем запись с 0 монетами
+    if username not in balance:
+        balance[username] = 0
+    
+    balance[username] += coins
+    
+    save_balance(balance)  # Сохраняем обновленный баланс
+    
+    # Отправляем обновленный баланс всем клиентам
+    emit('coins_added', {'success': True, 'username': username, 'coins': balance[username]}, broadcast=True)
+    
+@app.route('/add_coins', methods=['POST'])
+def add_coins_api():
+    try:
+        data = request.get_json()
+        username = data.get("username")
+        coins = data.get("coins", 0)
+
+        if not username or not isinstance(coins, int) or coins <= 0:
+            return jsonify({"error": "Invalid data"}), 400
+
+        balance = load_balance()
+        balance[username] = balance.get(username, 0) + coins
+        save_balance(balance)
+
+        # Отправляем обновленный баланс через WebSocket
+        socketio.emit('coins_added', {'success': True, 'username': username, 'coins': balance[username]})
+
+        return jsonify({"success": True, "username": username, "coins": balance[username]})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@socketio.on('pay_for_ban_reduction')
+def pay_for_ban_reduction(data):
+    username = data['username']
+    count_blocks = data['countBlocks']
+    cost_per_violation = 100  # 100 монет за одно нарушение
+
+    balance = load_balance()
+
+    # Проверяем, есть ли у пользователя достаточно монет
+    if username in balance and balance[username] >= cost_per_violation:
+        # Списываем 100 монет за одно нарушение
+        balance[username] -= cost_per_violation
+        save_balance(balance)
+
+        # Уменьшаем количество нарушений (countBlocks) на 1
+        new_count_blocks = max(count_blocks - 1, 0)
+
+        # Отправляем обновленное количество нарушений обратно на клиент
+        emit('ban_reduction_success', {'success': True, 'new_count_blocks': new_count_blocks, 'coins': balance[username]})
+    else:
+        emit('ban_reduction_failed', {'success': False, 'message': 'Not enough coins'})
+
+
+@socketio.on('apply_theme')
+def apply_theme(data):
+    username = data['username']
+    theme = data['theme']
+    price = data['price']
+    
+    balance = load_balance()
+    bought_themes = load_bought_themes()
+    
+    if username in balance and balance[username] >= price:
+        # Если тема не куплена ранее
+        if username not in bought_themes:
+            bought_themes[username] = []
+
+        if theme not in bought_themes[username]:
+            # Если у пользователя еще нет этой темы, списываем монеты
+            balance[username] -= price
+            bought_themes[username].append(theme)  # Добавляем тему в список купленных
+            save_balance(balance)
+            save_bought_themes(bought_themes)  # Сохраняем обновленные данные
+
+            # Отправляем подтверждение клиенту
+            emit('theme_applied', {'success': True, 'coins': balance[username], 'theme': theme}, room=request.sid)
+        else:
+            # Если тема уже куплена, применяем ее без списания монет
+            emit('theme_applied', {'success': True, 'coins': balance[username], 'theme': theme, 'already_purchased': True}, room=request.sid)
+    else:
+        emit('theme_applied', {'success': False, 'message': 'Not enough coins.'}, room=request.sid)
+
+# Получение списка купленных тем при открытии модального окна
+@socketio.on('get_bought_themes')
+def get_bought_themes(data):
+    username = data['username']
+    bought_themes = load_bought_themes()
+
+    if username in bought_themes:
+        emit('bought_themes', {'success': True, 'themes': bought_themes[username]})
+    else:
+        emit('bought_themes', {'success': False, 'message': 'No themes purchased yet.'})
+
+@app.route('/ping', methods=['GET'])
+def ping():
+    return '', 204  # Возвращает пустой успешный ответ
+
+@app.route('/create_exam', methods=['POST'])
+def create_exam():
+    try:
+        data = request.get_json()
+        questions = data.get('questions', [])
+
+        if not questions:
+            return jsonify({"error": "No questions provided"}), 400
+
+        # Set the exam start time and store duration
+        #exam_start_time = time.time()
+        global exam_start_time
+        exam_start_time = None  # Track the time when exam starts, comment this line if not needed
+
+        # Store questions
+        exam_questions.clear()
+        exam_passed.clear()
+        
+        for question in questions:
+            question_data = {
+                "id": question['id'],
+                "text": question['text'],
+                "type": question['type'],
+                "correct": question['correct']
+            }
+
+            if question['type'] == 'multiple_choice' and 'options' in question:
+                question_data["options"] = question['options']
+
+            exam_questions.append(question_data)
+
+        return jsonify({"success": True, "exam_duration": exam_duration})
+
+    except Exception as e:
+        app.logger.error(f"Error occurred in create_exam: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+exam_started = False  # Флаг начала экзамена
+
+@socketio.on('exam_started')
+def handle_exam_started():
+    global exam_started
+    exam_started = True
+    emit('exam_started', {'message': 'Exam has started'}) 
+
+exam_end_time = None
+
+@app.route('/api/start-exam', methods=['POST'])
+def start_exam():
+    global exam_start_time, exam_end_time, exam_passed
+
+    # Время начала экзамена
+    exam_start_time = time.time()
+
+    # Рассчитываем время окончания экзамена + 10 секунд
+    exam_end_time = exam_start_time + exam_duration + 10  
+
+    # Очищаем список пользователей, которые прошли экзамен
+    exam_passed.clear()
+
+    # Отправляем сообщение о старте экзамена
+    socketio.emit('exam_started', {'message': 'Exam has started'})  # Исправленный emit
+
+    return jsonify({"message": "Exam has started and the passed list is cleared."}), 200
+
+
+@app.route('/get_remaining_time', methods=['GET'])
+def get_remaining_time():
+    if exam_start_time is None:
+        return jsonify({"error": "Exam has not been started yet."}), 400
+
+    # Calculate how much time has passed
+    time_elapsed = time.time() - exam_start_time
+    remaining_time = max(0, exam_duration - time_elapsed)  # Ensure no negative time
+
+    return jsonify({"remaining_time": remaining_time})
+
+
+def calculate_score(user_answers):
+    correct_count = 0
+    for question_id, user_answer in user_answers.items():
+        # Поиск вопроса по ID
+        question = next((q for q in exam_questions if q["id"] == question_id), None)
+        
+        # Если вопрос найден и ответ совпадает
+        if question and user_answer == question["correct"]:
+            correct_count += 1
+
+    return (correct_count / len(exam_questions)) * 100 if exam_questions else 0
+
+
+@app.route('/get_exam_questions_result', methods=['GET'])
+def get_exam_questions_result():
+
+    return jsonify({"questions": exam_questions})
+
+@app.route('/get_exam_questions', methods=['GET'])
+def get_exam_questions():
+    time.sleep(1)  # Имитация задержки загрузки
+
+    username = request.args.get("username")  # Получаем имя пользователя из запроса
+
+    if username in exam_passed:
+        return jsonify({"error": "You have already passed the exam."}), 403  # Ошибка для уже прошедших
+
+    if not exam_questions:
+        return jsonify({"error": "No upcoming exams."}), 404
+
+    if exam_start_time is None:
+        return jsonify({"error": "Exam has not started yet."}), 403  # Ошибка, если экзамен ещё не начался
+
+    current_time = time.time()
+    exam_end_time = exam_start_time + exam_duration
+
+    if current_time > exam_end_time:
+        return jsonify({"error": "Exam time has expired."}), 403  # Ошибка, если время истекло
+
+    return jsonify({"questions": exam_questions})
+
+@app.route('/api/get_exam_results', methods=['GET'])
+def get_exam_results():
+    try:
+        # Проверяем, существует ли файл с результатами
+        if not os.path.exists('exam_results.json'):
+            return jsonify({"error": "No exam results found"}), 404
+
+        # Открываем и читаем файл с результатами
+        with open('exam_results.json', 'r') as f:
+            exam_results = json.load(f)
+
+        # Возвращаем все данные в формате JSON
+        return jsonify(exam_results)
+
+    except Exception as e:
+        app.logger.error(f"Error in get_exam_results: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/submit_exam', methods=['POST'])
+def submit_exam():
+    try:
+        # Проверка на истечение времени экзамена
+        current_time = time.time()  # Получаем текущее время
+        if current_time > exam_end_time:
+            return jsonify({"error": "Exam time has expired."}), 403  # Ошибка, если время истекло
+
+        time.sleep(2)
+        data = request.get_json(silent=True)
+        answers = data.get("answers")
+        username = data.get("username")
+
+        if not answers or not username:
+            return jsonify({"error": "Missing data"}), 400
+
+        if username in exam_passed:
+            return jsonify({"error": "You have already passed the exam."}), 403
+
+        correct = 0
+        incorrect = 0
+        skipped = 0
+        results = []
+
+        for question in exam_questions:
+            if 'id' not in question:
+                app.logger.error(f"Missing 'id' in question: {question}")
+                continue
+
+            question_id = f"q{question['id']}"
+            answer = answers.get(question_id)
+
+            if not answer or answer.strip() == "":
+                skipped += 1
+                continue
+
+            if question["type"] in ["true_false", "multiple_choice"]:
+                if answer.strip() == question["correct"]:
+                    correct += 1
+                else:
+                    incorrect += 1
+            elif question["type"] in ["fill_gaps", "unscramble"]:
+                if answer.strip().lower() == question["correct"].lower():
+                    correct += 1
+                else:
+                    incorrect += 1
+            elif question["type"] in ["reading", "listening"]:
+                if answer.strip().lower() == question["correct"].strip().lower():
+                    correct += 1
+                else:
+                    incorrect += 1
+
+            results.append({
+                "question_type": question["type"],
+                "question_id": question["id"],
+                "question": question["text"],
+                "user_answer": answer,
+                "correct_answer": question["correct"],
+                "is_correct": answer.strip().lower() == question["correct"].strip().lower()
+            })
+
+        total_questions = len(exam_questions)
+        correct_percentage = (correct / total_questions) * 100 if total_questions > 0 else 0
+
+        coins = 10 if correct_percentage >= 80 else 0 
+
+        exam_passed.append(username)
+
+        # Сохраняем результаты в файл
+        exam_results = {}
+        if os.path.exists('exam_results.json'):
+            with open('exam_results.json', 'r') as f:
+                exam_results = json.load(f)
+
+        exam_results[username] = {
+            "correct": correct,
+            "incorrect": incorrect,
+            "skipped": skipped,
+            "total_questions": total_questions,
+            "correct_percentage": correct_percentage,  # Добавлен correct_percentage
+            "rewarded": coins > 0,
+            "coins": coins,
+            "results": results
+        }
+
+        with open('exam_results.json', 'w') as f:
+            json.dump(exam_results, f, indent=4)
+
+        return jsonify({
+            "correct": correct,
+            "incorrect": incorrect,
+            "skipped": skipped,
+            "total_questions": total_questions,
+            "correct_percentage": correct_percentage,  # Возвращаем correct_percentage
+            "rewarded": coins > 0,
+            "coins": coins
+        })
+
+    except Exception as e:
+        app.logger.error(f"Error in submit_exam: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@app.route("/chatCRM")
+def crm():
+    return render_template("chatCRM.html")
+
+@app.route("/release-update", methods=["POST"])
+def release_update():
+    global current_version
+
+    # Разбиваем текущую версию на дату и номер версии
+    date, version = current_version.split("-v")
+    try:
+        # Преобразуем номер версии в целое число и увеличиваем на 1
+        next_version = f"{date}-v{int(version) + 1}"
+    except ValueError:
+        # Если произошла ошибка при преобразовании версии, отправляем ошибку
+        return jsonify({"error": "Invalid version format"}), 400
+
+    # Обновляем текущую версию
+    current_version = next_version
+
+    # Уведомляем всех подключённых клиентов об обновлении
+    socketio.emit("updateReleased", {"version": current_version})  # Убираем to='all'
+
+    # Возвращаем успешный ответ с новой версией
+    return jsonify({"success": True, "version": current_version})
+    
+@app.route('/api/tracks', methods=['GET'])
+def get_tracks():
+    return jsonify(tracks)
+
+@app.route('/')
+def login():
+    return render_template('login.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def handle_login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    # Проверка на заблокированных пользователей
+    if username in banned_users:
+        return render_template('login.html', error="Your account is banned.")  # Ошибка, если пользователь заблокирован
+
+    # Проверка на правильность введенного имени и пароля
+    if username in loggedUsers and loggedUsers[username] == password:
+        # Собираем более подробную информацию о устройстве
+        device_info = {
+            'User-Agent': request.headers.get('User-Agent'),
+            'IP-Address': request.headers.get('X-Forwarded-For', request.remote_addr),
+            'Language': request.headers.get('Accept-Language'),
+            'Platform': platform.system(),  # Используем платформу из Python
+            'OS': platform.version(),  # Версия операционной системы
+            'Device-Type': 'Mobile' if 'Mobi' in request.headers.get('User-Agent') else 'Desktop'
+        }
+
+        # Если пользователь уже в системе, но с другого устройства
+        if username in active_sessions:
+            active_sessions[username].append(device_info)  # Добавляем информацию об устройстве
+        else:
+            active_sessions[username] = [device_info]  # Добавляем пользователя и информацию об устройстве
+
+        session['username'] = username
+        return redirect(url_for('chat'))
+    else:
+        return render_template('login.html', error="Invalid username or password")
+
+@app.route('/sessions')
+def get_sessions():
+    sessions_data = []
+
+    # Пройдем по всем пользователям и их сессиям
+    for username, devices in active_sessions.items():
+        for device in devices:
+            sessions_data.append({
+                'deviceType': device.get('Device-Type', 'Unknown'),
+                'platform': device.get('Platform', 'Unknown'),
+                'os': device.get('OS', 'Unknown'),
+                'browser': device.get('User-Agent', 'Unknown').split(' ')[0],  # Получаем только имя браузера
+                'ipAddress': device.get('IP-Address', 'Unknown'),
+                'language': device.get('Language', 'Unknown')
+            })
+    
+    return jsonify({'sessions': sessions_data})
+
+@app.route('/chat')
+def chat():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('index.html', username=session.get('username', ''))
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    username = session.pop('username', None)
+    user_agent = request.headers.get('User-Agent')
+
+    if username and user_agent:
+        if username in active_sessions:
+            devices = active_sessions[username]
+            device_to_remove = None
+
+            for device_info in devices:
+                if device_info.get('User-Agent') == user_agent:
+                    device_to_remove = device_info
+                    break
+
+            if device_to_remove:
+                devices.remove(device_to_remove)
+
+            if not devices:
+                del active_sessions[username]
+
+    # Вместо редиректа возвращаем JSON
+    return jsonify({"success": True, "message": "Logged out successfully"}), 200
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    if 'username' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    if file and allowed_file(file.filename):
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        filename = f"{timestamp}_{file.filename}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        # Broadcast file info
+        message = {
+            'type': 'file',
+            'filename': filename,
+            'url': f'/uploads/{filename}',
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'username': session.get('username', 'Anonymous')
+        }
+        messages.append(message)
+        socketio.emit('new_message', message)
+
+        return jsonify({'success': True, 'url': f'/uploads/{filename}'})
+
+    return jsonify({'error': 'Invalid file type'}), 400
+
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@socketio.on('connect')
+def handle_connect():
+    if 'username' in session:
+        # Отправляем сохранённые сообщения
+        emit('load_messages', messages)
+
+        # Отправляем текущую версию
+        emit('updateReleased', {'version': current_version})
+
+
+@socketio.on('send_message')
+def handle_message(data):
+    if 'username' not in session:
+        return
+
+    message = {
+        'type': 'text',
+        'text': data['text'],
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'username': session.get('username', 'Anonymous')
+    }
+    messages.append(message)
+    emit('new_message', message, broadcast=True)
+
+@app.route('/change_password', methods=['POST'])
+def change_password():
+    if 'username' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    data = request.get_json()
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
+
+    username = session.get('username')
+
+    if loggedUsers.get(username) != current_password:
+        return jsonify({'error': 'Incorrect current password'})
+
+    loggedUsers[username] = new_password
+    with open(USER_DATA_FILE, 'w') as f:
+        json.dump(loggedUsers, f)
+
+    return jsonify({'message': 'Password updated successfully'})
+
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

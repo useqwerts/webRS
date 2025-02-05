@@ -1,0 +1,848 @@
+/* Global Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background: #151824; /* Darker, more subtle background */
+    color: #F0F4EF; /* Slightly warmer text color for better readability */
+    overflow: hidden;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased; /* Enhance font rendering for smoother text */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.side-nav {
+    width: 260px; /* Slightly wider sidebar */
+    background: rgba(20, 20, 30, 0.95); /* Slightly more opaque sidebar background */
+    color: #FFFFFF; /* White sidebar text */
+    height: 100vh;
+    padding: 30px 25px; /* Increased padding for a more spacious feel */
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.6); /* Enhanced shadow for depth */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Increased gap for better spacing */
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    z-index: 100; /* Ensure sidebar is above other content if needed */
+}
+
+.side-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-nav .nav-item {
+    padding: 14px 18px; /* Increased padding in nav items */
+    cursor: pointer;
+    font-size: 15px; /* Slightly larger font size */
+    border-radius: 10px; /* More rounded corners */
+    transition: background-color 0.3s, transform 0.2s ease-in-out, color 0.3s; /* Added color transition */
+    text-transform: uppercase;
+    letter-spacing: 0.5px; /* Reduced letter spacing for better readability */
+    margin: 6px 0; /* Adjusted margin */
+    font-weight: 500; /* Slightly bolder font weight */
+    color: #D0D4D3; /* Softer white color for default nav items */
+}
+
+.side-nav .nav-item.active,
+.side-nav .nav-item:hover {
+    background: linear-gradient(90deg, #38E57F, #2BB673); /* Brighter, more vibrant gradient */
+    color: #FFFFFF; /* White text for active/hover states */
+    transform: scale(1.03); /* Slightly more pronounced scale effect */
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.5); /* Enhanced shadow for active/hover states */
+}
+
+/* Main Content */
+.content {
+    flex-grow: 1;
+    padding: 30px; /* Increased padding for main content */
+    background: rgba(30, 35, 50, 0.2); /* Slightly darker, more subtle background */
+    border-radius: 15px; /* More rounded content corners */
+    margin: 25px; /* Increased margin around content */
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3); /* Enhanced content shadow */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Stretch items to fill content width */
+    max-height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+/* Content Sections */
+.content-section {
+    opacity: 0;
+    transform: translateX(25px); /* Slightly increased translation */
+    position: absolute;
+    width: 100%;
+    max-width: 900px; /* Increased max-width for content sections */
+    max-height: 90%;
+    overflow-y: auto;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Smoother transition */
+    text-align: left;
+    box-sizing: border-box;
+    padding-right: 15px; /* Add some right padding for text content */
+}
+
+.content-section.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Custom scrollbar for content and content-section */
+.content::-webkit-scrollbar,
+.content-section::-webkit-scrollbar {
+    width: 10px; /* Adjust scrollbar width */
+}
+
+.content::-webkit-scrollbar-track,
+.content-section::-webkit-scrollbar-track {
+    background: rgba(30, 35, 50, 0.3); /* Matching background */
+    border-radius: 10px; /* Smooth rounded track */
+}
+
+.content::-webkit-scrollbar-thumb,
+.content-section::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #57C4E5, #4ECDC4); /* Gradient scrollbar */
+    border-radius: 10px; /* Rounded thumb */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Soft shadow */
+}
+
+.content::-webkit-scrollbar-thumb:hover,
+.content-section::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #4ECDC4, #57C4E5); /* Reverse gradient on hover */
+}
+
+/* Enable scrolling only when needed */
+.content,
+.content-section {
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #57C4E5 rgba(30, 35, 50, 0.3);
+    scroll-behavior: smooth; /* Smooth scrolling effect */
+}
+
+
+/* Buttons */
+button {
+    background: linear-gradient(90deg, #38E57F, #2BB673); /* Vibrant green gradient for buttons */
+    color: #FFFFFF;
+    padding: 14px 28px; /* Increased button padding */
+    border: none;
+    border-radius: 25px; /* More rounded buttons */
+    cursor: pointer;
+    font-size: 15px; /* Slightly larger button font size */
+    font-weight: 600; /* Bolder button font weight */
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4); /* Enhanced button shadow */
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* Added box-shadow transition */
+    box-sizing: border-box;
+    letter-spacing: 0.6px; /* Subtle letter spacing for buttons */
+}
+
+button:hover {
+    background: linear-gradient(90deg, #2BB673, #38E57F); /* Inverted gradient on hover */
+    transform: translateY(-3px) scale(1.03); /* More pronounced hover effect */
+    box-shadow: 0 9px 25px rgba(0, 0, 0, 0.5); /* Enhanced hover shadow */
+}
+
+/* Dashboard */
+#dashboard {
+    background: rgba(30, 35, 50, 0.3); /* Slightly more opaque dashboard background */
+    color: #F0F4EF;
+    padding: 30px; /* Increased dashboard padding */
+    border-radius: 18px; /* More rounded dashboard corners */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Enhanced dashboard shadow */
+    width: 95%; /* Slightly wider dashboard */
+    max-width: 700px; /* Increased max-width for dashboard */
+    margin: 30px auto; /* Increased margin around dashboard */
+    text-align: center;
+    animation: fadeIn 0.6s ease-out;
+    box-sizing: border-box;
+}
+
+#dashboard h1 {
+    font-size: 28px; /* Larger dashboard heading */
+    color: #FFFFFF;
+    margin-bottom: 20px; /* Increased margin below heading */
+    font-weight: bold;
+    text-shadow: 0 3px 8px rgba(255, 255, 255, 0.2); /* Enhanced heading text shadow */
+}
+
+#dashboard input {
+    width: calc(100% - 30px); /* Adjust input width to account for padding and border */
+    padding: 14px 15px; /* Increased input padding */
+    border: 2px solid rgba(70, 70, 70, 0.8); /* Slightly lighter input border */
+    background: rgba(40, 40, 40, 0.7); /* Slightly lighter input background */
+    color: #EAEAEA;
+    font-size: 17px; /* Larger input font size */
+    border-radius: 10px; /* Rounded input corners */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin: 12px 0; /* Adjusted input margin */
+    box-sizing: border-box;
+}
+
+#dashboard input:focus {
+    border-color: #6A7ACB; /* Brighter focus border color */
+    outline: none;
+    box-shadow: 0 0 12px rgba(106, 124, 203, 0.7); /* Enhanced focus shadow */
+}
+
+/* Add Coins Button */
+#addCoinsButton {
+    background: linear-gradient(135deg, #6A7ACB, #57C4E5); /* Updated button gradient */
+    padding: 14px 25px; /* Increased button padding */
+    border-radius: 25px; /* More rounded button corners */
+    font-size: 17px; /* Larger button font size */
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 25px; /* Increased button margin-top */
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+#addCoinsButton:hover {
+    background: linear-gradient(135deg, #7B68EE, #87CEFA); /* Lighter gradient on hover */
+    box-shadow: 0 7px 22px rgba(0, 0, 0, 0.5); /* Enhanced hover shadow */
+    transform: translateY(-3px); /* More pronounced hover effect */
+}
+
+/* Status Messages */
+.message {
+    font-size: 17px; /* Larger message font size */
+    font-weight: bold;
+    margin-top: 25px; /* Increased message margin-top */
+    opacity: 0;
+    animation: fadeInMessage 0.6s forwards;
+}
+
+@keyframes fadeInMessage {
+    from {
+        opacity: 0;
+        transform: translateY(15px); /* Increased translation for fade-in */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Exam Form */
+#exam-form {
+    max-width: 900px; /* Increased exam form max-width */
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px; /* Increased exam form padding */
+    background: rgba(30, 35, 50, 0.2); /* Slightly darker exam form background */
+    border-radius: 15px; /* More rounded exam form corners */
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3); /* Enhanced exam form shadow */
+    box-sizing: border-box;
+}
+
+.question-block {
+    background: rgba(30, 35, 50, 0.3); /* Slightly darker question block background */
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Softer border for question block */
+    padding: 20px; /* Increased padding for question block */
+    margin-bottom: 20px; /* Increased margin below question block */
+    border-radius: 10px; /* Rounded question block corners */
+    position: relative;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* Enhanced question block shadow */
+    box-sizing: border-box;
+}
+
+.question-block input,
+.question-block select {
+    display: block;
+    width: calc(100% - 30px); /* Adjust input width for padding and border */
+    margin: 12px 0; /* Adjusted input margin */
+    padding: 12px 15px; /* Increased input padding */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Softer input border */
+    background: rgba(40, 40, 40, 0.5); /* Slightly lighter input background */
+    color: #EAEAEA;
+    border-radius: 8px; /* Rounded input corners */
+    font-size: 15px; /* Larger input font size */
+    box-sizing: border-box;
+}
+
+.remove-question {
+    background: #E55A5A; /* Updated remove button color */
+    color: white;
+    border: none;
+    padding: 6px 12px; /* Adjusted remove button padding */
+    cursor: pointer;
+    border-radius: 6px; /* Rounded remove button corners */
+    position: absolute;
+    top: 15px; /* Adjusted remove button position */
+    right: 15px; /* Adjusted remove button position */
+    font-size: 13px; /* Slightly smaller remove button font size */
+    transition: background-color 0.3s;
+}
+
+.remove-question:hover {
+    background: #F44336; /* Darker red on hover */
+}
+
+#save-exam {
+    background: #38E57F; /* Vibrant save button color */
+    color: white;
+    padding: 14px 28px; /* Increased save button padding */
+    border: none;
+    cursor: pointer;
+    margin-top: 25px; /* Increased save button margin-top */
+    display: block;
+    width: 100%;
+    max-width: 220px; /* Slightly wider save button */
+    border-radius: 25px; /* More rounded save button corners */
+    font-size: 15px; /* Larger save button font size */
+    font-weight: bold;
+    transition: 0.3s;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#save-exam:hover {
+    background: #32CD32; /* Slightly darker green on hover */
+    transform: translateY(-3px); /* More pronounced hover effect */
+}
+
+/* Style for radio buttons and labels (quiz-like design) */
+label {
+    user-select: none;
+    flex-direction: column;
+    display: flex;
+    margin-bottom: 18px; /* Increased margin below labels */
+    padding: 15px; /* Increased padding for labels */
+    border: 2px solid rgba(200, 200, 200, 0.3); /* Softer label border */
+    border-radius: 12px; /* Rounded label corners */
+    background-color: rgba(50, 50, 50, 0.3); /* Slightly darker label background */
+    cursor: pointer;
+    font-size: 17px; /* Larger label font size */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    color: #E0E0E0; /* Lighter color for default labels */
+}
+
+/* Скрытие стандартного радио-кнопки */
+input[type="radio"] {
+    display: none;
+}
+
+/* Базовый стиль для кастомных радио-кнопок */
+input[type="radio"] + label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600; /* Bolder radio button font weight */
+    background: rgba(255, 255, 255, 0.1); /* Softer radio button background */
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(150, 150, 150, 0.5); /* Softer radio button border */
+    color: #D0D4D3; /* Softer white color for default radio buttons */
+    padding: 14px 22px; /* Increased radio button padding */
+    border-radius: 28px; /* More rounded radio buttons */
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    user-select: none;
+}
+
+/* Анимация при наведении */
+input[type="radio"]:not(:checked) + label:hover {
+    background: rgba(255, 255, 255, 0.2); /* Lighter hover background */
+    border-color: rgba(180, 180, 180, 0.6); /* Lighter hover border */
+    transform: scale(1.05);
+}
+
+/* Состояние активного выбора */
+input[type="radio"]:checked + label {
+    margin: 12px; /* Adjusted checked radio margin */
+    font-weight: bolder;
+    background: linear-gradient(135deg, #38E57F, #2BB673); /* Vibrant checked radio gradient */
+    border-color: #38E57F;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 5px 18px rgba(56, 229, 127, 0.5); /* Enhanced checked radio shadow */
+}
+
+/* Современный стиль для текстового поля */
+input[type="text"] {
+    padding: 14px 18px; /* Increased text input padding */
+    font-size: 17px; /* Larger text input font size */
+    border: 1.5px solid rgba(150, 150, 150, 0.5); /* Softer text input border */
+    border-radius: 12px; /* Rounded text input corners */
+    width: calc(100% - 36px); /* Adjust text input width for padding and border */
+    box-sizing: border-box;
+    margin-top: 12px; /* Adjusted text input margin-top */
+    transition: all 0.3s ease-in-out;
+    background: rgba(255, 255, 255, 0.15); /* Softer text input background */
+    backdrop-filter: blur(10px);
+    color: #D0D4D3; /* Softer white color for text input */
+    outline: none;
+}
+
+/* Эффект фокуса */
+input[type="text"]:focus {
+    border-color: #57C4E5; /* Brighter focus border color */
+    box-shadow: 0 0 6px rgba(87, 196, 229, 0.6); /* Enhanced focus shadow */
+}
+
+.exam-result-summary {
+    background-color: rgba(40, 40, 40, 0.4); /* Darker exam summary background */
+    border-radius: 12px;
+    padding: 25px; /* Increased exam summary padding */
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3); /* Enhanced exam summary shadow */
+    margin-bottom: 25px; /* Increased exam summary margin-bottom */
+    transition: transform 0.2s ease-in-out;
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border for exam summary */
+}
+
+.exam-result-summary:hover {
+    transform: translateY(-7px); /* More pronounced hover effect */
+}
+
+.exam-result-summary p {
+    font-size: 1.2rem; /* Larger exam summary paragraph font size */
+    color: #F0F4EF; /* Lighter text color for exam summary paragraphs */
+    margin: 10px 0; /* Adjusted exam summary paragraph margin */
+}
+
+.exam-result-summary p strong {
+    color: #A0AEC0; /* Softer color for labels in exam summary */
+}
+
+.exam-result-summary .toggle-details {
+    background-color: #57C4E5; /* Updated toggle details button color */
+    color: white;
+    border: none;
+    padding: 12px 24px; /* Increased toggle details button padding */
+    border-radius: 6px; /* Rounded toggle details button corners */
+    cursor: pointer;
+    font-size: 1.1rem; /* Larger toggle details button font size */
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 12px; /* Adjusted toggle details button margin-top */
+}
+
+.exam-result-summary .toggle-details:hover {
+    background-color: #4ECDC4; /* Slightly darker toggle details button color on hover */
+}
+
+.exam-result-summary .details {
+    margin-top: 18px; /* Increased details margin-top */
+    padding-top: 12px; /* Increased details padding-top */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Softer details border */
+    font-size: 1rem; /* Larger details font size */
+    color: #D0D4D3; /* Softer white color for details text */
+}
+
+.exam-result-summary .details h3 {
+    font-size: 1.3rem; /* Larger details heading font size */
+    color: #A0AEC0; /* Softer color for details heading */
+}
+
+/* Custom scrollbar for exam result summary */
+.exam-result-summary::-webkit-scrollbar {
+    width: 10px; /* Adjust scrollbar width */
+}
+
+.exam-result-summary::-webkit-scrollbar-track {
+    background: rgba(40, 40, 40, 0.4); /* Matching background */
+    border-radius: 10px; /* Smooth rounded track */
+}
+
+.exam-result-summary::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #57C4E5, #4ECDC4); /* Gradient scrollbar */
+    border-radius: 10px; /* Rounded thumb */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Soft shadow */
+}
+
+.exam-result-summary::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #4ECDC4, #57C4E5); /* Reverse gradient on hover */
+}
+
+/* Enable scrolling only when needed */
+.exam-result-summary {
+    max-height: 400px; /* Adjust as needed */
+    overflow-y: auto; /* Add scroll only when necessary */
+}
+
+
+/* Style for exam results container */
+.exam-result {
+    background: rgba(30, 35, 50, 0.3); /* Slightly darker exam result container background */
+    padding: 20px; /* Increased exam result container padding */
+    margin-bottom: 25px; /* Increased exam result container margin-bottom */
+    border-radius: 12px; /* Rounded exam result container corners */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* Enhanced exam result container shadow */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border for exam result container */
+}
+
+.exam-result p {
+    margin: 8px 0; /* Adjusted exam result paragraph margin */
+    color: #F0F4EF; /* Lighter text color for exam result paragraphs */
+    font-size: 1.1rem; /* Larger exam result paragraph font size */
+}
+
+/* Apply these styles to clickable elements (e.g., <div>, <a>, etc.) */
+.exam-result .toggle-details {
+    background-color: #38E57F;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 15px;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+    font-weight: 600;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+
+    background: linear-gradient(135deg, #38E57F, #20B2AA);
+    background-size: 200% 200%;
+    background-position: top left;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    /* Pseudo-element for hover effect */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.15);
+        opacity: 0;
+        transition: opacity 0.3s ease-out;
+        border-radius: inherit;
+    }
+
+    /* Focus state */
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(56, 229, 127, 0.5), 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Hover state */
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        background-position: bottom right;
+
+        &::before {
+            opacity: 1;
+        }
+    }
+
+    /* Active state */
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-position: center;
+        transition-duration: 0.15s;
+
+        &::before {
+            opacity: 0.8;
+            background: rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    /* Disabled state */
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: #777;
+        color: #ddd;
+        border-color: transparent;
+        box-shadow: none;
+        transform: none;
+
+        &:hover, &:active, &:focus {
+            transform: none;
+            box-shadow: none;
+            background-position: top left;
+            &::before {
+                opacity: 0;
+            }
+        }
+    }
+}
+
+
+/* Define custom theme colors using CSS variables */
+:root {
+    --slider-background: #f2f2f2;
+    --slider-active-background: #2ecc71;
+    --handle-background: #4CAF50;
+    --handle-active-background: #2980b9;
+    --hover-shadow: rgba(0, 0, 0, 0.2);
+    --focus-outline: 2px solid #4CAF50;
+    --text-color: #555;
+    --text-active-color: #fff;
+}
+
+/* Стили для контейнера слайдера */
+#startExamSliderContainer {
+    position: relative;
+    width: 24vw;
+    height: 60px;
+    background-color: var(--slider-background);
+    border-radius: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* Эффект при наведении на контейнер слайдера */
+#startExamSliderContainer:hover {
+    box-shadow: 0 12px 20px var(--hover-shadow);
+    transform: translateY(-2px);
+}
+
+/* Стиль для ручки слайдера */
+#startExamSliderHandle {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    width: 60px;
+    height: 100%;
+    background-color: var(--handle-background);
+    border-radius: 30px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: left 0.4s ease, background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Эффект при наведении на ручку слайдера */
+#startExamSliderHandle:hover {
+    background-color: #45a049; /* Немного темнее цвет при наведении */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Иконка для ручки слайдера */
+#startExamSliderHandle i {
+    font-size: 24px;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+/* Анимация для активного состояния слайдера */
+#startExamSliderContainer.active {
+    background-color: var(--slider-active-background);
+    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
+}
+
+#startExamSliderHandle.active {
+    background-color: var(--handle-active-background);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1); /* Легкое увеличение ручки */
+}
+
+#startExamSliderHandle.active i {
+    transform: rotate(90deg); /* Поворот иконки при активации */
+}
+
+/* Стили для текста слайдера */
+.slider-text {
+    user-select: none;
+    font-size: 18px;
+    color: var(--text-color);
+    position: absolute;
+    top: 50%;
+    left: 80px; /* Adjusted to avoid overlap with handle */
+    transform: translateY(-50%);
+    transition: opacity 0.3s ease, transform 0.3s ease, color 0.3s ease;
+    font-weight: 500;
+}
+
+/* Когда текст скрыт */
+.slider-text.hidden {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.9); /* Слегка уменьшаем текст */
+}
+
+/* Стиль для индикатора прогресса */
+.loader {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+    width: 80%;
+    height: 5px;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Анимация для индикатора прогресса */
+.loader span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8e44ad);
+    animation: loading 2s infinite;
+}
+
+/* Ключевая анимация загрузки */
+@keyframes loading {
+    0% {
+        width: 0;
+    }
+    50% {
+        width: 50%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+/* При активации слайдера показываем индикатор */
+#startExamSliderContainer.active .loader {
+    opacity: 1;
+}
+
+/* Улучшение доступности: Фокус на ручке */
+#startExamSliderHandle:focus {
+    outline: var(--focus-outline);
+}
+
+/* Дополнительные улучшения для текста при активации */
+#startExamSliderContainer.active .slider-text {
+    color: var(--text-active-color);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.exam-result .details {
+    margin-top: 18px; /* Increased details margin-top for exam result */
+    display: none;
+    padding-left: 25px; /* Increased details padding-left for exam result */
+    border-left: 4px solid #38E57F; /* Vibrant border for details section in exam result */
+}
+
+.exam-result .question-result {
+    margin-bottom: 15px; /* Increased question result margin-bottom */
+}
+
+.exam-result .question-result p {
+    margin: 6px 0; /* Adjusted question result paragraph margin */
+    font-size: 1rem; /* Larger question result paragraph font size */
+}
+
+.exam-result .icon {
+    margin-right: 10px; /* Increased icon margin-right */
+}
+
+/* Highlight correct answers */
+.exam-result .correct-answer {
+    background-color: rgba(224, 247, 250, 0.15); /* Softer correct answer background */
+    color: #38E57F; /* Vibrant green for correct answer text */
+    padding: 14px; /* Increased correct answer padding */
+    border-radius: 6px; /* Rounded correct answer corners */
+    font-weight: bold;
+    border-left: 5px solid #38E57F; /* Vibrant border for correct answer */
+    margin-top: 12px; /* Adjusted correct answer margin-top */
+    box-shadow: 0 2px 5px rgba(56, 229, 127, 0.3); /* Subtle shadow for correct answer */
+}
+
+.exam-result .incorrect-answer {
+    background-color: rgba(255, 235, 238, 0.15); /* Softer incorrect answer background */
+    color: #E55A5A; /* Updated incorrect answer color */
+    padding: 14px; /* Increased incorrect answer padding */
+    border-radius: 6px; /* Rounded incorrect answer corners */
+    font-weight: bold;
+    border-left: 5px solid #E55A5A; /* Updated incorrect answer border */
+    margin-top: 12px; /* Adjusted incorrect answer margin-top */
+    box-shadow: 0 2px 5px rgba(229, 90, 90, 0.3); /* Subtle shadow for incorrect answer */
+}
+
+.exam-result .details .correct-answer {
+    background-color: rgba(200, 230, 201, 0.15); /* Softer details correct answer background */
+    border-left: 5px solid #38E57F; /* Vibrant border for details correct answer */
+    padding: 12px; /* Increased details correct answer padding */
+}
+
+.exam-result .details .incorrect-answer {
+    background-color: rgba(255, 205, 210, 0.15); /* Softer details incorrect answer background */
+    border-left: 5px solid #E55A5A; /* Updated border for details incorrect answer */
+    padding: 12px; /* Increased details incorrect answer padding */
+}
+
+.lds-facebook,
+.lds-facebook div {
+    box-sizing: border-box;
+}
+
+.lds-facebook {
+    display: inline-block;
+    position: relative;
+    width: 60px; /* Slightly smaller loading spinner */
+    height: 60px; /* Slightly smaller loading spinner */
+}
+
+.lds-facebook div {
+    display: inline-block;
+    position: absolute;
+    left: 6px; /* Adjusted position for smaller spinner */
+    width: 12px; /* Adjusted width for smaller spinner */
+    background: currentColor;
+    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+.lds-facebook div:nth-child(1) {
+    left: 6px; /* Adjusted position for smaller spinner */
+    animation-delay: -0.24s;
+}
+
+.lds-facebook div:nth-child(2) {
+    left: 24px; /* Adjusted position for smaller spinner */
+    animation-delay: -0.12s;
+}
+
+.lds-facebook div:nth-child(3) {
+    left: 42px; /* Adjusted position for smaller spinner */
+    animation-delay: 0s;
+}
+
+@keyframes lds-facebook {
+    0% {
+        top: 6px; /* Adjusted top position for smaller spinner */
+        height: 48px; /* Adjusted height for smaller spinner */
+    }
+    50%,
+    100% {
+        top: 18px; /* Adjusted top position for smaller spinner */
+        height: 24px; /* Adjusted height for smaller spinner */
+    }
+}

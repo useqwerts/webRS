@@ -1,0 +1,98 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+/* Добавим стили для индикатора поиска игроков */
+#progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    margin-top: 20px;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: none;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background-color: #4caf50;
+    text-align: center;
+    color: white;
+    line-height: 20px;
+    border-radius: 10px;
+    transition: width 0.2s ease-in-out;
+}
+
+#matchmaking-status {
+    text-align: center;
+    font-size: 16px;
+}
+
+
+#bridge {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+/* Анимации для плит */
+@keyframes plankAnimation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.plank {
+    width: 30px;
+    height: 30px;
+    background-color: gray;
+    margin: 5px;
+    cursor: pointer;
+    animation: plankAnimation 1s ease-in-out infinite;
+}
+
+.plank:hover {
+    background-color: lightgray;
+}
+
+.plank.correct {
+    background-color: green;
+}
+
+.plank.incorrect {
+    background-color: red;
+}
+
+
+#game-status {
+    font-size: 20px;
+    margin-top: 20px;
+}

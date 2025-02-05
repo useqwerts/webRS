@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miside Inc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Raleway:wght@400;600&display=swap" rel="stylesheet">
+    <link href="/static/styles/main.css" rel="stylesheet">
+    <script>
+        // Function to get the current time and highlight the next prayer
+    function getNextPrayer() {
+            const prayerTimes = [
+                {% for prayer, time in prayer_times.items() %}
+                    { name: '{{ prayer }}', time: '{{ time }}' },
+                {% endfor %}
+            ];
+
+            const currentTime = new Date();
+            const currentHours = currentTime.getHours();
+            const currentMinutes = currentTime.getMinutes();
+            const currentTimeInMinutes = currentHours * 60 + currentMinutes;
+
+            let nextPrayer = null;
+
+            for (let i = 0; i < prayerTimes.length; i++) {
+                const prayerTimeParts = prayerTimes[i].time.split(':');
+                const prayerHours = parseInt(prayerTimeParts[0], 10);
+                const prayerMinutes = parseInt(prayerTimeParts[1], 10);
+                const prayerTimeInMinutes = prayerHours * 60 + prayerMinutes;
+
+                if (prayerTimeInMinutes > currentTimeInMinutes) {
+                    nextPrayer = prayerTimes[i];
+                    break;
+                }
+            }
+
+            // Handle the case where no next prayer is found (e.g., after Isha)
+            if (nextPrayer === null && prayerTimes.length > 0) {
+                nextPrayer = prayerTimes[0]; // Set it to the first prayer of the next day
+            }
+
+            return nextPrayer;
+        }
+
+        function updateNextPrayer() {
+            const nextPrayer = getNextPrayer();
+            const nextPrayerElement = document.getElementById('next-prayer');
+            const timelineItems = document.querySelectorAll('.timeline-item');
+
+            if (nextPrayer) { // Check if nextPrayer is not null
+                timelineItems.forEach(item => {
+                    const prayerName = item.getAttribute('data-prayer-name');
+                    if (prayerName === nextPrayer.name) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+
+                const timeRemaining = calculateTimeRemaining(nextPrayer.time);
+                nextPrayerElement.innerHTML = `
+                    <h2>Next Prayer</h2>
+                    <p>${nextPrayer.name} at ${nextPrayer.time}</p>
+                    <p>Time Remaining: <span id="time-remaining">${timeRemaining}</span></p>
+                `;
+                startCountdown(timeRemaining); // Start the countdown
+            } else {
+              // Handle the case where nextPrayer is still null (shouldn't happen, but good to have a fallback)
+              nextPrayerElement.innerHTML = `<h2>Next Prayer</h2><p>Prayer times not available.</p>`;
+            }
+        }
+
+
+        // Calculate time remaining for the next prayer
+        function calculateTimeRemaining(prayerTime) {
+            const currentTime = new Date();
+            const prayerTimeParts = prayerTime.split(':');
+            const prayerHours = parseInt(prayerTimeParts[0], 10);
+            const prayerMinutes = parseInt(prayerTimeParts[1], 10);
+
+            const prayerTimeInMinutes = prayerHours * 60 + prayerMinutes;
+            const currentTimeInMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+            const remainingMinutes = prayerTimeInMinutes - currentTimeInMinutes;
+
+            const hours = Math.floor(remainingMinutes / 60);
+            const minutes = remainingMinutes % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        // Countdown function
+        function startCountdown(remainingTime) {
+            let interval = setInterval(() => {
+                const timeParts = remainingTime.split(':').map(Number);
+                let hours = timeParts[0];
+                let minutes = timeParts[1];
+                let seconds = timeParts[2];
+                seconds--;
+                if (seconds < 0) {
+                    seconds = 59;
+                    minutes--;
+                }
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours--;
+                }
+                if (hours < 0) {
+                    clearInterval(interval);
+                    remainingTime = '00:00:00'; // Time's up
+                } else {
+                    remainingTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+                document.getElementById('time-remaining').textContent = remainingTime;
+            }, 1000);
+        }
+
+        // Open Dua Modal
+        function openDuaModal() {
+            const modal = document.getElementById('dua-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 50);
+        }
+
+        // Close Dua Modal
+        function closeModal() {
+            const modal = document.getElementById('dua-modal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Show list of duas
+        function exploreDuas() {
+            document.getElementById('dua-selection').style.display = 'block';
+            document.getElementById('dua-details').style.display = 'none';
+        }
+
+        // Show Dua details and replace list with animation
+        function openDuaDetails(element) {
+            const duaName = element.getAttribute('data-dua-name');
+            const duaText = element.getAttribute('data-dua-text');
+    
+            document.getElementById('dua-name').textContent = duaName;
+            document.getElementById('dua-text').textContent = duaText;
+    
+            setTimeout(() => {
+                document.getElementById('dua-selection').style.display = 'none';
+                document.getElementById('dua-details').style.display = 'block';
+            }, 300);
+        }
+
+        // Go back to Dua selection
+        function goBackToDuas() {
+            document.getElementById('dua-details').style.display = 'none';
+            document.getElementById('dua-selection').style.display = 'block';
+        }
+
+        // Update every minute
+        setInterval(updateNextPrayer, 60000); // Every minute
+
+        // Initial update on page load
+        window.onload = updateNextPrayer;
+    </script>
+</head>
+<body>
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="hero-content">
+            <h1>Welcome to Miside Inc</h1>
+            <p>Your go-to source for accurate prayer times and duas</p>
+            <button onclick="openDuaModal()">Explore Duas</button>
+        </div>
+    </header>
+
+    <!-- Prayer Times -->
+    <section class="prayer-times" id="namaz-times">
+        <h2>Prayer Times</h2>
+        <div class="timeline">
+            {% for prayer, time in prayer_times.items() %}
+                <div class="timeline-item" data-prayer-name="{{ prayer }}">
+                    <span>{{ prayer }} - {{ time }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Next Prayer -->
+    <section class="next-prayer" id="next-prayer">
+        <h2>Next Prayer</h2>
+        <p>{{ next_prayer.name }} at {{ next_prayer.time }}</p>
+        <p>Time Remaining: <span id="time-remaining">{{ next_prayer.remaining }}</span></p>
+        <script> startCountdown("{{ next_prayer.remaining }}"); </script>
+    </section>
+
+    <!-- Dua Modal -->
+    <div id="dua-modal" class="dua-modal">
+        <div class="dua-modal-content">
+            <span class="close" onclick="closeModal()">×</span>
+            <!-- Dua Selection -->
+            <div id="dua-selection" class="dua-selection">
+                <h2>Select a Dua</h2>
+                <div class="dua-cards">
+                    {% for dua_name, dua_text in duas.items() %}
+                        <div class="dua-card" data-dua-name="{{ dua_name }}" data-dua-text="{{ dua_text }}" onclick="openDuaDetails(this)">
+                            <p>{{ dua_name }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Dua Details -->
+            <div id="dua-details" class="dua-details" style="display: none;">
+                <button class="back-button" onclick="goBackToDuas()">← Back</button>
+                <h2 id="dua-name"></h2>
+                <p id="dua-text"></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

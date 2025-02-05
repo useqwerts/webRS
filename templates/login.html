@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/styles/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Fullscreen Loader -->
+    <div class="fullscreen-loader" id="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <div class="login-wrapper">
+        <div class="login-container">
+            <form class="login-form" action="/login" method="POST">
+                <h2 class="login-title">Login</h2>
+
+                <!-- Error Message Display -->
+                {% if error %}
+                    <div class="error-container error-animate">
+                        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+                        <p class="error">{{ error }}</p>
+                    </div>
+                {% endif %}
+
+                <!-- Username Input -->
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                    <i class="fas fa-user input-icon"></i>
+                </div>
+
+                <!-- Password Input -->
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <i class="fas fa-lock input-icon"></i>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-button">
+                    <span>Login</span>
+                </button>
+            </form>
+
+            <!-- Forgot Password Link -->
+            <div class="forgot-password">
+                <a href="#" id="forgot-password-link">Forgot Password?</a>
+            </div>
+
+            <!-- Recovery Modal -->
+            <!-- Recovery Modal -->
+<div class="recovery-modal" id="forgot-password-modal">
+    <div class="recovery-container">
+        <button id="close-modal" class="close-modal">Close</button> <!-- Close Button -->
+        <h2>Password Recovery</h2>
+        <label for="recovery-username">Enter Username:</label>
+        <input type="text" id="recovery-username" placeholder="Enter your username">
+        <button type="button" id="recover-btn">Recover Password</button>
+        <div id="recovery-result"></div>
+    </div>
+</div>
+<!-- Fullscreen Loader -->
+<div class="fullscreen-loader" id="loading-overlay">
+    <div id="loader" class="lds-facebook"></div>
+</div>
+
+        </div>
+    </div>
+
+    <script src="/static/js/login.js"></script>
+</body>
+</html>

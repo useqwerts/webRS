@@ -1,0 +1,454 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9fafb;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Hero Section */
+.hero-section {
+    width: 100%;
+    height: 100vh;
+    background: url('https://unsplash.it/1920/1080/?random') no-repeat center center / cover;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-family: 'Raleway', sans-serif;
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+button {
+    background-color: #2563eb;
+    padding: 1rem 2rem;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #1e40af;
+}
+
+/* Prayer Times */
+.prayer-times {
+    width: 80%;
+    margin-top: 4rem;
+    text-align: center;
+}
+
+.prayer-times h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.cards {
+    display: flex;
+    justify-content: space-around;
+    gap: 2rem;
+    flex-wrap: wrap; /* Ensures it wraps in smaller screens */
+}
+
+.card {
+    background: #ffffff;
+    padding: 1.5rem;
+    width: 200px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.card p {
+    font-size: 1rem;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    background-color: #f3f4f6;
+}
+
+.card.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* Next Prayer */
+.next-prayer {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 80%;
+    margin-top: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.next-prayer h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.next-prayer p {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Dua Modal */
+.dua-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dua-modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.dua-modal-content {
+    background-color: #fff;
+    padding: 1rem;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* Dua Selection */
+.dua-selection h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.dua-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.dua-card {
+    background-color: #e5e7eb;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dua-card p {
+    font-size: 1rem;
+    color: #333;
+}
+
+.dua-card:hover {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* Dua Details */
+.dua-details {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 2rem auto;
+    overflow-y: auto;
+}
+
+.dua-details h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.dua-details p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: #555;
+    white-space: pre-wrap; /* This preserves whitespace, line breaks, and tabs */
+    word-wrap: break-word; /* Ensures long words break properly */
+    line-height: 1.6; /* Adds space between lines for readability */
+}
+
+.dua-details button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dua-details button:hover {
+    background-color: #45a049;
+}
+
+
+.back-button {
+    background-color: transparent;
+    color: #2563eb;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-bottom: 2rem;
+}
+
+/* Close Button */
+.close {
+    font-size: 2rem;
+    color: #333;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.close:hover {
+    color: #ff0000;
+}
+
+/* Timeline Styles */
+.timeline {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    position: relative;
+    margin: 50px 0;
+    padding: 20px;
+    border-top: 2px solid #ddd;
+    border-bottom: 2px solid #ddd;
+    flex-wrap: wrap; /* Ensure items wrap on smaller screens */
+}
+
+.timeline-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: slideIn 0.5s forwards;
+    width: 100%; /* Ensure it takes full width on smaller screens */
+    max-width: 200px; /* Limit width on larger screens */
+    margin-bottom: 20px; /* Add space between items */
+}
+
+.timeline-item.active {
+    transform: translateY(0);
+    opacity: 1;
+    animation: activeItem 1s ease-in-out forwards;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 15px;
+    background-color: #00aaff;
+    transform: translateX(-50%);
+}
+
+.timeline-item span {
+    display: block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #00aaff;
+    color: white;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+/* Highlight active prayer time */
+.timeline-item.active span {
+    background-color: #ff5722;
+}
+
+/* Animation for sliding items */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes activeItem {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Scroll effect for the timeline */
+.timeline {
+    overflow-x: scroll;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.timeline::-webkit-scrollbar {
+    height: 6px;
+}
+
+.timeline::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.timeline::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .prayer-times h2 {
+        font-size: 1.5rem;
+    }
+
+    .cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 20px;
+    }
+
+    .next-prayer {
+        width: 90%;
+        margin-top: 2rem;
+    }
+
+    .dua-selection h2 {
+        font-size: 1.75rem;
+    }
+
+    .dua-cards {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .dua-details p {
+        font-size: 1rem;
+    }
+
+    .timeline {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .timeline-item {
+        width: 90%;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 0.875rem;
+    }
+
+    .prayer-times h2 {
+        font-size: 1.25rem;
+    }
+
+    .card h3 {
+        font-size: 1rem;
+    }
+
+    .card p {
+        font-size: 0.875rem;
+    }
+
+    .next-prayer h2 {
+        font-size: 1.25rem;
+    }
+
+    .dua-selection h2 {
+        font-size: 1.5rem;
+    }
+
+    .dua-card p {
+        font-size: 0.875rem;
+    }
+}

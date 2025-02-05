@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Dashboard</title>
+
+    <!-- Добавление шрифта из Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Добавление Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="/static/styles/chatCRM.css">
+</head>
+<body>
+<div class="container">
+    <nav class="side-nav">
+        <ul>
+            <li class="nav-item active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </li>
+            <li class="nav-item" data-section="updates">
+                <i class="fas fa-sync-alt"></i> Updates
+            </li>
+            <li class="nav-item" data-section="chat">
+                <i class="fas fa-comments"></i> Chat
+            </li>
+            <li class="nav-item" data-section="ban">
+                <i class="fas fa-user-slash"></i> Ban User
+            </li>
+            <li class="nav-item" data-section="create-exam">
+                <i class="fas fa-pencil-alt"></i> Create Exam
+            </li>
+            <li class="nav-item" data-section="exam-results">
+                <i class="fas fa-trophy"></i> Exam Results
+            </li> <!-- New Section -->
+            <li class="nav-item" data-section="exit">
+                <i class="fas fa-sign-out-alt"></i> Exit
+            </li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <h1>Dashboard</h1>
+            <p>Welcome to the dashboard!</p>
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter username" />
+            </div>
+            <div>
+                <label for="coins">Coins:</label>
+                <input type="number" id="coins" placeholder="Enter coins amount" />
+            </div>
+            <button id="addCoinsButton" class="action-button">Add Coins</button>
+            <p id="coinsMessage" class="message" style="color: green; display: none;">Coins added successfully!</p>
+
+            <div>
+                <label for="balanceUsername">Username:</label>
+                <input type="text" id="balanceUsername" placeholder="Enter username" />
+            </div>
+            <button id="getBalanceButton" class="action-button">Get Balance</button>
+
+            <p id="balanceMessage" class="message" style="color: blue; display: none;">Current balance: <span id="currentBalance"></span> Coins</p>
+        </section>
+
+        <!-- Updates Section -->
+        <section id="updates" class="content-section">
+            <h1>Updates</h1>
+            <button id="releaseUpdateButton" class="release-button">Release Update</button>
+            <p>Current version: <span id="currentVersion">v0</span></p>
+            <div id="timeline" class="timeline">
+                <!-- Versions will be displayed here -->
+            </div>
+        </section>
+
+        <!-- Chat Section -->
+        <section id="chat" class="content-section">
+            <div class="lds-dual-ring" id="chatSpinner"></div>
+            <iframe id="chatIframe" src="" width="100%" height="680px" style="border: none; display: none;"></iframe>
+        </section>
+
+        <!-- Exit Section -->
+        <section id="exit" class="content-section">
+            <h1>Exit</h1>
+            <p>Are you sure you want to log out?</p>
+        </section>
+
+        <!-- Ban User Section -->
+        <section id="ban" class="content-section">
+            <h1>Ban User</h1>
+            <label for="banUsername">Username:</label>
+            <input type="text" id="banUsername" placeholder="Enter username to ban" />
+            <button id="banButton" class="action-button">Ban User</button>
+            <p id="banMessage" class="message" style="color: red; display: none;"></p>
+        </section>
+
+<section id="create-exam" class="content-section">
+    <!-- Modal for creating exam -->
+    <div id="create-exam-modal" class="exam-modal" style="display: none;">
+        <div class="exam-container">
+            <h2>Create Exam</h2>
+
+            <!-- Exam Form Section -->
+            <div id="exam-form"></div>
+
+            <!-- Question Type Dropdown -->
+            <label for="question-type">Choose Question Type:</label>
+            <select id="question-type">
+                <option value="multiple_choice">Multiple Choice</option>
+                <option value="true_false">True/False</option>
+                <option value="fill_gaps">Fill in the Gaps</option>
+                <option value="unscramble">Unscramble</option>
+            </select>
+
+            <!-- Add Question Button with new class -->
+            <button id="add-question" class="toggle-details">Add Question</button>
+            
+            <!-- Save Exam Button with new class -->
+            <button id="save-exam" class="toggle-details">Save Exam</button>
+
+            <!-- Slider to start the exam -->
+            <div id="startExamSliderContainer" class="slider-container">
+                <span class="slider-text">Slide to start exam</span>
+                <div id="startExamSliderHandle" class="slider-handle">
+                    <i class="fas fa-chevron-right"></i> <!-- Font Awesome icon -->
+                </div>
+                
+                <div class="loader">
+                    <span></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+        
+        <div id="loadingIndicator" class="lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <!-- Exam Results Section (New) -->
+        <section id="exam-results" class="content-section">
+            <h1>Exam Results</h1>
+            <div id="examResultsContainer">
+                <!-- Results will be dynamically added here -->
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script src="/static/js/chatCRM.js"></script>
+</body>
+</html>
