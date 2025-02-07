@@ -73,12 +73,13 @@
             <ul class="personal-account-options">
                 <li id="change-avatar-option">Change Avatar</li>
                 <li id="change-password-option">Change Password</li>
+                <li id="my-progress-option">My Progress</li> <!-- New Item -->
             </ul>
         </li>
         <li id="sessionsButton">Sessions</li>
         <li id="music-pack-option">Music Pack</li>
         <li id="messages-themes-button">Themes</li>
-        <li id="my-ban-status-option">My Ban Status</li> 
+        <li id="my-ban-status-option">My Ban Status</li>
         <li id="time-option">
             <a href="/apis/main" target="_blank">Namoz vaqtlari</a>
         </li>
@@ -86,6 +87,7 @@
         <li id="logout-option">Logout</li>
     </ul>
 </div>
+
 
 <div id="examModal">
     <h2 id="examTitle">Exam</h2>
@@ -198,6 +200,7 @@
 <!-- Модальное окно для списка музыки -->
 <div id="music-modal" class="music-modal hidden">
     <div class="music-modal-content">
+	<span id="close-music-modal" class="close-btn">&times;</span>
         <h2>Music Pack</h2>
         <div id="music-list" class="music-list">
             <!-- Анимация загрузки -->
@@ -207,14 +210,14 @@
 			<div class="track-item-music skeleton"></div>
 		</div>
         </div>
-        <button id="close-music-modal" class="music-modal-close-button">Close</button>
     </div>
 </div>
 
 <!-- Модальное окно аудиоплеера -->
 <div id="player-modal" class="modal-player hidden">
     <div class="modal-content-player">
-        <h2 id="player-title">Now Playing</h2>
+	<span id="close-player-modal" class="close-btn">&times;</span>
+        <h2 id="player-title">name</h2>
         <div id="custom-player">
             <audio id="audio-element"></audio>
             <div id="player-controls">
@@ -223,9 +226,11 @@
                 <button id="next-track-button"><i class="fas fa-step-forward"></i></button>
             </div>
 			<label class="toggle">
-			<input type="checkbox" id="autoplay-toggle">
-			<span class="slider"></span>
-			</label>
+    <input type="checkbox" id="autoplay-toggle">
+    <span class="icon-container">
+        <i id="autoplay-icon" class="fas fa-play"></i>
+    </span>
+</label>
             <div id="time-display">
                 <span id="current-time">0:00</span>
                 <span id="total-time">0:00</span>
@@ -235,7 +240,6 @@
                 <div id="progress-bar"></div>
             </div>
         </div>
-        <button id="close-player-modal">Close</button>
     </div>
 </div>
 
@@ -343,6 +347,32 @@
     </div>
     <span id="progress-percent">0%</span>
 </div>
+
+<div id="progress_modal" class="progress-modal">
+    <div class="progress-modal-content">
+        <span id="progress_modal_close" class="close-btn">&times;</span>
+        <h2>My Progress</h2>
+        
+        <div id="loading" class="loading">Loading...</div> <!-- Индикатор загрузки -->
+        
+        <div id="progress-container">
+            <!-- Контейнер для прогресса и даты экзамена -->
+            <div id="main_information">
+                <div id="progress-percentage">My Progress: 0%</div>
+
+                <!-- Дата экзамена с новым стилем -->
+                <div id="exam-date" class="exam-date-style">Exam Date: N/A</div>
+            </div>
+
+            <div class="progress-info-container">
+                <div id="current-unit" class="unit-style">Current Unit: N/A</div>
+                <div id="current-week" class="week-style">Week: N/A</div>
+                <div id="course-completion" class="completion-style">Course Completion: 0%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     </div>
 

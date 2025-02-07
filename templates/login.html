@@ -20,12 +20,16 @@
                 <h2 class="login-title">Login</h2>
 
                 <!-- Error Message Display -->
-                {% if error %}
-                    <div class="error-container error-animate">
-                        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
-                        <p class="error">{{ error }}</p>
-                    </div>
-                {% endif %}
+                <div class="error-container error-animate" id="error-container" style="display: none;">
+                    <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <p class="error" id="error-message"></p>
+                </div>
+
+                <!-- Avatar Display -->
+                <div class="avatar-container" id="avatar-container" style="display: none;">
+                    <p class="avatar-text">Your avatar:</p>
+                    <img id="user-avatar" class="avatar-image" src="" alt="Avatar" style="display: none;">
+                </div>
 
                 <!-- Username Input -->
                 <div class="input-group">
@@ -53,22 +57,16 @@
             </div>
 
             <!-- Recovery Modal -->
-            <!-- Recovery Modal -->
-<div class="recovery-modal" id="forgot-password-modal">
-    <div class="recovery-container">
-        <button id="close-modal" class="close-modal">Close</button> <!-- Close Button -->
-        <h2>Password Recovery</h2>
-        <label for="recovery-username">Enter Username:</label>
-        <input type="text" id="recovery-username" placeholder="Enter your username">
-        <button type="button" id="recover-btn">Recover Password</button>
-        <div id="recovery-result"></div>
-    </div>
-</div>
-<!-- Fullscreen Loader -->
-<div class="fullscreen-loader" id="loading-overlay">
-    <div id="loader" class="lds-facebook"></div>
-</div>
-
+            <div class="recovery-modal" id="forgot-password-modal">
+                <div class="recovery-container">
+                    <button id="close-modal" class="close-modal">Close</button>
+                    <h2>Password Recovery</h2>
+                    <label for="recovery-username">Enter Username:</label>
+                    <input type="text" id="recovery-username" placeholder="Enter your username">
+                    <button type="button" id="recover-btn">Recover Password</button>
+                    <div id="recovery-result"></div>
+                </div>
+            </div>
         </div>
     </div>
 

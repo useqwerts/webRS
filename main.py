@@ -23,7 +23,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Initialize messages as an empty list, not a dictionary
 messages = []  # Store messages locally
 
-exam_duration = 1 * 60  # 30 minutes in seconds
+exam_duration = 15 * 60  # 30 minutes in seconds
 exam_start_time = None  # Global variable to store exam start time
 
 
@@ -103,6 +103,84 @@ def initialize_users_data_file():
             json.dump({}, f)  # Reset to an empty object
         users = {}
     return users
+
+PROGRESS_FILE = 'students_progress.json'
+
+# Функция для загрузки данных из JSON файла
+def load_progress():
+    try:
+        with open(PROGRESS_FILE, 'r') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+# Функция для сохранения данных в JSON файл
+def save_progress(data):
+    with open(PROGRESS_FILE, 'w') as f:
+        json.dump(data, f, indent=4)
+
+# Функция для получения прогресса студента
+def get_student_progress():
+    return load_progress()
+
+@app.route('/api/get-student-progress', methods=['GET'])
+def get_progress():
+    # Получаем имя пользователя из параметров запроса
+    current_user = request.args.get("username")
+    
+    if not current_user:
+        return jsonify({"error": "Username is required"}), 400  # Если имя не передано, возвращаем ошибку
+
+    # Получаем прогресс всех студентов
+    progress_data = get_student_progress()  # Здесь предполагается, что эта функция возвращает словарь всех студентов и их прогресса
+    
+    # Если пользователь не найден в данных, возвращаем ошибку "notfound"
+    if current_user not in progress_data:
+        return jsonify({"error": "Student not found"}), 404  # Ошибка 404 если пользователь не найден
+
+    # Получаем прогресс и start_date для найденного пользователя
+    student_data = progress_data[current_user]
+    progress = student_data.get("progress", 0)
+    start_date = student_data.get("start_date", None)
+
+    # Возвращаем прогресс и start_date для указанного пользователя
+    return jsonify({current_user: {"progress": progress, "start_date": start_date}})
+
+
+@app.route('/api/update-student-progress', methods=['POST'])
+def update_progress():
+    data = request.json
+    username = data.get('username')
+    progress = data.get('progress')
+    start_date = data.get('start_date')  # Получаем дату начала курса из запроса
+
+    if not username or progress is None:
+        return jsonify({'error': 'Invalid input'}), 400
+
+    # Обновляем прогресс студента и start_date (если передан start_date)
+    update_student_progress(username, progress, start_date)
+    
+    return jsonify({'success': True, 'message': 'Progress updated successfully'})
+
+# Функция для обновления прогресса студента и start_date
+def update_student_progress(username, progress, start_date):
+    progress_data = load_progress()  # Загружаем текущие данные
+    
+    # Если студент не найден, добавляем его
+    if username not in progress_data:
+        progress_data[username] = {
+            "progress": progress,
+            "start_date": start_date  # Если start_date передан, он будет обновлен
+        }
+    else:
+        # Обновляем только прогресс
+        progress_data[username]["progress"] = progress
+        
+        # Если start_date передан, обновляем его
+        if start_date:
+            progress_data[username]["start_date"] = start_date
+
+    save_progress(progress_data)
 
 @app.route("/upload_avatar", methods=["POST"])
 def upload_avatar():

@@ -567,3 +567,42 @@ window.addEventListener('load', () => {
     }
 });
 
+const updateProgressButton = document.getElementById('update-progress-button');
+const studentNameInput = document.getElementById('student-name');
+const progressInput = document.getElementById('progress-input');
+const startDateInput = document.getElementById('start-date-input'); // Reference to start date input field
+
+// Обработчик клика по кнопке обновления прогресса
+updateProgressButton.addEventListener('click', () => {
+    const username = studentNameInput.value.trim();
+    const progress = parseInt(progressInput.value);
+    const startDate = startDateInput.value; // Get the start date value from input field
+
+    if (username && !isNaN(progress)) {
+        const requestBody = { username, progress };
+        
+        // Если start_date не пустое, добавляем его в тело запроса
+        if (startDate) {
+            requestBody.start_date = startDate;
+        }
+
+        fetch('/api/update-student-progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody) // Отправляем только то, что есть
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Progress updated successfully!');
+            } else {
+                alert('Error updating progress');
+            }
+        })
+        .catch(error => console.error('Error updating progress:', error));
+    } else {
+        alert('Please enter a valid username and progress');
+    }
+});
+
+

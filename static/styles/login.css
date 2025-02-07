@@ -5,6 +5,7 @@
     box-sizing: border-box;
 }
 
+/* Global Styles */
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #8E2DE2, #4A00E0);
@@ -82,7 +83,6 @@ input {
     border: 2px solid #ddd;
     border-radius: 12px;
     transition: all 0.3s ease;
-    box-shadow: none;
 }
 
 input:focus {
@@ -158,7 +158,6 @@ input:focus {
     font-weight: 500;
 }
 
-/* Animation for Error */
 @keyframes errorAnimation {
     0% {
         opacity: 0;
@@ -235,7 +234,6 @@ input:focus {
     font-weight: 500;
 }
 
-/* Slide-up animation for the modal */
 @keyframes slideUp {
     0% {
         transform: translateY(50px);
@@ -247,44 +245,81 @@ input:focus {
     }
 }
 
-.lds-facebook,
-.lds-facebook div {
-  box-sizing: border-box;
-}
+/* Loading Animation */
 .lds-facebook {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-facebook div {
-  display: inline-block;
-  position: absolute;
-  left: 8px;
-  width: 16px;
-  background: currentColor;
-  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-}
-.lds-facebook div:nth-child(1) {
-  left: 8px;
-  animation-delay: -0.24s;
-}
-.lds-facebook div:nth-child(2) {
-  left: 32px;
-  animation-delay: -0.12s;
-}
-.lds-facebook div:nth-child(3) {
-  left: 56px;
-  animation-delay: 0s;
-}
-@keyframes lds-facebook {
-  0% {
-    top: 8px;
-    height: 64px;
-  }
-  50%, 100% {
-    top: 24px;
-    height: 32px;
-  }
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
 }
 
+.lds-facebook div {
+    display: inline-block;
+    position: absolute;
+    left: 8px;
+    width: 16px;
+    background: currentColor;
+    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+.lds-facebook div:nth-child(1) {
+    left: 8px;
+    animation-delay: -0.24s;
+}
+
+.lds-facebook div:nth-child(2) {
+    left: 32px;
+    animation-delay: -0.12s;
+}
+
+.lds-facebook div:nth-child(3) {
+    left: 56px;
+    animation-delay: 0s;
+}
+
+@keyframes lds-facebook {
+    0% {
+        top: 8px;
+        height: 64px;
+    }
+    50%, 100% {
+        top: 24px;
+        height: 32px;
+    }
+}
+
+/* Avatar Container */
+.avatar-container {
+    display: none;
+    margin-top: 10px;
+    text-align: center;
+    background-color: #28a745;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-text {
+    font-size: 14px;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.avatar-image {
+	object-fit: cover;
+	margin-left: auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+}
+
+/* Error Animation */
+.error-container.error-animate {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}

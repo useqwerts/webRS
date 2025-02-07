@@ -50,6 +50,23 @@
         <section id="dashboard" class="content-section active">
             <h1>Dashboard</h1>
             <p>Welcome to the dashboard!</p>
+		<div id="update-progress-container">
+    <h4>Update Student Progress</h4>
+    <input type="text" id="student-name" placeholder="Enter student name" />
+    <input type="number" id="progress-input" placeholder="Enter progress percentage" />
+    <input type="date" id="start-date-input" placeholder="Enter start date" /> <!-- Add start date input -->
+
+    <div>
+        <label for="update-start-time">
+            <input type="checkbox" id="update-start-time" />
+            Хотите ли обновить Start Time?
+        </label>
+    </div>
+
+    <button id="update-progress-button">Update Progress</button>
+</div>
+
+
             <div>
                 <label for="username">Username:</label>
                 <input type="text" id="username" placeholder="Enter username" />

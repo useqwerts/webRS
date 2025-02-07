@@ -258,14 +258,25 @@ audioElement.addEventListener('playing', () => {
 
 let isAutoplayEnabled = false; // Изначально автоплей выключен
 
-// Получаем элемент тумблера
 const autoplayToggle = document.getElementById('autoplay-toggle');
+const autoplayIcon = document.getElementById('autoplay-icon');
 
 // Обработчик изменения состояния тумблера
 autoplayToggle.addEventListener('change', (event) => {
-    isAutoplayEnabled = event.target.checked; // Сохраняем состояние (включен/выключен)
+    const isAutoplayEnabled = event.target.checked; // Сохраняем состояние (включен/выключен)
+    
+    // Обновляем иконку в зависимости от состояния тумблера
+    if (isAutoplayEnabled) {
+        autoplayIcon.classList.remove('fa-play');
+        autoplayIcon.classList.add('fa-pause');
+    } else {
+        autoplayIcon.classList.remove('fa-pause');
+        autoplayIcon.classList.add('fa-play');
+    }
+    
     showToastNotification(`Autoplay is now ${isAutoplayEnabled ? 'enabled' : 'disabled'}`);
 });
+
 
 function playNextTrack() {
     if (currentTrackIndex < tracks.length - 1) {
@@ -2129,3 +2140,163 @@ document.getElementById('closeExamModal').addEventListener('click', function() {
 socket.on('exam_started', function(data) {
     showToastNotification(data.message);
 });
+
+// Функция для получения имени пользователя
+function getCurrentUser() {
+    return currentUser;  // Используем глобальную переменную currentUser, переданную из Flask
+}
+
+function getNextExamDate(unit, startDate, studyDays) {
+    const currentDate = new Date();
+    let baseDate = startDate ? new Date(startDate) : currentDate;
+
+    // 🔹 Каждый Unit состоит из 3 учебных дней
+    const daysPerUnit = 3;
+
+    // 🔹 Mid Exam — после 6.3 (6 недель × 3 дня = 18 учебных дней)
+    const midExamUnit = { week: 6, day: 3, totalDays: 18 };
+    // 🔹 Final Exam — после 12.3 (12 недель × 3 дня = 36 учебных дней)
+    const finalExamUnit = { week: 12, day: 3, totalDays: 36 };
+
+    // 🔹 Разбираем `unit` (например, "6.3" → week = 6, day = 3)
+    const [currentWeek, currentDay] = unit.split('.').map(Number);
+
+    // 🔹 Считаем пройденные учебные дни
+    const currentStudyDays = (currentWeek - 1) * daysPerUnit + currentDay;
+
+    // 🔹 Функция для вычисления даты экзамена
+    function calculateExamDate(targetStudyDays) {
+        const examDate = new Date(baseDate);
+        let studyDaysElapsed = 0;
+        let tempDate = new Date(baseDate);
+
+        // 🔹 Разрешённые учебные дни
+        const oddDays = [1, 3, 5];  // Понедельник, Среда, Пятница
+        const evenDays = [2, 4, 6]; // Вторник, Четверг, Суббота
+        const allowedDays = studyDays === "even" ? evenDays : oddDays;
+
+        // 🔹 Ищем первый учебный день курса
+        while (!allowedDays.includes(tempDate.getDay())) {
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
+
+        // 🔹 Считаем, когда наступит нужное число учебных дней
+        while (studyDaysElapsed < targetStudyDays) {
+            if (allowedDays.includes(tempDate.getDay())) {
+                studyDaysElapsed++;
+            }
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
+
+        return tempDate.toISOString().split('T')[0]; // Возвращаем дату в формате "YYYY-MM-DD"
+    }
+
+    if (currentStudyDays < midExamUnit.totalDays) {
+        return calculateExamDate(midExamUnit.totalDays); // Mid Exam
+    } else if (currentStudyDays < finalExamUnit.totalDays) {
+        return calculateExamDate(finalExamUnit.totalDays); // Final Exam
+    }
+
+    return "No upcoming exams"; // Если курс закончен
+}
+
+
+
+function fetchStudentProgress() {
+    const username = getCurrentUser();
+    document.getElementById("loading").style.display = "block";
+    
+    fetch(`/api/get-student-progress?username=${username}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Data from server:', data);
+            const studentData = data[username] || {};
+            const progress = studentData.progress || 0;
+            const startDate = studentData.start_date;
+            const studyDays = studentData.study_days || "odd";
+            const currentDate = new Date();
+            const start = new Date(startDate);
+            const totalCourseDays = 90;
+
+            // 🔹 Учебные дни
+            const oddDays = [1, 3, 5];  // Понедельник, Среда, Пятница
+            const evenDays = [2, 4, 6]; // Вторник, Четверг, Суббота
+            
+            let studyDaysElapsed = 0;
+            let tempDate = new Date(start);
+
+            // 🔹 Найти первый учебный день курса
+            while (!((studyDays === "odd" && oddDays.includes(tempDate.getDay())) ||
+                     (studyDays === "even" && evenDays.includes(tempDate.getDay())))) {
+                tempDate.setDate(tempDate.getDate() + 1);
+            }
+            const firstStudyDate = new Date(tempDate); // Первый учебный день курса
+            
+            // 🔹 Считаем учебные дни от первого учебного дня
+            tempDate = new Date(firstStudyDate);
+            while (tempDate <= currentDate) {
+                const dayOfWeek = tempDate.getDay();
+                if (
+                    (studyDays === "odd" && oddDays.includes(dayOfWeek)) ||
+                    (studyDays === "even" && evenDays.includes(dayOfWeek))
+                ) {
+                    studyDaysElapsed++;
+                }
+                tempDate.setDate(tempDate.getDate() + 1);
+            }
+
+            // 🔹 Вычисляем текущую неделю и Unit
+            const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3); // 3 дня = 1 неделя
+            const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1; // 1, 2, 3
+            const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
+
+            // 🔹 Процент завершенности курса
+            const completionPercentage = Math.min((studyDaysElapsed / (totalCourseDays / 2)) * 100, 100).toFixed(2);
+
+            // 🔹 Дата экзамена
+            const nextExamDate = getNextExamDate(unit, startDate, studyDays);
+
+            console.log('Progress:', progress);
+
+            // 🔹 Обновляем UI
+            document.getElementById("progress-percentage").textContent = `My Progress: ${progress}%`;
+            document.getElementById("current-unit").textContent = `Current Unit: Unit ${unit}`;
+            document.getElementById("current-week").textContent = `Week: ${studyWeeksElapsed + 1}`;
+            document.getElementById("course-completion").textContent = `Course Completion: ${completionPercentage}%`;
+
+            let examMessage = studyWeeksElapsed + 1 <= 6
+                ? `Middle Exam Date: ${nextExamDate}`
+                : `Final Exam Date: ${nextExamDate}`;
+            let examIcon = studyWeeksElapsed + 1 <= 6
+                ? '<i class="fas fa-calendar-day"></i>'
+                : '<i class="fas fa-calendar-check"></i>';
+
+            document.getElementById("exam-date").innerHTML = `${examIcon} ${examMessage}`;
+        })
+        .catch(error => console.error('Error fetching progress data:', error))
+        .finally(() => document.getElementById("loading").style.display = "none"); // ✅ УБРАНА ЛИШНЯЯ ')'
+}
+
+
+// Открытие и закрытие модального окна
+const progressModal = document.getElementById("progress_modal");
+const progressOption = document.getElementById("my-progress-option");
+
+progressOption.addEventListener("click", function() {
+    progressModal.style.display = "flex";
+    fetchStudentProgress(); // Получаем прогресс при открытии модалки
+});
+
+const closeModal = document.getElementById("progress_modal_close");
+
+// Закрытие модального окна при клике на "X"
+closeModal.addEventListener("click", function() {
+    progressModal.style.display = "none"; // Скрываем модальное окно
+});
+// Закрыть модалку, если пользователь кликает вне модального окна
+window.addEventListener("click", function(event) {
+    if (event.target === progressModal) {
+        progressModal.style.display = "none";
+    }
+});
+
