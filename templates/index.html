@@ -83,6 +83,7 @@
         <li id="time-option">
             <a href="/apis/main" target="_blank">Namoz vaqtlari</a>
         </li>
+		<li id="leaderboard-option">Leaderboard</li>
         <li id="examTaskOption">Exam</li>
         <li id="logout-option">Logout</li>
     </ul>
@@ -352,15 +353,23 @@
     <div class="progress-modal-content">
         <span id="progress_modal_close" class="close-btn">&times;</span>
         <h2>My Progress</h2>
-        
-        <div id="loading" class="loading">Loading...</div> <!-- Индикатор загрузки -->
-        
-        <div id="progress-container">
-            <!-- Контейнер для прогресса и даты экзамена -->
+		
+		<div id="error-message" style="display:none; color:red; font-weight: bold;"></div>
+
+
+        <!-- Skeleton Loading -->
+        <div id="loading" class="skeleton-container">
+            <div class="skeleton skeleton-percentage"></div>
+            <div class="skeleton skeleton-exam"></div>
+            <div class="skeleton skeleton-unit"></div>
+            <div class="skeleton skeleton-week"></div>
+            <div class="skeleton skeleton-completion"></div>
+        </div>
+
+        <!-- Основной контент (скрыт до загрузки данных) -->
+        <div id="progress-container" style="display: none;">
             <div id="main_information">
                 <div id="progress-percentage">My Progress: 0%</div>
-
-                <!-- Дата экзамена с новым стилем -->
                 <div id="exam-date" class="exam-date-style">Exam Date: N/A</div>
             </div>
 
@@ -372,7 +381,6 @@
         </div>
     </div>
 </div>
-
 
     </div>
 

@@ -90,41 +90,36 @@ navItems.forEach(item => {
         document.querySelector('.nav-item.active').classList.remove('active');
         item.classList.add('active');
 
-        // Убираем активные классы у всех секций
-        contentSections.forEach(section => {
-            section.classList.remove('active');
-        });
+        // Снимаем active класс с текущей активной секции
+        const currentActiveSection = document.querySelector('.content-section.active');
+        if (currentActiveSection) {
+            currentActiveSection.classList.remove('active');
+        }
 
-        // Показываем целевую секцию с эффектами
         const targetSection = document.getElementById(item.dataset.section);
         if (targetSection) {
             targetSection.classList.add('active');
         }
 
-        // Если выбрана секция Chat, загружаем iframe и показываем спиннер
         if (item.dataset.section === "chat") {
-            chatSpinner.style.display = 'inline-block'; // Показываем спиннер
-            chatIframe.style.display = 'none'; // Скрываем iframe
+            chatSpinner.style.display = 'inline-block';
+            chatIframe.style.display = 'none';
 
-            // Загружаем страницу /chat в iframe с задержкой
             chatIframe.src = "/chat";
 
-            // Создаем искусственную задержку для загрузки /chat
-            setTimeout(function() {
-                // Когда время задержки прошло, скрываем спиннер и показываем iframe
-                chatSpinner.style.display = 'none'; // Скрываем спиннер
-                chatIframe.style.display = 'block'; // Показываем iframe
-            }, 0700); // Задержка в 1 секунду (1000 миллисекунд)
-        }
-		if (item.dataset.section === "ban") {
-            // Скрываем все сообщения
+            // Обработчик события onload для iframe
+            chatIframe.onload = () => {
+                chatSpinner.style.display = 'none';
+                chatIframe.style.display = 'block';
+                chatIframe.onload = null; // Отключаем обработчик, чтобы не сработал повторно
+            };
+        } else if (item.dataset.section === "ban") {
             coinsMessage.style.display = 'none';
             balanceMessage.style.display = 'none';
             banMessage.style.display = 'none';
         }
     });
 });
-
 const banUsernameInput = document.getElementById('banUsername');
 const banButton = document.getElementById('banButton');
 const banMessage = document.getElementById('banMessage');
@@ -603,6 +598,150 @@ updateProgressButton.addEventListener('click', () => {
     } else {
         alert('Please enter a valid username and progress');
     }
+});
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const studentSelect = document.getElementById("student-select");
+    const tableBody = document.querySelector("#roadmap-table tbody");
+
+    async function fetchStudents() {
+        try {
+            const response = await fetch("/api/get-student-names");
+            const data = await response.json();
+
+            studentSelect.innerHTML = '<option value="">🎓 Select Student</option>';
+            data.students.forEach(student => {
+                studentSelect.innerHTML += `<option value="${student}">${student}</option>`;
+            });
+        } catch (error) {
+            console.error("Error loading students:", error);
+        }
+    }
+
+    async function fetchStudentProgress(username) {
+        try {
+            const response = await fetch(`/api/get-student-progress?username=${username}`);
+            const data = await response.json();
+            return data[username] || null;
+        } catch (error) {
+            console.error("Error fetching progress:", error);
+            return null;
+        }
+    }
+
+    function calculateExamDate(startDate, studyDays, targetUnit) {
+        let tempDate = new Date(startDate);
+        const oddDays = [1, 3, 5];
+        const evenDays = [2, 4, 6];
+        const allowedDays = studyDays === "even" ? evenDays : oddDays;
+
+        // Устанавливаем первый учебный день
+        while (!allowedDays.includes(tempDate.getDay())) {
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
+
+        // Рассчитываем общее количество учебных дней до целевого юнита
+        const [targetWeek, targetDay] = targetUnit.split('.').map(Number);
+        const targetStudyDays = (targetWeek - 1) * 3 + targetDay;
+
+        let studyDaysElapsed = 0;
+        while (studyDaysElapsed < targetStudyDays) {
+            if (allowedDays.includes(tempDate.getDay())) {
+                studyDaysElapsed++;
+            }
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
+
+        return tempDate.toISOString().split('T')[0];
+    }
+
+    function generateRoadmap(startDate, studyDays) {
+        let units = [];
+        let tempDate = new Date(startDate);
+        const oddDays = [1, 3, 5];
+        const evenDays = [2, 4, 6];
+        const allowedDays = studyDays === "even" ? evenDays : oddDays;
+
+        // Устанавливаем первый учебный день
+        while (!allowedDays.includes(tempDate.getDay())) {
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
+
+        for (let week = 1; week <= 12; week++) {
+            for (let day = 1; day <= 3; day++) {
+                const unitName = `${week}.${day}`;
+                const unitDate = new Date(tempDate);
+                const formattedDate = unitDate.toISOString().split('T')[0];
+                const isPast = unitDate < new Date() ? `<i class="fa-solid fa-check-circle completed"></i>` : "";
+
+                units.push({ 
+                    unit: unitName, 
+                    lesson_date: formattedDate, 
+                    status: isPast, 
+                    week: week, 
+                    progress: isPast ? "Completed" : "Pending" 
+                });
+
+                // Переход к следующему разрешённому дню
+                do {
+                    tempDate.setDate(tempDate.getDate() + 1);
+                } while (!allowedDays.includes(tempDate.getDay()));
+            }
+        }
+
+        return units;
+    }
+
+async function updateRoadmap(username) {
+    const loader = document.getElementById("loader");
+    const roadmapTable = document.getElementById("roadmap-table");
+    const tableBody = roadmapTable.querySelector("tbody");
+
+    // Показываем загрузку, скрываем таблицу
+    loader.style.display = "block";
+    roadmapTable.style.display = "none";
+
+    tableBody.innerHTML = "";
+    const studentData = await fetchStudentProgress(username);
+    if (!studentData) {
+        loader.style.display = "none";
+        return;
+    }
+
+    const { start_date, study_days } = studentData;
+    const roadmap = generateRoadmap(start_date, study_days);
+
+    roadmap.forEach(entry => {
+        const row = `<tr>
+            <td><i class="fa-solid fa-book"></i> ${entry.unit}</td>
+            <td><i class="fa-solid fa-calendar-days"></i> ${entry.lesson_date} ${entry.status}</td>
+            <td>${entry.week}</td>
+            <td>${entry.progress}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+    });
+
+    const midExamDate = calculateExamDate(start_date, study_days, "6.3");
+    const finalExamDate = calculateExamDate(start_date, study_days, "12.3");
+
+    tableBody.innerHTML += `
+        <tr class="exam-row"><td colspan="4"><i class="fa-solid fa-pen"></i> Mid Exam: ${midExamDate}</td></tr>
+        <tr class="exam-row"><td colspan="4"><i class="fa-solid fa-graduation-cap"></i> Final Exam: ${finalExamDate}</td></tr>
+    `;
+
+    // Скрываем загрузку, показываем таблицу
+    loader.style.display = "none";
+    roadmapTable.style.display = "table";
+}
+
+
+    studentSelect.addEventListener("change", function () {
+        if (this.value) {
+            updateRoadmap(this.value);
+        }
+    });
+
+    fetchStudents();
 });
 
 

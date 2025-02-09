@@ -81,6 +81,7 @@ body {
 
 /* Content Sections */
 .content-section {
+	display:none;
     opacity: 0;
     transform: translateX(25px); /* Slightly increased translation */
     position: absolute;
@@ -135,6 +136,7 @@ body {
 
 /* Buttons */
 button {
+	    user-select: none;
     background: linear-gradient(90deg, #38E57F, #2BB673); /* Vibrant green gradient for buttons */
     color: #FFFFFF;
     padding: 14px 28px; /* Increased button padding */
@@ -845,4 +847,173 @@ input[type="text"]:focus {
         top: 18px; /* Adjusted top position for smaller spinner */
         height: 24px; /* Adjusted height for smaller spinner */
     }
+}
+
+#roadmap {
+    padding: 20px;
+    max-width: 1200px; /* Increased max-width */
+    margin: auto;
+    border-radius: 8px;
+    font-family: revert; /* Added font-family */
+}
+
+h1 {
+    text-align: center;
+    font-size: 28px; /* Increased font-size */
+    color: #343a40; /* Darker gray color */
+    margin-bottom: 20px; /* Added margin */
+}
+
+label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #343a40;
+}
+
+select {
+	    user-select: none;
+
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ced4da; /* Light gray border */
+    border-radius: 5px;
+    appearance: none; /* For consistent styling across browsers */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l8 8 8-8'/%3e%3c/svg%3e") no-repeat right 10px center; /* Add dropdown arrow */
+    padding-right: 30px; /* Adjust padding for arrow */
+}
+
+table {
+    width: 100%;
+    margin-top: 20px; /* Added margin */
+    border-radius: 8px; /* Rounded corners for the table */
+    overflow: hidden; /* Hide overflowing content for rounded corners */
+}
+
+th, td {
+    padding: 15px; /* Increased padding */
+    text-align: left;
+}
+
+th {
+    background-color: #007bff; /* Blue header background */
+    color: white;
+    font-weight: 500; /* Slightly bolder font */
+    text-transform: uppercase; /* Uppercase header text */
+}
+
+td i {
+    margin-right: 8px;
+    color: #007bff; /* Blue icon color */
+}
+
+.exam-row {
+    background-color: #fff3cd; /* Light yellow for exam rows */
+    font-weight: bold;
+    text-align: center; /* Center the exam row text */
+}
+
+.completed {
+    color: green;
+}
+
+/* Style the select dropdown on hover */
+select:hover {
+    border-color: #80bdff; /* Highlighted border color on hover */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Subtle blue outline on hover */
+}
+
+#roadmap-table {
+    width: 100%;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#roadmap-table th, #roadmap-table td {
+	border-radius:25px;
+    padding: 12px;
+    background: rgb(0 167 255 / 20%);
+    border: 1px solid #45b8ff;
+    text-align: center;
+}
+
+#roadmap-table th {
+    background: #111;
+}
+
+#roadmap-table .exam-row {
+    background: #444;
+    font-weight: bold;
+}
+
+.completed {
+    color: green;
+    margin-left: 5px;
+}
+
+.fa-calendar-days, .fa-book, .fa-pen, .fa-graduation-cap {
+    margin-right: 5px;
+}
+
+
+.lds-ripple,
+.lds-ripple div {
+  box-sizing: border-box;
+}
+.lds-ripple {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ripple div {
+  position: absolute;
+  border: 4px solid currentColor;
+  opacity: 1;
+  border-radius: 50%;
+  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+.lds-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+@keyframes lds-ripple {
+  0% {
+    top: 36px;
+    left: 36px;
+    width: 8px;
+    height: 8px;
+    opacity: 0;
+  }
+  4.9% {
+    top: 36px;
+    left: 36px;
+    width: 8px;
+    height: 8px;
+    opacity: 0;
+  }
+  5% {
+    top: 36px;
+    left: 36px;
+    width: 8px;
+    height: 8px;
+    opacity: 1;
+  }
+  100% {
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+  }
+}
+
+#loader {
+  display: none; /* Скрыто по умолчанию */
+  margin: 20px auto;
+  color: #007bff; /* Цвет анимации */
 }

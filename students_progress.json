@@ -1,15 +1,17 @@
 {
     "Muhammadiso": {
-        "progress": 49,
-        "start_date": "2024-11-22",
+        "progress": 75,
+        "start_date": "2025-02-01",
         "study_days": "odd"
     },
-    "Abdulmalik": {
-        "progress": 80,
-        "start_date": "2024-11-23"
-    },
     "Muhammadali": {
-        "progress": 80,
-        "start_date": "2024-11-23"
+        "progress": 100,
+        "start_date": "2024-11-23",
+        "study_days": "even"
+    },
+    "Abdulmalik": {
+        "progress": 10,
+        "start_date": "2024-11-23",
+        "study_days": "odd"
     }
 }

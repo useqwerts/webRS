@@ -2033,7 +2033,7 @@ audio {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgb(0 0 0 / 15%);
     backdrop-filter: blur(30px);
     color: #f3f4f6;
     padding: 12px 16px;
@@ -2045,7 +2045,6 @@ audio {
 /* Анимация при наведении */
 .track-item-music:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
 /* Название трека */
@@ -2996,6 +2995,10 @@ p {
     letter-spacing: 1px;
 }
 
+#sessionsList {
+	max-height:700px;
+}
+
 #sessionsList li {
     background-color: #f4f4f9;
     padding: 16px;
@@ -3420,7 +3423,7 @@ button .icon {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgb(0 0 0 / 15%);
     backdrop-filter: blur(30px);
     flex-direction: column;
     padding: 20px;
@@ -4526,4 +4529,252 @@ i {
         align-items: center;
         gap: 10px;
     }
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: -200px 0; }
+    100% { background-position: 200px 0; }
+}
+
+.skeleton-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #dddddd 25%, #f5f5f5 50%, #dddddd 75%);
+    background-size: 400% 100%;
+    animation: skeleton-loading 1.5s infinite linear;
+    border-radius: 15px;
+    width: 80%;
+}
+
+/* Размеры скелетонов в точности совпадают с контентом */
+.skeleton-percentage {
+    height: 45px;
+    width: 70%;
+}
+
+.skeleton-exam {
+    height: 45px;
+    width: 75%;
+}
+
+.skeleton-unit,
+.skeleton-week,
+.skeleton-completion {
+    height: 45px;
+    width: 60%;
+}
+
+/* Для мобильных адаптируем размеры */
+@media (max-width: 768px) {
+    .skeleton {
+        width: 90%;
+    }
+}
+
+/* Стили для модального окна */
+.leaderboard-modal {
+    background: rgb(0 0 0 / 15%);
+    backdrop-filter: blur(30px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; /* Increased width */
+    max-width: 90%;
+    border-radius: 20px; /* Increased border radius */
+    box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.3); /* Larger shadow */
+    padding: 30px; /* Increased padding */
+    z-index: 1000;
+}
+
+.leaderboard-content {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+/* Заголовок */
+.leaderboard-content h2 {
+    font-size: 30px; /* Larger font size */
+    font-weight: bold;
+    margin-bottom: 20px; /* Increased margin */
+}
+
+/* Топ-3 игроков */
+.top-3 {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 30px; /* Increased gap */
+    margin-bottom: 30px; /* Increased margin */
+}
+
+.top-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+/* Медали и рамки для топ-3 */
+.top-player img {
+    width: 120px; /* Increased avatar size */
+    height: 120px; /* Increased avatar size */
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow */
+    border: 5px solid transparent; /* Thicker border */
+}
+
+.top-player:nth-child(1) img { border-color: gold; }
+.top-player:nth-child(2) img { border-color: silver; }
+.top-player:nth-child(3) img { border-color: #cd7f32; }
+
+/* Ранги 1st, 2nd, 3rd */
+.rank-number {
+    position: absolute;
+    top: -15px; /* Adjusted for better positioning */
+    left: 50%;
+    transform: translateX(-50%);
+    background: gold;
+    color: black;
+    font-size: 18px; /* Increased font size */
+    font-weight: bold;
+    padding: 8px 12px; /* Larger padding */
+    border-radius: 15px;
+}
+
+.top-player:nth-child(2) .rank-number { background: silver; }
+.top-player:nth-child(3) .rank-number { background: #cd7f32; }
+
+
+.top-player p {
+    font-size: 18px; /* Larger text */
+    font-weight: bold;
+    margin-top: 10px; /* Increased margin */
+}
+
+/* Разделение топ-3 и остальных */
+hr {
+    border: none;
+    height: 2px;
+    background: #888;
+    margin: 20px 0; /* Increased margin */
+}
+
+/* Список остальных участников */
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+}
+
+.leaderboard-list li {
+    font-weight: bolder;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(30px);
+    display: flex;
+    align-items: center;
+    margin: 10px 0; /* Increased margin */
+    padding: 15px 20px; /* Larger padding */
+    border-radius: 12px; /* Rounded corners */
+    justify-content: space-between;
+    font-size: 16px; /* Larger text */
+}
+
+/* Аватарки (или буква, если нет фото) */
+.avatar-placeholder {
+    width: 60px; /* Larger avatar size */
+    height: 60px; /* Larger avatar size */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px; /* Larger font size */
+    font-weight: bold;
+    color: white;
+    background: #555;
+}
+
+/* Бейджи рангов */
+.rank-badge {
+    background:radial-gradient(at 76.78540734776111% 42.06947713576511%, hsla(352.45901639344265, 79.22077922077922%, 45.294117647058826%, 1) 0%, hsla(352.45901639344265, 79.22077922077922%, 45.294117647058826%, 0) 100%), radial-gradient(at 44.60477323726234% 30.41084958804988%, hsla(26.53846153846154, 86.66666666666667%, 47.05882352941176%, 1) 0%, hsla(26.53846153846154, 86.66666666666667%, 47.05882352941176%, 0) 100%), radial-gradient(at 19.47178452914996% 81.94479800586004%, hsla(355.3846153846154, 76.47058823529413%, 43.33333333333333%, 1) 0%, hsla(355.3846153846154, 76.47058823529413%, 43.33333333333333%, 0) 100%), radial-gradient(at 79.03386445136204% 97.07748317632924%, hsla(37.52988047808765, 99.2094861660079%, 50.3921568627451%, 1) 0%, hsla(37.52988047808765, 99.2094861660079%, 50.3921568627451%, 0) 100%), radial-gradient(at 37.44186401730779% 69.21329682838288%, hsla(352.45901639344265, 79.22077922077922%, 45.294117647058826%, 1) 0%, hsla(352.45901639344265, 79.22077922077922%, 45.294117647058826%, 0) 100%), radial-gradient(at 13.520984765309462% 69.56783326198777%, hsla(26.53846153846154, 86.66666666666667%, 47.05882352941176%, 1) 0%, hsla(26.53846153846154, 86.66666666666667%, 47.05882352941176%, 0) 100%), radial-gradient(at 12.952682941188087% 62.20371370686107%, hsla(355.3846153846154, 76.47058823529413%, 43.33333333333333%, 1) 0%, hsla(355.3846153846154, 76.47058823529413%, 43.33333333333333%, 0) 100%), radial-gradient(at 52.1355266731061% 15.15540885159512%, hsla(37.52988047808765, 99.2094861660079%, 50.3921568627451%, 1) 0%, hsla(37.52988047808765, 99.2094861660079%, 50.3921568627451%, 0) 100%);
+    color: white;
+    font-size: 14px; /* Larger font size */
+    font-weight: bold;
+    padding: 6px 14px; /* Larger padding */
+    border-radius: 20px;
+}
+
+/* Avatar Image */
+.leaderboard-img {
+    width: 60px; /* Larger avatar size */
+    height: 60px; /* Larger avatar size */
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Star Icon */
+.fa-star {
+    color: yellow;
+}
+
+@media (max-width: 768px) {
+    .leaderboard-modal {
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        padding: 15px; /* Reduced padding for smaller screens */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 0; /* Position at the top */
+        left: 0; /* Position at the left */
+        transform: none; /* Remove previous translation */
+    }
+
+    .leaderboard-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center the content inside the modal */
+        text-align: center;
+    }
+
+    .leaderboard-content h2 {
+        font-size: 20px; /* Smaller font size for smaller screens */
+        margin-bottom: 10px; /* Adjusted margin */
+    }
+
+    .top-3 {
+        gap: 10px; /* Reduced gap between top players */
+        margin-bottom: 10px; /* Adjusted margin */
+        justify-content: center; /* Ensure the top players are centered */
+    }
+
+    .top-player img {
+        width: 60px; /* Smaller avatar images */
+        height: 60px;
+    }
+
+    .rank-number {
+        font-size: 12px; /* Smaller font size for rank number */
+        padding: 4px 6px; /* Adjusted padding */
+    }
+
+    .leaderboard-list li {
+        padding: 8px 10px; /* Adjusted padding for list items */
+        font-size: 12px; /* Smaller font size */
+    }
+
+    .rank-badge {
+        font-size: 10px; /* Smaller rank badge font size */
+        padding: 4px 8px; /* Adjusted padding */
+    }
+
 }

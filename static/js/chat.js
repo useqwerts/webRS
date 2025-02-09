@@ -1579,11 +1579,10 @@ updatePing();
 
 socket.on('user_banned', (data) => {
     if (data.success) {
-        setTimeout(() => { // Задержка перед перенаправлением
+		if (data.username === currentUser) {
             window.location.href = '/';
-        }, 1000); // Задержка в 1.5 секунды (можно изменить)
-    } else {
-    }
+        }
+	}
 });
 
 async function checkBanStatus(username) {  // Передаем имя пользователя в функцию
@@ -1803,7 +1802,7 @@ document.getElementById('examTaskOption').addEventListener('click', function() {
         examHeader.style.display = 'block';
         finishExamButton.style.display = 'block';
         examTimerDisplay.style.display = 'block';
-		initExamSecurity(true);
+		//initExamSecurity(true);
 
         data.questions.forEach((question, index) => {
             let instruction = "";
@@ -2200,14 +2199,22 @@ function getNextExamDate(unit, startDate, studyDays) {
     return "No upcoming exams"; // Если курс закончен
 }
 
-
-
 function fetchStudentProgress() {
     const username = getCurrentUser();
-    document.getElementById("loading").style.display = "block";
-    
+	document.getElementById("error-message").style.display = "none";
+
+    // Показываем скелетоны и скрываем реальный контент
+    document.getElementById("loading").style.display = "flex";
+    document.getElementById("progress-container").style.display = "none";
+
     fetch(`/api/get-student-progress?username=${username}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                // If the response is not ok (e.g., 404 error), throw an error
+                return response.json().then(data => { throw data.error });
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Data from server:', data);
             const studentData = data[username] || {};
@@ -2218,21 +2225,19 @@ function fetchStudentProgress() {
             const start = new Date(startDate);
             const totalCourseDays = 90;
 
-            // 🔹 Учебные дни
-            const oddDays = [1, 3, 5];  // Понедельник, Среда, Пятница
-            const evenDays = [2, 4, 6]; // Вторник, Четверг, Суббота
-            
+            // 🔹 Определяем учебные дни
+            const oddDays = [1, 3, 5];  
+            const evenDays = [2, 4, 6]; 
+
             let studyDaysElapsed = 0;
             let tempDate = new Date(start);
 
-            // 🔹 Найти первый учебный день курса
             while (!((studyDays === "odd" && oddDays.includes(tempDate.getDay())) ||
                      (studyDays === "even" && evenDays.includes(tempDate.getDay())))) {
                 tempDate.setDate(tempDate.getDate() + 1);
             }
-            const firstStudyDate = new Date(tempDate); // Первый учебный день курса
-            
-            // 🔹 Считаем учебные дни от первого учебного дня
+            const firstStudyDate = new Date(tempDate);
+
             tempDate = new Date(firstStudyDate);
             while (tempDate <= currentDate) {
                 const dayOfWeek = tempDate.getDay();
@@ -2245,20 +2250,16 @@ function fetchStudentProgress() {
                 tempDate.setDate(tempDate.getDate() + 1);
             }
 
-            // 🔹 Вычисляем текущую неделю и Unit
-            const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3); // 3 дня = 1 неделя
-            const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1; // 1, 2, 3
+            const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3); 
+            const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1; 
             const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
 
-            // 🔹 Процент завершенности курса
             const completionPercentage = Math.min((studyDaysElapsed / (totalCourseDays / 2)) * 100, 100).toFixed(2);
 
-            // 🔹 Дата экзамена
             const nextExamDate = getNextExamDate(unit, startDate, studyDays);
 
             console.log('Progress:', progress);
 
-            // 🔹 Обновляем UI
             document.getElementById("progress-percentage").textContent = `My Progress: ${progress}%`;
             document.getElementById("current-unit").textContent = `Current Unit: Unit ${unit}`;
             document.getElementById("current-week").textContent = `Week: ${studyWeeksElapsed + 1}`;
@@ -2273,9 +2274,21 @@ function fetchStudentProgress() {
 
             document.getElementById("exam-date").innerHTML = `${examIcon} ${examMessage}`;
         })
-        .catch(error => console.error('Error fetching progress data:', error))
-        .finally(() => document.getElementById("loading").style.display = "none"); // ✅ УБРАНА ЛИШНЯЯ ')'
+        .catch(error => {
+            // Catch errors and display the error message to the user
+            console.error('Error fetching progress data:', error);
+            document.getElementById("error-message").textContent = "You are not an active student";
+            document.getElementById("error-message").style.display = "block";  // Show error message
+        })
+        .finally(() => {
+            // Плавное скрытие скелетонов
+            setTimeout(() => {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("progress-container").style.display = "block";
+            }, 500);
+        });
 }
+
 
 
 // Открытие и закрытие модального окна
@@ -2299,4 +2312,101 @@ window.addEventListener("click", function(event) {
         progressModal.style.display = "none";
     }
 });
+
+document.getElementById("leaderboard-option").addEventListener("click", function () {
+    fetch('/api/leaderboard')
+        .then(response => response.json())
+        .then(async data => {
+            let leaderboardHTML = `<div class="leaderboard">
+                <h2>Leaderboard</h2>
+                <div class="top-3">`;
+
+            // Иконки медалей
+            const medalIcons = [
+                "<i class='fas fa-crown' style='color: gold;'></i>",
+                "<i class='fas fa-medal' style='color: silver;'></i>",
+                "<i class='fas fa-award' style='color: #cd7f32;'></i>"
+            ];
+
+            // Генерация топ-3 игроков
+            for (let i = 0; i < data.top_3.length; i++) {
+                let player = data.top_3[i];
+                let avatar = await fetchAvatar(player.name);
+                let rankClass = ["gold", "silver", "bronze"][i] || "";
+
+                leaderboardHTML += `
+                    <div class="top-player ${rankClass}">
+                        <div class="rank-number">${i + 1}${getRankSuffix(i + 1)}</div>
+                        <div class="leaderboard-avatar">${avatar}</div>
+                        <p>${medalIcons[i]} ${player.name} - ${player.coins} <i class="fas fa-star"></i></p>
+                    </div>`;
+            }
+
+            leaderboardHTML += `</div><h3></h3><ul class="leaderboard-list">`;
+
+            // Генерация списка остальных игроков
+            let rank = 4;
+            for (let player of data.others) {
+                let avatar = await fetchAvatar(player.name);
+                leaderboardHTML += `
+                    <li class="leaderboard-item">
+                        <div class="leaderboard-avatar">${avatar}</div>
+                        <span class="leaderboard-name">${player.name}</span> 
+                        <span class="rank-badge">${rank}${getRankSuffix(rank)}</span>
+                        <span class="leaderboard-rank">${player.coins} <i class="fas fa-star"></i></span>
+                    </li>`;
+                rank++;
+            }
+
+            leaderboardHTML += "</ul></div>";
+
+            showLeaderboardModal(leaderboardHTML);
+        })
+        .catch(error => console.error("Error fetching leaderboard:", error));
+});
+
+// Функция для показа модального окна
+function showLeaderboardModal(content) {
+    const modal = document.createElement("div");
+    modal.classList.add("leaderboard-modal");
+    modal.innerHTML = `
+        <div class="leaderboard-content">
+            <span class="close-btn" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            ${content}
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// Функция загрузки аватарки
+async function fetchAvatar(username) {
+    try {
+        let response = await fetch(`/get_avatar/${username}`);
+        let data = await response.json();
+        
+        if (data.avatar_url) {
+            return `<img src="${data.avatar_url}" alt="Avatar" class="leaderboard-img">`;
+        } else {
+            return getAvatarPlaceholder(username);
+        }
+    } catch (error) {
+        console.error("Error fetching avatar:", error);
+        return getAvatarPlaceholder(username);
+    }
+}
+
+// Функция для генерации первой буквы имени
+function getAvatarPlaceholder(username) {
+    return `<div class='avatar-placeholder'>${username.charAt(0).toUpperCase()}</div>`;
+}
+
+// Функция для добавления суффиксов рангов (1st, 2nd, 3rd, 4th и т.д.)
+function getRankSuffix(rank) {
+    if (rank === 1) return "st";
+    if (rank === 2) return "nd";
+    if (rank === 3) return "rd";
+    return "th";
+}
+
+
 

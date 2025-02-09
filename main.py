@@ -66,8 +66,10 @@ tracks = [
     {'title': 'Lenka - Everything At Once', 'url': '/static/music/Lenka - Everything At Once.mp3'},
     {'title': 'Jambul Madam', 'url': '/static/music/Jambul Madam.mp3'},
     {'title': 'Ozoda - Dilbarim', 'url': '/static/music/Ozoda - Dilbarim.mp3'},
-    {'title': 'Dilnoza Hakimova, Shirin Zaitova va Aziza Nizamova - (Yulduz Usmonova -Sogintirib yashagim kelar)', 'url': '/static/music/Dilnoza Hakimova, Shirin Zaitova va Aziza Nizamova - (Yulduz Usmonova -Sogintirib yashagim kelar).mp3'},
     {'title': 'Shawn Mendes - Señorita', 'url': '/static/music/Shawn Mendes Senorita.mp3'},
+    {'title': 'Andreea Bostanica feat.  HAVANA & Yaar - Supergirl', 'url': '/static/music/Andreea Bostanica feat.  HAVANA & Yaar - Supergirl.mp3'},
+    {'title': 'YAAR feat KAiiA & ADEN - Shıkıdım', 'url': '/static/music/YAAR feat KAiiA & ADEN - Shıkıdım.mp3'},
+    {'title': 'Bruninho Mars - Bonde do Brunao', 'url': '/static/music/Bruninho Mars - Bonde do Brunao.mp3'},
 ]
 
 USER_DATA_FILE = "users.json"
@@ -125,6 +127,7 @@ def get_student_progress():
 
 @app.route('/api/get-student-progress', methods=['GET'])
 def get_progress():
+    time.sleep(2)
     # Получаем имя пользователя из параметров запроса
     current_user = request.args.get("username")
     
@@ -138,13 +141,24 @@ def get_progress():
     if current_user not in progress_data:
         return jsonify({"error": "Student not found"}), 404  # Ошибка 404 если пользователь не найден
 
-    # Получаем прогресс и start_date для найденного пользователя
+    # Получаем прогресс, start_date и study_days для найденного пользователя
     student_data = progress_data[current_user]
     progress = student_data.get("progress", 0)
     start_date = student_data.get("start_date", None)
+    study_days = student_data.get("study_days", None)  # Получаем study_days
 
-    # Возвращаем прогресс и start_date для указанного пользователя
-    return jsonify({current_user: {"progress": progress, "start_date": start_date}})
+    # Возвращаем прогресс, start_date и study_days для указанного пользователя
+    return jsonify({current_user: {"progress": progress, "start_date": start_date, "study_days": study_days}})
+    
+@app.route('/api/get-student-names', methods=['GET'])
+def get_student_names():
+    try:
+        with open(PROGRESS_FILE, "r", encoding="utf-8") as file:
+            data = json.load(file)
+            student_names = list(data.keys())  # Получаем только ключи (имена студентов)
+            return jsonify({"students": student_names})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  # Ошибка сервера
 
 
 @app.route('/api/update-student-progress', methods=['POST'])
@@ -323,38 +337,42 @@ active_sessions = {}  # Track active sessions by username
 current_version = "2025-01-10-v1"
 
 exam_questions = [
-    # Listening (1-5)
-    {"id": 1, "type": "listening", "text": "Listen to the audio and write the missing word: 'The cat is ___ on the mat.'", "correct": "sleeping"},
-    {"id": 2, "type": "listening", "text": "Listen to the audio and choose the correct word: 'I ___ a phone call yesterday.'", "options": ["make", "made", "making"], "correct": "made"},
-    {"id": 3, "type": "listening", "text": "Listen to the audio and complete the sentence: 'She is ___ in the kitchen.'", "correct": "cooking"},
-    {"id": 4, "type": "listening", "text": "Listen to the audio and fill in the blank: 'They are ___ a movie right now.'", "correct": "watching"},
-    {"id": 5, "type": "listening", "text": "Listen to the audio and answer the question: 'Where is the boy going?'", "correct": "to the park"},
-    
-    # Reading (6-10)
-    {"id": 6, "type": "reading", "text": "Read the passage and answer the question: 'Mary is reading a book in the park. She enjoys the quiet and the fresh air.'", "correct": "reading a book"},
-    {"id": 7, "type": "reading", "text": "Read the passage and answer the question: 'Tom likes to play football every weekend.'", "correct": "football"},
-    {"id": 8, "type": "reading", "text": "Read the passage and answer the question: 'John is having lunch with his friends at a restaurant.'", "correct": "restaurant"},
-    {"id": 9, "type": "reading", "text": "Read the passage and answer the question: 'Sally is going to the gym after work to stay fit.'", "correct": "gym"},
-    {"id": 10, "type": "reading", "text": "Read the passage and answer the question: 'Lucy is watching TV in her living room.'", "correct": "living room"},
-    
-    # Beginner Grammar (11-25)
-    {"id": 11, "type": "fill_gaps", "text": "I ___ (go) to the store yesterday.", "correct": "went"},
-    {"id": 12, "type": "fill_gaps", "text": "She ___ (like) chocolate.", "correct": "likes"},
-    {"id": 13, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["He go to school.", "He goes to school.", "He going to school."], "correct": "He goes to school."},
-    {"id": 14, "type": "multiple_choice", "text": "What ___ she do?", "options": ["do", "does", "doing"], "correct": "does"},
-    {"id": 15, "type": "true_false", "text": "They plays football every day.", "correct": "False"},
-    {"id": 16, "type": "fill_gaps", "text": "I ___ (not/like) apples.", "correct": "don't like"},
-    {"id": 17, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["She has a car.", "She have a car.", "She having a car."], "correct": "She has a car."},
-    {"id": 18, "type": "multiple_choice", "text": "___ you like this book?", "options": ["Do", "Does", "Are"], "correct": "Do"},
-    {"id": 19, "type": "unscramble", "text": "rtitla", "correct": "little"},
-    {"id": 20, "type": "unscramble", "text": "lliw", "correct": "will"},
-    {"id": 21, "type": "fill_gaps", "text": "We ___ (go) to the park tomorrow.", "correct": "are going"},
-    {"id": 22, "type": "fill_gaps", "text": "I ___ (eat) lunch right now.", "correct": "am eating"},
-    {"id": 23, "type": "true_false", "text": "She have a dog.", "correct": "False"},
-    {"id": 24, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["I is happy.", "I am happy.", "I be happy."], "correct": "I am happy."},
-    {"id": 25, "type": "multiple_choice", "text": "What time ___ she wake up?", "options": ["do", "does", "is"], "correct": "does"}
-]
+    # Listening (1-6)
+    {"id": 1, "type": "multiple_choice", "text": "The student’s name is ...", "options": ["Abdul Surimani", "Ahmed Saeed", "Ashraf Suri"], "correct": "Ahmed Saeed"},
+    {"id": 2, "type": "multiple_choice", "text": "His address is ...", "options": ["14 Spring Avenue, Leicester", "40 Spring Avenue, Lester", "40 Spring Avenue, Lemster"], "correct": "14 Spring Avenue, Leicester"},
+    {"id": 3, "type": "multiple_choice", "text": "His postcode is ...", "options": ["LE14 2JZ", "LE14 2GS", "LE14 2GZ"], "correct": "LE14 2GZ"},
+    {"id": 4, "type": "multiple_choice", "text": "He's ...", "options": ["Chinese.", "Russian.", "British."], "correct": "British."},
+    {"id": 5, "type": "multiple_choice", "text": "He goes to ...", "options": ["Newtown Secondary School.", "Newtown Secondary College.", "Newton Secondary School."], "correct": "Newtown Secondary School."},
+    {"id": 6, "type": "multiple_choice", "text": "His date of birth is ...", "options": ["2nd July 1997", "2nd June 1998", "22nd June 1998"], "correct": "2nd June 1998"},
 
+    # Reading (7-13)
+    {"id": 7, "type": "reading", "text": "Read the passage and answer the question: 'Sarah wakes up early and goes for a run in the park.'", "correct": "goes for a run"},
+    {"id": 8, "type": "reading", "text": "Read the passage and answer the question: 'David is studying for his math test in the library.'", "correct": "library"},
+    {"id": 9, "type": "reading", "text": "Read the passage and answer the question: 'Emma is baking a cake for her sister’s birthday.'", "correct": "baking a cake"},
+    {"id": 10, "type": "reading", "text": "Read the passage and answer the question: 'Mark and Tom are playing basketball at the school gym.'", "correct": "basketball"},
+    {"id": 11, "type": "reading", "text": "Read the passage and answer the question: 'Lisa is writing an email to her friend about her vacation.'", "correct": "an email"},
+    {"id": 12, "type": "reading", "text": "Read the passage and answer the question: 'Jake enjoys swimming in the lake during summer.'", "correct": "swimming"},
+    {"id": 13, "type": "reading", "text": "Read the passage and answer the question: 'Anna bought fresh vegetables from the market.'", "correct": "vegetables"},
+
+    # Beginner Grammar (14-30)
+    {"id": 14, "type": "fill_gaps", "text": "I ___ (go) to the store yesterday.", "correct": "went"},
+    {"id": 15, "type": "fill_gaps", "text": "She ___ (like) chocolate.", "correct": "likes"},
+    {"id": 16, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["He go to school.", "He goes to school.", "He going to school."], "correct": "He goes to school."},
+    {"id": 17, "type": "multiple_choice", "text": "What ___ she do?", "options": ["do", "does", "doing"], "correct": "does"},
+    {"id": 18, "type": "true_false", "text": "They plays football every day.", "correct": "False"},
+    {"id": 19, "type": "fill_gaps", "text": "I ___ (not/like) apples.", "correct": "don't like"},
+    {"id": 20, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["She has a car.", "She have a car.", "She having a car."], "correct": "She has a car."},
+    {"id": 21, "type": "multiple_choice", "text": "___ you like this book?", "options": ["Do", "Does", "Are"], "correct": "Do"},
+    {"id": 22, "type": "unscramble", "text": "rtitla", "correct": "little"},
+    {"id": 23, "type": "unscramble", "text": "lliw", "correct": "will"},
+    {"id": 24, "type": "fill_gaps", "text": "We ___ (go) to the park tomorrow.", "correct": "are going"},
+    {"id": 25, "type": "fill_gaps", "text": "I ___ (eat) lunch right now.", "correct": "am eating"},
+    {"id": 26, "type": "true_false", "text": "She have a dog.", "correct": "False"},
+    {"id": 27, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["I is happy.", "I am happy.", "I be happy."], "correct": "I am happy."},
+    {"id": 28, "type": "multiple_choice", "text": "What time ___ she wake up?", "options": ["do", "does", "is"], "correct": "does"},
+    {"id": 29, "type": "fill_gaps", "text": "He ___ (be) my best friend.", "correct": "is"},
+    {"id": 30, "type": "fill_gaps", "text": "They ___ (have) a big house.", "correct": "have"}
+]
 
 # Путь к файлу с балансами
 BALANCE_FILE = 'balance.json'
@@ -371,6 +389,24 @@ def load_balance():
 def save_balance(balance):
     with open(BALANCE_FILE, 'w') as f:
         json.dump(balance, f)
+        
+@app.route('/api/leaderboard', methods=['GET'])
+def get_leaderboard():
+    balance_data = load_balance()
+
+    # Преобразуем в список [(имя, баланс)] и сортируем по убыванию монет
+    sorted_balances = sorted(balance_data.items(), key=lambda x: x[1], reverse=True)
+
+    # ТОП-3 и остальные
+    top_3 = sorted_balances[:3]  # Берем только 3 лучших
+    others = sorted_balances[3:]  # Остальные
+
+    leaderboard = {
+        "top_3": [{"name": user, "coins": coins} for user, coins in top_3],
+        "others": [{"name": user, "coins": coins} for user, coins in others]
+    }
+
+    return jsonify(leaderboard)
 
 # Получение баланса для пользователя
 @socketio.on('get_balance')
