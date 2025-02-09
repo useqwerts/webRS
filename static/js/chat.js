@@ -1802,7 +1802,7 @@ document.getElementById('examTaskOption').addEventListener('click', function() {
         examHeader.style.display = 'block';
         finishExamButton.style.display = 'block';
         examTimerDisplay.style.display = 'block';
-		//initExamSecurity(true);
+		initExamSecurity(true);
 
         data.questions.forEach((question, index) => {
             let instruction = "";
