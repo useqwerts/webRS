@@ -23,7 +23,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Initialize messages as an empty list, not a dictionary
 messages = []  # Store messages locally
 
-exam_duration = 15 * 60  # 30 minutes in seconds
+exam_duration = 1 * 60  # 30 minutes in seconds
 exam_start_time = None  # Global variable to store exam start time
 
 
@@ -124,6 +124,29 @@ def save_progress(data):
 # Функция для получения прогресса студента
 def get_student_progress():
     return load_progress()
+    
+@app.route('/api/get-leaderboard', methods=['GET'])
+def get_leaderboard_myprogress():
+    time.sleep(2)  # Simulate delay, you can adjust or remove this
+
+    # Получаем прогресс всех студентов
+    progress_data = get_student_progress()  # Предполагается, что эта функция возвращает словарь всех студентов и их прогресса
+
+    if not progress_data:
+        return jsonify({"error": "No student progress data found"}), 404  # Если данных нет, возвращаем ошибку
+
+    # Подготовка данных для таблицы
+    leaderboard = {}
+
+    for student, data in progress_data.items():
+        leaderboard[student] = {
+            "progress": data.get("progress", 0),
+            "start_date": data.get("start_date", None),
+            "study_days": data.get("study_days", "odd")  # Default "odd" if not provided
+        }
+
+    # Возвращаем все данные о студентах в формате JSON
+    return jsonify(leaderboard)
 
 @app.route('/api/get-student-progress', methods=['GET'])
 def get_progress():
@@ -195,6 +218,15 @@ def update_student_progress(username, progress, start_date):
             progress_data[username]["start_date"] = start_date
 
     save_progress(progress_data)
+    
+@socketio.on('typing')
+def handle_typing(data):
+    emit('user_typing', data, broadcast=True, include_self=False)  # Рассылаем всем, кроме отправителя
+
+# Событие "пользователь перестал печатать"
+@socketio.on('stop_typing')
+def handle_stop_typing(data):
+    emit('user_stopped_typing', data, broadcast=True, include_self=False)
 
 @app.route("/upload_avatar", methods=["POST"])
 def upload_avatar():
@@ -535,7 +567,7 @@ def create_exam():
         # Set the exam start time and store duration
         #exam_start_time = time.time()
         global exam_start_time
-        exam_start_time = None  # Track the time when exam starts, comment this line if not needed
+        #exam_start_time = None  # Track the time when exam starts, comment this line if not needed
 
         # Store questions
         exam_questions.clear()

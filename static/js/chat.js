@@ -1,3 +1,4 @@
+let Unit = '';
 let currentVersion = ''; // Переменная для текущей версии
 const currentUser = sessionStorage.getItem('username');
 
@@ -1776,24 +1777,22 @@ document.getElementById('examTaskOption').addEventListener('click', function() {
     document.getElementById('examModal').style.display = 'flex';
     loadingSpinner.style.display = 'inline-block';
     examContainer.innerHTML = '';
-	enableFinishButton();
+    enableFinishButton();
     const url = `/get_exam_questions?username=${currentUser}`;
 
     fetch(url)
     .then(response => {
-        console.log("Response Status:", response.status); // Логируем статус ответа
+        console.log("Response Status:", response.status);
         if (!response.ok) {
             return response.json().then(errorData => {
-                // Показываем только сообщение ошибки без статуса
                 throw new Error(errorData.error || 'Unknown error');
             });
         }
         return response.json();
     })
     .then(data => {
-        // Проверка на ошибки в данных
         if (data.error) {
-            handleError(data.error);  // Покажем ошибку как уведомление или на странице
+            handleError(data.error);
             loadingSpinner.style.display = 'none';
             return;
         }
@@ -1802,7 +1801,6 @@ document.getElementById('examTaskOption').addEventListener('click', function() {
         examHeader.style.display = 'block';
         finishExamButton.style.display = 'block';
         examTimerDisplay.style.display = 'block';
-		initExamSecurity(true);
 
         data.questions.forEach((question, index) => {
             let instruction = "";
@@ -1855,7 +1853,6 @@ document.getElementById('examTaskOption').addEventListener('click', function() {
     .then(response => {
         if (!response.ok) {
             return response.json().then(errorData => {
-                // Покажем только сообщение ошибки без статуса
                 throw new Error(errorData.error || 'Unknown error');
             });
         }
@@ -1879,46 +1876,60 @@ document.getElementById('examTaskOption').addEventListener('click', function() {
             let timerInterval = setInterval(updateTimer, 1000);
 
             function finishExam() {
-                clearInterval(timerInterval);
+				loadingFinishExam.style.display = 'flex';
+                clearInterval(timerInterval); // Останавливаем таймер
                 showToastNotification('Time is up! The exam will be automatically finished.');
                 finishExamButton.click();
             }
-			finishExamButton.addEventListener('click', function() {
-			const examQuestions = document.querySelectorAll('.exam-question');
-			let answeredCount = 0;
 
-			examQuestions.forEach((question) => {
-			const inputs = question.querySelectorAll('input[type="radio"], input[type="text"]');
-        
-			// Проверка, есть ли хотя бы один выбранный ответ (для радиокнопок или текстовых полей)
-			inputs.forEach(input => {
-            if ((input.type === "radio" && input.checked) || (input.type === "text" && input.value.trim() !== "")) {
-                answeredCount++;
+            finishExamButton.addEventListener('click', function() {
+                if (remainingTime > 0) {
+					const loadingFinishExam = document.getElementById('loadingFinishExam');
+					loadingFinishExam.style.display = 'flex';
+                    showSubmitConfirmation();
+                } else {
+                    clearInterval(timerInterval); // Останавливаем таймер при ручной отправке
+                    submitExamResults();
+                }
+            });
+
+            function showSubmitConfirmation() {
+                const modal = document.createElement('div');
+                modal.className = 'leaderboard-modal';
+                modal.innerHTML = `
+                    <div class="leaderboard-content">
+                        <h2><i class="fas fa-exclamation-triangle"></i> Confirm Submission</h2>
+                        <p>You are about to submit your exam. This action is irreversible. Please review your answers carefully.</p>
+                        <button id="confirmSubmit" class="submit-button">
+                            <span class="text-skeleton" data-text="Submit Exam">Submit Exam</span>
+                        </button>
+                        <button id="cancelSubmit" class="cancel-button">Cancel</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const confirmButton = document.getElementById('confirmSubmit');
+
+                confirmButton.addEventListener('click', function() {
+                    clearInterval(timerInterval); // Останавливаем таймер перед отправкой
+                    submitExamResults();
+                    setTimeout(() => modal.remove(), 0700);
+					const loadingFinishExam = document.getElementById('loadingFinishExam');
+					loadingFinishExam.style.display = 'flex';
+                });
+
+                document.getElementById('cancelSubmit').addEventListener('click', function() {
+					document.getElementById('loadingFinishExam').style.display = 'none'; // Hide loading animation
+                    modal.remove();
+                });
             }
-        });
-    });
-
-    if (answeredCount === 0) {
-        // Если ни один вопрос не был отвечен
-        showToastNotification("Please answer at least one question before finishing the exam.", "error");
-    } else {
-        // Если хотя бы один вопрос был отвечен
-        const loadingFinishExam = document.getElementById('loadingFinishExam');
-        loadingFinishExam.style.display = 'flex';
-        finishExamButton.disabled = true;
-        clearInterval(timerInterval);
-        submitExamResults();
-    }
-	});
-
         }
     })
     .catch(error => {
-        console.error('Error:', error.message);  // Логирование ошибки
-        handleError(error.message);  // Отображаем только текст ошибки
+        console.error('Error:', error.message);
+        handleError(error.message);
         loadingSpinner.style.display = 'none';
     });
-
 });
 
 
@@ -2199,24 +2210,40 @@ function getNextExamDate(unit, startDate, studyDays) {
     return "No upcoming exams"; // Если курс закончен
 }
 
-function fetchStudentProgress() {
-    const username = getCurrentUser();
-	document.getElementById("error-message").style.display = "none";
+document.addEventListener("DOMContentLoaded", function () {
+    fetchStudentProgress();
+});
 
-    // Показываем скелетоны и скрываем реальный контент
+function fetchStudentProgress() {
+    const username = getCurrentUser(); // Функция, получающая текущего пользователя
+    document.getElementById("error-message").style.display = "none";
+
+    // Показываем загрузку и скрываем содержимое
     document.getElementById("loading").style.display = "flex";
     document.getElementById("progress-container").style.display = "none";
+
+    // Показываем спиннер в таблице
+    const leaderboardTable = document.getElementById("leaderboard-table-body");
+    leaderboardTable.innerHTML = `<tr><td colspan="3" class="loading-spinner">
+                                    <div class="lds-spinner">
+                                        <div></div><div></div><div></div><div></div>
+                                        <div></div><div></div><div></div><div></div>
+                                        <div></div><div></div><div></div><div></div>
+                                    </div>
+                                  </td></tr>`;
 
     fetch(`/api/get-student-progress?username=${username}`)
         .then(response => {
             if (!response.ok) {
-                // If the response is not ok (e.g., 404 error), throw an error
-                return response.json().then(data => { throw data.error });
+                return response.json().then(data => {
+                    throw new Error(data.error);
+                });
             }
             return response.json();
         })
         .then(data => {
-            console.log('Data from server:', data);
+            console.log('📊 Student Data:', data);
+
             const studentData = data[username] || {};
             const progress = studentData.progress || 0;
             const startDate = studentData.start_date;
@@ -2225,9 +2252,9 @@ function fetchStudentProgress() {
             const start = new Date(startDate);
             const totalCourseDays = 90;
 
-            // 🔹 Определяем учебные дни
-            const oddDays = [1, 3, 5];  
-            const evenDays = [2, 4, 6]; 
+            // 🔹 Определение учебных дней
+            const oddDays = [1, 3, 5];
+            const evenDays = [2, 4, 6];
 
             let studyDaysElapsed = 0;
             let tempDate = new Date(start);
@@ -2241,29 +2268,28 @@ function fetchStudentProgress() {
             tempDate = new Date(firstStudyDate);
             while (tempDate <= currentDate) {
                 const dayOfWeek = tempDate.getDay();
-                if (
-                    (studyDays === "odd" && oddDays.includes(dayOfWeek)) ||
-                    (studyDays === "even" && evenDays.includes(dayOfWeek))
-                ) {
+                if ((studyDays === "odd" && oddDays.includes(dayOfWeek)) ||
+                    (studyDays === "even" && evenDays.includes(dayOfWeek))) {
                     studyDaysElapsed++;
                 }
                 tempDate.setDate(tempDate.getDate() + 1);
             }
 
-            const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3); 
-            const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1; 
+            const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3);
+            const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1;
             const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
 
             const completionPercentage = Math.min((studyDaysElapsed / (totalCourseDays / 2)) * 100, 100).toFixed(2);
-
             const nextExamDate = getNextExamDate(unit, startDate, studyDays);
+            
+            // Saving Unit to global
+            Unit = unit;
 
-            console.log('Progress:', progress);
-
-            document.getElementById("progress-percentage").textContent = `My Progress: ${progress}%`;
-            document.getElementById("current-unit").textContent = `Current Unit: Unit ${unit}`;
-            document.getElementById("current-week").textContent = `Week: ${studyWeeksElapsed + 1}`;
-            document.getElementById("course-completion").textContent = `Course Completion: ${completionPercentage}%`;
+            // 🏆 Обновляем UI
+            document.getElementById("progress-percentage").innerHTML = `<i class="fas fa-chart-line"></i> ${progress}%`;
+            document.getElementById("current-unit").innerHTML = `<i class="fas fa-book"></i> Unit ${unit}`;
+            document.getElementById("current-week").innerHTML = `<i class="fas fa-calendar-week"></i> Week ${studyWeeksElapsed + 1}`;
+            document.getElementById("course-completion").innerHTML = `<i class="fas fa-check-circle"></i> ${completionPercentage}%`;
 
             let examMessage = studyWeeksElapsed + 1 <= 6
                 ? `Middle Exam Date: ${nextExamDate}`
@@ -2273,15 +2299,74 @@ function fetchStudentProgress() {
                 : '<i class="fas fa-calendar-check"></i>';
 
             document.getElementById("exam-date").innerHTML = `${examIcon} ${examMessage}`;
+
+            // Кнопка Weekly Exam
+            const isWeeklyExamUnit = studyWeeksElapsed >= 1;
+            const existingExamButton = document.querySelector('.weekly-exam-button');
+
+            if (isWeeklyExamUnit && dayInWeek === 1 && !existingExamButton) {
+                const weeklyExamButton = document.createElement("button");
+                weeklyExamButton.textContent = "Weekly Exam START";
+                weeklyExamButton.classList.add("weekly-exam-button");
+                weeklyExamButton.addEventListener('click', function () {
+                    showModal();
+                });
+
+                const progressContainer = document.getElementById("progress-container");
+                if (progressContainer) {
+                    progressContainer.appendChild(weeklyExamButton);
+                } else {
+                    console.error('Progress container not found.');
+                }
+            }
+
+            return fetch('/api/get-leaderboard');
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch leaderboard');
+            }
+            return response.json();
+        })
+        .then(leaderboardData => {
+            console.log('🏅 Leaderboard Data:', leaderboardData);
+
+            // Сортируем студентов по прогрессу в порядке убывания
+            const sortedLeaderboard = Object.entries(leaderboardData)
+                .sort(([, a], [, b]) => b.progress - a.progress);
+
+            leaderboardTable.innerHTML = ''; // Убираем спиннер после загрузки
+
+            let rank = 1;
+            for (let [student, studentInfo] of sortedLeaderboard) {
+                const row = document.createElement('tr');
+
+                // 🔵 Номер студента
+                const numberCell = document.createElement('td');
+                numberCell.innerHTML = `<div class="student-avatar">${rank}</div>`;
+                row.appendChild(numberCell);
+
+                // 📚 Имя студента
+                const nameCell = document.createElement('td');
+                nameCell.classList.add("student-name");
+                nameCell.textContent = student;
+                row.appendChild(nameCell);
+
+                // 📊 Прогресс студента
+                const progressCell = document.createElement('td');
+                progressCell.innerHTML = `${studentInfo.progress}%`;
+                row.appendChild(progressCell);
+
+                leaderboardTable.appendChild(row);
+                rank++;
+            }
         })
         .catch(error => {
-            // Catch errors and display the error message to the user
-            console.error('Error fetching progress data:', error);
+            console.error('⚠️ Error:', error);
             document.getElementById("error-message").textContent = "You are not an active student";
-            document.getElementById("error-message").style.display = "block";  // Show error message
+            document.getElementById("error-message").style.display = "block";
         })
         .finally(() => {
-            // Плавное скрытие скелетонов
             setTimeout(() => {
                 document.getElementById("loading").style.display = "none";
                 document.getElementById("progress-container").style.display = "block";
@@ -2289,6 +2374,188 @@ function fetchStudentProgress() {
         });
 }
 
+
+const messagesContainer = document.getElementById("messages");
+
+let typingTimeout;
+let isTyping = false;
+
+// Функция для показа индикатора
+function showTyping() {
+    if (!isTyping) {
+        socket.emit("typing", { user: currentUser });
+        isTyping = true;
+    }
+
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+        socket.emit("stop_typing", { user: currentUser });
+        isTyping = false;
+    }, 2000);
+}
+
+// Отслеживаем ввод текста
+messageInput.addEventListener("input", showTyping);
+
+// Получаем событие "user_typing"
+socket.on("user_typing", (data) => {
+    let typingIndicator = document.getElementById("typing-indicator");
+
+    if (!typingIndicator) {
+        typingIndicator = document.createElement("div");
+        typingIndicator.id = "typing-indicator";
+        typingIndicator.classList.add("message");
+        messagesContainer.appendChild(typingIndicator);
+    }
+
+    typingIndicator.innerHTML = `<span class="text-skeleton" data-text="${data.user} is typing...">${data.user} is typing...</span>`;
+    typingIndicator.classList.add("show");
+
+    // Всегда перемещаем в самый низ
+    messagesContainer.appendChild(typingIndicator);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+});
+
+// Получаем "user_stopped_typing"
+socket.on("user_stopped_typing", () => {
+    let typingIndicator = document.getElementById("typing-indicator");
+    if (typingIndicator) {
+        typingIndicator.classList.remove("show");
+
+        // Удаляем его из DOM через 300 мс (чтобы плавно исчез)
+        setTimeout(() => {
+            if (typingIndicator.parentNode) {
+                typingIndicator.parentNode.removeChild(typingIndicator);
+            }
+        }, 300);
+    }
+});
+
+
+// Получаем событие "user_typing"
+socket.on("user_typing", (data) => {
+    typingIndicator.innerHTML = `<span class="text-skeleton" data-text="${data.user} печатает...">${data.user} печатает...</span>`;
+    typingIndicator.classList.add("show");
+
+    // Всегда оставляем индикатор внизу
+    messagesContainer.appendChild(typingIndicator);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+});
+
+// Получаем "user_stopped_typing"
+socket.on("user_stopped_typing", () => {
+    typingIndicator.classList.remove("show");
+});
+
+// Show modal and attach event listeners
+function showModal() {
+    let modal = document.querySelector('.leaderboard-modal');
+
+    // Check if modal already exists, if not create it
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.className = 'leaderboard-modal';
+        modal.innerHTML = `
+            <div class="leaderboard-content">
+                <h2><i class="fas fa-exclamation-triangle"></i> Confirm </h2>
+                <p>Do you want to start the exam?</p>
+                <button id="confirm" class="submit-button">
+                    <span class="text-skeleton" data-text="Start Exam">Start Exam</span>
+                </button>
+                <button id="cancel" class="cancel-button">Cancel</button>
+            </div>
+        `;
+
+        // Append the modal to the progress container
+        const progressContainer = document.getElementById("progress-container");
+        if (progressContainer) {
+            progressContainer.appendChild(modal);
+        } else {
+            console.error('Progress container not found.');
+        }
+
+        // Attach event listeners for confirm and cancel buttons
+        const confirmButton = modal.querySelector('#confirm');
+        const cancelButton = modal.querySelector('#cancel');
+
+        // Remove previous listeners before adding new ones
+        if (confirmButton) {
+            confirmButton.removeEventListener('click', handleConfirm);
+            confirmButton.addEventListener('click', handleConfirm);
+        }
+
+        if (cancelButton) {
+            cancelButton.removeEventListener('click', handleCancel);
+            cancelButton.addEventListener('click', handleCancel);
+        }
+    }
+
+    // Display the modal
+    modal.style.display = 'block';
+}
+
+// Handle confirm button click
+function handleConfirm() {
+	loadExamQuestions(Unit);
+	const modal = document.querySelector('.progress-modal');
+	modal.style.display = 'none';
+	closeModalCONFIRM();
+    document.getElementById('examTaskOption').click();  // Trigger examTaskOption
+}
+
+// Handle cancel button click
+function handleCancel() {
+    closeModalCONFIRM();
+}
+
+// Close the modal
+function closeModalCONFIRM () {
+    const modal = document.querySelector('.leaderboard-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function loadExamQuestions(unit) {
+    // Determine the correct JSON file based on the unit number
+    const examQuestionsUrl = `/static/weekly_exam/Unit${unit}.json`;
+
+    fetch(examQuestionsUrl)
+        .then(response => response.json())
+        .then(examQuestions => {
+            console.log("Exam Questions:", examQuestions);
+            // Send the questions to the server via API call
+            sendQuestionsToServer(examQuestions);
+        })
+        .catch(error => {
+            console.error("Error fetching exam questions:", error);
+            alert("There was an error loading the exam questions.");
+        });
+}
+
+function sendQuestionsToServer(examQuestions) {
+    fetch('/create_exam', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            questions: examQuestions
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Exam has been created successfully!");
+        } else {
+            alert(`Error creating exam: ${data.error}`);
+        }
+    })
+    .catch(error => {
+        console.error("Error sending exam questions to server:", error);
+        alert("There was an error processing the exam.");
+    });
+}
 
 
 // Открытие и закрытие модального окна
@@ -2314,6 +2581,16 @@ window.addEventListener("click", function(event) {
 });
 
 document.getElementById("leaderboard-option").addEventListener("click", function () {
+    // Добавление скелетона загрузки
+    let loadingHTML = `<div id="leaderboard_loading" class="leaderboard-loading">
+        <div class="skeleton skeleton-avatar"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-list"></div>
+        <div class="skeleton skeleton-list"></div>
+        <div class="skeleton skeleton-list"></div>
+    </div>`;
+    showLeaderboardModal(loadingHTML);
+
     fetch('/api/leaderboard')
         .then(response => response.json())
         .then(async data => {
@@ -2360,9 +2637,13 @@ document.getElementById("leaderboard-option").addEventListener("click", function
 
             leaderboardHTML += "</ul></div>";
 
-            showLeaderboardModal(leaderboardHTML);
+            // Обновление содержимого модального окна
+            updateLeaderboardModal(leaderboardHTML);
         })
-        .catch(error => console.error("Error fetching leaderboard:", error));
+        .catch(error => {
+            console.error("Error fetching leaderboard:", error);
+            updateLeaderboardModal("<p>Error loading leaderboard. Please try again later.</p>");
+        });
 });
 
 // Функция для показа модального окна
@@ -2372,10 +2653,15 @@ function showLeaderboardModal(content) {
     modal.innerHTML = `
         <div class="leaderboard-content">
             <span class="close-btn" onclick="this.parentElement.parentElement.remove()">&times;</span>
-            ${content}
+            <div id="leaderboard-container">${content}</div>
         </div>
     `;
     document.body.appendChild(modal);
+}
+
+// Функция для обновления модального окна
+function updateLeaderboardModal(content) {
+    document.getElementById("leaderboard-container").innerHTML = content;
 }
 
 // Функция загрузки аватарки
@@ -2408,5 +2694,44 @@ function getRankSuffix(rank) {
     return "th";
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    // Убедитесь, что currentUser - это объект, а не строка.
+    const username = currentUser; // Присваиваем только имя пользователя
+    
+    fetch('/api/leaderboard')
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            
+            const leaderboardOption = document.getElementById("leaderboard-option");
+            if (!leaderboardOption) {
+                console.log("Leaderboard option not found.");
+                return;
+            }
 
+            // Проверяем, существует ли username
+            if (!username) {
+                console.error("Current user is not defined or does not have a name.");
+                return;
+            }
+
+            // Собираем полный список игроков (топ-3 + остальные)
+            let allPlayers = [...data.top_3, ...data.others];
+
+            // Приводим имя текущего пользователя и имена игроков к нижнему регистру для точного сравнения
+            let userRank = allPlayers.findIndex(player => player.name.toLowerCase() === username.toLowerCase()) + 1;
+
+            // Если пользователь найден, обновляем текст на кнопке
+            if (userRank > 0) {
+                // Добавляем иконку для "Leaderboard"
+				leaderboardOption.innerHTML = `<i class="fas fa-trophy" style="margin-right: 8px;"></i>Leaderboard #${userRank}`;
+            } else {
+                leaderboardOption.innerText = `Leaderboard #?`; // Если не нашли
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching leaderboard:", error);
+        });
+});
 

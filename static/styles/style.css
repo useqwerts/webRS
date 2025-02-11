@@ -2679,21 +2679,30 @@ body {
 .account-menu {
     user-select: none;
     z-index: 1000;
-    border-radius: 25px;
+    border-radius: 10px;
     position: absolute;
-    right: 10px;
-    top: 50px;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    right: 20px;
+    top: 70px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 15px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
     display: none;
     opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(-15px);
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Показываем меню */
+.account-menu.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Стили для списка */
 .account-menu ul {
     list-style: none;
     padding: 0;
@@ -2701,63 +2710,107 @@ body {
 }
 
 .account-menu li {
-    padding: 12px;
+    display: flex;
+    align-items: center;
+    padding: 14px;
     cursor: pointer;
-    border-radius: 15px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
 }
 
+/* Эффект при наведении */
 .account-menu li:hover {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 123, 255, 0.1);
     transform: scale(1.05);
 }
 
-.account-menu.show {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
+/* Иконки FontAwesome */
+.account-menu li i {
+    margin-right: 10px;
+    font-size: 18px;
+    color: #007bff;
+    transition: color 0.3s ease;
 }
 
-/* Стили для Personal Account */
-#personal-account-section {
-    padding: 12px;
-    cursor: pointer;
-    border-radius: 15px;
-    background-color: rgba(255, 255, 255, 0.2);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-#personal-account-section:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.05);
+.account-menu li:hover i {
+    color: #0056b3;
 }
 
 /* Подменю для Personal Account */
-#personal-account-options {
+#personal-account-section {
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Добавляем отступ справа для текста Personal Account */
+#personal-account-section span {
+    margin-right: 15px;
+}
+
+/* Эффект при наведении */
+#personal-account-section:hover {
+    background-color: rgba(0, 123, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Стили для элементов подменю */
+.personal-account-options {
     display: none;
     list-style-type: none;
     padding: 0;
     margin: 0;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.05);
     border-radius: 10px;
     margin-top: 10px;
 }
 
-#personal-account-options li {
-    padding: 10px;
+.personal-account-options li {
+    padding: 12px;
     cursor: pointer;
-    border-radius: 15px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .personal-account-options li:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 123, 255, 0.1);
     transform: scale(1.05);
 }
 
 /* Показывать подменю при наведении */
 #personal-account-section:hover .personal-account-options {
     display: block;
+}
+
+/* Иконки в подменю */
+.personal-account-options li i {
+    margin-right: 10px;
+}
+
+/* Стили для ссылок */
+#time-option a {
+    color: inherit;
+    text-decoration: none;
+}
+
+#time-option a:hover {
+    text-decoration: underline;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .account-menu {
+        right: 15px;
+        top: 50px;
+    }
 }
 
 
@@ -3124,6 +3177,7 @@ body {
 }
 
 #message-input {
+	color: black;
 	margin: 4px;
     flex: 1;
     padding: 14px;
@@ -3568,20 +3622,44 @@ p {
     margin-bottom: 30px;
 }
 
-/* Correct answer styling */
+/* Стиль для правильного ответа */
 .correct {
-    background-color: #4CAF50; /* Зеленый фон */
+    background: linear-gradient(135deg, #4CAF50, #388E3C); /* Зеленый градиент */
     color: white;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(56, 142, 60, 0.3);
+    transition: all 0.3s ease;
+    border: 2px solid #388E3C;
 }
 
-/* Incorrect answer styling */
+/* Эффект при наведении */
+.correct:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(56, 142, 60, 0.4);
+}
+
+/* Стиль для неправильного ответа */
 .incorrect {
-    background-color: #FF6347; /* Красный фон */
+    background: linear-gradient(135deg, #FF6347, #D32F2F); /* Красный градиент */
     color: white;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.3);
+    transition: all 0.3s ease;
+    border: 2px solid #D32F2F;
+}
+
+/* Эффект при наведении */
+.incorrect:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(211, 47, 47, 0.4);
 }
 
 /* Анимация для появления модального окна */
@@ -3634,97 +3712,87 @@ p {
     border-radius: 8px;
 }
 
-/* Style for radio buttons and labels (quiz-like design) */
+/* Основной стиль для радио-кнопок и меток */
 label {
-	user-select: none;
-    flex-direction: column;
+    user-select: none;
     display: flex;
+    align-items: center;
     margin-bottom: 15px;
-    padding: 10px;
+    padding: 8px 16px; /* Уменьшаем отступы */
     border: 2px solid #ddd;
-    border-radius: 8px;
-    background-color: #969696;;
+    border-radius: 25px; /* Немного округлим углы */
+    background-color: #f0f0f0;
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    font-size: 14px; /* Уменьшаем размер шрифта */
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Скрытие стандартного радио-кнопки */
+/* Скрытие стандартной радио-кнопки */
 input[type="radio"] {
     display: none;
 }
 
-/* Базовый стиль для кастомных радио-кнопок */
+/* Стиль для кастомных радио-кнопок */
 input[type="radio"] + label {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1.5px solid #989595;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 2px solid #d1d1d1;
     color: #333;
-    padding: 12px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    user-select: none;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    padding: 8px 16px; /* Уменьшаем отступы */
 }
 
-/* Анимация при наведении */
+/* Плавное изменение фона и масштаба на наведении */
 input[type="radio"]:not(:checked) + label:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: #bbb;
+    background: #e7f7e7;
+    border-color: #6cbf6c;
     transform: scale(1.05);
 }
 
-/* Состояние активного выбора */
+/* Стиль для выбранной радио-кнопки */
 input[type="radio"]:checked + label {
-	margin: 10px;
-    font-weight: bolder;
     background: linear-gradient(135deg, #4CAF50, #388E3C);
-    border-color: #4CAF50;
+    border-color: #388E3C;
     color: white;
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+    font-weight: bold;
+    transform: scale(1.05); /* Уменьшаем размер увеличения */
+    box-shadow: 0 6px 20px rgba(56, 142, 60, 0.3);
 }
 
+/* Иконка галочки для выбранной кнопки */
+input[type="radio"]:checked + label::after {
+    content: '\f00c'; /* Unicode для галочки */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: white;
+    font-size: 16px; /* Уменьшаем размер иконки */
+    margin-left: 8px; /* Немного уменьшаем отступ */
+    transition: transform 0.3s ease;
+}
 
-/* Современный стиль для текстового поля */
-input[type="text"] {
+/* Современный стиль для текстовых полей */
+input[type="text"], input[type="password"] {
     padding: 12px 15px;
     font-size: 16px;
-    border: 1.5px solid #989595; /* Серый бордер */
-    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    border-radius: 12px;
     width: 100%;
     box-sizing: border-box;
     margin-top: 10px;
-    transition: all 0.3s ease-in-out;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    color: #333;
+    background-color: #f8f8f8;
+    transition: all 0.3s ease;
+}
+
+/* Эффект фокуса для текстовых полей */
+input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+    background-color: #ffffff;
     outline: none;
-}
-
-/* Эффект фокуса */
-input[type="text"]:focus {
-    border-color: #145CFF;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-input[type="password"] {
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 10px;
-    transition: border-color 0.3s ease;
-}
-
-input[type="password"]:focus {
-    border-color: #4CAF50; /* Green focus border */
 }
 
 .no-exams {
@@ -3788,18 +3856,20 @@ input[type="password"]:focus {
 }
 
 .exam-question {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
-    padding: 15px; /* Reduced padding */
-    margin: 10px 0; /* Reduced margin */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    color: #fff;
-    font-size: 16px; /* Slightly smaller font size */
-    transition: transform 0.2s, box-shadow 0.2s;
-    width: 100%; /* Ensure it takes full width */
-    max-width: 600px; /* Limit max-width */
+    background: rgba(255, 255, 255, 0.15); /* Мягкий белый фон с прозрачностью */
+    backdrop-filter: blur(15px); /* Немного ослабим эффект размытия для более чистого вида */
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Тонкая белая граница */
+    border-radius: 12px; /* Округлые углы */
+    padding: 20px;
+    margin: 15px 0; /* Увеличим отступы для лучшего внешнего вида */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Плавная тень */
+    color: #fff; /* Белый цвет текста */
+    font-size: 18px; /* Увеличим шрифт для лучшего восприятия */
+    line-height: 1.6; /* Немного увеличим межстрочный интервал для читаемости */
+    transition: transform 0.3s, box-shadow 0.3s; /* Увеличим время перехода для более плавного эффекта */
+    width: 100%;
+    max-width: 600px; /* Ограничение по ширине */
+    position: relative;
 }
 
 #ExamResultsModal {
@@ -4349,17 +4419,17 @@ i {
 
 /* Модальное окно */
 .progress-modal {
-    display: none;  /* Скрыть окно по умолчанию */
+    display: none;  /* Скрыто по умолчанию */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);  /* Прозрачный фон */
+    background-color: rgba(0, 0, 0, 0.7);  /* Затемненный фон */
     z-index: 1000;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Скрываем переполнение */
+    overflow: hidden; /* Отключаем переполнение */
 }
 
 /* Контент модального окна */
@@ -4367,29 +4437,37 @@ i {
     background: rgba(255, 255, 255, 0.2);
     padding: 25px;
     width: 100%;
-    max-width: 450px;  /* Ограничиваем максимальную ширину */
+    max-width: 450px;  /* Ограничение по ширине */
+    max-height: 90vh;  /* Ограничение по высоте */
     border-radius: 15px;
     backdrop-filter: blur(20px);
     color: #fff;
     text-align: center;
     font-size: 20px;
     box-sizing: border-box; /* Учитываем padding в ширине */
+    overflow-y: auto;  /* Включаем прокрутку, если контент больше max-height */
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Заголовок модального окна */
+/* Анимация появления */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Заголовок */
 .progress-modal h2 {
     text-align: center;
     color: #fff;
-    font-size: 32px;  /* Увеличиваем размер заголовка */
+    font-size: 32px;
     margin-bottom: 20px;
     font-weight: bold;
-}
-
-/* Стиль для индикатора загрузки */
-.loading {
-    font-size: 22px;
-    color: #fff;
-    margin-bottom: 15px;
 }
 
 /* Контейнер для прогресса */
@@ -4398,15 +4476,19 @@ i {
     text-align: left;
 }
 
-/* Стиль для main_information */
-#main_information {
-    text-align: center;  /* Центрируем текст */
-    margin-bottom: 20px;  /* Отступ между элементами */
+/* Контейнер для элементов */
+.progress-info-container {
+    display: flex;
+    justify-content: center; /* Центрируем по горизонтали */
+    align-items: center;     /* Центрируем по вертикали */
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+    text-align: center;      /* Центрируем текст внутри элементов */
 }
 
-/* Стиль для прогресса и даты экзамена */
-#progress-percentage,
-#exam-date {
+/* Стиль для основных элементов */
+#progress-percentage, #exam-date, .unit-style, .week-style, .completion-style {
     color: #fff;
     font-size: 28px;
     font-weight: bold;
@@ -4414,42 +4496,61 @@ i {
     padding: 12px 30px;
     border-radius: 15px;
     display: inline-block;
+    text-align: center;
 }
 
+/* Цветовые стили */
 #progress-percentage {
+	margin-left: 32%;
     background: rgba(255, 0, 0, 0.2);
     border: 1px solid #ff4d4d;
 }
 
 #exam-date {
-    background: rgb(0 167 255 / 20%);
+    background: rgba(0, 167, 255, 0.2);
     border: 1px solid #45b8ff;
 }
 
-/* Стиль для Unit, Week и Completion */
-.unit-style,
-.week-style,
-.completion-style {
-    color: #fff;
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 12px;
-    padding: 12px 32px;
-    background: rgb(0 163 252 / 20%);
-    border-radius: 15px;
-    display: inline-block;
-    text-align: center;
+.unit-style, .week-style, .completion-style {
+    background: rgba(0, 163, 252, 0.2);
 }
 
-/* Контейнер для всех элементов */
-.progress-info-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 25px;
+.weekly-exam-button {
+    margin-bottom: 15px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 200px; /* Большие отступы для десктопа */
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    white-space: nowrap;
 }
+
+.weekly-exam-button i {
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.weekly-exam-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.weekly-exam-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #0056b3;
+}
+
 
 /* Адаптация для мобильных устройств */
 @media (max-width: 768px) {
@@ -4457,15 +4558,18 @@ i {
         padding: 15px;
         max-width: 90%;  /* Уменьшаем максимальную ширину на мобильных */
         font-size: 18px;  /* Уменьшаем размер шрифта */
+        margin: 0 auto;   /* Центрируем модальное окно */
     }
 
     /* Заголовок */
     .progress-modal h2 {
         font-size: 28px;
+        text-align: center; /* Центрируем заголовок */
     }
 
     /* Процент прогресса */
     #progress-percentage {
+		margin-left: 82px;
         font-size: 24px;
         padding: 12px 50px;
     }
@@ -4485,51 +4589,18 @@ i {
 
     /* Контейнер для всех элементов */
     .progress-info-container {
-        flex-direction: row;
-        gap: 10px;
-        justify-content: space-between;
+        flex-direction: column;  /* Выравниваем элементы по колонке для мобильных */
+        gap: 20px;               /* Увеличиваем расстояние между элементами */
+        justify-content: center; /* Центрируем элементы */
+        align-items: center;     /* Центрируем по вертикали */
+        text-align: center;      /* Центрируем текст внутри элементов */
+    }
+	.weekly-exam-button {
+        padding: 20px 170px; /* Уменьшаем горизонтальные отступы для мобильных */
+        font-size: 14px;  /* Уменьшаем размер шрифта */
     }
 }
 
-/* Адаптация для еще более узких экранов */
-@media (max-width: 480px) {
-    .progress-modal-content {
-        padding: 10px;
-        max-width: 100%;
-        font-size: 16px;  /* Еще меньше размер шрифта */
-    }
-
-    /* Заголовок */
-    .progress-modal h2 {
-        font-size: 24px;
-    }
-
-    /* Процент прогресса */
-    #progress-percentage {
-        font-size: 20px;
-        padding: 12px 30px;
-    }
-
-    /* Дата экзамена */
-    #exam-date {
-        font-size: 20px;
-    }
-
-    /* Стиль для Unit, Week и Completion */
-    .unit-style,
-    .week-style,
-    .completion-style {
-        font-size: 18px;
-        padding: 8px 20px;
-    }
-
-    /* Контейнер для всех элементов */
-    .progress-info-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-}
 
 @keyframes skeleton-loading {
     0% { background-position: -200px 0; }
@@ -4576,205 +4647,571 @@ i {
     }
 }
 
-/* Стили для модального окна */
+/* Основная модалка */
 .leaderboard-modal {
-    background: rgb(0 0 0 / 15%);
-    backdrop-filter: blur(30px);
+    background: rgb(0 0 0 / 25%);
+    backdrop-filter: blur(20px);
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px; /* Increased width */
-    max-width: 90%;
-    border-radius: 20px; /* Increased border radius */
-    box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.3); /* Larger shadow */
-    padding: 30px; /* Increased padding */
+    width: 90%; /* 90% от ширины экрана */
+    max-width: 650px; /* Максимальная ширина */
+    height: auto;
+    max-height: 80vh; /* Максимальная высота */
+    border-radius: 25px;
+    box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.4);
+    padding: 30px;
     z-index: 1000;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрируем контент по горизонтали */
 }
 
+/* Контент внутри модалки */
 .leaderboard-content {
     text-align: center;
-    font-family: Arial, sans-serif;
-    color: white;
+    font-family: 'Arial', sans-serif;
+    color: #f8f8f8;
+    overflow-y: auto;
+    flex-grow: 1;
+    width: 100%; /* На весь доступный экран */
 }
 
 /* Заголовок */
 .leaderboard-content h2 {
-    font-size: 30px; /* Larger font size */
+    margin: 10px;
+    font-size: 32px;
     font-weight: bold;
-    margin-bottom: 20px; /* Increased margin */
+    margin-bottom: 55px;
+    color: #fff;
 }
 
 /* Топ-3 игроков */
 .top-3 {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: flex-end;
-    gap: 30px; /* Increased gap */
-    margin-bottom: 30px; /* Increased margin */
+    gap: 40px;
+    margin-bottom: 35px;
+    width: 100%; /* Чтобы топ-3 занимали весь доступный горизонтальный пространство */
+    padding: 0 10px; /* Добавляем отступы для более аккуратного вида */
 }
 
+/* Стиль для каждого игрока в топ-3 */
 .top-player {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
     position: relative;
+    text-align: center;
 }
 
-/* Медали и рамки для топ-3 */
+/* Стиль для изображений игроков */
 .top-player img {
-    width: 120px; /* Increased avatar size */
-    height: 120px; /* Increased avatar size */
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow */
-    border: 5px solid transparent; /* Thicker border */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    border: 6px solid transparent;
 }
 
 .top-player:nth-child(1) img { border-color: gold; }
 .top-player:nth-child(2) img { border-color: silver; }
 .top-player:nth-child(3) img { border-color: #cd7f32; }
 
-/* Ранги 1st, 2nd, 3rd */
+/* Ранг номер */
 .rank-number {
     position: absolute;
-    top: -15px; /* Adjusted for better positioning */
+    top: -20px;
     left: 50%;
     transform: translateX(-50%);
-    background: gold;
-    color: black;
-    font-size: 18px; /* Increased font size */
+    background: #f4c542;
+    color: #222;
+    font-size: 20px;
     font-weight: bold;
-    padding: 8px 12px; /* Larger padding */
+    padding: 10px 15px;
     border-radius: 15px;
 }
 
 .top-player:nth-child(2) .rank-number { background: silver; }
 .top-player:nth-child(3) .rank-number { background: #cd7f32; }
 
-
+/* Описание игрока */
 .top-player p {
-    font-size: 18px; /* Larger text */
-    font-weight: bold;
-    margin-top: 10px; /* Increased margin */
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 12px;
 }
 
 /* Разделение топ-3 и остальных */
 hr {
     border: none;
     height: 2px;
-    background: #888;
-    margin: 20px 0; /* Increased margin */
+    background: #ddd;
+    margin: 25px 0;
 }
 
-/* Список остальных участников */
+/* Список игроков */
 .leaderboard-list {
+    max-height: 60vh; /* Максимальная высота списка */
+    overflow-y: auto;
     list-style: none;
     padding: 0;
+    margin-top: 25px;
 }
 
+/* Стиль для каждого элемента в списке */
 .leaderboard-list li {
     font-weight: bolder;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(30px);
     display: flex;
     align-items: center;
-    margin: 10px 0; /* Increased margin */
-    padding: 15px 20px; /* Larger padding */
-    border-radius: 12px; /* Rounded corners */
+    margin: 15px 0;
+    padding: 18px 25px;
+    border-radius: 14px;
     justify-content: space-between;
-    font-size: 16px; /* Larger text */
+    font-size: 18px;
 }
 
-/* Аватарки (или буква, если нет фото) */
+/* Аватарка или буква, если нет фото */
 .avatar-placeholder {
-    width: 60px; /* Larger avatar size */
-    height: 60px; /* Larger avatar size */
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px; /* Larger font size */
+    font-size: 26px;
     font-weight: bold;
     color: white;
-    background: #555;
+    background: #666;
 }
 
 /* Бейджи рангов */
 .rank-badge {
-    background:radial-gradient(at 76.78540734776111% 42.06947713576511%, hsla(352.45901639344265, 79.22077922077922%, 45.294117647058826%, 1) 0%, hsla(352.45901639344265, 79.22077922077922%, 45.294117647058826%, 0) 100%), radial-gradient(at 44.60477323726234% 30.41084958804988%, hsla(26.53846153846154, 86.66666666666667%, 47.05882352941176%, 1) 0%, hsla(26.53846153846154, 86.66666666666667%, 47.05882352941176%, 0) 100%), radial-gradient(at 19.47178452914996% 81.94479800586004%, hsla(355.3846153846154, 76.47058823529413%, 43.33333333333333%, 1) 0%, hsla(355.3846153846154, 76.47058823529413%, 43.33333333333333%, 0) 100%), radial-gradient(at 79.03386445136204% 97.07748317632924%, hsla(37.52988047808765, 99.2094861660079%, 50.3921568627451%, 1) 0%, hsla(37.52988047808765, 99.2094861660079%, 50.3921568627451%, 0) 100%), radial-gradient(at 37.44186401730779% 69.21329682838288%, hsla(352.45901639344265, 79.22077922077922%, 45.294117647058826%, 1) 0%, hsla(352.45901639344265, 79.22077922077922%, 45.294117647058826%, 0) 100%), radial-gradient(at 13.520984765309462% 69.56783326198777%, hsla(26.53846153846154, 86.66666666666667%, 47.05882352941176%, 1) 0%, hsla(26.53846153846154, 86.66666666666667%, 47.05882352941176%, 0) 100%), radial-gradient(at 12.952682941188087% 62.20371370686107%, hsla(355.3846153846154, 76.47058823529413%, 43.33333333333333%, 1) 0%, hsla(355.3846153846154, 76.47058823529413%, 43.33333333333333%, 0) 100%), radial-gradient(at 52.1355266731061% 15.15540885159512%, hsla(37.52988047808765, 99.2094861660079%, 50.3921568627451%, 1) 0%, hsla(37.52988047808765, 99.2094861660079%, 50.3921568627451%, 0) 100%);
+    background: radial-gradient(at 76.7% 42.1%, hsla(352.5, 79.22%, 45.3%, 1) 0%, hsla(352.5, 79.22%, 45.3%, 0) 100%), radial-gradient(at 44.6% 30.4%, hsla(26.5, 86.67%, 47.06%, 1) 0%, hsla(26.5, 86.67%, 47.06%, 0) 100%), radial-gradient(at 19.5% 81.9%, hsla(355.4, 76.47%, 43.33%, 1) 0%, hsla(355.4, 76.47%, 43.33%, 0) 100%);
     color: white;
-    font-size: 14px; /* Larger font size */
+    font-size: 16px;
     font-weight: bold;
-    padding: 6px 14px; /* Larger padding */
+    padding: 8px 16px;
     border-radius: 20px;
 }
 
-/* Avatar Image */
+/* Изображение игрока */
 .leaderboard-img {
-    width: 60px; /* Larger avatar size */
-    height: 60px; /* Larger avatar size */
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* Star Icon */
+/* Звездочка для оценки */
 .fa-star {
-    color: yellow;
+    color: #ffdb00;
 }
 
+/* Медиа-запрос для мобильных устройств */
 @media (max-width: 768px) {
     .leaderboard-modal {
-        height: 100%;
         width: 100%;
         max-width: 100%;
-        padding: 15px; /* Reduced padding for smaller screens */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        top: 0; /* Position at the top */
-        left: 0; /* Position at the left */
-        transform: none; /* Remove previous translation */
+        height: auto;
+        max-height: 100%;
+        padding: 20px;
     }
 
     .leaderboard-content {
-        display: flex;
         flex-direction: column;
-        align-items: center; /* Center the content inside the modal */
-        text-align: center;
     }
 
     .leaderboard-content h2 {
-        font-size: 20px; /* Smaller font size for smaller screens */
-        margin-bottom: 10px; /* Adjusted margin */
+        font-size: 24px;
+        margin-bottom: 45px;
     }
 
     .top-3 {
-        gap: 10px; /* Reduced gap between top players */
-        margin-bottom: 10px; /* Adjusted margin */
-        justify-content: center; /* Ensure the top players are centered */
+        gap: 15px;
+        margin-bottom: 20px;
     }
 
     .top-player img {
-        width: 60px; /* Smaller avatar images */
-        height: 60px;
+        width: 80px;
+        height: 80px;
     }
 
     .rank-number {
-        font-size: 12px; /* Smaller font size for rank number */
-        padding: 4px 6px; /* Adjusted padding */
+        font-size: 16px;
+        padding: 6px 10px;
     }
 
     .leaderboard-list li {
-        padding: 8px 10px; /* Adjusted padding for list items */
-        font-size: 12px; /* Smaller font size */
+        padding: 12px 18px;
+        font-size: 14px;
     }
 
     .rank-badge {
-        font-size: 10px; /* Smaller rank badge font size */
-        padding: 4px 8px; /* Adjusted padding */
+        font-size: 12px;
+        padding: 6px 12px;
     }
 
+    .avatar-placeholder {
+        width: 60px;
+        height: 60px;
+        font-size: 22px;
+    }
+}
+
+.leaderboard-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #d0d0d0 25%, #9c9797 50%, #d0d0d0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 2s infinite linear;
+    border-radius: 25px;
+    opacity: 0.8;
+}
+
+.skeleton-text {
+    width: 150px;
+    height: 20px;
+    margin-top: 10px;
+}
+
+.skeleton-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.skeleton-list {
+    width: 80%;
+    height: 40px;
+    margin: 5px 0;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.text-skeleton {
+    position: relative;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 16px;
+    color: transparent; /* Делает текст прозрачным, чтобы его не было видно */
+}
+
+.text-skeleton::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 25%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0.3) 75%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent; /* Делает текст прозрачным */
+    background-size: 200% 100%;
+    animation: skeleton-loading 6s infinite linear; /* Увеличено время анимации до 6 секунд */
+    opacity: 1;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+
+.submit-button, .cancel-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 10px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    min-width: 150px; /* Minimum width to accommodate text */
+    text-align: center; /* Center text within button */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.cancel-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.submit-button.animate-text {
+    color: transparent;
+}
+
+.submit-button.animate-text::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #d0d0d0 25%, #e0e0e0 50%, #d0d0d0 75%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% 100%;
+    animation: skeleton-loading 2s infinite linear;
+    opacity: 0.8;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.leaderboard-table {
+	margin-top: 10px;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    font-size: 16px;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.leaderboard-table thead th {
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.2);
+    color: #333333;
+    font-weight: bolder;
+    padding: 12px;
+    text-align: center;
+    border-radius: 12px 12px 0 0;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.leaderboard-table th i {
+    margin-right: 6px;
+    font-size: 16px;
+}
+
+.leaderboard-table tbody tr {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.leaderboard-table td {
+    color: #181818;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaderboard-table tr:nth-child(even) {
+    background: rgba(240, 240, 240, 0.4);
+}
+
+.leaderboard-table tr:hover {
+    background-color: rgba(220, 220, 220, 0.5);
+    transform: translateY(-2px);
+}
+
+.student-avatar {
+    width: 36px;
+    height: 36px;
+    background: #007bff;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.student-name {
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 8px;
+}
+
+.progress-icon {
+    color: #0056b3;
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+.lds-spinner,
+.lds-spinner div,
+.lds-spinner div:after {
+  box-sizing: border-box;
+}
+
+.lds-spinner {
+  color: currentColor;
+  display: inline-block;
+  position: relative;
+  width: 40px; /* Уменьшаем размер */
+  height: 40px; /* Уменьшаем размер */
+}
+
+.lds-spinner div {
+  transform-origin: 20px 20px; /* Корректируем центр вращения */
+  animation: lds-spinner 1.2s linear infinite;
+}
+
+.lds-spinner div:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 1.6px; /* Уменьшаем отступ */
+  left: 18.4px; /* Уменьшаем отступ */
+  width: 3.2px; /* Уменьшаем ширину */
+  height: 8.8px; /* Уменьшаем высоту */
+  border-radius: 20%;
+  background: currentColor;
+}
+
+.lds-spinner div:nth-child(1) {
+  transform: rotate(0deg);
+  animation-delay: -1.1s;
+}
+
+.lds-spinner div:nth-child(2) {
+  transform: rotate(30deg);
+  animation-delay: -1s;
+}
+
+.lds-spinner div:nth-child(3) {
+  transform: rotate(60deg);
+  animation-delay: -0.9s;
+}
+
+.lds-spinner div:nth-child(4) {
+  transform: rotate(90deg);
+  animation-delay: -0.8s;
+}
+
+.lds-spinner div:nth-child(5) {
+  transform: rotate(120deg);
+  animation-delay: -0.7s;
+}
+
+.lds-spinner div:nth-child(6) {
+  transform: rotate(150deg);
+  animation-delay: -0.6s;
+}
+
+.lds-spinner div:nth-child(7) {
+  transform: rotate(180deg);
+  animation-delay: -0.5s;
+}
+
+.lds-spinner div:nth-child(8) {
+  transform: rotate(210deg);
+  animation-delay: -0.4s;
+}
+
+.lds-spinner div:nth-child(9) {
+  transform: rotate(240deg);
+  animation-delay: -0.3s;
+}
+
+.lds-spinner div:nth-child(10) {
+  transform: rotate(270deg);
+  animation-delay: -0.2s;
+}
+
+.lds-spinner div:nth-child(11) {
+  transform: rotate(300deg);
+  animation-delay: -0.1s;
+}
+
+.lds-spinner div:nth-child(12) {
+  transform: rotate(330deg);
+  animation-delay: 0s;
+}
+
+@keyframes lds-spinner {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+#typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(30px);
+    color: white;
+    border-radius: 30px 10px 30px 30px;
+    max-width: 75%;
+    word-wrap: break-word;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    position: absolute;  /* Убираем из потока */
+    bottom: 0;
+    left: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none; /* Чтобы нельзя было кликнуть */
+}
+
+/* Когда появляется */
+#typing-indicator.show {
+    opacity: 1;
+    position: relative;  /* Вставляем обратно в поток */
+    order: 9999;
 }

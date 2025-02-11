@@ -1,0 +1,122 @@
+[
+    {
+        "id": 1,
+        "type": "multiple_choice",
+        "text": "What is the capital city of France?",
+        "options": [
+            "London",
+            "Berlin",
+            "Paris",
+            "Madrid"
+        ],
+        "correct": "Paris"
+    },
+    {
+        "id": 2,
+        "type": "multiple_choice",
+        "text": "Which of the following is the largest ocean?",
+        "options": [
+            "Atlantic Ocean",
+            "Indian Ocean",
+            "Pacific Ocean",
+            "Arctic Ocean"
+        ],
+        "correct": "Pacific Ocean"
+    },
+    {
+        "id": 3,
+        "type": "fill_gaps",
+        "text": "He ___ (be) a doctor.",
+        "correct": "is"
+    },
+    {
+        "id": 4,
+        "type": "fill_gaps",
+        "text": "They ___ (go) to school every day.",
+        "correct": "go"
+    },
+    {
+        "id": 5,
+        "type": "true_false",
+        "text": "The Earth is flat.",
+        "correct": "False"
+    },
+    {
+        "id": 6,
+        "type": "true_false",
+        "text": "Water boils at 100°C.",
+        "correct": "True"
+    },
+    {
+        "id": 7,
+        "type": "reading",
+        "text": "Read the passage and answer the question: 'John loves playing basketball. He plays every weekend with his friends.' What sport does John like?",
+        "correct": "basketball"
+    },
+    {
+        "id": 8,
+        "type": "reading",
+        "text": "Read the passage and answer the question: 'Sarah enjoys reading books in the evening before going to bed.' What does Sarah do before bed?",
+        "correct": "reading books"
+    },
+    {
+        "id": 9,
+        "type": "multiple_choice",
+        "text": "Which country is known as the Land of the Rising Sun?",
+        "options": [
+            "China",
+            "Japan",
+            "India",
+            "South Korea"
+        ],
+        "correct": "Japan"
+    },
+    {
+        "id": 10,
+        "type": "multiple_choice",
+        "text": "Which of the following is not a primary color?",
+        "options": [
+            "Red",
+            "Green",
+            "Blue",
+            "Yellow"
+        ],
+        "correct": "Green"
+    },
+    {
+        "id": 11,
+        "type": "fill_gaps",
+        "text": "She ___ (have) a beautiful cat.",
+        "correct": "has"
+    },
+    {
+        "id": 12,
+        "type": "fill_gaps",
+        "text": "I ___ (not/like) spinach.",
+        "correct": "don't like"
+    },
+    {
+        "id": 13,
+        "type": "multiple_choice",
+        "text": "Which is the largest animal on Earth?",
+        "options": [
+            "Elephant",
+            "Whale",
+            "Shark",
+            "Giraffe"
+        ],
+        "correct": "Whale"
+    },
+    {
+        "id": 14,
+        "type": "multiple_choice",
+        "text": "Which of the following planets is closest to the Sun?",
+        "options": [
+            "Earth",
+            "Venus",
+            "Mercury",
+            "Mars"
+        ],
+        "correct": "Mercury"
+    }
+]

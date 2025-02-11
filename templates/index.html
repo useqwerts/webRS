@@ -69,25 +69,27 @@
 <div id="account-menu" class="account-menu" style="display: none;">
     <ul>
         <li id="personal-account-section">
-            Personal Account
+            <i class="fas fa-user-circle personal-account-icon"></i> Personal Account
             <ul class="personal-account-options">
-                <li id="change-avatar-option">Change Avatar</li>
-                <li id="change-password-option">Change Password</li>
-                <li id="my-progress-option">My Progress</li> <!-- New Item -->
+                <li id="change-avatar-option"><i class="fas fa-image change-avatar-icon"></i> Change Avatar</li>
+                <li id="change-password-option"><i class="fas fa-key change-password-icon"></i> Change Password</li>
+                <li id="my-progress-option"><i class="fas fa-chart-line my-progress-icon"></i> My Progress</li>
             </ul>
         </li>
-        <li id="sessionsButton">Sessions</li>
-        <li id="music-pack-option">Music Pack</li>
-        <li id="messages-themes-button">Themes</li>
-        <li id="my-ban-status-option">My Ban Status</li>
+        <li id="sessionsButton"><i class="fas fa-calendar-alt sessions-icon"></i> Sessions</li>
+        <li id="music-pack-option"><i class="fas fa-music music-icon"></i> Music Pack</li>
+        <li id="messages-themes-button"><i class="fas fa-palette themes-icon"></i> Themes</li>
+        <li id="my-ban-status-option"><i class="fas fa-ban ban-status-icon"></i> My Ban Status</li>
         <li id="time-option">
-            <a href="/apis/main" target="_blank">Namoz vaqtlari</a>
+            <a href="/apis/main" target="_blank"><i class="fas fa-clock time-icon"></i> Namoz vaqtlari</a>
         </li>
-		<li id="leaderboard-option">Leaderboard</li>
-        <li id="examTaskOption">Exam</li>
-        <li id="logout-option">Logout</li>
+        <li id="leaderboard-option"><i class="fas fa-trophy leaderboard-icon"></i> Leaderboard</li>
+        <li id="examTaskOption"><i class="fas fa-pencil-alt exam-icon"></i> Exam</li>
+        <li id="logout-option"><i class="fas fa-sign-out-alt logout-icon"></i> Logout</li>
     </ul>
 </div>
+
+
 
 
 <div id="examModal">
@@ -281,26 +283,16 @@
 </div>
 
 		
-        <!-- Messages section with skeleton loader -->
-        <div class="messages" id="messages">
+<div class="messages" id="messages">
     <div class="skeleton-loader" id="skeleton-loader">
-    <div class="skeleton-message">
-        <div class="skeleton-title"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
+        <div class="skeleton-message">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+        </div>
     </div>
-    <div class="skeleton-message">
-        <div class="skeleton-title"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-    </div>
-	<div class="skeleton-message">
-        <div class="skeleton-title"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-    </div>
-		</div>
-		</div>
+    <div id="typing-indicator"></div>
+</div>
 
 
 <!-- Message input form -->
@@ -356,7 +348,6 @@
 		
 		<div id="error-message" style="display:none; color:red; font-weight: bold;"></div>
 
-
         <!-- Skeleton Loading -->
         <div id="loading" class="skeleton-container">
             <div class="skeleton skeleton-percentage"></div>
@@ -366,7 +357,7 @@
             <div class="skeleton skeleton-completion"></div>
         </div>
 
-        <!-- Основной контент (скрыт до загрузки данных) -->
+        <!-- Main Content (hidden until data is loaded) -->
         <div id="progress-container" style="display: none;">
             <div id="main_information">
                 <div id="progress-percentage">My Progress: 0%</div>
@@ -379,6 +370,32 @@
                 <div id="course-completion" class="completion-style">Course Completion: 0%</div>
             </div>
         </div>
+
+<!-- Leaderboard Section -->
+<table class="leaderboard-table">
+    <thead>
+        <tr>
+            <th>#</th> <!-- Добавлен столбец для номера студента -->
+            <th>Students</th>
+            <th>Progress</th>
+        </tr>
+    </thead>
+    <tbody id="leaderboard-table-body"> 
+        <!-- Loading spinner will be inserted here -->
+        <tr>
+            <td colspan="3" class="spinner-container">
+                <div class="lds-spinner">
+                    <div></div><div></div><div></div><div></div>
+                    <div></div><div></div><div></div><div></div>
+                    <div></div><div></div><div></div><div></div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
     </div>
 </div>
 
