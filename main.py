@@ -4,13 +4,14 @@ import os
 import json
 import platform
 import time
+import requests 
 from datetime import datetime , timedelta
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 # Initialize app and socket
 app = Flask(__name__)
-app.secret_key = '15616481651'  # For session management
+app.secret_key = os.urandom(32)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'txt', 'pdf','mp3','wav'}
 socketio = SocketIO(app)
@@ -23,7 +24,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Initialize messages as an empty list, not a dictionary
 messages = []  # Store messages locally
 
-exam_duration = 1 * 60  # 30 minutes in seconds
+exam_duration = 30 * 60  # 30 minutes in seconds
 exam_start_time = None  # Global variable to store exam start time
 
 
@@ -83,6 +84,79 @@ USER_AVATAR_FILE = "users_avatar.json"
 app.config["AVATAR_FOLDER"] = AVATAR_FOLDER
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"png", "jpg", "jpeg", "gif"}
 
+EDEN_AI_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmM0MDNkMWYtMzk5Ny00MjFiLThmMDgtNWU3NWM2MjU1MWQzIiwidHlwZSI6ImFwaV90b2tlbiJ9.2gbXe9dIwFI6Omg5Wohg0PZrsV1KLdjdl_SfMs5_7sA"
+
+MAX_RETRIES = 3  # Максимальное количество попыток
+RETRY_DELAY = 5  # Задержка между попытками в секундах
+
+@app.route("/ai-chat", methods=["POST"])
+def ai_chat():
+    time.sleep(1)
+    user_input = request.json.get("text")
+
+    if not user_input:
+        return jsonify({"error": "No text provided"}), 400  # Обрабатываем случай, когда текст не был передан
+
+    headers = {
+        "Authorization": f"Bearer {EDEN_AI_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    url = "https://api.edenai.run/v2/text/spell_check"  # Используем правильную конечную точку для спеллчека
+    payload = {
+        "providers": "openai,microsoft",
+        "language": "en",
+        "text": user_input,
+    }
+
+    for attempt in range(MAX_RETRIES):
+        # Отправка запроса к Eden AI
+        response = requests.post(url, json=payload, headers=headers)
+
+        # Логируем сам ответ от API для диагностики
+        print("Response status code:", response.status_code)
+        print("Response content:", response.content)
+
+        if response.status_code == 200:
+            result = response.json()
+            # Проверяем, что в ответе есть текст от AI
+            openai_response = result.get("openai", {})
+            if openai_response and "text" in openai_response:
+                text = openai_response["text"]
+                items = openai_response.get("items", [])
+                
+                # Если есть предложения по исправлениям, добавляем их
+                corrections = []
+                for item in items:
+                    if "suggestions" in item and item["suggestions"]:
+                        word = item.get("text", "")
+                        suggestions = [sugg["suggestion"] for sugg in item["suggestions"]]
+                        if word and suggestions:
+                            correction = {
+                                "word": word,
+                                "suggestions": suggestions
+                            }
+                            corrections.append(correction)
+
+                # Формируем итоговый ответ
+                response_data = {
+                    "text": text,
+                    "corrections": corrections
+                }
+
+                return jsonify({"response": response_data})  # Возвращаем текст с исправлениями в структурированном виде
+
+            else:
+                return jsonify({"error": "No valid response from AI"}), 500
+        else:
+            print(f"Attempt {attempt + 1} failed, retrying...")
+            time.sleep(RETRY_DELAY)
+
+    # Если все попытки не удались
+    return jsonify({"error": "Provider failed after multiple attempts", "details": response.json()}), 500
+
+
+        
 if not os.path.exists(AVATAR_FOLDER):
     os.makedirs(AVATAR_FOLDER)
 
@@ -218,6 +292,31 @@ def update_student_progress(username, progress, start_date):
             progress_data[username]["start_date"] = start_date
 
     save_progress(progress_data)
+    
+@app.route('/api/update-student-progress-exam', methods=['POST'])
+def update_progress_exam():
+    data = request.json
+    username = data.get('username')
+    progress_increment = data.get('progress')  # Это не новый прогресс, а процент, который нужно добавить
+
+    if not username or progress_increment is None:
+        return jsonify({'error': 'Invalid input'}), 400
+
+    progress_data = load_progress()
+
+    # Если студент новый, создаем запись
+    if username not in progress_data:
+        progress_data[username] = {"progress": 0}
+
+    # Обновляем прогресс (старое значение + новое)
+    current_progress = float(progress_data[username]["progress"])
+    new_progress = min(100, current_progress + float(progress_increment))  # Ограничиваем 100%
+
+    progress_data[username]["progress"] = new_progress
+    save_progress(progress_data)
+
+    return jsonify({'success': True, 'message': 'Progress updated successfully', 'new_progress': new_progress})
+
     
 @socketio.on('typing')
 def handle_typing(data):
@@ -369,41 +468,128 @@ active_sessions = {}  # Track active sessions by username
 current_version = "2025-01-10-v1"
 
 exam_questions = [
-    # Listening (1-6)
-    {"id": 1, "type": "multiple_choice", "text": "The student’s name is ...", "options": ["Abdul Surimani", "Ahmed Saeed", "Ashraf Suri"], "correct": "Ahmed Saeed"},
-    {"id": 2, "type": "multiple_choice", "text": "His address is ...", "options": ["14 Spring Avenue, Leicester", "40 Spring Avenue, Lester", "40 Spring Avenue, Lemster"], "correct": "14 Spring Avenue, Leicester"},
-    {"id": 3, "type": "multiple_choice", "text": "His postcode is ...", "options": ["LE14 2JZ", "LE14 2GS", "LE14 2GZ"], "correct": "LE14 2GZ"},
-    {"id": 4, "type": "multiple_choice", "text": "He's ...", "options": ["Chinese.", "Russian.", "British."], "correct": "British."},
-    {"id": 5, "type": "multiple_choice", "text": "He goes to ...", "options": ["Newtown Secondary School.", "Newtown Secondary College.", "Newton Secondary School."], "correct": "Newtown Secondary School."},
-    {"id": 6, "type": "multiple_choice", "text": "His date of birth is ...", "options": ["2nd July 1997", "2nd June 1998", "22nd June 1998"], "correct": "2nd June 1998"},
+    {
+        "id": 1,
+        "text": "Listen and choose correct answer.",
+        "type": "listening",  # Вопрос на аудирование
+        "audio": "/static/exam/ElonMusk.mp3",  # Путь к файлу mp3, который нужно будет проигрывать на клиенте.
+        "subquestions": [
+            {
+                "id": "1.1",
+                "type": "multiple_choice",
+                "text": "Who is this?",
+                "options": ["Elon", "Elon Musk", "Tesla"],
+                "correct": "Elon Musk"
+            },
+            {
+                "id": "1.2",
+                "type": "true_false",
+                "text": "Tesla's Founder and not a CEO",
+                "correct": "False"
+            },
+            {
+            "id": "1.3",
+            "type": "question",
+            "text": "Elon is ______ ( One word only )",
+            "correct": "inventor"
+            },
+            {
+                "id": "1.4",
+                "type": "true_false",
+                "text": "Is ELon genuise human?",
+                "correct": "True"
+            },
+            {
+                "id": "1.5",
+                "type": "multiple_choice",
+                "text": "When critics say 'you can't do this' what did you answer Elon? ",
+                "options": ["We have done it", "We've did it", "None of this answers."],
+                "correct": "We have done it"
+            }
+        ]
+    },
 
-    # Reading (7-13)
-    {"id": 7, "type": "reading", "text": "Read the passage and answer the question: 'Sarah wakes up early and goes for a run in the park.'", "correct": "goes for a run"},
-    {"id": 8, "type": "reading", "text": "Read the passage and answer the question: 'David is studying for his math test in the library.'", "correct": "library"},
-    {"id": 9, "type": "reading", "text": "Read the passage and answer the question: 'Emma is baking a cake for her sister’s birthday.'", "correct": "baking a cake"},
-    {"id": 10, "type": "reading", "text": "Read the passage and answer the question: 'Mark and Tom are playing basketball at the school gym.'", "correct": "basketball"},
-    {"id": 11, "type": "reading", "text": "Read the passage and answer the question: 'Lisa is writing an email to her friend about her vacation.'", "correct": "an email"},
-    {"id": 12, "type": "reading", "text": "Read the passage and answer the question: 'Jake enjoys swimming in the lake during summer.'", "correct": "swimming"},
-    {"id": 13, "type": "reading", "text": "Read the passage and answer the question: 'Anna bought fresh vegetables from the market.'", "correct": "vegetables"},
+        {
+        "id": 2,
+        "text": "Listen and choose correct answer.",
+        "type": "listening",  # Вопрос на аудирование
+        "audio": "/static/exam/four.mp3",  # Путь к файлу mp3, который нужно будет проигрывать на клиенте.
+        "subquestions": [
+            {
+                "id": "2.1",
+                "type": "multiple_choice",
+                "text": "What do you hear?",
+                "options": ["49", "94", "iPhone", "fortnite"],
+                "correct": "fortnite"
+            }
+        ]
+    },
+{
+    "id": 6,
+    "type": "reading",
+    "text": """<h1>Traditions around the world</h1>
 
-    # Beginner Grammar (14-30)
-    {"id": 14, "type": "fill_gaps", "text": "I ___ (go) to the store yesterday.", "correct": "went"},
-    {"id": 15, "type": "fill_gaps", "text": "She ___ (like) chocolate.", "correct": "likes"},
-    {"id": 16, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["He go to school.", "He goes to school.", "He going to school."], "correct": "He goes to school."},
-    {"id": 17, "type": "multiple_choice", "text": "What ___ she do?", "options": ["do", "does", "doing"], "correct": "does"},
-    {"id": 18, "type": "true_false", "text": "They plays football every day.", "correct": "False"},
-    {"id": 19, "type": "fill_gaps", "text": "I ___ (not/like) apples.", "correct": "don't like"},
-    {"id": 20, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["She has a car.", "She have a car.", "She having a car."], "correct": "She has a car."},
-    {"id": 21, "type": "multiple_choice", "text": "___ you like this book?", "options": ["Do", "Does", "Are"], "correct": "Do"},
-    {"id": 22, "type": "unscramble", "text": "rtitla", "correct": "little"},
-    {"id": 23, "type": "unscramble", "text": "lliw", "correct": "will"},
-    {"id": 24, "type": "fill_gaps", "text": "We ___ (go) to the park tomorrow.", "correct": "are going"},
-    {"id": 25, "type": "fill_gaps", "text": "I ___ (eat) lunch right now.", "correct": "am eating"},
-    {"id": 26, "type": "true_false", "text": "She have a dog.", "correct": "False"},
-    {"id": 27, "type": "multiple_choice", "text": "Which sentence is correct?", "options": ["I is happy.", "I am happy.", "I be happy."], "correct": "I am happy."},
-    {"id": 28, "type": "multiple_choice", "text": "What time ___ she wake up?", "options": ["do", "does", "is"], "correct": "does"},
-    {"id": 29, "type": "fill_gaps", "text": "He ___ (be) my best friend.", "correct": "is"},
-    {"id": 30, "type": "fill_gaps", "text": "They ___ (have) a big house.", "correct": "have"}
+<h2>The Kukeri Festival</h2>
+<p>
+  The Kukeri Festival is one of the oldest traditions in Bulgaria. It happens every year in winter. Men wear special costumes and wear big, scary masks that look like animals. The men dance and make loud noises with bells. They do this to scare away bad spirits and bring good luck for the new year. The Kukeri Festival is very colourful and exciting. People come from around the world to see it. The festival is a big part of Bulgarian culture and helps keep old traditions alive.
+</p>
+
+<h2>The Day of the Dead</h2>
+<p>
+  The Day of the Dead is a special holiday in Mexico. It happens every year on November 1st and 2nd. People remember and honour their family members who have died. They believe that on these days, their spirits come back to visit. Families make altars with photos, flowers, candles, and food. Bread of the Dead is a popular recipe. Some people also paint their faces to look like skeletons and dress in colourful clothes. The Day of the Dead is a happy celebration, not a sad one. It is a way to celebrate life and remember the past.
+</p>
+
+<h2>La Tomatina</h2>
+<p>
+  Every year, on the last Wednesday of August, the quiet village of Buñol, Spain, becomes busy and full of people. Everyone goes out to the streets to throw tomatoes at each other. It is a big, fun food fight! The festival lasts about one hour, and everyone gets very dirty, so they all wear old clothes. Before the tomato fight, there are other activities, like parades and music. After the battle, the streets are covered in tomato juice, but they get cleaned.
+</p>
+""",
+    "subquestions": [
+        {
+            "id": "2.1",
+            "type": "question",
+            "text": "When does Tom wake up?",
+            "correct": "early in the morning"
+        },
+        {
+            "id": "2.2",
+            "type": "question",
+            "text": "What does Tom eat in the morning?",
+            "correct": "breakfast"
+        },
+        {
+            "id": "2.3",
+            "type": "question",
+            "text": "Where does Tom go after breakfast?",
+            "correct": "to school"
+        },
+        {
+            "id": "2.4",
+            "type": "question",
+            "text": "What does Tom do after school?",
+            "correct": "plays football"
+        },
+        {
+            "id": "2.5",
+            "type": "question",
+            "text": "Who does Tom play football with?",
+            "correct": "his friends"
+        },
+        {
+            "id": "2.6",
+            "type": "true_false",
+            "text": "What sport does Tom play?",
+            "correct": "False"
+        }
+    ]
+},
+    {
+        "id": 3,
+        "type": "multiple_choice",
+        "text": "If today is Wednesday, what day will it be in 10 days?",
+        "options": ["Saturday", "Sunday", "Monday"],
+        "correct": "Monday"
+    }
 ]
 
 # Путь к файлу с балансами
@@ -716,47 +902,86 @@ def submit_exam():
         skipped = 0
         results = []
 
+        # Обработка вопросов и под-вопросов
         for question in exam_questions:
-            if 'id' not in question:
-                app.logger.error(f"Missing 'id' in question: {question}")
-                continue
+            # Если есть под-вопросы, обрабатываем их отдельно
+            if "subquestions" in question:
+                for subq in question["subquestions"]:
+                    subq_id = f"q{subq['id']}"
+                    answer = answers.get(subq_id)
+                    if not answer or answer.strip() == "":
+                        skipped += 1
+                        results.append({
+                            "question_type": subq["type"],
+                            "question_id": subq["id"],
+                            "question": subq["text"],
+                            "user_answer": answer,
+                            "correct_answer": subq["correct"],
+                            "is_correct": False
+                        })
+                        continue
 
-            question_id = f"q{question['id']}"
-            answer = answers.get(question_id)
+                    # Проверка ответа для всех типов без учёта регистра
+                    is_correct = answer.strip().lower() == subq["correct"].strip().lower()
 
-            if not answer or answer.strip() == "":
-                skipped += 1
-                continue
+                    if is_correct:
+                        correct += 1
+                    else:
+                        incorrect += 1
 
-            if question["type"] in ["true_false", "multiple_choice"]:
-                if answer.strip() == question["correct"]:
+                    results.append({
+                        "question_type": subq["type"],
+                        "question_id": subq["id"],
+                        "question": subq["text"],
+                        "user_answer": answer,
+                        "correct_answer": subq["correct"],
+                        "is_correct": is_correct
+                    })
+            else:
+                # Обработка обычных вопросов
+                if 'id' not in question:
+                    app.logger.error(f"Missing 'id' in question: {question}")
+                    continue
+
+                question_id = f"q{question['id']}"
+                answer = answers.get(question_id)
+
+                if not answer or answer.strip() == "":
+                    skipped += 1
+                    results.append({
+                        "question_type": question["type"],
+                        "question_id": question["id"],
+                        "question": question["text"],
+                        "user_answer": answer,
+                        "correct_answer": question["correct"],
+                        "is_correct": False
+                    })
+                    continue
+
+                # Проверка ответа без учёта регистра
+                is_correct = answer.strip().lower() == question["correct"].strip().lower()
+
+                if is_correct:
                     correct += 1
                 else:
                     incorrect += 1
-            elif question["type"] in ["fill_gaps", "unscramble"]:
-                if answer.strip().lower() == question["correct"].lower():
-                    correct += 1
-                else:
-                    incorrect += 1
-            elif question["type"] in ["reading", "listening"]:
-                if answer.strip().lower() == question["correct"].strip().lower():
-                    correct += 1
-                else:
-                    incorrect += 1
 
-            results.append({
-                "question_type": question["type"],
-                "question_id": question["id"],
-                "question": question["text"],
-                "user_answer": answer,
-                "correct_answer": question["correct"],
-                "is_correct": answer.strip().lower() == question["correct"].strip().lower()
-            })
+                results.append({
+                    "question_type": question["type"],
+                    "question_id": question["id"],
+                    "question": question["text"],
+                    "user_answer": answer,
+                    "correct_answer": question["correct"],
+                    "is_correct": is_correct
+                })
 
-        total_questions = len(exam_questions)
+        total_questions = sum(
+            1 + len(question["subquestions"]) if "subquestions" in question else 1
+            for question in exam_questions
+        )
         correct_percentage = (correct / total_questions) * 100 if total_questions > 0 else 0
 
-        coins = 10 if correct_percentage >= 80 else 0 
+        coins = 15 if correct_percentage >= 80 else 0 
 
         exam_passed.append(username)
 
@@ -771,7 +996,7 @@ def submit_exam():
             "incorrect": incorrect,
             "skipped": skipped,
             "total_questions": total_questions,
-            "correct_percentage": correct_percentage,  # Добавлен correct_percentage
+            "correct_percentage": correct_percentage,
             "rewarded": coins > 0,
             "coins": coins,
             "results": results
@@ -785,7 +1010,7 @@ def submit_exam():
             "incorrect": incorrect,
             "skipped": skipped,
             "total_questions": total_questions,
-            "correct_percentage": correct_percentage,  # Возвращаем correct_percentage
+            "correct_percentage": correct_percentage,
             "rewarded": coins > 0,
             "coins": coins
         })
@@ -884,6 +1109,7 @@ def chat():
     if 'username' not in session:
         return redirect(url_for('login'))
     return render_template('index.html', username=session.get('username', ''))
+    
 
 @app.route('/logout', methods=['POST'])
 def logout():

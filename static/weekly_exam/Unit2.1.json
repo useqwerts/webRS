@@ -2,121 +2,157 @@
     {
         "id": 1,
         "type": "multiple_choice",
-        "text": "What is the capital city of France?",
+        "text": "What is the correct form of the verb in Present Continuous? 'She ___ (read) a book now.'",
         "options": [
-            "London",
-            "Berlin",
-            "Paris",
-            "Madrid"
+            "reads",
+            "is reading",
+            "read",
+            "reading"
         ],
-        "correct": "Paris"
+        "correct": "is reading"
     },
     {
         "id": 2,
         "type": "multiple_choice",
-        "text": "Which of the following is the largest ocean?",
+        "text": "Which sentence is in Present Continuous?",
         "options": [
-            "Atlantic Ocean",
-            "Indian Ocean",
-            "Pacific Ocean",
-            "Arctic Ocean"
+            "They go to school every day.",
+            "They went to school yesterday.",
+            "They are going to school now.",
+            "They have gone to school."
         ],
-        "correct": "Pacific Ocean"
+        "correct": "They are going to school now."
     },
     {
         "id": 3,
         "type": "fill_gaps",
-        "text": "He ___ (be) a doctor.",
-        "correct": "is"
+        "text": "Look! The children ___ (play) in the park.",
+        "correct": "are playing"
     },
     {
         "id": 4,
         "type": "fill_gaps",
-        "text": "They ___ (go) to school every day.",
-        "correct": "go"
+        "text": "Listen! Someone ___ (sing) in the next room.",
+        "correct": "is singing"
     },
     {
         "id": 5,
         "type": "true_false",
-        "text": "The Earth is flat.",
-        "correct": "False"
+        "text": "The sentence 'She is cooking dinner at the moment.' is in Present Continuous.",
+        "correct": "True"
     },
     {
         "id": 6,
         "type": "true_false",
-        "text": "Water boils at 100°C.",
-        "correct": "True"
+        "text": "The sentence 'He writes a letter now.' is in Present Continuous.",
+        "correct": "False"
     },
     {
         "id": 7,
-        "type": "reading",
-        "text": "Read the passage and answer the question: 'John loves playing basketball. He plays every weekend with his friends.' What sport does John like?",
-        "correct": "basketball"
+        "type": "multiple_choice",
+        "text": "Which question is in Present Continuous?",
+        "options": [
+            "What do you do?",
+            "What are you doing?",
+            "What did you do?",
+            "What have you done?"
+        ],
+        "correct": "What are you doing?"
     },
     {
         "id": 8,
-        "type": "reading",
-        "text": "Read the passage and answer the question: 'Sarah enjoys reading books in the evening before going to bed.' What does Sarah do before bed?",
-        "correct": "reading books"
+        "type": "multiple_choice",
+        "text": "Choose the correct sentence:",
+        "options": [
+            "He playing football.",
+            "He is play football.",
+            "He is playing football.",
+            "He plays football now."
+        ],
+        "correct": "He is playing football."
     },
     {
         "id": 9,
-        "type": "multiple_choice",
-        "text": "Which country is known as the Land of the Rising Sun?",
-        "options": [
-            "China",
-            "Japan",
-            "India",
-            "South Korea"
-        ],
-        "correct": "Japan"
+        "type": "fill_gaps",
+        "text": "They ___ (not/watch) TV right now.",
+        "correct": "are not watching"
     },
     {
         "id": 10,
-        "type": "multiple_choice",
-        "text": "Which of the following is not a primary color?",
-        "options": [
-            "Red",
-            "Green",
-            "Blue",
-            "Yellow"
-        ],
-        "correct": "Green"
+        "type": "fill_gaps",
+        "text": "She ___ (not/write) an email at the moment.",
+        "correct": "is not writing"
     },
     {
         "id": 11,
-        "type": "fill_gaps",
-        "text": "She ___ (have) a beautiful cat.",
-        "correct": "has"
+        "type": "question",
+        "text": "Make a positive sentence in Present Continuous: 'I / work / on a project now.'",
+        "correct": "I am working on a project now."
     },
     {
         "id": 12,
-        "type": "fill_gaps",
-        "text": "I ___ (not/like) spinach.",
-        "correct": "don't like"
+        "type": "question",
+        "text": "Make a negative sentence in Present Continuous: 'He / watch / TV / now.'",
+        "correct": "He is not watching TV now."
     },
     {
         "id": 13,
-        "type": "multiple_choice",
-        "text": "Which is the largest animal on Earth?",
-        "options": [
-            "Elephant",
-            "Whale",
-            "Shark",
-            "Giraffe"
-        ],
-        "correct": "Whale"
+        "type": "question",
+        "text": "Make a question in Present Continuous: 'they / study / for the exam?'",
+        "correct": "Are they studying for the exam?"
     },
     {
         "id": 14,
         "type": "multiple_choice",
-        "text": "Which of the following planets is closest to the Sun?",
+        "text": "What is the correct question form? '___ you listening to me?'",
         "options": [
-            "Earth",
-            "Venus",
-            "Mercury",
-            "Mars"
+            "Do",
+            "Are",
+            "Does",
+            "Is"
         ],
-        "correct": "Mercury"
+        "correct": "Are"
+    },
+    {
+        "id": 15,
+        "type": "multiple_choice",
+        "text": "Which sentence is correct?",
+        "options": [
+            "She are cooking dinner.",
+            "She is cooking dinner.",
+            "She cooking dinner.",
+            "She cooks dinner now."
+        ],
+        "correct": "She is cooking dinner."
+    },
+    {
+        "id": 16,
+        "type": "true_false",
+        "text": "The sentence 'They are playing soccer right now.' is in Present Continuous.",
+        "correct": "True"
+    },
+    {
+        "id": 17,
+        "type": "fill_gaps",
+        "text": "Right now, we ___ (have) lunch at a restaurant.",
+        "correct": "are having"
+    },
+    {
+        "id": 18,
+        "type": "fill_gaps",
+        "text": "Why ___ you ___ (cry)?",
+        "correct": "are crying"
+    },
+    {
+        "id": 19,
+        "type": "question",
+        "text": "Make a question in Present Continuous: 'she / work / today?'",
+        "correct": "Is she working today?"
+    },
+    {
+        "id": 20,
+        "type": "question",
+        "text": "Make a negative sentence in Present Continuous: 'They / not / play / outside.'",
+        "correct": "They are not playing outside."
     }
 ]

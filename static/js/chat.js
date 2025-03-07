@@ -1,4 +1,5 @@
 let Unit = '';
+let Week = '';
 let currentVersion = ''; // Переменная для текущей версии
 const currentUser = sessionStorage.getItem('username');
 
@@ -728,8 +729,8 @@ changePasswordOption.addEventListener("click", () => {
 });
 
 let messageTimestamps = []; // Массив для хранения времени отправки сообщений
-const maxMessages = 2; // Максимальное количество сообщений за промежуток времени
-const timeFrame = 4000; // Промежуток времени в миллисекундах (5 секунд)
+const maxMessages = 3; // Максимальное количество сообщений за промежуток времени
+const timeFrame = 9000; // Промежуток времени в миллисекундах (5 секунд)
 const cooldownTime = 30; // Время блокировки в секундах
 const blockScreen = document.getElementById("block-screen");
 const timerElement = document.getElementById("timer");
@@ -777,12 +778,16 @@ const backgroundMusic = new Audio('/static/music/DeepSleep.mp3');
     }
 
 
+let isBlockedyet = false; // Флаг, показывающий, что блокировка активна
+
 function blockUser(duration) {
-	// Блокируем взаимодействие с элементами страницы
+    if (isBlockedyet) return; // Если пользователь уже заблокирован, не запускаем блокировку повторно
+
+    // Блокируем взаимодействие с элементами страницы
     document.body.style.pointerEvents = 'none';
-	playSpecialMusic(); // Запускаем музыку
-	disableMessageInput(); // Блокируем ввод сообщений
-    isBlocked = true;
+    //playSpecialMusic(); // Запускаем музыку
+    disableMessageInput(); // Блокируем ввод сообщений
+    isBlockedyet = true;
     const blockEndTime = Date.now() + duration * 1000;
 
     // Сохраняем время окончания блокировки в localStorage
@@ -805,6 +810,8 @@ function blockUser(duration) {
         if (timeLeft <= 0) {
             clearInterval(interval);
             unblockUser(); // Разблокировка
+            isBlockedyet = false; // Сбрасываем флаг блокировки после окончания
+            localStorage.removeItem("blockEndTime"); // Очистка localStorage
         }
     }, 1000);
 }
@@ -812,7 +819,7 @@ function blockUser(duration) {
 // Форматирование времени в MM:SS
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60); // Округляем секунды до целых чисел
+    const secs = Math.floor(seconds % 60);
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
@@ -833,6 +840,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Функция для разблокировки пользователя
 function unblockUser() {
+	isBlockedyet = false;
 	document.body.style.pointerEvents = 'auto';
 	stopSpecialMusic();
 	enableMessageInput();
@@ -1761,180 +1769,382 @@ function initExamSecurity(enable = true) {
     }
 }
 
-document.getElementById('examTaskOption').addEventListener('click', function() {
+function toggleRulesModal(action) {
+    const rulesModal = document.getElementById('rulesModal');
 
-    const examContainer = document.getElementById('examQuestions');
-    const examHeader = document.getElementById('examTitle');
-    const finishExamButton = document.getElementById('finishExam');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const examTimerDisplay = document.getElementById('exam-timer');
+    if (action === 'open') {
+        rulesModal.style.display = 'flex';
+    } else if (action === 'close') {
+        rulesModal.style.display = 'none';
+    }
+}
 
-    examHeader.style.display = 'none';
-    finishExamButton.style.display = 'none';
-    examTimerDisplay.style.display = 'none';
-    loadingSpinner.style.display = 'block';
+// Привязываем функции к кнопкам
+document.getElementById('closeRulesModal').addEventListener('click', () => toggleRulesModal('close'));
+document.getElementById('continueExamBtn').addEventListener('click', () => {
+    document.getElementById('rulesModal').style.display = 'none';
+});
 
-    document.getElementById('examModal').style.display = 'flex';
-    loadingSpinner.style.display = 'inline-block';
-    examContainer.innerHTML = '';
-    enableFinishButton();
-    const url = `/get_exam_questions?username=${currentUser}`;
+document.getElementById('closeExamModal').addEventListener('click', function() {
+    document.getElementById('examModal').style.display = 'none';
+});
 
-    fetch(url)
-    .then(response => {
-        console.log("Response Status:", response.status);
-        if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(errorData.error || 'Unknown error');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.error) {
-            handleError(data.error);
-            loadingSpinner.style.display = 'none';
-            return;
-        }
+// Закрытие при клике вне модального окна
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('rulesModal')) {
+        toggleRulesModal('close');
+    }
+});
 
-        loadingSpinner.style.display = 'none';
-        examHeader.style.display = 'block';
-        finishExamButton.style.display = 'block';
-        examTimerDisplay.style.display = 'block';
+// Обработчик для клика по опции экзамена
+document.getElementById('examTaskOption').addEventListener('click', async function () {
+  // Получаем необходимые элементы
+  toggleRulesModal('open');
+  const examModal = document.getElementById('examModal');
+  const examContainer = document.getElementById('examQuestions');
+  const examHeader = document.getElementById('examTitle');
+  const finishExamButton = document.getElementById('finishExam');
+  const examTimerDisplay = document.getElementById('exam-timer');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const loadingFinishExam = document.getElementById('loadingFinishExam');
 
-        data.questions.forEach((question, index) => {
-            let instruction = "";
+  // Настраиваем видимость элементов
+  examHeader.style.display = 'none';
+  finishExamButton.style.display = 'none';
+  examTimerDisplay.style.display = 'none';
+  loadingSpinner.style.display = 'block';
 
-            switch (question.type) {
-                case "true_false":
-                    instruction = `<p> <i class="fas fa-exclamation-circle"></i> Choose True or False.</p>`;
-                    break;
-                case "multiple_choice":
-                    instruction = `<p> <i class="fas fa-check-circle"></i> Select the correct answer.</p>`;
-                    break;
-                case "fill_gaps":
-                    instruction = `<p> <i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
-                    break;
-                case "unscramble":
-                    instruction = `<p> <i class="fas fa-random"></i> Unscramble the word.</p>`;
-                    break;
-                case "reading":
-                    instruction = `<p> <i class="fas fa-book"></i> Read the passage and answer.</p>`;
-                    break;
-                case "listening":
-                    instruction = `<p> <i class="fas fa-headphones"></i> Listen to the audio and write the missing word.</p>`;
-                    break;
-            }
+  examModal.style.display = 'flex';
+  examContainer.innerHTML = '';
+  enableFinishButton();
 
-            let questionHtml = `<p>${index + 1}. ${question.text}</p>${instruction}`;
+  const url = `/get_exam_questions?username=${currentUser}`;
 
-            if (question.type === 'true_false') {
-                questionHtml += `
-                    <input type="radio" name="q${index}" value="True" id="true${index}">
-                    <label for="true${index}">True</label>
-                    <input type="radio" name="q${index}" value="False" id="false${index}">
-                    <label for="false${index}">False</label>
-                `;
-            } else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
-                question.options.forEach(option => {
-                    const optionId = `${option.replace(/\s+/g, '')}${index}`;
-                    questionHtml += `<input type="radio" name="q${index}" value="${option}" id="${optionId}">
-                                      <label for="${optionId}">${option}</label>`;
-                });
-            } else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(question.type)) {
-                questionHtml += `<input type="text" name="q${index}" autocomplete="off" spellcheck="false">`;
-            }
+  try {
+    const response = await fetch(url);
+    console.log("Response Status:", response.status);
+    const data = await (response.ok ? response.json() : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
+    if (data.error) {
+      handleError(data.error);
+      loadingSpinner.style.display = 'none';
+      return;
+    }
 
-            examContainer.innerHTML += `<div class="exam-question exam-${question.type}">${questionHtml}</div>`;
+    // Показываем элементы после загрузки
+    loadingSpinner.style.display = 'none';
+    examHeader.style.display = 'block';
+    finishExamButton.style.display = 'block';
+    examTimerDisplay.style.display = 'block';
+    // Temporary turned off // initExamSecurity(true);
+
+    // Получаем шаблон вопроса
+    const questionTemplate = document.getElementById('questionTemplate');
+    let questionCounter = 0;
+
+    data.questions.forEach((question) => {
+      // Если у вопроса есть под-вопросы – создаем контейнер для "parent" (например, Passage)
+if (question.type === 'listening') {
+  // Создаем контейнер parent для Listening вопроса
+  const parentContainer = document.createElement('div');
+  parentContainer.className = 'exam-parent-question';
+  // Если есть текст вопроса, выводим его как заголовок
+  if (question.text) {
+    parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+  }
+  // Добавляем кастомный аудиоплеер (динамически)
+  parentContainer.innerHTML += `
+    <div class="custom-audio-player">
+      <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
+      <button class="custom-play-btn"><i class="fas fa-play"></i></button>
+      <span class="custom-time-display">0:00 / 0:00</span>
+    </div>
+  `;
+
+  // Сначала добавляем родительский контейнер в examContainer
+  examContainer.appendChild(parentContainer);
+
+  // Затем, если есть под-вопросы – добавляем их внутрь parentContainer
+  if (question.subquestions && Array.isArray(question.subquestions)) {
+    question.subquestions.forEach((subq) => {
+      questionCounter++;
+      const instruction = getInstructionForType(subq.type);
+      const questionNode = document.importNode(questionTemplate.content, true);
+      questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+      questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+      let optionsContainer = questionNode.querySelector('.question-options');
+      if (subq.type === 'true_false') {
+        optionsContainer.innerHTML = `
+          <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+          <label for="true${subq.id}">True</label>
+          <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+          <label for="false${subq.id}">False</label>
+        `;
+      } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+        subq.options.forEach(option => {
+          const optionId = `${option.replace(/\s+/g, '')}${subq.id}`;
+          optionsContainer.innerHTML += `
+            <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+            <label for="${optionId}">${option}</label>
+          `;
         });
-
-        return fetch('/get_remaining_time');
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(errorData.error || 'Unknown error');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.remaining_time) {
-            let remainingTime = data.remaining_time * 1000;
-
-            function updateTimer() {
-                if (remainingTime <= 0) {
-                    finishExam();
-                    return;
-                }
-                let minutes = Math.floor(remainingTime / 60000);
-                let seconds = Math.floor((remainingTime % 60000) / 1000);
-                examTimerDisplay.innerHTML = `<i class="fas fa-clock"></i> ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-                remainingTime -= 1000;
-            }
-
-            let timerInterval = setInterval(updateTimer, 1000);
-
-            function finishExam() {
-				loadingFinishExam.style.display = 'flex';
-                clearInterval(timerInterval); // Останавливаем таймер
-                showToastNotification('Time is up! The exam will be automatically finished.');
-                finishExamButton.click();
-            }
-
-            finishExamButton.addEventListener('click', function() {
-                if (remainingTime > 0) {
-					const loadingFinishExam = document.getElementById('loadingFinishExam');
-					loadingFinishExam.style.display = 'flex';
-                    showSubmitConfirmation();
-                } else {
-                    clearInterval(timerInterval); // Останавливаем таймер при ручной отправке
-                    submitExamResults();
-                }
-            });
-
-            function showSubmitConfirmation() {
-                const modal = document.createElement('div');
-                modal.className = 'leaderboard-modal';
-                modal.innerHTML = `
-                    <div class="leaderboard-content">
-                        <h2><i class="fas fa-exclamation-triangle"></i> Confirm Submission</h2>
-                        <p>You are about to submit your exam. This action is irreversible. Please review your answers carefully.</p>
-                        <button id="confirmSubmit" class="submit-button">
-                            <span class="text-skeleton" data-text="Submit Exam">Submit Exam</span>
-                        </button>
-                        <button id="cancelSubmit" class="cancel-button">Cancel</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-
-                const confirmButton = document.getElementById('confirmSubmit');
-
-                confirmButton.addEventListener('click', function() {
-                    clearInterval(timerInterval); // Останавливаем таймер перед отправкой
-                    submitExamResults();
-                    setTimeout(() => modal.remove(), 0700);
-					const loadingFinishExam = document.getElementById('loadingFinishExam');
-					loadingFinishExam.style.display = 'flex';
-                });
-
-                document.getElementById('cancelSubmit').addEventListener('click', function() {
-					document.getElementById('loadingFinishExam').style.display = 'none'; // Hide loading animation
-                    modal.remove();
-                });
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error.message);
-        handleError(error.message);
-        loadingSpinner.style.display = 'none';
+      } else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
+        optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+      }
+      questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
+      parentContainer.appendChild(questionNode);
     });
+  }
+}
+ else if (question.subquestions && Array.isArray(question.subquestions)) {
+        // Для остальных вопросов с под-вопросами (например, Reading)
+        if (question.text) {
+          const parentContainer = document.createElement('div');
+          parentContainer.className = 'exam-parent-question';
+          parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+          examContainer.appendChild(parentContainer);
+        }
+        question.subquestions.forEach((subq) => {
+          questionCounter++;
+          const instruction = getInstructionForType(subq.type);
+          const questionNode = document.importNode(questionTemplate.content, true);
+          questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+          questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+          let optionsContainer = questionNode.querySelector('.question-options');
+          if (subq.type === 'true_false') {
+            optionsContainer.innerHTML = `
+              <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+              <label for="true${subq.id}">True</label>
+              <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+              <label for="false${subq.id}">False</label>
+            `;
+          } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+            subq.options.forEach(option => {
+              const optionId = `${option.replace(/\s+/g, '')}${subq.id}`;
+              optionsContainer.innerHTML += `
+                <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                <label for="${optionId}">${option}</label>
+              `;
+            });
+          } else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
+            optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+          }
+          questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
+          examContainer.appendChild(questionNode);
+        });
+      } else {
+        // Обычный вопрос (без под-вопросов)
+        questionCounter++;
+        const instruction = getInstructionForType(question.type);
+        const questionNode = document.importNode(questionTemplate.content, true);
+        const qId = question.id ? question.id : questionCounter;
+        questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
+        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+        let optionsContainer = questionNode.querySelector('.question-options');
+        if (question.type === 'true_false') {
+          optionsContainer.innerHTML = `
+            <input type="radio" name="q${qId}" value="True" id="true${qId}">
+            <label for="true${qId}">True</label>
+            <input type="radio" name="q${qId}" value="False" id="false${qId}">
+            <label for="false${qId}">False</label>
+          `;
+        } else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
+          question.options.forEach(option => {
+            const optionId = `${option.replace(/\s+/g, '')}${qId}`;
+            optionsContainer.innerHTML += `
+              <input type="radio" name="q${qId}" value="${option}" id="${optionId}">
+              <label for="${optionId}">${option}</label>
+            `;
+          });
+        } else if (['fill_gaps', 'unscramble', 'reading'].includes(question.type)) {
+          optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
+        }
+        questionNode.querySelector('.exam-question').dataset.questionId = qId;
+        examContainer.appendChild(questionNode);
+      }
+    });
+
+    // Функция для получения инструкции по типу
+    function getInstructionForType(type) {
+      switch (type) {
+        case "true_false":
+          return `<p><i class="fas fa-exclamation-circle"></i> Choose True or False.</p>`;
+        case "multiple_choice":
+          return `<p><i class="fas fa-check-circle"></i> Select the correct answer.</p>`;
+        case "fill_gaps":
+          return `<p><i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
+        case "unscramble":
+          return `<p><i class="fas fa-random"></i> Unscramble the letters.</p>`;
+        case "reading":
+          return `<p><i class="fas fa-book"></i> Read the text and answer the question.</p>`;
+        case "listening":
+          return `<p><i class="fas fa-headphones"></i> Listen to the audio and enter the missing word.</p>`;
+        case "question":
+          return `<p><i class="fas fa-question-circle"></i> Answer the question below.</p>`;
+        default:
+          return "";
+      }
+    }
+
+    // Обработка оставшегося времени экзамена
+    const timeResponse = await fetch('/get_remaining_time');
+    const timeData = await (timeResponse.ok ? timeResponse.json() : timeResponse.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
+    if (timeData.remaining_time) {
+      let remainingTime = timeData.remaining_time * 1000; // convert to ms
+
+      function updateTimer() {
+        if (remainingTime <= 0) {
+          finishExam();
+          return;
+        }
+        const minutes = Math.floor(remainingTime / 60000);
+        const seconds = Math.floor((remainingTime % 60000) / 1000);
+        examTimerDisplay.innerHTML = `<i class="fas fa-clock"></i> ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        if (remainingTime <= 180000) {
+          examTimerDisplay.style.background = 'rgba(255, 0, 0, 0.2)';
+          examTimerDisplay.style.border = '1px solid #ff4d4d';
+          examTimerDisplay.style.color = '#ff4d4d';
+        } else {
+          examTimerDisplay.style.background = 'rgba(0, 167, 255, 0.2)';
+          examTimerDisplay.style.border = '1px solid #45b8ff';
+          examTimerDisplay.style.color = 'white';
+        }
+        remainingTime -= 1000;
+      }
+
+      const timerInterval = setInterval(updateTimer, 1000);
+
+      function finishExam() {
+        loadingFinishExam.style.display = 'flex';
+        clearInterval(timerInterval);
+        showToastNotification('Time is up! The exam will be automatically submitted.');
+        finishExamButton.click();
+      }
+
+      finishExamButton.addEventListener('click', function () {
+        if (remainingTime > 0) {
+          loadingFinishExam.style.display = 'flex';
+          showSubmitConfirmation();
+        } else {
+          clearInterval(timerInterval);
+          submitExamResults();
+        }
+      });
+
+      function showSubmitConfirmation() {
+        const modal = document.createElement('div');
+        modal.className = 'leaderboard-modal';
+        modal.innerHTML = `
+          <div class="leaderboard-content">
+            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Submission</h2>
+            <p>You are about to submit your exam. This action cannot be undone. Please review your answers.</p>
+            <button id="confirmSubmit" class="submit-button">
+              <span class="text-skeleton" data-text="Submit Exam">Submit Exam</span>
+            </button>
+            <button id="cancelSubmit" class="cancel-button">Cancel</button>
+          </div>
+        `;
+        document.body.appendChild(modal);
+        document.getElementById('confirmSubmit').addEventListener('click', function () {
+          clearInterval(timerInterval);
+          submitExamResults();
+          setTimeout(() => modal.remove(), 700);
+          loadingFinishExam.style.display = 'flex';
+        });
+        document.getElementById('cancelSubmit').addEventListener('click', function () {
+          loadingFinishExam.style.display = 'none';
+          modal.remove();
+        });
+      }
+    }
+
+    // После вставки всех вопросов, инициализируем кастомные аудиоплееры (без Wavesurfer.js)
+    initAllWavePlayers();
+  } catch (error) {
+    console.error('Error:', error.message);
+    handleError(error.message);
+    loadingSpinner.style.display = 'none';
+  }
 });
 
 
+// Функция форматирования времени (mm:ss)
+function formatTime(time) {
+  if (isNaN(time)) return "0:00";
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+}
+
+// Инициализация всех кастомных аудиоплееров (без Wavesurfer.js)
+function initAllWavePlayers() {
+  const waveContainers = document.querySelectorAll('.custom-audio-waves');
+  waveContainers.forEach(container => {
+    const audioSrc = container.getAttribute('data-audio-src');
+    if (!audioSrc) return;
+    // Создаем элемент <audio> и скрываем его стандартные контролы
+    const audioEl = document.createElement('audio');
+    audioEl.src = audioSrc;
+    audioEl.controls = false;
+    container.appendChild(audioEl);
+
+    const playBtn = container.parentElement.querySelector('.custom-play-btn');
+    const timeDisplay = container.parentElement.querySelector('.custom-time-display');
+
+    playBtn.addEventListener('click', () => {
+      if (audioEl.paused) {
+        audioEl.play();
+        playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
+      } else {
+        audioEl.pause();
+        playBtn.innerHTML = `<i class="fas fa-play"></i>`;
+      }
+    });
+    
+    // При буферизации показываем спиннер
+    audioEl.addEventListener('waiting', () => {
+      playBtn.innerHTML = '<div class="lds-ring"><div></div><div></div><div></div></div>';
+    });
+    
+    // Когда аудио начинает воспроизводиться, возвращаем значок паузы
+    audioEl.addEventListener('playing', () => {
+      playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
+    });
+    
+    // Альтернативно, можно использовать canplay для восстановления значка
+    audioEl.addEventListener('canplay', () => {
+      // Если аудио уже играет, показать значок паузы
+      if (!audioEl.paused) {
+        playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
+      }
+    });
+
+    audioEl.addEventListener('timeupdate', () => {
+      const progressPercent = (audioEl.currentTime / audioEl.duration) * 100 || 0;
+      // Обновляем фон контейнера для имитации прогресса
+      container.style.backgroundSize = `${progressPercent}% 100%`;
+      timeDisplay.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
+    });
+
+    audioEl.addEventListener('loadedmetadata', () => {
+      timeDisplay.textContent = `0:00 / ${formatTime(audioEl.duration)}`;
+    });
+
+    container.addEventListener('click', function (e) {
+      if (e.target.closest('.custom-play-btn')) return;
+      const rect = container.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const newTime = (clickX / rect.width) * audioEl.duration;
+      audioEl.currentTime = newTime;
+    });
+  });
+}
+
+
+// Function to fetch exam questions (result)
 function fetchExamQuestions() {
-    // Fetch exam questions from the server
     return fetch('/get_exam_questions_result')
         .then(response => response.json())
         .then(result => {
@@ -1943,209 +2153,423 @@ function fetchExamQuestions() {
                 showToastNotification(result.error);
                 return null;
             }
-            return result.questions; // Return the questions
+            return result.questions;
         })
         .catch(error => {
-            console.error('Error fetching exam questions:', error);
+            console.error('Error fetching questions:', error);
             showToastNotification('Failed to fetch questions. Please try again.');
             return null;
         });
 }
 
-function submitExamResults() {
-    const answers = {};
-    const examResultsHtml = [];
-
-    // Fetch the questions before submitting the answers
-    fetchExamQuestions().then(examQuestions => {
-        if (!examQuestions) {
-            return; // If questions are not available, return
-        }
-
-        // Collect the answers from the user
-        document.querySelectorAll('.exam-question').forEach((question, index) => {
-            const selectedOption = question.querySelector('input:checked') || question.querySelector('input[type="text"]');
-            if (selectedOption && selectedOption.value) {
-                answers[`q${index + 1}`] = selectedOption.value;
-            }
-        });
-
-		/*
-        if (Object.keys(answers).length === 0) {
-            showToastNotification("Please answer all questions before finishing the exam.");
-            document.getElementById('loadingFinishExam').style.display = 'none'; // Hide loading animation in case of error
-            document.getElementById('finishExam').disabled = false; // Re-enable the button
-            return;
-        }*/
-
-        // Send answers to the server
-        fetch('/submit_exam', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: currentUser, answers: answers })
-        })
-        .then(response => response.json())
-        .then(result => {
-            document.getElementById('loadingFinishExam').style.display = 'none'; // Hide loading animation
-            document.getElementById('finishExam').disabled = false; // Re-enable the button
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-
-            if (result.error) {
-                showToastNotification(`Error: ${result.error}`);
-                return;
-            }
-
-			initExamSecurity(false);
-            // Display the correct, incorrect, and skipped answers
-            document.getElementById('correctAnswers').textContent = result.correct;
-            document.getElementById('incorrectAnswers').textContent = result.incorrect;
-            document.getElementById('skippedAnswers').textContent = result.skipped;
-			document.getElementById('coinsReward').style.display = 'none';
-			document.getElementById('coinCount').textContent = '';
-
-            let totalQuestions = result.correct + result.incorrect + result.skipped;
-            let percentage = totalQuestions > 0 ? (result.correct / totalQuestions) * 100 : 0;
-            document.getElementById('progressBar').style.width = `${percentage}%`;
-            document.getElementById('progressText').textContent = `${Math.round(percentage)}%`;
-
-			let motivationText = "Keep pushing forward!";
-        if (percentage >= 80) {
-            document.getElementById('coinsReward').style.display = 'flex';
-            document.getElementById('coinCount').textContent = '10';
-            addCoins(currentUser, 10);
-            motivationText = "Great job! You achieved 80% or higher! 🎉";
-        } else if (percentage >= 50) {
-            motivationText = "You're doing well! Aim for 80% next time!";
-        } 	else {
-            motivationText = "Don't give up! Keep practicing!";
-			}
-			document.getElementById('examMotivation').textContent = motivationText;
-		
-            // Create the results HTML if questions exist in result
-            examQuestions.forEach((question, index) => {
-                let instruction = '';
-                switch (question.type) {
-                    case 'true_false':
-                        instruction = `<p> <i class="fas fa-exclamation-circle"></i> Choose True or False.</p>`;
-                        break;
-                    case 'multiple_choice':
-                        instruction = `<p> <i class="fas fa-check-circle"></i> Select the correct answer.</p>`;
-                        break;
-                    case 'fill_gaps':
-                        instruction = `<p> <i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
-                        break;
-                    case 'unscramble':
-                        instruction = `<p> <i class="fas fa-random"></i> Unscramble the word.</p>`;
-                        break;
-                    case 'reading':
-                        instruction = `<p> <i class="fas fa-book"></i> Read the passage and answer.</p>`;
-                        break;
-                    case 'listening':
-                        instruction = `<p> <i class="fas fa-headphones"></i> Listen to the audio and write the missing word.</p>`;
-                        break;
-                }
-
-                let questionHtml = `<p>${index + 1}. ${question.text}</p>${instruction}`;
-
-                // Display the user's selected answer and whether it was correct
-                const userAnswer = answers[`q${index + 1}`];
-                let isCorrect = userAnswer === question.correct;
-                let resultClass = isCorrect ? 'correct' : 'incorrect';
-
-                if (question.type === 'true_false') {
-                    questionHtml += `
-                        <input type="radio" name="q${index}" value="True" id="true${index}" ${userAnswer === 'True' ? 'checked' : ''}>
-                        <label for="true${index}">True</label>
-                        <input type="radio" name="q${index}" value="False" id="false${index}" ${userAnswer === 'False' ? 'checked' : ''}>
-                        <label for="false${index}">False</label>
-                    `;
-                } else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
-                    question.options.forEach(option => {
-                        const optionId = `${option.replace(/\s+/g, '')}${index}`;
-                        questionHtml += `<input type="radio" name="q${index}" value="${option}" id="${optionId}" ${userAnswer === option ? 'checked' : ''}>
-                                          <label for="${optionId}">${option}</label>`;
-                    });
-                } else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(question.type)) {
-                    questionHtml += `<input type="text" name="q${index}" style="pointer-events: none;" autocomplete="off" spellcheck="false" value="${userAnswer || ''}">`;
-                }
-
-                // Add a result indicator for each question
-                questionHtml += `<p class="${resultClass}">Your answer: ${userAnswer || 'No answer provided'} ${isCorrect ? '(Correct)' : '(Incorrect)'}</p>`;
-
-                // Add the question HTML to the results container
-                examResultsHtml.push(`<div class="exam-question exam-${question.type}">${questionHtml}</div>`);
-            });
-
-            // Ensure that the modal exists before updating its content
-            const examResultsModal = document.getElementById('ExamResultsModal');
-            if (examResultsModal) {
-                document.getElementById('ExamResultsModal').style.display = 'flex';
-                document.getElementById('examResultsContainer').innerHTML = examResultsHtml.join('');
-            } else {
-                console.error("Exam Results Modal not found.");
-            }
-        })
-        .catch(error => {
-            console.error('Error during exam submission:', error);
-            showToastNotification('An error occurred. Please try again.');
-            document.getElementById('loadingFinishExam').style.display = 'none'; // Hide loading animation in case of error
-            document.getElementById('finishExam').disabled = false; // Re-enable the button
-        });
-    });
+// Function to add coins to user
+function addCoinsToUser(username, coins) {
+    socket.emit('add_coins', { username: username, coins: coins });
 }
 
-function toggleMistakes() {
-    const resultsContainer = document.getElementById('examResultsContainer');
-    const toggleText = document.getElementById('toggleText');
-    const toggleIcon = document.getElementById('toggleIcon');
-    
-    // Проверяем текущее состояние
-    const isVisible = resultsContainer.style.display === 'block';
-    
-    if (isVisible) {
-        // Скрываем контейнер и меняем текст/иконку
-        resultsContainer.style.display = 'none';
-        toggleText.textContent = 'Do you want to see your mistakes?';
-        toggleIcon.classList.remove('fa-chevron-up');
-        toggleIcon.classList.add('fa-chevron-down');
-    } else {
-        // Показываем контейнер и меняем текст/иконку
-        resultsContainer.style.display = 'block';
-        toggleText.textContent = 'Hide mistakes';
-        toggleIcon.classList.remove('fa-chevron-down');
-        toggleIcon.classList.add('fa-chevron-up');
+function stopAllAudio() {
+    // Остановить все HTML5 аудио и видео элементы
+    document.querySelectorAll('audio, video').forEach(media => {
+        media.pause();
+        media.currentTime = 0;
+    });
+
+    // Остановить все Web Audio API потоки
+    if (window.audioContexts) {
+        window.audioContexts.forEach(context => {
+            if (context.state !== 'closed') {
+                context.close();
+            }
+        });
+        window.audioContexts = [];
     }
 }
 
-// Получаем кнопку по ID
-const finishButton = document.getElementById('finishExam');
+// При отправке экзамена сохраняем ответы глобально
+function submitExamResults() {
+  stopAllAudio();
+  const answers = {};
+  const examResultsHtml = [];
+  const finishExamButton = document.getElementById('finishExam');
+  const loadingFinishExam = document.getElementById('loadingFinishExam');
 
-// Функция для отключения кнопки
+  // Собираем ответы из всех элементов с классом "exam-question" и "exam-subquestion"
+  document.querySelectorAll('.exam-question, .exam-subquestion').forEach((questionElem) => {
+    let qKey = questionElem.dataset.questionId;
+    // Если для subquestion dataset.questionId не установлен, выводим его из name инпута (начинается с "q")
+    if (!qKey) {
+      const inputElem = questionElem.querySelector('input');
+      if (inputElem && inputElem.name && inputElem.name.startsWith('q')) {
+        qKey = inputElem.name.substring(1); // удаляем начальное 'q'
+      }
+    }
+    const selectedOption =
+      questionElem.querySelector('input:checked') ||
+      questionElem.querySelector('input[type="text"]');
+    if (qKey && selectedOption && selectedOption.value) {
+      answers[`q${qKey}`] = selectedOption.value;
+    }
+  });
+
+  // Сохраняем ответы глобально, чтобы можно было использовать их при повторном открытии модалки
+  window.examAnswers = answers;
+
+  fetchExamQuestions().then((examQuestions) => {
+    if (!examQuestions) return;
+
+    window.examQuestionsData = examQuestions; // для подробного просмотра в модальном окне
+
+    fetch('/submit_exam', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: currentUser, answers: answers }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        loadingFinishExam.style.display = 'none';
+        finishExamButton.disabled = false;
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+        if (result.error) {
+          showToastNotification(`Error: ${result.error}`);
+          return;
+        }
+
+        const totalQuestions = result.correct + result.incorrect + result.skipped;
+        const percentage = totalQuestions > 0 ? (result.correct / totalQuestions) * 100 : 0;
+
+        // Пример расчёта прогресса (остальное оставляем без изменений)
+        let progressIncrease;
+        let maxAllowedProgress;
+        if (Unit === '6.3' || Unit === '12.3') {
+          const maxExamProgress = 30;
+          progressIncrease = (percentage / 100) * maxExamProgress;
+          maxAllowedProgress = 100;
+        } else if (
+          Unit.endsWith('.1') &&
+          parseFloat(Unit) >= 2.1 &&
+          parseFloat(Unit) <= 12.1
+        ) {
+          progressIncrease = 5.83 * (percentage / 100);
+          maxAllowedProgress = 70;
+        } else {
+          progressIncrease = 0;
+          maxAllowedProgress = 100;
+        }
+
+        fetch(`/api/get-student-progress?username=${currentUser}`)
+          .then((res) => res.json())
+          .then((data) => {
+            let currentProgress = parseFloat(data.progress) || 0;
+            let newProgress = Math.min(maxAllowedProgress, currentProgress + progressIncrease);
+            console.log(
+              `Current progress: ${currentProgress.toFixed(2)}%, Increase: ${progressIncrease.toFixed(2)}%, New progress: ${newProgress.toFixed(2)}%`
+            );
+            return fetch('/api/update-student-progress-exam', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username: currentUser, progress: newProgress }),
+            });
+          })
+          .then((res) => res.json())
+          .then((updateResponse) => {
+            if (updateResponse.success) {
+              // Можно добавить уведомление об обновлении прогресса
+            }
+          })
+          .catch((error) => {
+            console.error('Error updating progress:', error);
+            showToastNotification('Failed to update progress.');
+          });
+
+        // Анимация прогресс-бара
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+
+        progressBar.style.width = '0%';
+        progressBar.offsetHeight; // Пересчёт для перезапуска анимации
+        progressBar.style.transition = 'none';
+
+        setTimeout(() => {
+          progressBar.style.transition = 'width 1s ease-in-out';
+          progressBar.style.width = `${percentage}%`;
+        }, 50);
+
+        let currentText = parseInt(progressText.textContent.replace('%', '')) || 0;
+        const interval = setInterval(() => {
+          if (currentText < Math.round(percentage)) {
+            currentText++;
+            progressText.textContent = `${currentText}%`;
+          } else {
+            clearInterval(interval);
+          }
+        }, 20);
+
+        // Определяем вознаграждение
+        let motivationText = 'Keep up the good work!';
+        let iconClass = 'fa-smile';
+        let pointsText = '';
+
+        if (percentage >= 80) {
+          iconClass = 'fa-trophy';
+          pointsText = 'Points: 15';
+          motivationText = 'Excellent! You scored 80% or above! 🎉';
+          addCoinsToUser(currentUser, 15);
+          new Audio('/static/music/Coins_Rewarded.mp3').play().catch(console.log);
+        } else if (percentage >= 50) {
+          motivationText = 'Good job! Aim for 80% next time!';
+          iconClass = 'fa-smile';
+        } else {
+          motivationText = "Don't give up! Keep practicing!";
+          iconClass = 'fa-sad-cry';
+        }
+
+        document.getElementById('resultIcon').className = `fa-solid ${iconClass}`;
+        document.getElementById('examSubtitle').textContent = motivationText;
+        document.getElementById('examPoints').textContent = pointsText;
+
+        // Построение HTML для результатов экзамена
+        examQuestions.forEach((question, index) => {
+          if (question.subquestions && Array.isArray(question.subquestions)) {
+            let subCorrectCount = 0;
+            question.subquestions.forEach((subq) => {
+              const userAnswer = window.examAnswers ? window.examAnswers[`q${subq.id}`] || '' : '';
+              const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
+              if (isCorrect) subCorrectCount++;
+            });
+            const aggregatedScore = `${subCorrectCount}/${question.subquestions.length}`;
+            const questionBlock = `
+              <div class="collapsible-question">
+                <div class="question-header">
+                  <span>Question ${question.id}</span>
+                </div>
+                <div class="question-right-section">
+                  <i class="fas fa-eye" onclick="openQuestionModal('${question.id}', event)"></i>
+                  <span class="score-badge">${aggregatedScore}</span>
+                </div>
+              </div>
+            `;
+            examResultsHtml.push(questionBlock);
+          } else {
+            const qId = question.id ? question.id : (index + 1);
+            const userAnswer = window.examAnswers ? window.examAnswers[`q${qId}`] || '' : '';
+            const isCorrect = userAnswer.trim().toLowerCase() === question.correct.trim().toLowerCase();
+            const questionScore = isCorrect ? '1/1' : '0/1';
+
+            const questionBlock = `
+              <div class="collapsible-question">
+                <div class="question-header">
+                  <span>Question ${qId}</span>
+                </div>
+                <div class="question-right-section">
+                  <i class="fas fa-eye" onclick="openQuestionModal('${qId}', event)"></i>
+                  <span class="score-badge">${questionScore}</span>
+                </div>
+              </div>
+            `;
+            examResultsHtml.push(questionBlock);
+          }
+        });
+
+        const examResultsModal = document.getElementById('ExamResultsModal');
+        if (examResultsModal) {
+          examResultsModal.style.display = 'flex';
+          document.getElementById('examResultsContainer').innerHTML = examResultsHtml.join('');
+        } else {
+          console.error("Exam results modal not found.");
+        }
+      })
+      .catch((error) => {
+        console.error('Error submitting exam:', error);
+        showToastNotification('An error occurred. Please try again.');
+        loadingFinishExam.style.display = 'none';
+        finishExamButton.disabled = false;
+      });
+  });
+}
+
+// Modal for detailed question view
+function openQuestionModal(qKey, event) {
+  event.stopPropagation();
+
+  // Для вопросов с группировкой (с под-вопросами)
+  let parentQuestion = null;
+  window.examQuestionsData.forEach((question) => {
+    if (question.subquestions && String(question.id) === String(qKey)) {
+      parentQuestion = question;
+    }
+  });
+
+  if (parentQuestion) {
+    let modalHtml = '';
+    if (parentQuestion.text) {
+      modalHtml += `
+        <div class="parent-question-modal">
+          <p>${parentQuestion.text}</p>
+        </div>
+      `;
+    }
+    modalHtml += `<div class="subquestions-modal-list">`;
+    parentQuestion.subquestions.forEach((subq) => {
+      // Используем глобально сохранённый объект с ответами
+      const userAnswer = window.examAnswers ? window.examAnswers[`q${subq.id}`] || '' : '';
+      const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
+      let subHtml = `
+        <div class="subquestion-modal-item">
+          <p><strong>${subq.id}.</strong> ${subq.text}</p>
+      `;
+      if (subq.type === 'true_false') {
+        subHtml += `
+          <input type="radio" name="q${subq.id}" value="True" ${userAnswer === 'True' ? 'checked' : ''} disabled>
+          <label>True</label>
+          <input type="radio" name="q${subq.id}" value="False" ${userAnswer === 'False' ? 'checked' : ''} disabled>
+          <label>False</label>
+        `;
+      } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+        subHtml += `<div class="options">`;
+        subq.options.forEach((option) => {
+          subHtml += `
+            <input type="radio" name="q${subq.id}" value="${option}" ${userAnswer === option ? 'checked' : ''} disabled>
+            <label>${option}</label>
+          `;
+        });
+        subHtml += `</div>`;
+      } else if (['fill_gaps', 'unscramble', 'reading', 'listening', 'question'].includes(subq.type)) {
+        let displayValue = userAnswer;
+        if (subq.type === 'fill_gaps' && isCorrect) {
+          displayValue = '';
+        }
+        subHtml += `<input type="text" name="q${subq.id}" value="${displayValue}" disabled>`;
+      }
+      subHtml += `
+        <p class="${isCorrect ? 'correct' : 'incorrect'}">
+          ${isCorrect ? '<i class="fas fa-check"></i> Correct' : '<i class="fas fa-times"></i> Incorrect'}
+        </p>
+        </div>
+      `;
+      modalHtml += subHtml;
+    });
+    modalHtml += `</div>`;
+
+    const modalContent = `
+      <div class="leaderboard-content examQuestions-container" style="position: relative;">
+        <h2><i class="fas fa-question-circle"></i> Question ${parentQuestion.id}</h2>
+        ${modalHtml}
+        <span class="close-btn" id="close-results_modal" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
+      </div>
+    `;
+    const modal = document.createElement('div');
+    modal.className = 'leaderboard-modal';
+    modal.innerHTML = modalContent;
+    document.body.appendChild(modal);
+
+    modal.querySelector('#close-results_modal').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  } else {
+    // Для индивидуального вопроса
+    let foundQuestion = null;
+    window.examQuestionsData.forEach((question) => {
+      if (question.subquestions) {
+        question.subquestions.forEach((subq) => {
+          if (String(subq.id) === String(qKey)) {
+            foundQuestion = subq;
+          }
+        });
+      } else if (String(question.id) === String(qKey)) {
+        foundQuestion = question;
+      }
+    });
+    if (!foundQuestion) return;
+
+    let questionHtml = `<p>${foundQuestion.text}</p>`;
+    const userAnswer = window.examAnswers ? window.examAnswers[`q${qKey}`] || '' : '';
+    const isCorrect = userAnswer.trim().toLowerCase() === foundQuestion.correct.trim().toLowerCase();
+
+    if (foundQuestion.type === 'true_false') {
+      questionHtml += `
+        <input type="radio" name="q${qKey}" value="True" ${userAnswer === 'True' ? 'checked' : ''} disabled style="pointer-events: none;">
+        <label>True</label>
+        <input type="radio" name="q${qKey}" value="False" ${userAnswer === 'False' ? 'checked' : ''} disabled style="pointer-events: none;">
+        <label>False</label>
+      `;
+    } else if (foundQuestion.type === 'multiple_choice' && Array.isArray(foundQuestion.options)) {
+      foundQuestion.options.forEach((option) => {
+        questionHtml += `
+          <input type="radio" name="q${qKey}" value="${option}" ${userAnswer === option ? 'checked' : ''} disabled style="pointer-events: none;">
+          <label>${option}</label>
+        `;
+      });
+    } else if (['fill_gaps', 'unscramble', 'reading', 'listening', 'question'].includes(foundQuestion.type)) {
+      let displayValue = userAnswer;
+      if (foundQuestion.type === 'fill_gaps' && isCorrect) {
+        displayValue = '';
+      }
+      questionHtml += `<input type="text" name="q${qKey}" value="${displayValue}" disabled style="pointer-events: none;">`;
+    }
+    const answerIndicator = `
+      <p class="${isCorrect ? 'correct' : 'incorrect'}">
+        ${isCorrect ? '<i class="fas fa-check"></i> Correct' : '<i class="fas fa-times"></i> Incorrect'}
+      </p>
+    `;
+    const modalContent = `
+      <div class="leaderboard-content examQuestions-container" style="position: relative;">
+        <h2><i class="fas fa-question-circle"></i> Question ${qKey}</h2>
+        ${questionHtml}
+        ${answerIndicator}
+        <span class="close-btn" id="close-results_modal" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
+      </div>
+    `;
+    const modal = document.createElement('div');
+    modal.className = 'leaderboard-modal';
+    modal.innerHTML = modalContent;
+    document.body.appendChild(modal);
+
+    modal.querySelector('#close-results_modal').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  }
+}
+
+
+// Handlers for closing the exam results and exam modals
+document.addEventListener('DOMContentLoaded', () => {
+    const doneBtn = document.getElementById('ResultDone');
+    if (doneBtn) {
+        doneBtn.addEventListener('click', () => {
+            document.getElementById('ExamResultsModal').style.display = 'none';
+            document.getElementById('examModal').style.display = 'none';
+        });
+    }
+});
+
+// Function to return instruction text based on question type
+function getInstructionForType(type) {
+    switch (type) {
+        case 'true_false':
+            return 'Choose True or False.';
+        case 'multiple_choice':
+            return 'Select the correct answer.';
+        case 'fill_gaps':
+            return 'Fill in the blank.';
+        case 'unscramble':
+            return 'Unscramble the letters.';
+        case 'reading':
+            return 'Read the text and answer.';
+        case 'listening':
+            return 'Listen to the audio and enter the missing word.';
+        default:
+            return '';
+    }
+}
+
+// Functions to disable/enable the "Finish Task" button
 function disableFinishButton() {
-    finishButton.setAttribute('disabled', 'true'); // Делаем кнопку отключённой
+    document.getElementById('finishExam').setAttribute('disabled', 'true');
 }
 
-// Функция для включения кнопки
 function enableFinishButton() {
-    finishButton.removeAttribute('disabled');  // Убираем атрибут disabled
+    document.getElementById('finishExam').removeAttribute('disabled');
 }
 
-// Закрытие модального окна результатов
-document.getElementById('closeExamResults').addEventListener('click', function() {
-	disableFinishButton();
-    document.getElementById('ExamResultsModal').style.display = 'none';
-});
-
-// Закрытие по кнопке "Done"
-document.getElementById('ResultDone').addEventListener('click', function() {
-    document.getElementById('ExamResultsModal').style.display = 'none';
-	document.getElementById('examModal').style.display = 'none';
-});
-
-
-document.getElementById('closeExamModal').addEventListener('click', function() {
-    document.getElementById('examModal').style.display = 'none';
-});
 
 socket.on('exam_started', function(data) {
     showToastNotification(data.message);
@@ -2224,13 +2648,17 @@ function fetchStudentProgress() {
 
     // Показываем спиннер в таблице
     const leaderboardTable = document.getElementById("leaderboard-table-body");
-    leaderboardTable.innerHTML = `<tr><td colspan="3" class="loading-spinner">
-                                    <div class="lds-spinner">
-                                        <div></div><div></div><div></div><div></div>
-                                        <div></div><div></div><div></div><div></div>
-                                        <div></div><div></div><div></div><div></div>
-                                    </div>
-                                  </td></tr>`;
+    leaderboardTable.innerHTML = `
+        <tr>
+            <td colspan="3" class="loading-spinner">
+                <div class="lds-spinner">
+                    <div></div><div></div><div></div><div></div>
+                    <div></div><div></div><div></div><div></div>
+                    <div></div><div></div><div></div><div></div>
+                </div>
+            </td>
+        </tr>
+    `;
 
     fetch(`/api/get-student-progress?username=${username}`)
         .then(response => {
@@ -2244,66 +2672,85 @@ function fetchStudentProgress() {
         .then(data => {
             console.log('📊 Student Data:', data);
 
+            // Данные студента
             const studentData = data[username] || {};
-            const progress = studentData.progress || 0;
+            const progress = studentData.progress || 0;         // "Total Score" (например, 51.72)
             const startDate = studentData.start_date;
             const studyDays = studentData.study_days || "odd";
             const currentDate = new Date();
-            const start = new Date(startDate);
+			currentDate.setHours(23, 59, 59, 999);
             const totalCourseDays = 90;
+            const courseStartDate = new Date(startDate);
 
-            // 🔹 Определение учебных дней
+            // 1. Процент завершения курса (по календарным дням)
+            const daysElapsed = Math.floor((currentDate - courseStartDate) / (1000 * 60 * 60 * 24)) + 1;
+            const completionPercentage = Math.min((daysElapsed / totalCourseDays) * 100, 100).toFixed(2);
+
+            // 2. Определение учебных дней (для Unit и Week)
             const oddDays = [1, 3, 5];
             const evenDays = [2, 4, 6];
-
             let studyDaysElapsed = 0;
-            let tempDate = new Date(start);
+            let tempDate = new Date(courseStartDate);
 
-            while (!((studyDays === "odd" && oddDays.includes(tempDate.getDay())) ||
-                     (studyDays === "even" && evenDays.includes(tempDate.getDay())))) {
+            // Прокручиваем вперёд до первого подходящего учебного дня
+            while (!(
+                (studyDays === "odd" && oddDays.includes(tempDate.getDay())) ||
+                (studyDays === "even" && evenDays.includes(tempDate.getDay()))
+            )) {
                 tempDate.setDate(tempDate.getDate() + 1);
             }
             const firstStudyDate = new Date(tempDate);
 
+            // Подсчитываем количество учебных дней до текущей даты
             tempDate = new Date(firstStudyDate);
             while (tempDate <= currentDate) {
                 const dayOfWeek = tempDate.getDay();
-                if ((studyDays === "odd" && oddDays.includes(dayOfWeek)) ||
-                    (studyDays === "even" && evenDays.includes(dayOfWeek))) {
+                if (
+                    (studyDays === "odd" && oddDays.includes(dayOfWeek)) ||
+                    (studyDays === "even" && evenDays.includes(dayOfWeek))
+                ) {
                     studyDaysElapsed++;
                 }
                 tempDate.setDate(tempDate.getDate() + 1);
             }
 
+            // 3. Считаем, какая сейчас неделя и день в ней
             const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3);
             const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1;
             const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
 
-            const completionPercentage = Math.min((studyDaysElapsed / (totalCourseDays / 2)) * 100, 100).toFixed(2);
+            // 4. Определяем дату следующего экзамена (используя вашу функцию getNextExamDate)
             const nextExamDate = getNextExamDate(unit, startDate, studyDays);
-            
-            // Saving Unit to global
+
             Unit = unit;
+            Week = studyWeeksElapsed + 1;
 
-            // 🏆 Обновляем UI
-            document.getElementById("progress-percentage").innerHTML = `<i class="fas fa-chart-line"></i> ${progress}%`;
-            document.getElementById("current-unit").innerHTML = `<i class="fas fa-book"></i> Unit ${unit}`;
-            document.getElementById("current-week").innerHTML = `<i class="fas fa-calendar-week"></i> Week ${studyWeeksElapsed + 1}`;
-            document.getElementById("course-completion").innerHTML = `<i class="fas fa-check-circle"></i> ${completionPercentage}%`;
+            // ===============================
+            //    Обновляем новый дизайн
+            // ===============================
 
+            // a) Отображаем общий прогресс (Total Score)
+            const totalScore = progress.toFixed(2);
+            document.getElementById("progress-score").textContent = `Total Score: ${totalScore}%`;
+            document.getElementById("progress-bar-fill").style.width = `${totalScore}%`;
+
+            // b) Обновляем дату экзамена
             let examMessage = studyWeeksElapsed + 1 <= 6
-                ? `Middle Exam Date: ${nextExamDate}`
-                : `Final Exam Date: ${nextExamDate}`;
+                ? `Middle Exam : ${nextExamDate}`
+                : `Final Exam : ${nextExamDate}`;
             let examIcon = studyWeeksElapsed + 1 <= 6
                 ? '<i class="fas fa-calendar-day"></i>'
                 : '<i class="fas fa-calendar-check"></i>';
-
             document.getElementById("exam-date").innerHTML = `${examIcon} ${examMessage}`;
 
-            // Кнопка Weekly Exam
+            // c) Отображаем текущий юнит, неделю и общее завершение курса
+            document.getElementById("current-unit").textContent = `Current Unit: ${unit}`;
+            document.getElementById("current-week").textContent = `Week: ${studyWeeksElapsed + 1}`;
+            document.getElementById("course-completion").textContent = `Course Completion: ${completionPercentage}%`;
+
+            // 6. Логика появления кнопки "Weekly Exam"
             const isWeeklyExamUnit = studyWeeksElapsed >= 1;
             const existingExamButton = document.querySelector('.weekly-exam-button');
-
             if (isWeeklyExamUnit && dayInWeek === 1 && !existingExamButton) {
                 const weeklyExamButton = document.createElement("button");
                 weeklyExamButton.textContent = "Weekly Exam START";
@@ -2320,6 +2767,7 @@ function fetchStudentProgress() {
                 }
             }
 
+            // 7. Загружаем таблицу лидеров
             return fetch('/api/get-leaderboard');
         })
         .then(response => {
@@ -2335,7 +2783,8 @@ function fetchStudentProgress() {
             const sortedLeaderboard = Object.entries(leaderboardData)
                 .sort(([, a], [, b]) => b.progress - a.progress);
 
-            leaderboardTable.innerHTML = ''; // Убираем спиннер после загрузки
+            // Убираем спиннер после загрузки
+            leaderboardTable.innerHTML = '';
 
             let rank = 1;
             for (let [student, studentInfo] of sortedLeaderboard) {
@@ -2367,6 +2816,7 @@ function fetchStudentProgress() {
             document.getElementById("error-message").style.display = "block";
         })
         .finally(() => {
+            // Скрываем скелетон-загрузку и показываем контент
             setTimeout(() => {
                 document.getElementById("loading").style.display = "none";
                 document.getElementById("progress-container").style.display = "block";
@@ -2734,4 +3184,221 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error fetching leaderboard:", error);
         });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const chatai = document.getElementById("chatai");
+    const openBtn = document.getElementById("open-chatai"); // Кнопка для открытия чата
+    const closeBtn = document.getElementById("close-chatai");
+    const chatBox = document.getElementById("chatai-box");
+    const userInput = document.getElementById("ai_chat_input");
+    const sendBtn = document.getElementById("chatai-send");
+
+    // Открытие модального окна
+    if (openBtn) {
+        openBtn.addEventListener("click", function () {
+            chatai.style.display = "block";
+            loadChatHistory(); // Загрузка истории чата при открытии
+        });
+    }
+
+    // Закрытие модального окна
+    closeBtn.addEventListener("click", function () {
+        chatai.style.display = "none";
+    });
+
+    // Закрытие по клику вне окна
+    window.addEventListener("click", function (event) {
+        if (event.target === chatai) {
+            chatai.style.display = "none";
+        }
+    });
+
+sendBtn.addEventListener("click", async function () {
+    const userMessage = userInput.value.trim();
+    if (!userMessage) return;
+
+    // Добавляем сообщение пользователя в чат
+    const userName = currentUser || "User"; // Пример имени пользователя
+    addMessageToChat(userName, userMessage);
+
+    userInput.value = ""; // Очищаем поле ввода
+
+    // Показываем индикатор "пишет"
+    addTypingIndicator();
+
+    chatBox.scrollTop = chatBox.scrollHeight; // Прокручиваем чат вниз
+
+    // Отключаем кнопку send во время загрузки
+    sendBtn.disabled = true;
+
+    try {
+        // Отправляем запрос на сервер
+        const response = await fetch("/ai-chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ text: userMessage })
+        });
+
+        const data = await response.json();
+        console.log("Received response from the server:", data);
+
+        // Проверка на правильный формат ответа
+        if (data.response) {
+            const { text, corrections } = data.response;
+            const botMessage = formatBotMessage(text, corrections);
+
+            // Удаляем индикатор "пишет" и добавляем ответ от AI
+            removeTypingIndicator();
+            addMessageToChat("AI", botMessage);
+
+            // Прокрутка чата вниз после получения ответа
+            chatBox.scrollTop = chatBox.scrollHeight;
+        } else {
+            // Если нет текста с рекомендациями или сообщений
+            const errorMessage = "Sorry, I couldn't process your request properly. Please provide more details.";
+            removeTypingIndicator();
+            addMessageToChat("AI", errorMessage);
+        }
+    } catch (error) {
+        console.error("Error in AI chat:", error);
+
+        // Обновляем индикатор "пишет" в случае ошибки
+        updateTypingIndicatorOnError();
+        addMessageToChat("AI", "There was an error with your request. Please try again.");
+    } finally {
+        // Включаем кнопку send после получения ответа
+        sendBtn.disabled = false;
+    }
+
+    // Сохранение чата в JSON
+    saveChatHistory();
+});
+
+// Функция для форматирования сообщения с исправлениями
+function formatBotMessage(text, corrections) {
+    let formattedMessage = text;
+
+    if (corrections && corrections.length > 0) {
+        corrections.forEach(correction => {
+            const word = correction.word;
+            const suggestions = correction.suggestions.join(", ");
+            const suggestionHtml = correction.suggestions.map(suggestion => `
+                <span class="correct-answer-ai">${suggestion}</span>
+            `).join(", ");
+
+            // Формируем сообщение о неправильном слове с предложенными исправлениями
+            const correctionMessage = `
+                <span class="incorrect-answer-ai">"${word}" is incorrect.</span>
+                <span class="suggestion-text">Suggested correction(s): ${suggestionHtml}</span>
+            `;
+            formattedMessage += `\n${correctionMessage}`;
+        });
+    }
+
+    return formattedMessage;
+}
+
+// Функция для получения иконки FontAwesome в зависимости от предложения
+function getFontAwesomeIconForSuggestion(suggestion) {
+    if (suggestion === "am") {
+        return "check-circle";  // Иконка для правильных предложений
+    } else if (suggestion === "helping") {
+        return "hand-pointer";  // Иконка для действия
+    } else if (suggestion === "assist") {
+        return "hands-helping";  // Иконка для помощи
+    } else {
+        return "question-circle";  // Иконка для неопределённых предложений
+    }
+}
+
+// Функция добавления сообщения в чат
+function addMessageToChat(author, message) {
+    // Проверка длины текста и правильное его отображение
+    if (message.length > 1000) {
+        message = message.substring(0, 1000) + '...'; // Ограничиваем длину для предотвращения ошибок
+    }
+    chatBox.innerHTML += `
+        <div class="message">
+            <div class="message-header">
+                <div class="avatar-container">
+                    <span class="avatar-placeholder">${author === "AI" ? "<i class='fas fa-robot'></i>" : "<i class='fas fa-user'></i>"}</span>
+                </div>
+                <span class="message-author">${author}</span>
+            </div>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+// Функция добавления индикатора "пишет"
+function addTypingIndicator() {
+    console.log("Adding typing indicator...");
+    chatBox.innerHTML += `
+        <div class="message typing">
+            <div class="message-header">
+                <div class="avatar-container">
+                    <span class="avatar-placeholder"><i class="fas fa-robot"></i></span>
+                </div>
+                <span class="message-author">AI</span>
+            </div>
+            <span class="text-skeleton" data-text="AI is typing">AI is typing</span>
+        </div>
+    `;
+}
+
+// Функция обновления индикатора в случае ошибки
+function updateTypingIndicatorOnError() {
+    const typingMessage = chatBox.querySelector('.message.typing');
+    if (typingMessage) {
+        typingMessage.innerHTML = `
+            <div class="message-header">
+                <div class="avatar-container">
+                    <span class="avatar-placeholder"><i class="fas fa-robot"></i></span>
+                </div>
+                <span class="message-author">AI</span>
+            </div>
+            <span class="text-skeleton error" data-text="Retrying...">Retrying...</span>
+        `;
+        // Добавляем красный цвет для ошибки
+        typingMessage.querySelector('.text-skeleton').style.color = "red";
+    }
+}
+
+// Функция удаления индикатора "пишет"
+function removeTypingIndicator() {
+    const typingMessage = chatBox.querySelector('.message.typing');
+    if (typingMessage) {
+        typingMessage.remove();
+    }
+}
+
+    // Функция для сохранения чата
+    function saveChatHistory() {
+        const messages = [];
+        const messageElements = chatBox.querySelectorAll('.message');
+        messageElements.forEach(msg => {
+            const author = msg.querySelector('.message-author') ? msg.querySelector('.message-author').textContent : '';
+            const text = msg.querySelector('p') ? msg.querySelector('p').textContent : '';
+            if (author && text) {
+                messages.push({ author, text });
+            }
+        });
+
+        // Сохранение в локальном хранилище (или отправка на сервер)
+        localStorage.setItem('chatHistory', JSON.stringify(messages));
+    }
+
+    // Функция для загрузки чатов
+    function loadChatHistory() {
+        const chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+        chatBox.innerHTML = ''; // Очистить текущий чат
+
+        chatHistory.forEach(msg => {
+            addMessageToChat(msg.author, msg.text);
+        });
+    }
+});
+
 

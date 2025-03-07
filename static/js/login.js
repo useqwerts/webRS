@@ -1,26 +1,21 @@
+// Получаем элементы, уже существующие в коде
 const form = document.querySelector('.login-form');
-const loader = document.getElementById('loader');
 const body = document.body;
 const forgotPasswordLink = document.getElementById('forgot-password-link');
 const modal = document.getElementById('forgot-password-modal');
 const closeModalButton = document.getElementById('close-modal');
 const recoveryUsernameInput = document.getElementById('recovery-username');
 const recoverBtn = document.getElementById('recover-btn');
-const recoveryResult = document.getElementById('recovery-result');
 const usernameInput = document.getElementById('username');
 const errorContainer = document.querySelector('.error-container'); // Контейнер для ошибок
-
-// Вставляем этот код в файл login.js
-
-// Получаем ссылку на изображение аватарки
 const avatarImage = document.getElementById('user-avatar');
 const avatarContainer = document.querySelector('.avatar-container');
 
-// Следим за вводом username и получаем аватарку с сервера
+// --- Логика получения аватара при вводе username ---
 usernameInput.addEventListener('input', async () => {
     const username = usernameInput.value.trim();
     if (username.length === 0) {
-        avatarContainer.style.display = 'none'; // Скрыть аватарку, если поле пустое
+        avatarContainer.style.display = 'none';
         return;
     }
 
@@ -29,30 +24,32 @@ usernameInput.addEventListener('input', async () => {
         const data = await response.json();
 
         if (data.avatar_url) {
-            avatarContainer.style.display = 'flex';  // Показываем аватар
-            avatarImage.style.display = 'block';    // Делаем картинку видимой
-            avatarImage.src = data.avatar_url;     // Устанавливаем URL аватара
-            errorContainer.style.backgroundColor = '#28a745';  // Зеленый фон
+            avatarContainer.style.display = 'flex';
+            avatarImage.style.display = 'block';
+            avatarImage.src = data.avatar_url;
+            errorContainer.style.backgroundColor = '#28a745';
         } else {
-            avatarContainer.style.display = 'none';  // Если аватарки нет, скрываем контейнер
+            avatarContainer.style.display = 'none';
         }
     } catch (error) {
         console.error('Error fetching avatar:', error);
-        avatarContainer.style.display = 'none'; // Ошибка - скрыть контейнер
+        avatarContainer.style.display = 'none';
     }
 });
 
 
-// 🔹 Отправка формы с анимацией
+const loginButtonText = document.querySelector('.login-button .text-skeleton');
+
 form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    //loader.style.display = 'flex';
-    body.style.filter = 'blur(1px)';
-
-    const username = usernameInput.value;
+    // При необходимости можно добавить дополнительный визуальный эффект или отключить кнопку
+    loginButtonText.style.pointerEvents = 'none';
+	 loginButtonText.classList.add('text-loading');
+    
+    // Сохраняем данные в localStorage и sessionStorage
+    const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-
     localStorage.setItem('username', username);
     localStorage.setItem('password', password);
 
@@ -60,10 +57,11 @@ form.addEventListener('submit', (e) => {
         sessionStorage.setItem('username', username);
         form.submit();
         console.log("User logged in:", sessionStorage.getItem('username'));
-    }, 1000);
+    }, 0);
 });
 
-// 🔹 Forgot Password Modal Logic
+
+// --- Логика модального окна "Forgot Password" ---
 forgotPasswordLink.addEventListener('click', () => {
     modal.style.display = 'flex';
 });
@@ -84,4 +82,47 @@ recoverBtn.addEventListener('click', () => {
         recoveryResult.innerHTML = 'Username not found!';
         recoveryResult.style.color = '#dc3545';
     }
+});
+
+// --- Новая логика для проверки localStorage и отображения модального окна "Remember Me" ---
+window.addEventListener('load', () => {
+    const storedUsername = localStorage.getItem('username');
+    const storedPassword = localStorage.getItem('password');
+    
+    // Если найдены сохранённые данные, показываем модальное окно
+    if (storedUsername && storedPassword) {
+        const rememberModal = document.getElementById('remember-modal');
+        const rememberUsername = document.getElementById('remember-username');
+        rememberUsername.textContent = storedUsername;
+        rememberModal.style.display = 'flex';
+    }
+});
+
+// Обработчик для кнопки "Continue"
+document.getElementById('continue-btn').addEventListener('click', () => {
+    const storedUsername = localStorage.getItem('username');
+    const storedPassword = localStorage.getItem('password');
+    
+    // Автоматически заполняем форму и инициируем вход
+    usernameInput.value = storedUsername;
+    document.getElementById('password').value = storedPassword;
+    sessionStorage.setItem('username', storedUsername);
+
+    // Можно добавить задержку или анимацию, как в основном обработчике формы
+    setTimeout(() => {
+        form.submit();
+    }, 0);
+
+    // Скрываем модальное окно
+    document.getElementById('remember-modal').style.display = 'none';
+});
+
+// Обработчик для кнопки "Cancel Account"
+document.getElementById('cancel-btn').addEventListener('click', () => {
+    // Удаляем сохранённые данные из localStorage
+    localStorage.removeItem('username');
+    localStorage.removeItem('password');
+    
+    // Скрываем модальное окно
+    document.getElementById('remember-modal').style.display = 'none';
 });

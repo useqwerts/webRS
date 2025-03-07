@@ -11,14 +11,9 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-
- <div class="wave-container">
-    <div class="wave"></div>
-    <div class="wave"></div>
-    <div class="wave"></div>
-  </div>
   
 <div id="updateModal" class="update-modal">
     <div class="update-modal-content">
@@ -54,7 +49,7 @@
                 <img src="/static/icons/account.svg" alt="Account" id="account-icon" class="account-icon">
             </div>
 		<div id="ping-container" class="ping-container">
-    <i class="fas fa-signal" id="ping-icon" aria-hidden="true"></i>
+	<i class="fa-solid fa-wifi" id="ping-icon"></i>
     <span id="ping-value" class="ping-value">- ms</span>
 </div>
 <div id="coinDisplay" class="coin-icon-container">
@@ -73,83 +68,137 @@
             <ul class="personal-account-options">
                 <li id="change-avatar-option"><i class="fas fa-image change-avatar-icon"></i> Change Avatar</li>
                 <li id="change-password-option"><i class="fas fa-key change-password-icon"></i> Change Password</li>
-                <li id="my-progress-option"><i class="fas fa-chart-line my-progress-icon"></i> My Progress</li>
+                <!--<li id="my-progress-option"><i class="fas fa-chart-line my-progress-icon"></i> My Progress</li> -->
             </ul>
         </li>
         <li id="sessionsButton"><i class="fas fa-calendar-alt sessions-icon"></i> Sessions</li>
-        <li id="music-pack-option"><i class="fas fa-music music-icon"></i> Music Pack</li>
+        <!-- <li id="music-pack-option"><i class="fas fa-music music-icon"></i> Music Pack</li> -->
         <li id="messages-themes-button"><i class="fas fa-palette themes-icon"></i> Themes</li>
         <li id="my-ban-status-option"><i class="fas fa-ban ban-status-icon"></i> My Ban Status</li>
         <li id="time-option">
             <a href="/apis/main" target="_blank"><i class="fas fa-clock time-icon"></i> Namoz vaqtlari</a>
         </li>
         <li id="leaderboard-option"><i class="fas fa-trophy leaderboard-icon"></i> Leaderboard</li>
-        <li id="examTaskOption"><i class="fas fa-pencil-alt exam-icon"></i> Exam</li>
+        <li id="examTaskOption"><i class="fas fa-pencil-alt exam-icon"></i>Demo Exam</li>
+        <li id="open-chatai"><i class="fas fa-comments ai-chat-icon"></i> AI Spell Check</li>
         <li id="logout-option"><i class="fas fa-sign-out-alt logout-icon"></i> Logout</li>
     </ul>
 </div>
 
-
-
+<!-- AI Chat Modal -->
+<div id="chatai" class="chatai-modal">
+    <span class="close-btn" id="close-chatai">&times;</span>
+    <h2>AI Chat</h2>
+    <div id="chatai-box"></div>
+    <div class="chat-input-container">
+        <input type="text" id="ai_chat_input" placeholder="Type a message...">
+        <button id="chatai-send">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
 
 <div id="examModal">
-    <h2 id="examTitle">Exam</h2>
-	<div id="exam-timer">
+  <h2 id="examTitle">Exam</h2>
+  <div id="exam-timer">
     <i class="fas fa-clock"></i> 00:00 <!-- This will be updated dynamically -->
-	</div>
-    <span class="close-btn" id="closeExamModal">&times;</span>
-	<div id="loadingSpinner" class="lds-spinner">
-  <div></div><div></div><div></div><div></div><div></div><div></div>
-  <div></div><div></div><div></div><div></div><div></div><div></div>
-</div>
-    <div id="examQuestions" class="examQuestions-container"></div>
-	<div id="loadingFinishExam" class="lds-facebook-container" style="display: none;">
+  </div>
+  <span class="close-btn" id="closeExamModal">&times;</span>
+  <div id="loadingSpinner" class="lds-spinner">
+    <div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div>
+  </div>
+  <div id="examQuestions" class="examQuestions-container"></div>
+  <div id="loadingFinishExam" class="lds-facebook-container" style="display: none;">
     <div class="lds-facebook">
-        <div></div><div></div><div></div>
+      <div></div><div></div><div></div>
     </div>
+  </div>
+  <div id="finishExam" role="button" tabindex="0">Finish Task</div>
+  <div id="examResults" class="examResults"></div>
 </div>
-    <div id="finishExam" role="button" tabindex="0">Finish Task</div>
-    <div id="examResults" class="examResults"></div>
-</div>
 
-<div id="ExamResultsModal">
-    <div class="exam-results-content">
-        <span id="closeExamResults" class="close-btn">&times;</span>
-        <h2>Exam Results</h2>
+<!-- Template for exam question (for optimized HTML insertion) -->
+<template id="questionTemplate">
+  <div class="exam-question">
+    <p class="question-text"></p>
+    <div class="question-instruction"></div>
+    <div class="question-options"></div>
+  </div>
+</template>
 
-        <div class="result-icons">
-            <p><i class="fas fa-check-circle correct-icon"></i> Correct: <span id="correctAnswers"></span></p>
-            <p><i class="fas fa-times-circle incorrect-icon"></i> Incorrect: <span id="incorrectAnswers"></span></p>
-            <p><i class="fas fa-minus-circle skipped-icon"></i> Skipped: <span id="skippedAnswers"></span></p>
-            <p id="coinsReward" class="coins-reward">
-                <img src="/static/icons/exam_coin.svg" alt="coin" class="coin-icon" />
-                <span id="coinCount"></span>
-            </p>
-            <p id="examMotivation" class="motivation-text"></p>
+<div id="rulesModal">
+  <div id="rulesModalContent">
+    <span class="close-btn" id="closeRulesModal">&times;</span>
+    <h2>Exam Rules</h2>
+    <div class="rules-list">
+      <div class="rule-item">
+        <i class="fas fa-ban"></i>
+        <div class="rule-text">
+          App Restrict: If you try to close the app and open it again, the exam will be blocked for 3 minutes.
         </div>
-
-        <div class="progress-wrapper">
-            <div class="progress-container">
-                <div id="progressBar" class="progress-bar"></div>
-            </div>
-            <span id="progressText">0%</span>
+      </div>
+      <div class="rule-item">
+        <i class="fas fa-user-secret"></i>
+        <div class="rule-text">
+          You will be banned for any type of fraud.
         </div>
-
-        <!-- Сворачиваемая секция ошибок -->
-		<div id="mistakesToggle" class="mistakes-toggle" onclick="toggleMistakes()">
-		<span id="toggleText">Do you want to see your mistakes?</span>
-		<i id="toggleIcon" class="fas fa-chevron-down"></i>
-		</div>
-
-        <div id="examResultsContainer" class="exam-results-container" style="display: none;">
-            <!-- Exam questions and results will be displayed here -->
+      </div>
+      <div class="rule-item">
+        <i class="fas fa-user-lock"></i>
+        <div class="rule-text">
+          Copying answers from another student, communicating with other students during the exam, or sharing exam questions or answers with others is prohibited.
         </div>
-
-        <button id="ResultDone">Done</button>
+      </div>
+      <div class="rule-item">
+        <i class="fas fa-scroll"></i>
+        <div class="rule-text">
+          We take academic integrity seriously. Please do your part to ensure a fair and honest testing environment for all students.
+        </div>
+      </div>
     </div>
+    <!-- Continue Exam Button -->
+    <button id="continueExamBtn" class="weekly-exam-button">Continue Exam</button>
+  </div>
 </div>
 
+  
+<!-- Модальное окно результатов -->
+<div id="ExamResultsModal" class="exam-results-modal">
 
+  <!-- Основной контейнер с градиентным фоном -->
+  <div class="results-container">
+    
+    <!-- Верхняя белая (или полупрозрачная) панель с кнопкой Done -->
+    <div class="top-bar">
+      <span class="done-button" id="ResultDone">Done</span>
+    </div>
+
+  <div id="resultIconContainer" class="result-icon-container">
+    <i id="resultIcon" class="fa-solid fa-smile"></i>
+  </div>
+  
+  <div id="examPoints"></div>
+
+    <!-- Подзаголовок, где будет мотивационный текст -->
+    <p class="subtitle" id="examSubtitle">Your hard work and dedication are paying off.</p>
+
+<div class="progress-row">
+  <!-- Текст прогресса -->
+  <span class="progress-text-results" id="progressText">0%</span>
+  <div class="progress-bar-container-result">
+    <!-- Полоса прогресса (будет заливаться через width) -->
+    <div class="progress-bar-result" id="progressBar"></div>
+  </div>
+</div>
+
+    <!-- Список вопросов -->
+    <div class="questions-list" id="examResultsContainer">
+      <!-- JS вставит сюда список вопросов -->
+    </div>
+  </div>
+</div>
 
 <!-- Модальное окно "My Ban Status" -->
 <div id="ban-status-modal" class="modal-ban">
@@ -342,65 +391,109 @@
 </div>
 
 <div id="progress_modal" class="progress-modal">
-    <div class="progress-modal-content">
-        <span id="progress_modal_close" class="close-btn">&times;</span>
-        <h2>My Progress</h2>
-		
-		<div id="error-message" style="display:none; color:red; font-weight: bold;"></div>
+  <div class="progress-modal-content">
+    <span id="progress_modal_close" class="close-btn">&times;</span>
+    <h2>My Progress</h2>
 
-        <!-- Skeleton Loading -->
-        <div id="loading" class="skeleton-container">
-            <div class="skeleton skeleton-percentage"></div>
-            <div class="skeleton skeleton-exam"></div>
-            <div class="skeleton skeleton-unit"></div>
-            <div class="skeleton skeleton-week"></div>
-            <div class="skeleton skeleton-completion"></div>
+    <div id="error-message" style="display:none; color:red; font-weight: bold;"></div>
+
+    <!-- Skeleton Loading -->
+    <div id="loading" class="skeleton-container">
+      <div class="skeleton skeleton-percentage"></div>
+      <div class="skeleton skeleton-exam"></div>
+      <div class="skeleton skeleton-unit"></div>
+      <div class="skeleton skeleton-week"></div>
+      <div class="skeleton skeleton-completion"></div>
+    </div>
+
+    <!-- Основное содержимое (изначально скрыто) -->
+    <div id="progress-container" style="display: none;">
+      
+      <div id="main_information">
+        <!-- Карточка прогресса -->
+<div class="progress-card">
+    <div class="progress-title">My Progress</div>
+    <div class="progress-score" id="progress-score">Total Score: 0%</div>
+
+    <!-- Контейнер прогресс-бара -->
+    <div class="progress-bar-container">
+        <div class="progress-bar-background">
+            <div class="progress-bar-fill" id="progress-bar-fill" style="width: 78%;"></div>
         </div>
 
-        <!-- Main Content (hidden until data is loaded) -->
-        <div id="progress-container" style="display: none;">
-            <div id="main_information">
-                <div id="progress-percentage">My Progress: 0%</div>
-                <div id="exam-date" class="exam-date-style">Exam Date: N/A</div>
-            </div>
-
-            <div class="progress-info-container">
-                <div id="current-unit" class="unit-style">Current Unit: N/A</div>
-                <div id="current-week" class="week-style">Week: N/A</div>
-                <div id="course-completion" class="completion-style">Course Completion: 0%</div>
-            </div>
+        <!-- Метки-стрелки (absolute) -->
+        <!-- Fail <50% -->
+        <div class="progress-marker" style="left: 50%;">
+            <i class="fas fa-times-circle"></i> Fail &lt;50%<br>
+            <span class="arrow">&#9650;</span>
         </div>
 
-<!-- Leaderboard Section -->
-<table class="leaderboard-table">
-    <thead>
-        <tr>
-            <th>#</th> <!-- Добавлен столбец для номера студента -->
-            <th>Students</th>
-            <th>Progress</th>
-        </tr>
-    </thead>
-    <tbody id="leaderboard-table-body"> 
-        <!-- Loading spinner will be inserted here -->
-        <tr>
-            <td colspan="3" class="spinner-container">
-                <div class="lds-spinner">
-                    <div></div><div></div><div></div><div></div>
-                    <div></div><div></div><div></div><div></div>
-                    <div></div><div></div><div></div><div></div>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
+        <!-- C (65% - 80%) -->
+        <div class="progress-marker" style="left: 72.5%;">
+            C<br>
+            <span class="arrow">&#9650;</span>
+        </div>
 
+        <!-- B (81% - 90%) -->
+        <div class="progress-marker" style="left: 85.5%;">
+            B<br>
+            <span class="arrow">&#9650;</span>
+        </div>
 
-
+        <!-- A (91% - 100%) -->
+        <div class="progress-marker" style="left: 95.5%;">
+            A<br>
+            <span class="arrow">&#9650;</span>
+        </div>
     </div>
 </div>
 
-    </div>
 
+        
+        <!-- Дата экзамена -->
+        <div id="exam-date" class="exam-date-style">Exam Date: N/A</div>
+      </div>
+
+      <!-- Блок с юнитом, неделей и завершением курса -->
+      <div class="progress-info-container">
+        <div id="current-unit" class="unit-style">Current Unit: N/A</div>
+        <div id="current-week" class="week-style">Week: N/A</div>
+        <div id="course-completion" class="completion-style">Course Completion: 0%</div>
+      </div>
+
+      <!-- Таблица лидеров (теперь внутри модального окна) -->
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Students</th>
+            <th>Progress</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-table-body">
+          <!-- Loading spinner или данные -->
+          <tr>
+            <td colspan="3" class="spinner-container">
+              <div class="lds-spinner">
+                <div></div><div></div><div></div><div></div>
+                <div></div><div></div><div></div><div></div>
+                <div></div><div></div><div></div><div></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Конец таблицы лидеров -->
+
+    </div> <!-- конец #progress-container -->
+  </div> <!-- конец .progress-modal-content -->
+</div> <!-- конец #progress_modal -->
+
+
+</div>
+
+    </div>
+	<script src="https://unpkg.com/wavesurfer.js"></script>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="/static/js/chat.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.11/lottie.min.js"></script>
