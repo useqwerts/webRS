@@ -138,90 +138,273 @@ banButton.addEventListener('click', () => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const sliderContainer = document.getElementById('startExamSliderContainer');
-    const sliderHandle = document.getElementById('startExamSliderHandle');
-    const sliderText = document.querySelector('.slider-text');
-	const loadingIndicator = document.getElementById('loadingIndicator');
-    loadingIndicator.style.display = 'none';  // Показываем индикатор
-    if (!sliderContainer || !sliderHandle || !sliderText) {
-        console.error("Slider elements not found! Check your HTML IDs.");
-        return;
-    }
+ document.addEventListener('DOMContentLoaded', function() {
+      const sliderContainer = document.getElementById('startExamSliderContainer');
+      const sliderHandle = document.getElementById('startExamSliderHandle');
+      const sliderText = document.getElementById('sliderText');
 
-    let isDragging = false;
-    let sliderStartPositionX;
-    let handleStartPositionX;
+      let isDragging = false;
+      let sliderStartX = 0;
+      let handleStartX = 0;
 
-    // Когда начинается перетаскивание
-    sliderHandle.addEventListener('mousedown', function(e) {
+      // Начало перетаскивания
+      sliderHandle.addEventListener('mousedown', (e) => {
         isDragging = true;
-        sliderStartPositionX = sliderContainer.getBoundingClientRect().left;
-        handleStartPositionX = e.clientX - sliderHandle.offsetLeft;
-        sliderHandle.style.transitionDuration = '0s'; // Отключаем анимацию во время перетаскивания
-        sliderText.classList.add('hidden'); // Скрываем текст при перетаскивании
-    });
+        sliderStartX = sliderContainer.getBoundingClientRect().left;
+        handleStartX = e.clientX - sliderHandle.offsetLeft;
+        // Отключаем плавный переход, чтобы ручка двигалась без задержки
+        sliderHandle.style.transition = 'none';
+      });
 
-    // Когда происходит перетаскивание
-    document.addEventListener('mousemove', function(e) {
+      // Процесс перетаскивания
+      document.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
+        const containerWidth = sliderContainer.offsetWidth;
+        const handleWidth = sliderHandle.offsetWidth;
+        let newPosition = e.clientX - sliderStartX - handleStartX;
 
-        let mouseX = e.clientX - sliderStartPositionX;
-        let newHandlePosition = mouseX - handleStartPositionX;
+        // Не даём выйти за границы
+        if (newPosition < 0) newPosition = 0;
+        if (newPosition > containerWidth - handleWidth) {
+          newPosition = containerWidth - handleWidth;
+        }
 
-        let minPos = 5;
-        let maxPos = sliderContainer.offsetWidth - sliderHandle.offsetWidth - 5;
+        sliderHandle.style.left = newPosition + 'px';
+      });
 
-        if (newHandlePosition < minPos) newHandlePosition = minPos;
-        if (newHandlePosition > maxPos) newHandlePosition = maxPos;
-
-        sliderHandle.style.left = newHandlePosition + 'px';
-    });
-
-    // Когда отпускаем мышку
-    document.addEventListener('mouseup', function(e) {
+      // Окончание перетаскивания
+      document.addEventListener('mouseup', () => {
         if (!isDragging) return;
         isDragging = false;
-        sliderHandle.style.transitionDuration = '0.4s'; // Включаем анимацию после завершения перетаскивания
-        sliderText.classList.remove('hidden'); // Показать текст снова
 
-        const slideThreshold = sliderContainer.offsetWidth - sliderHandle.offsetWidth - 20;
+        // Включаем анимацию возврата/завершения
+        sliderHandle.style.transition = 'left 0.4s ease';
 
+        const containerWidth = sliderContainer.offsetWidth;
+        const handleWidth = sliderHandle.offsetWidth;
+        const slideThreshold = (containerWidth - handleWidth) * 0.8;
+
+        // Если перетянули достаточно вправо – засчитываем «подтверждение»
         if (sliderHandle.offsetLeft >= slideThreshold) {
-            sliderContainer.classList.add('active');
-            sliderHandle.classList.add('active');
+          sliderContainer.classList.add('active');
+          sliderHandle.classList.add('active');
+          sliderHandle.style.left = (containerWidth - handleWidth) + 'px';
 
+          // Сначала плавно убираем старый текст
+          sliderText.classList.remove('fade-in');
+          sliderText.classList.add('fade-out');
+
+          // По окончании анимации fadeOut меняем текст на "Confirmed!" и анимируем появление
+          setTimeout(() => {
+            sliderText.innerText = 'Confirmed!';
+			initializeExamTime();
+            sliderText.classList.remove('fade-out');
+            sliderText.classList.add('fade-in');
+
+            // Меняем иконку на галочку
+            const icon = sliderHandle.querySelector('i');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-check');
+
+            // Пример запроса (если нужно что-то вызывать)
             fetch('/api/start-exam', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
             })
             .then(response => response.json())
             .then(data => {
-                alert(data.message);
-                setTimeout(() => {
-                    resetSlider();
-                }, 1500);
+              console.log('Exam started:', data);
+              // Если нужно что-то делать по ответу
             })
             .catch(error => {
-                console.error('Error:', error);
-                resetSlider();
+              console.error('Error:', error);
+              // При ошибке тоже сброс
+              resetSlider();
             });
-        } else {
-            resetSlider();
-        }
-    });
+          }, 300); // Ждём окончания fadeOut (0.3s)
 
-    // Функция сброса слайдера
-    function resetSlider() {
-        sliderHandle.style.left = '5px';
+        } else {
+          // Иначе – сбрасываем слайдер в исходное положение
+          resetSlider();
+        }
+      });
+
+      // Функция сброса слайдера в исходное состояние
+      function resetSlider() {
+        sliderHandle.style.left = '0';
         sliderContainer.classList.remove('active');
         sliderHandle.classList.remove('active');
-        sliderText.classList.remove('hidden');
-    }
+
+        // Убираем текущую анимацию
+        sliderText.classList.remove('fade-in', 'fade-out');
+
+        // Запускаем анимацию исчезновения (если хотим красиво скрыть)
+        sliderText.classList.add('fade-out');
+        setTimeout(() => {
+          // Возвращаем текст
+          sliderText.innerText = 'Slide to start the exam';
+          sliderText.classList.remove('fade-out');
+          // Анимируем появление
+          sliderText.classList.add('fade-in');
+
+          // Возвращаем иконку стрелочки
+          const icon = sliderHandle.querySelector('i');
+          icon.classList.remove('fa-check');
+          icon.classList.add('fa-chevron-right');
+        }, 300);
+      }
+    });
+	
+document.addEventListener('DOMContentLoaded', () => {
+  initializeExamTime();
 });
 
+function initializeExamTime() {
+  // Кэширование элементов DOM
+  const examResultsDisplay = document.getElementById('examResultsDisplay');
+  const timeValue = document.getElementById('timeValue');
+  let localRemainingSeconds = 0;
+  let timerInterval = null;
+
+  // Запуск всех необходимых процессов
+  fetchExamResults();
+  initializeRemainingTime();
+
+  // Если интервал уже установлен, очищаем его чтобы избежать дублирования
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+  timerInterval = setInterval(decrementTime, 1000);
+
+async function fetchExamResults() {
+  try {
+    const response = await fetch('/api/get_exam_results');
+    const data = await response.json();
+
+    if (data.error) {
+      console.error(`Error: ${data.error}`);
+      return;
+    }
+
+    // If there are no exam results, display a message.
+    if (Object.entries(data).length === 0) {
+      examResultsDisplay.innerHTML = '<p>No one has passed the exam yet.</p>';
+      return;
+    }
+
+    const tableHeader = `
+      <table class="exam-results-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Score</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    const tableRows = Object.entries(data)
+      .map(([userName, userInfo]) => {
+        const grade =
+          userInfo.correct_percentage >= 80
+            ? 'Excellent'
+            : userInfo.correct_percentage >= 51
+            ? 'Average'
+            : 'Poor';
+        const status = userInfo.correct_percentage >= 80 ? 'Passed' : 'Failed';
+        const formattedPercentage = userInfo.correct_percentage.toFixed(2);
+
+        return `
+          <tr>
+            <td>${userName}</td>
+            <td><span class="status ${status.toLowerCase()}">${status}</span></td>
+            <td>${userInfo.correct}/${userInfo.total_questions} (${formattedPercentage}%)</td>
+            <td>${grade}</td>
+          </tr>
+        `;
+      })
+      .join('');
+
+    const tableFooter = `
+        </tbody>
+      </table>
+    `;
+
+    examResultsDisplay.innerHTML = tableHeader + tableRows + tableFooter;
+  } catch (error) {
+    console.error('Error fetching exam results:', error);
+  }
+}
+
+  async function initializeRemainingTime() {
+    try {
+      const response = await fetch('/get_remaining_time');
+      const data = await response.json();
+
+      if (data.remaining_time !== undefined) {
+        localRemainingSeconds = Math.floor(data.remaining_time);
+        updateTimerDisplayFromSeconds(localRemainingSeconds);
+      } else if (data.error) {
+        timeValue.textContent = data.error;
+      }
+    } catch (error) {
+      console.error('Error fetching remaining time:', error);
+    }
+  }
+
+  function decrementTime() {
+    if (localRemainingSeconds > 0) {
+      localRemainingSeconds--;
+      updateTimerDisplayFromSeconds(localRemainingSeconds);
+    }
+  }
+
+  function updateTimerDisplayFromSeconds(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    timeValue.innerHTML = `
+      <div class="timer-container">
+        <div class="timer-box"><span class="time">${hours}</span><span class="label">Hours</span></div>
+        <div class="timer-box"><span class="time">${minutes}</span><span class="label">Minutes</span></div>
+        <div class="timer-box"><span class="time">${seconds}</span><span class="label">Seconds</span></div>
+      </div>
+    `;
+  }
+}
+
+
+  /* ===== Пример простой логики для слайдера (если нужна) ===== */
+  const sliderContainer = document.getElementById('startExamSliderContainer');
+  const sliderHandle = document.getElementById('startExamSliderHandle');
+  let isDragging = false;
+
+  sliderHandle.addEventListener('mousedown', () => {
+    isDragging = true;
+    sliderContainer.classList.add('active');
+    sliderHandle.classList.add('active');
+  });
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      // Возвращаем ручку в начальное положение
+      sliderHandle.style.left = '0px';
+      sliderContainer.classList.remove('active');
+      sliderHandle.classList.remove('active');
+    }
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const containerRect = sliderContainer.getBoundingClientRect();
+    let newLeft = e.clientX - containerRect.left - (sliderHandle.offsetWidth / 2);
+    // Ограничиваем перемещение ручки
+    newLeft = Math.max(0, Math.min(newLeft, containerRect.width - sliderHandle.offsetWidth));
+    sliderHandle.style.left = newLeft + 'px';
+  });
 
 const timeline = document.getElementById('timeline');
 
@@ -306,54 +489,6 @@ socket.on('currentVersion', (data) => {
     });
 });
 
-document.querySelector(".nav-item[data-section='create-exam']").addEventListener('click', function() {
-    document.getElementById('create-exam-modal').style.display = 'block';
-});
-
-document.getElementById('add-question').addEventListener('click', function () {
-    const examForm = document.getElementById('exam-form');
-    const questionTypeElement = document.getElementById('question-type');
-    const questionType = questionTypeElement.value;
-
-    // Создаем блок вопроса
-    let questionBlock = document.createElement('div');
-    questionBlock.classList.add('question-block');
-
-    questionBlock.innerHTML = `
-        <input type='hidden' class='question-type' value='${questionType}'>
-        <input type='text' class='question-text' placeholder='Enter question text'>
-    `;
-
-    if (questionType === 'multiple_choice') {
-        questionBlock.innerHTML += `
-            <input type='text' class='option' placeholder='Option 1'>
-            <input type='text' class='option' placeholder='Option 2'>
-            <input type='text' class='option' placeholder='Option 3'>
-            <select class='correct-answer'>
-                <option value='' disabled selected>Select correct answer</option>
-            </select>
-        `;
-    } else {
-        questionBlock.innerHTML += `<input type='text' class='correct-answer' placeholder='Correct Answer'>`;
-    }
-
-    // Добавляем кнопку удаления вопроса
-    let deleteButton = document.createElement('button');
-    deleteButton.innerText = 'Remove';
-    deleteButton.classList.add('remove-question');
-    deleteButton.addEventListener('click', function () {
-        questionBlock.remove();
-    });
-
-    questionBlock.appendChild(deleteButton);
-    examForm.appendChild(questionBlock);
-
-    // Если это multiple_choice, обновляем select
-    if (questionType === 'multiple_choice') {
-        updateCorrectAnswerSelect(questionBlock);
-    }
-});
-
 // Функция для обновления select с правильными ответами
 function updateCorrectAnswerSelect(questionBlock) {
     const optionsInputs = questionBlock.querySelectorAll('.option');
@@ -375,45 +510,6 @@ function updateCorrectAnswerSelect(questionBlock) {
         });
     });
 }
-
-// Сохранение экзамена
-document.getElementById('save-exam').addEventListener('click', function () {
-    const questions = [];
-    let questionId = 1;
-
-    document.querySelectorAll('.question-block').forEach(block => {
-        const questionType = block.querySelector('.question-type').value;
-        const questionText = block.querySelector('.question-text').value;
-        let correctAnswer = block.querySelector('.correct-answer').value;
-
-        let question = {
-            id: questionId++,
-            text: questionText,
-            correct: correctAnswer,
-            type: questionType
-        };
-
-        if (questionType === 'multiple_choice') {
-            let options = Array.from(block.querySelectorAll('.option')).map(opt => opt.value).filter(opt => opt.trim() !== '');
-            question.options = options;
-        }
-
-        questions.push(question);
-    });
-
-    fetch('/create_exam', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ questions })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Exam successfully created!');
-            document.getElementById('create-exam-modal').style.display = 'none';
-        }
-    });
-});
 
 // Clear the exam creation form
 function clearExamForm() {

@@ -1,0 +1,36 @@
+{
+    "Muhammadiso": [
+        {
+            "amount": 100,
+            "description": "WTF",
+            "time": "2025-03-08T07:18:37.087599"
+        },
+        {
+            "amount": -400,
+            "description": "Shakabum",
+            "time": "2025-03-08T07:19:38.987513"
+        },
+        {
+            "amount": 150,
+            "description": "Exam passed",
+            "time": "2025-03-08T07:39:35.945864"
+        },
+        {
+            "amount": 150,
+            "description": "Exam between 80 and 100",
+            "time": "2025-03-08T07:44:36.494359"
+        },
+        {
+            "amount": 150,
+            "description": "Exam between 80 and 100",
+            "time": "2025-03-09T03:08:32.281358"
+        }
+    ],
+    "Zakariyo": [
+        {
+            "amount": 150,
+            "description": "Exam between 80 and 100",
+            "time": "2025-03-08T07:54:16.729443"
+        }
+    ]
+}

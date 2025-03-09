@@ -24,8 +24,10 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Initialize messages as an empty list, not a dictionary
 messages = []  # Store messages locally
 
-exam_duration = 30 * 60  # 30 minutes in seconds
+exam_duration = 10 * 60  # 30 minutes in seconds
 exam_start_time = None  # Global variable to store exam start time
+exam_started = False  # Флаг начала экзамена
+exam_end_time = None
 
 
 # Sample data for prayer times (replace with actual data or API integration)
@@ -84,78 +86,14 @@ USER_AVATAR_FILE = "users_avatar.json"
 app.config["AVATAR_FOLDER"] = AVATAR_FOLDER
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"png", "jpg", "jpeg", "gif"}
 
-EDEN_AI_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmM0MDNkMWYtMzk5Ny00MjFiLThmMDgtNWU3NWM2MjU1MWQzIiwidHlwZSI6ImFwaV90b2tlbiJ9.2gbXe9dIwFI6Omg5Wohg0PZrsV1KLdjdl_SfMs5_7sA"
-
-MAX_RETRIES = 3  # Максимальное количество попыток
-RETRY_DELAY = 5  # Задержка между попытками в секундах
-
-@app.route("/ai-chat", methods=["POST"])
-def ai_chat():
-    time.sleep(1)
-    user_input = request.json.get("text")
-
-    if not user_input:
-        return jsonify({"error": "No text provided"}), 400  # Обрабатываем случай, когда текст не был передан
-
-    headers = {
-        "Authorization": f"Bearer {EDEN_AI_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    url = "https://api.edenai.run/v2/text/spell_check"  # Используем правильную конечную точку для спеллчека
-    payload = {
-        "providers": "openai,microsoft",
-        "language": "en",
-        "text": user_input,
-    }
-
-    for attempt in range(MAX_RETRIES):
-        # Отправка запроса к Eden AI
-        response = requests.post(url, json=payload, headers=headers)
-
-        # Логируем сам ответ от API для диагностики
-        print("Response status code:", response.status_code)
-        print("Response content:", response.content)
-
-        if response.status_code == 200:
-            result = response.json()
-            # Проверяем, что в ответе есть текст от AI
-            openai_response = result.get("openai", {})
-            if openai_response and "text" in openai_response:
-                text = openai_response["text"]
-                items = openai_response.get("items", [])
-                
-                # Если есть предложения по исправлениям, добавляем их
-                corrections = []
-                for item in items:
-                    if "suggestions" in item and item["suggestions"]:
-                        word = item.get("text", "")
-                        suggestions = [sugg["suggestion"] for sugg in item["suggestions"]]
-                        if word and suggestions:
-                            correction = {
-                                "word": word,
-                                "suggestions": suggestions
-                            }
-                            corrections.append(correction)
-
-                # Формируем итоговый ответ
-                response_data = {
-                    "text": text,
-                    "corrections": corrections
-                }
-
-                return jsonify({"response": response_data})  # Возвращаем текст с исправлениями в структурированном виде
-
-            else:
-                return jsonify({"error": "No valid response from AI"}), 500
-        else:
-            print(f"Attempt {attempt + 1} failed, retrying...")
-            time.sleep(RETRY_DELAY)
-
-    # Если все попытки не удались
-    return jsonify({"error": "Provider failed after multiple attempts", "details": response.json()}), 500
-
-
+@app.route('/api/get_exam_times', methods=['GET'])
+def get_exam_times():
+    current_time = time.time()  # текущее время в секундах
+    return jsonify({
+        "current_time": current_time,
+        "exam_start_time": exam_start_time,
+        "exam_end_time": exam_end_time
+    })
         
 if not os.path.exists(AVATAR_FOLDER):
     os.makedirs(AVATAR_FOLDER)
@@ -458,6 +396,83 @@ def main_page():
 def api_next_prayer():
     next_prayer = get_next_prayer()
     return jsonify(next_prayer)
+    
+TRANSACTIONS_FILE = "users_transactions.json"   
+ 
+def load_balances():
+    if os.path.exists(BALANCE_FILE):
+        with open(BALANCE_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def store_balances(balances):
+    with open(BALANCE_FILE, "w") as f:
+        json.dump(balances, f, indent=4) 
+
+def load_transactions():
+    if os.path.exists(TRANSACTIONS_FILE):
+        with open(TRANSACTIONS_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def store_transactions(transactions):
+    with open(TRANSACTIONS_FILE, "w") as f:
+        json.dump(transactions, f, indent=4)
+    
+@app.route('/api/get_balance/<username>', methods=['GET'])
+def get_balance(username):
+    balances = load_balances()
+    transactions = load_transactions()
+    if username not in balances:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "username": username,
+        "balance": balances[username],
+        "transactions": transactions.get(username, [])
+    })
+
+@app.route('/api/add_transaction', methods=['POST'])
+def add_transaction():
+    data = request.json
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
+
+    username = data.get("username")
+    amount = data.get("amount")
+    description = data.get("description", "")
+
+    if not username or amount is None:
+        return jsonify({"error": "username and amount are required"}), 400
+
+    balances = load_balances()
+    transactions = load_transactions()
+
+    # If user does not exist, initialize balance and transaction list.
+    if username not in balances:
+        balances[username] = 0.0
+    if username not in transactions:
+        transactions[username] = []
+
+    # Update balance
+    balances[username] += amount
+
+    # Create a transaction record
+    transaction_record = {
+        "amount": amount,
+        "description": description,
+        "time": datetime.utcnow().isoformat()
+    }
+    transactions[username].append(transaction_record)
+
+    # Save the updated data back to their respective files.
+    store_balances(balances)
+    store_transactions(transactions)
+
+    return jsonify({
+        "message": "Transaction added",
+        "new_balance": balances[username]
+    })
 
 # Initialize loggedUsers from file
 loggedUsers = load_file(USER_DATA_FILE, {})
@@ -469,65 +484,72 @@ current_version = "2025-01-10-v1"
 
 exam_questions = [
     {
-        "id": 1,
-        "text": "Listen and choose correct answer.",
-        "type": "listening",  # Вопрос на аудирование
-        "audio": "/static/exam/ElonMusk.mp3",  # Путь к файлу mp3, который нужно будет проигрывать на клиенте.
-        "subquestions": [
-            {
-                "id": "1.1",
-                "type": "multiple_choice",
-                "text": "Who is this?",
-                "options": ["Elon", "Elon Musk", "Tesla"],
-                "correct": "Elon Musk"
-            },
-            {
-                "id": "1.2",
-                "type": "true_false",
-                "text": "Tesla's Founder and not a CEO",
-                "correct": "False"
-            },
-            {
+        "id":
+        1,
+        "text":
+        "Listen and choose correct answer.",
+        "type":
+        "listening",  # Вопрос на аудирование
+        "audio":
+        "/static/exam/ElonMusk.mp3",  # Путь к файлу mp3, который нужно будет проигрывать на клиенте.
+        "subquestions": [{
+            "id": "1.1",
+            "type": "multiple_choice",
+            "text": "Who is this?",
+            "options": ["Elon", "Elon Musk", "Tesla"],
+            "correct": "Elon Musk"
+        }, {
+            "id": "1.2",
+            "type": "true_false",
+            "text": "Tesla's Founder and not a CEO",
+            "correct": "False"
+        }, {
             "id": "1.3",
             "type": "question",
             "text": "Elon is ______ ( One word only )",
             "correct": "inventor"
-            },
-            {
-                "id": "1.4",
-                "type": "true_false",
-                "text": "Is ELon genuise human?",
-                "correct": "True"
-            },
-            {
-                "id": "1.5",
-                "type": "multiple_choice",
-                "text": "When critics say 'you can't do this' what did you answer Elon? ",
-                "options": ["We have done it", "We've did it", "None of this answers."],
-                "correct": "We have done it"
-            }
-        ]
+        }, {
+            "id": "1.4",
+            "type": "true_false",
+            "text": "Is ELon genuise human?",
+            "correct": "True"
+        }, {
+            "id":
+            "1.5",
+            "type":
+            "multiple_choice",
+            "text":
+            "When critics say 'you can't do this' what did you answer Elon? ",
+            "options":
+            ["We have done it", "We've did it", "None of this answers."],
+            "correct":
+            "We have done it"
+        }]
     },
-
-        {
-        "id": 2,
-        "text": "Listen and choose correct answer.",
-        "type": "listening",  # Вопрос на аудирование
-        "audio": "/static/exam/four.mp3",  # Путь к файлу mp3, который нужно будет проигрывать на клиенте.
-        "subquestions": [
-            {
-                "id": "2.1",
-                "type": "multiple_choice",
-                "text": "What do you hear?",
-                "options": ["49", "94", "iPhone", "fortnite"],
-                "correct": "fortnite"
-            }
-        ]
+    {
+        "id":
+        2,
+        "text":
+        "Listen and choose correct answer.",
+        "type":
+        "listening",  # Вопрос на аудирование
+        "audio":
+        "/static/exam/four.mp3",  # Путь к файлу mp3, который нужно будет проигрывать на клиенте.
+        "subquestions": [{
+            "id": "2.1",
+            "type": "multiple_choice",
+            "text": "What do you hear?",
+            "options": ["49", "94", "iPhone", "fortnite"],
+            "correct": "fortnite"
+        }]
     },
-{
-    "id": 6,
-    "type": "reading",
-    "text": """<h1>Traditions around the world</h1>
+    {
+        "id":
+        3,
+        "type":
+        "reading",
+        "text":
+        """<h1>Traditions around the world</h1>
 
 <h2>The Kukeri Festival</h2>
 <p>
@@ -544,47 +566,46 @@ exam_questions = [
   Every year, on the last Wednesday of August, the quiet village of Buñol, Spain, becomes busy and full of people. Everyone goes out to the streets to throw tomatoes at each other. It is a big, fun food fight! The festival lasts about one hour, and everyone gets very dirty, so they all wear old clothes. Before the tomato fight, there are other activities, like parades and music. After the battle, the streets are covered in tomato juice, but they get cleaned.
 </p>
 """,
-    "subquestions": [
-        {
-            "id": "2.1",
+        "subquestions": [{
+            "id": "3.1",
             "type": "question",
-            "text": "When does Tom wake up?",
-            "correct": "early in the morning"
-        },
-        {
-            "id": "2.2",
+            "text": "Which festival celebrates the visit of spirits?",
+            "correct": "The Day of the Dead"
+        }, {
+            "id": "3.2",
             "type": "question",
-            "text": "What does Tom eat in the morning?",
-            "correct": "breakfast"
-        },
-        {
-            "id": "2.3",
+            "text": "At which festival do people hide their faces?",
+            "correct": "The Kukeri Festival"
+        }, {
+            "id": "3.3",
             "type": "question",
-            "text": "Where does Tom go after breakfast?",
-            "correct": "to school"
-        },
-        {
-            "id": "2.4",
+            "text": "Which festival is popular among tourists?",
+            "correct": "The Kukeri Festival"
+        }, {
+            "id": "3.4",
             "type": "question",
-            "text": "What does Tom do after school?",
-            "correct": "plays football"
-        },
-        {
-            "id": "2.5",
+            "text": "Which festival is the shortest?",
+            "correct": "La Tomatina"
+        }, {
+            "id": "3.5",
             "type": "question",
-            "text": "Who does Tom play football with?",
-            "correct": "his friends"
-        },
-        {
-            "id": "2.6",
-            "type": "true_false",
-            "text": "What sport does Tom play?",
-            "correct": "False"
-        }
-    ]
-},
+            "text": "Which festival happens at the beginning of the year?",
+            "correct": "The Kukeri Festival"
+        }, {
+            "id":
+            "3.6",
+            "type":
+            "multiple_choice",
+            "text":
+            "Which festival is about the past?",
+            "options":
+            ["The Kukeri Festival", "The Day of the Dead", "La Tomatina"],
+            "correct":
+            "The Day of the Dead"
+        }]
+    },
     {
-        "id": 3,
+        "id": 4,
         "type": "multiple_choice",
         "text": "If today is Wednesday, what day will it be in 10 days?",
         "options": ["Saturday", "Sunday", "Monday"],
@@ -778,15 +799,11 @@ def create_exam():
         app.logger.error(f"Error occurred in create_exam: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
-exam_started = False  # Флаг начала экзамена
-
 @socketio.on('exam_started')
 def handle_exam_started():
     global exam_started
     exam_started = True
     emit('exam_started', {'message': 'Exam has started'}) 
-
-exam_end_time = None
 
 @app.route('/api/start-exam', methods=['POST'])
 def start_exam():
@@ -886,7 +903,7 @@ def submit_exam():
         if current_time > exam_end_time:
             return jsonify({"error": "Exam time has expired."}), 403  # Ошибка, если время истекло
 
-        time.sleep(2)
+        time.sleep(1)
         data = request.get_json(silent=True)
         answers = data.get("answers")
         username = data.get("username")
@@ -904,8 +921,8 @@ def submit_exam():
 
         # Обработка вопросов и под-вопросов
         for question in exam_questions:
-            # Если есть под-вопросы, обрабатываем их отдельно
             if "subquestions" in question:
+                # Обрабатываем только под-вопросы, основной текст не считается
                 for subq in question["subquestions"]:
                     subq_id = f"q{subq['id']}"
                     answer = answers.get(subq_id)
@@ -921,9 +938,7 @@ def submit_exam():
                         })
                         continue
 
-                    # Проверка ответа для всех типов без учёта регистра
                     is_correct = answer.strip().lower() == subq["correct"].strip().lower()
-
                     if is_correct:
                         correct += 1
                     else:
@@ -938,7 +953,7 @@ def submit_exam():
                         "is_correct": is_correct
                     })
             else:
-                # Обработка обычных вопросов
+                # Обработка обычных вопросов (без под-вопросов)
                 if 'id' not in question:
                     app.logger.error(f"Missing 'id' in question: {question}")
                     continue
@@ -958,9 +973,7 @@ def submit_exam():
                     })
                     continue
 
-                # Проверка ответа без учёта регистра
                 is_correct = answer.strip().lower() == question["correct"].strip().lower()
-
                 if is_correct:
                     correct += 1
                 else:
@@ -975,15 +988,17 @@ def submit_exam():
                     "is_correct": is_correct
                 })
 
+        # Подсчитываем общее количество вопросов:
+        # Если у вопроса есть под-вопросы, считаем только их, иначе считаем сам вопрос.
         total_questions = sum(
-            1 + len(question["subquestions"]) if "subquestions" in question else 1
+            len(question["subquestions"]) if "subquestions" in question else 1
             for question in exam_questions
         )
         correct_percentage = (correct / total_questions) * 100 if total_questions > 0 else 0
-
         coins = 15 if correct_percentage >= 80 else 0 
 
         exam_passed.append(username)
+        time_finished = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         # Сохраняем результаты в файл
         exam_results = {}
@@ -999,6 +1014,7 @@ def submit_exam():
             "correct_percentage": correct_percentage,
             "rewarded": coins > 0,
             "coins": coins,
+            "time_finished": time_finished,
             "results": results
         }
 
@@ -1012,12 +1028,14 @@ def submit_exam():
             "total_questions": total_questions,
             "correct_percentage": correct_percentage,
             "rewarded": coins > 0,
+            "time_finished": time_finished,
             "coins": coins
         })
 
     except Exception as e:
         app.logger.error(f"Error in submit_exam: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
+
 
 
 @app.route("/chatCRM")

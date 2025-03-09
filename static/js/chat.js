@@ -1697,75 +1697,57 @@ async function addCoins(username, coins) {
     }
 }
 
- function handleVisibilityChange() {
-        if (document.hidden) {
-            blockUser(180);
-        }
+ let violationCount = 0;
+const maxViolations = 2;
+
+function incrementViolation() {
+    violationCount++;
+    showToastNotification(`Violation ${violationCount}/${maxViolations}`, "error");
+    if (violationCount >= maxViolations) {
+        // Ban user for 3 minutes (180 seconds)
+        blockUser(180);
+        // Reset the violation counter
+        violationCount = 0;
     }
-	
-function disableCopyPasteAndRightClick() {
-    // Блокируем копирование
-    document.addEventListener('copy', function(event) {
-        event.preventDefault();
-        showToastNotification("Copying is disabled.", "error");
-    });
-
-    // Блокируем вставку
-    document.addEventListener('paste', function(event) {
-        event.preventDefault();
-        showToastNotification("Pasting is disabled.", "error");
-    });
-
-    // Блокируем правый клик мыши
-    document.addEventListener('contextmenu', function(event) {
-        event.preventDefault();
-        showToastNotification("Right-clicking is disabled.", "error");
-    });
 }
 
-// Функция для инициализации и деактивации безопасности
+function handleVisibilityChange() {
+    if (document.hidden) {
+        incrementViolation();
+    }
+}
+
+function onCopy(event) {
+    event.preventDefault();
+    incrementViolation();
+}
+
+function onPaste(event) {
+    event.preventDefault();
+    incrementViolation();
+}
+
+function onContextMenu(event) {
+    event.preventDefault();
+    incrementViolation();
+}
+
+// Function to initialize or disable the exam security system
 function initExamSecurity(enable = true) {
     if (enable) {
-        // Включаем безопасность, блокируем копирование, вставку и правый клик
-        document.addEventListener('visibilitychange', handleVisibilityChange);  // Отслеживаем смену видимости страницы
-
-        // Блокируем копирование, вставку и правый клик
-        document.addEventListener('copy', function(event) {
-            event.preventDefault();
-            showToastNotification("Copying is disabled.", "error");
-        });
-
-        document.addEventListener('paste', function(event) {
-            event.preventDefault();
-            showToastNotification("Pasting is disabled.", "error");
-        });
-
-        document.addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-            showToastNotification("Right-clicking is disabled.", "error");
-        });
-
-        showToastNotification("Anti Cheating system is active.", "success");
+        // Activate security: disable copy, paste, right-click and monitor visibility change
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        document.addEventListener('copy', onCopy);
+        document.addEventListener('paste', onPaste);
+        document.addEventListener('contextmenu', onContextMenu);
+        showToastNotification("Anti-cheating system is active.", "success");
     } else {
-        // Включаем все действия и восстанавливаем нормальную работу
+        // Remove restrictions
         document.removeEventListener('visibilitychange', handleVisibilityChange);
-
-        document.removeEventListener('copy', function(event) {
-            event.preventDefault();
-            showToastNotification("Copying is disabled.", "error");
-        });
-
-        document.removeEventListener('paste', function(event) {
-            event.preventDefault();
-            showToastNotification("Pasting is disabled.", "error");
-        });
-
-        document.removeEventListener('contextmenu', function(event) {
-            event.preventDefault();
-            showToastNotification("Right-clicking is disabled.", "error");
-        });
-
-        showToastNotification("Anti Cheating system is disabled.", "success");
+        document.removeEventListener('copy', onCopy);
+        document.removeEventListener('paste', onPaste);
+        document.removeEventListener('contextmenu', onContextMenu);
+        showToastNotification("Anti-cheating system is disabled.", "success");
     }
 }
 
@@ -1774,19 +1756,22 @@ function toggleRulesModal(action) {
 
     if (action === 'open') {
         rulesModal.style.display = 'flex';
+		rulesModal.classList.add('show');
     } else if (action === 'close') {
         rulesModal.style.display = 'none';
     }
 }
 
+
+
+document.getElementById('closeExamModal').addEventListener('click', function() {
+    document.getElementById('examModal').style.display = 'none';
+});
+
 // Привязываем функции к кнопкам
 document.getElementById('closeRulesModal').addEventListener('click', () => toggleRulesModal('close'));
 document.getElementById('continueExamBtn').addEventListener('click', () => {
     document.getElementById('rulesModal').style.display = 'none';
-});
-
-document.getElementById('closeExamModal').addEventListener('click', function() {
-    document.getElementById('examModal').style.display = 'none';
 });
 
 // Закрытие при клике вне модального окна
@@ -1796,7 +1781,6 @@ window.addEventListener('click', (event) => {
     }
 });
 
-// Обработчик для клика по опции экзамена
 document.getElementById('examTaskOption').addEventListener('click', async function () {
   // Получаем необходимые элементы
   toggleRulesModal('open');
@@ -1804,14 +1788,19 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
   const examContainer = document.getElementById('examQuestions');
   const examHeader = document.getElementById('examTitle');
   const finishExamButton = document.getElementById('finishExam');
-  const examTimerDisplay = document.getElementById('exam-timer');
+  const examTimer = document.getElementById('exam-timer');
   const loadingSpinner = document.getElementById('loadingSpinner');
   const loadingFinishExam = document.getElementById('loadingFinishExam');
+
+  // Получаем элементы таймера
+  const hoursEl   = document.getElementById('hours');
+  const minutesEl = document.getElementById('minutes');
+  const secondsEl = document.getElementById('seconds');
 
   // Настраиваем видимость элементов
   examHeader.style.display = 'none';
   finishExamButton.style.display = 'none';
-  examTimerDisplay.style.display = 'none';
+  examTimer.style.display = 'none';
   loadingSpinner.style.display = 'block';
 
   examModal.style.display = 'flex';
@@ -1823,7 +1812,9 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
   try {
     const response = await fetch(url);
     console.log("Response Status:", response.status);
-    const data = await (response.ok ? response.json() : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
+    const data = await (response.ok
+      ? response.json()
+      : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
     if (data.error) {
       handleError(data.error);
       loadingSpinner.style.display = 'none';
@@ -1834,139 +1825,14 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
     loadingSpinner.style.display = 'none';
     examHeader.style.display = 'block';
     finishExamButton.style.display = 'block';
-    examTimerDisplay.style.display = 'block';
-    // Temporary turned off // initExamSecurity(true);
+    examTimer.style.display = 'flex';
+    initExamSecurity(true);
 
     // Получаем шаблон вопроса
     const questionTemplate = document.getElementById('questionTemplate');
     let questionCounter = 0;
 
-    data.questions.forEach((question) => {
-      // Если у вопроса есть под-вопросы – создаем контейнер для "parent" (например, Passage)
-if (question.type === 'listening') {
-  // Создаем контейнер parent для Listening вопроса
-  const parentContainer = document.createElement('div');
-  parentContainer.className = 'exam-parent-question';
-  // Если есть текст вопроса, выводим его как заголовок
-  if (question.text) {
-    parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
-  }
-  // Добавляем кастомный аудиоплеер (динамически)
-  parentContainer.innerHTML += `
-    <div class="custom-audio-player">
-      <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
-      <button class="custom-play-btn"><i class="fas fa-play"></i></button>
-      <span class="custom-time-display">0:00 / 0:00</span>
-    </div>
-  `;
-
-  // Сначала добавляем родительский контейнер в examContainer
-  examContainer.appendChild(parentContainer);
-
-  // Затем, если есть под-вопросы – добавляем их внутрь parentContainer
-  if (question.subquestions && Array.isArray(question.subquestions)) {
-    question.subquestions.forEach((subq) => {
-      questionCounter++;
-      const instruction = getInstructionForType(subq.type);
-      const questionNode = document.importNode(questionTemplate.content, true);
-      questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
-      questionNode.querySelector('.question-instruction').innerHTML = instruction;
-
-      let optionsContainer = questionNode.querySelector('.question-options');
-      if (subq.type === 'true_false') {
-        optionsContainer.innerHTML = `
-          <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
-          <label for="true${subq.id}">True</label>
-          <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
-          <label for="false${subq.id}">False</label>
-        `;
-      } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-        subq.options.forEach(option => {
-          const optionId = `${option.replace(/\s+/g, '')}${subq.id}`;
-          optionsContainer.innerHTML += `
-            <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
-            <label for="${optionId}">${option}</label>
-          `;
-        });
-      } else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
-        optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
-      }
-      questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
-      parentContainer.appendChild(questionNode);
-    });
-  }
-}
- else if (question.subquestions && Array.isArray(question.subquestions)) {
-        // Для остальных вопросов с под-вопросами (например, Reading)
-        if (question.text) {
-          const parentContainer = document.createElement('div');
-          parentContainer.className = 'exam-parent-question';
-          parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
-          examContainer.appendChild(parentContainer);
-        }
-        question.subquestions.forEach((subq) => {
-          questionCounter++;
-          const instruction = getInstructionForType(subq.type);
-          const questionNode = document.importNode(questionTemplate.content, true);
-          questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
-          questionNode.querySelector('.question-instruction').innerHTML = instruction;
-
-          let optionsContainer = questionNode.querySelector('.question-options');
-          if (subq.type === 'true_false') {
-            optionsContainer.innerHTML = `
-              <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
-              <label for="true${subq.id}">True</label>
-              <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
-              <label for="false${subq.id}">False</label>
-            `;
-          } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-            subq.options.forEach(option => {
-              const optionId = `${option.replace(/\s+/g, '')}${subq.id}`;
-              optionsContainer.innerHTML += `
-                <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
-                <label for="${optionId}">${option}</label>
-              `;
-            });
-          } else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
-            optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
-          }
-          questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
-          examContainer.appendChild(questionNode);
-        });
-      } else {
-        // Обычный вопрос (без под-вопросов)
-        questionCounter++;
-        const instruction = getInstructionForType(question.type);
-        const questionNode = document.importNode(questionTemplate.content, true);
-        const qId = question.id ? question.id : questionCounter;
-        questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
-        questionNode.querySelector('.question-instruction').innerHTML = instruction;
-
-        let optionsContainer = questionNode.querySelector('.question-options');
-        if (question.type === 'true_false') {
-          optionsContainer.innerHTML = `
-            <input type="radio" name="q${qId}" value="True" id="true${qId}">
-            <label for="true${qId}">True</label>
-            <input type="radio" name="q${qId}" value="False" id="false${qId}">
-            <label for="false${qId}">False</label>
-          `;
-        } else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
-          question.options.forEach(option => {
-            const optionId = `${option.replace(/\s+/g, '')}${qId}`;
-            optionsContainer.innerHTML += `
-              <input type="radio" name="q${qId}" value="${option}" id="${optionId}">
-              <label for="${optionId}">${option}</label>
-            `;
-          });
-        } else if (['fill_gaps', 'unscramble', 'reading'].includes(question.type)) {
-          optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
-        }
-        questionNode.querySelector('.exam-question').dataset.questionId = qId;
-        examContainer.appendChild(questionNode);
-      }
-    });
-
-    // Функция для получения инструкции по типу
+    // Функция для получения инструкции по типу вопроса
     function getInstructionForType(type) {
       switch (type) {
         case "true_false":
@@ -1988,34 +1854,205 @@ if (question.type === 'listening') {
       }
     }
 
+    // Генерация вопросов
+    data.questions.forEach((question) => {
+      if (question.type === 'listening') {
+        // Создаем родительский контейнер для Listening вопроса
+        const parentContainer = document.createElement('div');
+        parentContainer.className = 'exam-parent-question';
+        if (question.text) {
+          parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+        }
+        parentContainer.innerHTML += `
+          <div class="custom-audio-player">
+            <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
+            <button class="custom-play-btn"><i class="fas fa-play"></i></button>
+            <span class="custom-time-display">0:00 / 0:00</span>
+          </div>
+        `;
+        examContainer.appendChild(parentContainer);
+
+        if (question.subquestions && Array.isArray(question.subquestions)) {
+          question.subquestions.forEach((subq) => {
+            questionCounter++;
+            const instruction = getInstructionForType(subq.type);
+            const questionNode = document.importNode(questionTemplate.content, true);
+            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+            questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+            let optionsContainer = questionNode.querySelector('.question-options');
+            // Если true_false, multiple_choice и т.д. — генерируем по типу
+            if (subq.type === 'true_false') {
+              optionsContainer.innerHTML = `
+                <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+                <label for="true${subq.id}">True</label>
+                <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+                <label for="false${subq.id}">False</label>
+              `;
+            } 
+            else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+              // Генерируем варианты ответа с буквами
+              const letters = ['A','B','C','D','E','F','G','H'];
+              let html = '';
+              subq.options.forEach((option, index) => {
+                const letter = letters[index] || '?'; // Если вариантов больше, чем букв в массиве
+                const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
+                html += `
+                  <div class="option-group">
+                    <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                    <label for="${optionId}">
+                      <span class="option-letter">${letter}</span>
+                      <span class="option-text">${option}</span>
+                    </label>
+                  </div>
+                `;
+              });
+              optionsContainer.innerHTML = html;
+            } 
+            else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
+              optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+            }
+            questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
+            parentContainer.appendChild(questionNode);
+          });
+        }
+      } 
+      else if (question.subquestions && Array.isArray(question.subquestions)) {
+        // Вопрос с под-вопросами (например, Reading)
+        if (question.text) {
+          const parentContainer = document.createElement('div');
+          parentContainer.className = 'exam-parent-question';
+          parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+          examContainer.appendChild(parentContainer);
+        }
+        question.subquestions.forEach((subq) => {
+          questionCounter++;
+          const instruction = getInstructionForType(subq.type);
+          const questionNode = document.importNode(questionTemplate.content, true);
+          questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+          questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+          let optionsContainer = questionNode.querySelector('.question-options');
+          if (subq.type === 'true_false') {
+            optionsContainer.innerHTML = `
+              <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+              <label for="true${subq.id}">True</label>
+              <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+              <label for="false${subq.id}">False</label>
+            `;
+          } 
+          else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+            // Генерируем варианты ответа с буквами
+            const letters = ['A','B','C','D','E','F','G','H'];
+            let html = '';
+            subq.options.forEach((option, index) => {
+              const letter = letters[index] || '?';
+              const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
+              html += `
+                <div class="option-group">
+                  <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                  <label for="${optionId}">
+                    <span class="option-letter">${letter}</span>
+                    <span class="option-text">${option}</span>
+                  </label>
+                </div>
+              `;
+            });
+            optionsContainer.innerHTML = html;
+          } 
+          else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
+            optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+          }
+          questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
+          examContainer.appendChild(questionNode);
+        });
+      } 
+      else {
+        // Обычный вопрос (без под-вопросов)
+        questionCounter++;
+        const instruction = getInstructionForType(question.type);
+        const questionNode = document.importNode(questionTemplate.content, true);
+        const qId = question.id ? question.id : questionCounter;
+        questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
+        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+        let optionsContainer = questionNode.querySelector('.question-options');
+        if (question.type === 'true_false') {
+          optionsContainer.innerHTML = `
+            <input type="radio" name="q${qId}" value="True" id="true${qId}">
+            <label for="true${qId}">True</label>
+            <input type="radio" name="q${qId}" value="False" id="false${qId}">
+            <label for="false${qId}">False</label>
+          `;
+        } 
+        else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
+          // Генерируем варианты ответа с буквами
+          const letters = ['A','B','C','D','E','F','G','H'];
+          let html = '';
+          question.options.forEach((option, index) => {
+            const letter = letters[index] || '?';
+            const optionId = `${letter.replace(/\s+/g, '')}${qId}`;
+            html += `
+              <div class="option-group">
+                <input type="radio" name="q${qId}" value="${option}" id="${optionId}">
+                <label for="${optionId}">
+                  <span class="option-letter">${letter}</span>
+                  <span class="option-text">${option}</span>
+                </label>
+              </div>
+            `;
+          });
+          optionsContainer.innerHTML = html;
+        } 
+        else if (['fill_gaps', 'unscramble', 'reading'].includes(question.type)) {
+          optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
+        }
+        questionNode.querySelector('.exam-question').dataset.questionId = qId;
+        examContainer.appendChild(questionNode);
+      }
+    });
+
     // Обработка оставшегося времени экзамена
     const timeResponse = await fetch('/get_remaining_time');
-    const timeData = await (timeResponse.ok ? timeResponse.json() : timeResponse.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
-    if (timeData.remaining_time) {
-      let remainingTime = timeData.remaining_time * 1000; // convert to ms
+    const timeData = await (timeResponse.ok
+      ? timeResponse.json()
+      : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
 
+    if (timeData.remaining_time) {
+      let remainingTime = timeData.remaining_time * 1000; // перевод в миллисекунды
+
+      // Функция обновления таймера
       function updateTimer() {
         if (remainingTime <= 0) {
-          finishExam();
+          finishExam(); // Время истекло — завершаем экзамен
           return;
         }
-        const minutes = Math.floor(remainingTime / 60000);
-        const seconds = Math.floor((remainingTime % 60000) / 1000);
-        examTimerDisplay.innerHTML = `<i class="fas fa-clock"></i> ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+
+        const totalSeconds = Math.floor(remainingTime / 1000);
+        // Считаем часы, минуты, секунды
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        // Обновляем значения с ведущими нулями
+        hoursEl.textContent   = hours   < 10 ? '0' + hours   : hours;
+        minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes;
+        secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
+
+        // Меняем фон таймера при малом времени (например, менее 3 минут)
         if (remainingTime <= 180000) {
-          examTimerDisplay.style.background = 'rgba(255, 0, 0, 0.2)';
-          examTimerDisplay.style.border = '1px solid #ff4d4d';
-          examTimerDisplay.style.color = '#ff4d4d';
+          examTimer.style.backgroundColor = '#3d0000';
         } else {
-          examTimerDisplay.style.background = 'rgba(0, 167, 255, 0.2)';
-          examTimerDisplay.style.border = '1px solid #45b8ff';
-          examTimerDisplay.style.color = 'white';
+          examTimer.style.backgroundColor = '#2c2c2c';
         }
+
         remainingTime -= 1000;
       }
 
+      // Запускаем интервал обновления каждую секунду
       const timerInterval = setInterval(updateTimer, 1000);
 
+      // Функция автоматической отправки экзамена
       function finishExam() {
         loadingFinishExam.style.display = 'flex';
         clearInterval(timerInterval);
@@ -2023,7 +2060,8 @@ if (question.type === 'listening') {
         finishExamButton.click();
       }
 
-      finishExamButton.addEventListener('click', function () {
+      // Обработчик нажатия на кнопку завершения экзамена
+      finishExamButton.addEventListener('click', function handleFinishClick() {
         if (remainingTime > 0) {
           loadingFinishExam.style.display = 'flex';
           showSubmitConfirmation();
@@ -2033,41 +2071,268 @@ if (question.type === 'listening') {
         }
       });
 
+      // Функция показа модального окна подтверждения отправки экзамена
       function showSubmitConfirmation() {
+        // Удаляем существующее модальное окно, если есть
+        const existingModal = document.querySelector('.leaderboard-modal');
+        if (existingModal) {
+          existingModal.remove();
+        }
+
+        // Создаем новое модальное окно
         const modal = document.createElement('div');
         modal.className = 'leaderboard-modal';
         modal.innerHTML = `
           <div class="leaderboard-content">
             <h2><i class="fas fa-exclamation-triangle"></i> Confirm Submission</h2>
             <p>You are about to submit your exam. This action cannot be undone. Please review your answers.</p>
-            <button id="confirmSubmit" class="submit-button">
+            <button class="submit-button confirm-submit">
               <span class="text-skeleton" data-text="Submit Exam">Submit Exam</span>
             </button>
-            <button id="cancelSubmit" class="cancel-button">Cancel</button>
+            <button class="cancel-button cancel-submit">Cancel</button>
           </div>
         `;
         document.body.appendChild(modal);
-        document.getElementById('confirmSubmit').addEventListener('click', function () {
+
+        // Обработчик подтверждения
+        modal.querySelector('.confirm-submit').addEventListener('click', function () {
           clearInterval(timerInterval);
           submitExamResults();
-          setTimeout(() => modal.remove(), 700);
           loadingFinishExam.style.display = 'flex';
+          modal.remove();
         });
-        document.getElementById('cancelSubmit').addEventListener('click', function () {
+
+        // Обработчик отмены
+        modal.querySelector('.cancel-submit').addEventListener('click', function () {
           loadingFinishExam.style.display = 'none';
           modal.remove();
         });
       }
     }
 
-    // После вставки всех вопросов, инициализируем кастомные аудиоплееры (без Wavesurfer.js)
+    // Инициализируем кастомные аудиоплееры после рендеринга вопросов
     initAllWavePlayers();
+
   } catch (error) {
     console.error('Error:', error.message);
     handleError(error.message);
     loadingSpinner.style.display = 'none';
   }
 });
+
+// Функция открытия модального окна
+function openMyExamResultsModal(userData) {
+  buildExamResultsUI(userData); // формируем UI с данными
+  const modal = document.getElementById('myExamResultsModal');
+  modal.style.display = 'flex'; // показываем модальное окно
+}
+
+// Функция закрытия модального окна по клику на крестик
+document.getElementById('closeMyExamResultsModal').addEventListener('click', function () {
+  stopAllAudio();
+  document.getElementById('myExamResultsModal').style.display = 'none';
+});
+
+document.getElementById('myExamResultsOption').addEventListener('click', async function() {
+  try {
+    // Запрос времени экзамена
+    const timeResponse = await fetch('/api/get_exam_times');
+    if (!timeResponse.ok) throw new Error("Failed to fetch exam times");
+
+    const { current_time, exam_start_time, exam_end_time } = await timeResponse.json();
+
+    // Если экзамен ещё идёт, показываем заглушку
+    if (current_time >= exam_start_time && current_time <= exam_end_time) {
+      showExamSkeletonLoading();
+      return;
+    }
+
+    // Если экзамен завершён, загружаем результаты
+    const response = await fetch('/api/get_exam_results');
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.error || "Error fetching exam results");
+    }
+    const allResults = await response.json();
+
+    const userData = allResults[currentUser];
+    if (!userData) {
+      throw new Error(`No results found for user ${currentUser}`);
+    }
+
+    openMyExamResultsModal(userData);
+  } catch (error) {
+    console.error("Failed to fetch exam results:", error.message);
+    //showToastNotification("Failed to load exam results: " + error.message,'error');
+	showToastNotification("To see you results please refresh the site.");
+  }
+});
+
+function showExamSkeletonLoading() {
+  const modal = document.getElementById('myExamResultsModal');
+     const musicPlayer = new Audio('/static/music/onmyway.mp3');
+    musicPlayer.loop = true;
+    musicPlayer.volume = 1;
+
+    // Проверяем наличие сохраненного времени
+    let savedTime = localStorage.getItem('musicTime');
+    if (savedTime && !isNaN(savedTime)) {
+        savedTime = parseFloat(savedTime);
+        musicPlayer.addEventListener('loadedmetadata', () => {
+            if (savedTime < musicPlayer.duration) {
+                musicPlayer.currentTime = savedTime;
+            }
+        });
+    }
+
+    // Попытка воспроизведения при взаимодействии пользователя
+    function tryPlay() {
+        musicPlayer.play().catch(err => console.log('Ошибка воспроизведения:', err));
+        document.removeEventListener('click', tryPlay);
+    }
+
+    tryPlay();
+
+    // Сохраняем текущую позицию каждые 2 секунды
+    setInterval(() => {
+        if (!isNaN(musicPlayer.currentTime)) {
+            localStorage.setItem('musicTime', musicPlayer.currentTime);
+        }
+    }, 2000);
+  const loadingTexts = [
+    "Your exam is still in progress...",
+    "Please wait until the exam is completed...",
+    "Results will be available after the exam ends...",
+    "Your exam session is not yet finished...",
+    "Stay patient! The results will be shown soon..."
+  ];
+  const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
+
+  // Формируем содержимое с контейнером для Lottie-анимации и сообщением, центрируя контент по горизонтали и вертикали
+  const modalContent = `
+    <div id="skeletonContent" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+      <div id="animationContainer" style="width: 100px; height: 100px;"></div>
+      <div class="text-skeleton" data-text="${randomText}" style="margin-top: 10px;">${randomText}</div>
+    </div>
+  `;
+
+  // Обновляем контейнер с динамическим содержимым (без кнопки OK)
+  document.getElementById('modalBody').innerHTML = modalContent;
+  modal.style.display = 'flex';
+
+  // Инициализируем Lottie-анимацию
+  lottie.loadAnimation({
+    container: document.getElementById('animationContainer'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: '/static/animations/ExamLoading.json'
+  });
+}
+
+
+/*// Закрытие модального окна по нажатию на кнопку "X"
+document.getElementById('closeMyExamResultsModal').addEventListener('click', function() {
+  stopAllAudio();
+  document.getElementById('myExamResultsModal').style.display = 'none';
+});
+*/
+
+function buildExamResultsUI(data) {
+  // Приводим Accuracy к числу и округляем до двух знаков после запятой
+  const accuracy = parseFloat(data.correct_percentage).toFixed(2);
+
+  // Header elements
+  const examTitleElem = document.getElementById('examTitle');
+  const examDateInfoElem = document.getElementById('examDateInfo');
+  const examAccuracyElem = document.getElementById('examAccuracy');
+  const examPointsElem = document.getElementById('examPoints');
+  const examAnsweredElem = document.getElementById('examAnswered');
+
+  // Container elements
+  const statusSquaresContainer = document.getElementById('examStatusSquares');
+  const summaryRowContainer = document.getElementById('examSummaryRow');
+  const detailsContainer = document.getElementById('examDetails');
+
+  // Clear old content
+  statusSquaresContainer.innerHTML = '';
+  summaryRowContainer.innerHTML = '';
+  detailsContainer.innerHTML = '';
+
+  // ----- Populate the Header -----
+  examTitleElem.textContent = data.exam_title || 'Final Exam';
+  examDateInfoElem.textContent = `Finished at ${data.time_finished} - ${data.total_questions} Questions`;
+  examAccuracyElem.textContent = `${accuracy}%`;
+  examPointsElem.textContent = data.points || '0';
+  examAnsweredElem.textContent = `${data.total_questions - data.skipped}/${data.total_questions}`;
+
+  // ----- Generate the question status squares -----
+  data.results.forEach((result, index) => {
+    let squareClass = 'square-incorrect';
+    if (result.user_answer === null) {
+      squareClass = 'square-skipped';
+    } else if (result.is_correct) {
+      squareClass = 'square-correct';
+    } else if (result.is_partial) {
+      squareClass = 'square-partial';
+    }
+
+    const square = document.createElement('div');
+    square.classList.add('question-status-square', squareClass);
+    square.textContent = (index + 1).toString();
+    statusSquaresContainer.appendChild(square);
+  });
+
+  // ----- Build the summary row (like "Correct 24 - 72%", etc.) -----
+  const correctRate = ((data.correct / data.total_questions) * 100).toFixed(2);
+  const incorrectRate = ((data.incorrect / data.total_questions) * 100).toFixed(2);
+  const skippedRate = ((data.skipped / data.total_questions) * 100).toFixed(2);
+
+  const correctSummary = `<div class="summary-item correct">Correct ${data.correct} - ${correctRate}%</div>`;
+  const incorrectSummary = `<div class="summary-item incorrect">Incorrect ${data.incorrect} - ${incorrectRate}%</div>`;
+  const skippedSummary = `<div class="summary-item skipped">Skipped ${data.skipped} - ${skippedRate}%</div>`;
+  
+  summaryRowContainer.innerHTML = correctSummary + incorrectSummary + skippedSummary;
+
+  // ----- Detailed Questions List -----
+  data.results.forEach((result, index) => {
+    let statusClass = '';
+    let statusText = 'Incorrect';
+    if (result.user_answer === null) {
+      statusClass = 'skipped';
+      statusText = 'Skipped';
+    } else if (result.is_correct) {
+      statusClass = 'correct';
+      statusText = 'Correct';
+    } else if (result.is_partial) {
+      statusClass = 'partial';
+      statusText = 'Half Correct';
+    }
+
+    const questionHtml = `
+      <div class="question-result">
+        <div class="question-top-row">
+          <div class="question-title">
+            <span class="question-number">Question ${index + 1}</span>
+            <span class="question-type">${result.question_type || 'Multiple Choice'}</span>
+            <span class="question-time">${result.time_spent || 'N/A'}s</span>
+            <span class="question-points">${result.points || 1} point</span>
+          </div>
+          <div class="question-status ${statusClass}">${statusText}</div>
+        </div>
+        <div class="question-text"><strong>Q:</strong> ${result.question}</div>
+        <div class="question-user-answer">
+          <strong>Your answer:</strong> ${
+            result.user_answer !== null
+              ? result.user_answer
+              : '<em>no answer</em>'
+          }
+        </div>
+      </div>
+    `;
+    detailsContainer.innerHTML += questionHtml;
+  });
+}
 
 
 // Функция форматирования времени (mm:ss)
@@ -2078,23 +2343,30 @@ function formatTime(time) {
   return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
 }
 
-// Инициализация всех кастомных аудиоплееров (без Wavesurfer.js)
+// Инициализация всех кастомных аудиоплееров
 function initAllWavePlayers() {
   const waveContainers = document.querySelectorAll('.custom-audio-waves');
   waveContainers.forEach(container => {
-    const audioSrc = container.getAttribute('data-audio-src');
+    const audioSrc = container.getAttribute('data-audio-src') || container.parentElement.getAttribute('data-audio-src');
     if (!audioSrc) return;
-    // Создаем элемент <audio> и скрываем его стандартные контролы
+    
+    // Создаем элемент <audio>
     const audioEl = document.createElement('audio');
     audioEl.src = audioSrc;
     audioEl.controls = false;
     container.appendChild(audioEl);
+
+    // Создаем элемент для отображения прогресса
+    let progressEl = document.createElement('div');
+    progressEl.className = 'progress';
+    container.appendChild(progressEl);
 
     const playBtn = container.parentElement.querySelector('.custom-play-btn');
     const timeDisplay = container.parentElement.querySelector('.custom-time-display');
 
     playBtn.addEventListener('click', () => {
       if (audioEl.paused) {
+		stopAllAudio();
         audioEl.play();
         playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
       } else {
@@ -2102,36 +2374,22 @@ function initAllWavePlayers() {
         playBtn.innerHTML = `<i class="fas fa-play"></i>`;
       }
     });
-    
-    // При буферизации показываем спиннер
-    audioEl.addEventListener('waiting', () => {
-      playBtn.innerHTML = '<div class="lds-ring"><div></div><div></div><div></div></div>';
-    });
-    
-    // Когда аудио начинает воспроизводиться, возвращаем значок паузы
-    audioEl.addEventListener('playing', () => {
-      playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
-    });
-    
-    // Альтернативно, можно использовать canplay для восстановления значка
-    audioEl.addEventListener('canplay', () => {
-      // Если аудио уже играет, показать значок паузы
-      if (!audioEl.paused) {
-        playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
-      }
-    });
 
-    audioEl.addEventListener('timeupdate', () => {
-      const progressPercent = (audioEl.currentTime / audioEl.duration) * 100 || 0;
-      // Обновляем фон контейнера для имитации прогресса
-      container.style.backgroundSize = `${progressPercent}% 100%`;
-      timeDisplay.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
-    });
+audioEl.addEventListener('timeupdate', () => {
+  if (audioEl.duration) {
+    const progressPercent = (audioEl.currentTime / audioEl.duration) * 100;
+    progressEl.style.width = `${progressPercent}%`;
+    timeDisplay.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
+  }
+});
 
+
+    // Устанавливаем начальное значение времени
     audioEl.addEventListener('loadedmetadata', () => {
       timeDisplay.textContent = `0:00 / ${formatTime(audioEl.duration)}`;
     });
 
+    // Перемотка при клике по полосе прогресса
     container.addEventListener('click', function (e) {
       if (e.target.closest('.custom-play-btn')) return;
       const rect = container.getBoundingClientRect();
@@ -2141,6 +2399,7 @@ function initAllWavePlayers() {
     });
   });
 }
+
 
 
 // Function to fetch exam questions (result)
@@ -2174,16 +2433,37 @@ function stopAllAudio() {
         media.currentTime = 0;
     });
 
+    // Остановить все Audio объекты
+    if (window.audioPlayers) {
+        window.audioPlayers.forEach(player => {
+            player.pause();
+            player.currentTime = 0;
+        });
+        window.audioPlayers = [];
+    }
+
     // Остановить все Web Audio API потоки
     if (window.audioContexts) {
         window.audioContexts.forEach(context => {
             if (context.state !== 'closed') {
-                context.close();
+                context.suspend(); // Приостанавливаем (чтобы можно было возобновить)
             }
         });
-        window.audioContexts = [];
     }
 }
+
+// Перехват создания Audio объектов, чтобы их тоже можно было остановить
+(function() {
+    const originalAudio = window.Audio;
+    window.audioPlayers = [];
+
+    window.Audio = function(...args) {
+        const audioInstance = new originalAudio(...args);
+        window.audioPlayers.push(audioInstance);
+        return audioInstance;
+    };
+})();
+
 
 // При отправке экзамена сохраняем ответы глобально
 function submitExamResults() {
@@ -2313,6 +2593,7 @@ function submitExamResults() {
         if (percentage >= 80) {
           iconClass = 'fa-trophy';
           pointsText = 'Points: 15';
+		  addTransaction(150,"Exam between 80 and 100");
           motivationText = 'Excellent! You scored 80% or above! 🎉';
           addCoinsToUser(currentUser, 15);
           new Audio('/static/music/Coins_Rewarded.mp3').play().catch(console.log);
@@ -3185,220 +3466,164 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    const chatai = document.getElementById("chatai");
-    const openBtn = document.getElementById("open-chatai"); // Кнопка для открытия чата
-    const closeBtn = document.getElementById("close-chatai");
-    const chatBox = document.getElementById("chatai-box");
-    const userInput = document.getElementById("ai_chat_input");
-    const sendBtn = document.getElementById("chatai-send");
-
-    // Открытие модального окна
-    if (openBtn) {
-        openBtn.addEventListener("click", function () {
-            chatai.style.display = "block";
-            loadChatHistory(); // Загрузка истории чата при открытии
-        });
-    }
-
-    // Закрытие модального окна
-    closeBtn.addEventListener("click", function () {
-        chatai.style.display = "none";
-    });
-
-    // Закрытие по клику вне окна
-    window.addEventListener("click", function (event) {
-        if (event.target === chatai) {
-            chatai.style.display = "none";
-        }
-    });
-
-sendBtn.addEventListener("click", async function () {
-    const userMessage = userInput.value.trim();
-    if (!userMessage) return;
-
-    // Добавляем сообщение пользователя в чат
-    const userName = currentUser || "User"; // Пример имени пользователя
-    addMessageToChat(userName, userMessage);
-
-    userInput.value = ""; // Очищаем поле ввода
-
-    // Показываем индикатор "пишет"
-    addTypingIndicator();
-
-    chatBox.scrollTop = chatBox.scrollHeight; // Прокручиваем чат вниз
-
-    // Отключаем кнопку send во время загрузки
-    sendBtn.disabled = true;
-
-    try {
-        // Отправляем запрос на сервер
-        const response = await fetch("/ai-chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ text: userMessage })
-        });
-
-        const data = await response.json();
-        console.log("Received response from the server:", data);
-
-        // Проверка на правильный формат ответа
-        if (data.response) {
-            const { text, corrections } = data.response;
-            const botMessage = formatBotMessage(text, corrections);
-
-            // Удаляем индикатор "пишет" и добавляем ответ от AI
-            removeTypingIndicator();
-            addMessageToChat("AI", botMessage);
-
-            // Прокрутка чата вниз после получения ответа
-            chatBox.scrollTop = chatBox.scrollHeight;
-        } else {
-            // Если нет текста с рекомендациями или сообщений
-            const errorMessage = "Sorry, I couldn't process your request properly. Please provide more details.";
-            removeTypingIndicator();
-            addMessageToChat("AI", errorMessage);
-        }
-    } catch (error) {
-        console.error("Error in AI chat:", error);
-
-        // Обновляем индикатор "пишет" в случае ошибки
-        updateTypingIndicatorOnError();
-        addMessageToChat("AI", "There was an error with your request. Please try again.");
-    } finally {
-        // Включаем кнопку send после получения ответа
-        sendBtn.disabled = false;
-    }
-
-    // Сохранение чата в JSON
-    saveChatHistory();
+// Open modal
+document.getElementById('coinDisplay').addEventListener('click', async function() {
+  document.getElementById('balanceModal').style.display = 'block';
+  await updateBalanceUI();
 });
 
-// Функция для форматирования сообщения с исправлениями
-function formatBotMessage(text, corrections) {
-    let formattedMessage = text;
-
-    if (corrections && corrections.length > 0) {
-        corrections.forEach(correction => {
-            const word = correction.word;
-            const suggestions = correction.suggestions.join(", ");
-            const suggestionHtml = correction.suggestions.map(suggestion => `
-                <span class="correct-answer-ai">${suggestion}</span>
-            `).join(", ");
-
-            // Формируем сообщение о неправильном слове с предложенными исправлениями
-            const correctionMessage = `
-                <span class="incorrect-answer-ai">"${word}" is incorrect.</span>
-                <span class="suggestion-text">Suggested correction(s): ${suggestionHtml}</span>
-            `;
-            formattedMessage += `\n${correctionMessage}`;
-        });
-    }
-
-    return formattedMessage;
-}
-
-// Функция для получения иконки FontAwesome в зависимости от предложения
-function getFontAwesomeIconForSuggestion(suggestion) {
-    if (suggestion === "am") {
-        return "check-circle";  // Иконка для правильных предложений
-    } else if (suggestion === "helping") {
-        return "hand-pointer";  // Иконка для действия
-    } else if (suggestion === "assist") {
-        return "hands-helping";  // Иконка для помощи
-    } else {
-        return "question-circle";  // Иконка для неопределённых предложений
-    }
-}
-
-// Функция добавления сообщения в чат
-function addMessageToChat(author, message) {
-    // Проверка длины текста и правильное его отображение
-    if (message.length > 1000) {
-        message = message.substring(0, 1000) + '...'; // Ограничиваем длину для предотвращения ошибок
-    }
-    chatBox.innerHTML += `
-        <div class="message">
-            <div class="message-header">
-                <div class="avatar-container">
-                    <span class="avatar-placeholder">${author === "AI" ? "<i class='fas fa-robot'></i>" : "<i class='fas fa-user'></i>"}</span>
-                </div>
-                <span class="message-author">${author}</span>
-            </div>
-            <p>${message}</p>
-        </div>
-    `;
-}
-
-// Функция добавления индикатора "пишет"
-function addTypingIndicator() {
-    console.log("Adding typing indicator...");
-    chatBox.innerHTML += `
-        <div class="message typing">
-            <div class="message-header">
-                <div class="avatar-container">
-                    <span class="avatar-placeholder"><i class="fas fa-robot"></i></span>
-                </div>
-                <span class="message-author">AI</span>
-            </div>
-            <span class="text-skeleton" data-text="AI is typing">AI is typing</span>
-        </div>
-    `;
-}
-
-// Функция обновления индикатора в случае ошибки
-function updateTypingIndicatorOnError() {
-    const typingMessage = chatBox.querySelector('.message.typing');
-    if (typingMessage) {
-        typingMessage.innerHTML = `
-            <div class="message-header">
-                <div class="avatar-container">
-                    <span class="avatar-placeholder"><i class="fas fa-robot"></i></span>
-                </div>
-                <span class="message-author">AI</span>
-            </div>
-            <span class="text-skeleton error" data-text="Retrying...">Retrying...</span>
-        `;
-        // Добавляем красный цвет для ошибки
-        typingMessage.querySelector('.text-skeleton').style.color = "red";
-    }
-}
-
-// Функция удаления индикатора "пишет"
-function removeTypingIndicator() {
-    const typingMessage = chatBox.querySelector('.message.typing');
-    if (typingMessage) {
-        typingMessage.remove();
-    }
-}
-
-    // Функция для сохранения чата
-    function saveChatHistory() {
-        const messages = [];
-        const messageElements = chatBox.querySelectorAll('.message');
-        messageElements.forEach(msg => {
-            const author = msg.querySelector('.message-author') ? msg.querySelector('.message-author').textContent : '';
-            const text = msg.querySelector('p') ? msg.querySelector('p').textContent : '';
-            if (author && text) {
-                messages.push({ author, text });
-            }
-        });
-
-        // Сохранение в локальном хранилище (или отправка на сервер)
-        localStorage.setItem('chatHistory', JSON.stringify(messages));
-    }
-
-    // Функция для загрузки чатов
-    function loadChatHistory() {
-        const chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
-        chatBox.innerHTML = ''; // Очистить текущий чат
-
-        chatHistory.forEach(msg => {
-            addMessageToChat(msg.author, msg.text);
-        });
-    }
+// Close modal
+document.getElementById('closeBalanceModal').addEventListener('click', function() {
+  document.getElementById('balanceModal').style.display = 'none';
 });
+
+// Tab switching
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabContents = document.querySelectorAll('.tab-content');
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabContents.forEach(tab => tab.style.display = 'none');
+    button.classList.add('active');
+    document.getElementById(button.dataset.tab).style.display = 'block';
+  });
+});
+
+// Fetch balance and transactions, then populate the UI
+async function updateBalanceUI() {
+  try {
+    const data = await fetchBalanceAndTransactions(currentUser);
+    
+    // Update balance
+    const balanceAmountEl = document.getElementById('balanceAmount');
+    balanceAmountEl.textContent = `$${Number(data.balance).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })}`;
+    
+    // Separate transactions
+    const allTab = document.getElementById('allTab');
+    const receivedTab = document.getElementById('receivedTab');
+    const sentTab = document.getElementById('sentTab');
+    allTab.innerHTML = "";
+    receivedTab.innerHTML = "";
+    sentTab.innerHTML = "";
+    
+    let allCount = 0;
+    let receivedCount = 0;
+    let sentCount = 0;
+    
+    data.transactions.forEach(tx => {
+      const row = createTransactionRow(tx);
+      // Always append to allTab
+      allTab.appendChild(row.cloneNode(true));
+      allCount++;
+      
+      if (tx.amount > 0) {
+        receivedTab.appendChild(row);
+        receivedCount++;
+      } else {
+        sentTab.appendChild(row);
+        sentCount++;
+      }
+    });
+    
+    // Update tab counts
+    document.getElementById('allCount').textContent = allCount;
+    document.getElementById('receivedCount').textContent = receivedCount;
+    document.getElementById('sentCount').textContent = sentCount;
+    
+    // If no transactions in a category, show a placeholder message
+    if (receivedCount === 0) {
+      receivedTab.innerHTML = "<p>No received transactions yet.</p>";
+    }
+    if (sentCount === 0) {
+      sentTab.innerHTML = "<p>No sent transactions yet.</p>";
+    }
+    
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Example: create a transaction row
+function createTransactionRow(tx) {
+  // tx object: { amount, description, time, method, status, etc. }
+  const row = document.createElement('div');
+  row.classList.add('transaction-row');
+  
+  const sign = tx.amount < 0 ? 'sent' : 'received';
+  const arrowIcon = sign === 'sent' ? 'fa-arrow-up' : 'fa-arrow-down';
+  
+  row.innerHTML = `
+    <div class="transaction-info">
+      <div class="transaction-arrow ${sign}">
+        <i class="fa-solid ${arrowIcon}"></i>
+      </div>
+      <div class="transaction-details">
+        <div class="transaction-amount">
+          ${sign === 'sent' ? '-' : '+'}$${Math.abs(tx.amount).toLocaleString()}
+        </div>
+        <div class="transaction-method">
+          ${tx.method || 'Unknown method'}
+        </div>
+      </div>
+    </div>
+    <div class="transaction-status">
+      <span class="status success">Success</span>
+      <div class="transaction-description">
+        ${tx.description || ''}
+      </div>
+    </div>
+  `;
+  
+  return row;
+}
+
+// Example: mock function that fetches data
+async function fetchBalanceAndTransactions(username) {
+  const response = await fetch(`/api/get_balance/${username}`);
+  if (!response.ok) throw new Error('Failed to fetch balance');
+  return response.json(); // { balance: number, transactions: array }
+}
+
+
+
+// Example function to add a transaction with a description
+async function addTransaction(amount, description) {
+  try {
+    const response = await fetch('/api/add_transaction', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: currentUser, // currentUser must be defined globally
+        amount: amount,
+        description: description
+      })
+    });
+    if (!response.ok) {
+      throw new Error(`Error adding transaction: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Transaction added:', data.message);
+    // Update balance UI after adding a transaction
+    await updateBalanceUI();
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+// Example usage:
+// Add an expense transaction (e.g., Paying services -200 USD)
+// addTransaction(-200, "Paying services");
+
+// Add a revenue transaction (e.g., Salary +512 USD)
+// addTransaction(512, "Salary");
+
+// Update balance UI on page load
+document.addEventListener('DOMContentLoaded', () => {
+  updateBalanceUI();
+});
+
 
 

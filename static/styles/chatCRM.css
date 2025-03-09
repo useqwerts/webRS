@@ -596,103 +596,122 @@ input[type="text"]:focus {
 }
 
 
-/* Define custom theme colors using CSS variables */
 :root {
-    --slider-background: #f2f2f2;
-    --slider-active-background: #2ecc71;
-    --handle-background: #4CAF50;
-    --handle-active-background: #2980b9;
-    --hover-shadow: rgba(0, 0, 0, 0.2);
-    --focus-outline: 2px solid #4CAF50;
-    --text-color: #555;
-    --text-active-color: #fff;
-}
+      --slider-background: #f2f2f2;       /* Цвет фона (неактивный) */
+      --slider-active-background: #2ecc71;/* Цвет фона (активный) */
+      --handle-background: #ffffff;       /* Цвет ручки (неактивный) */
+      --handle-active-background: #ffffff;/* Цвет ручки (активный) */
+      --handle-icon-color: #888;          /* Цвет иконки по умолчанию */
+      --handle-icon-active-color: #2ecc71;/* Цвет иконки при активации */
+      --text-color: #555;                 /* Цвет текста (неактивный) */
+      --text-color-active: #fff;          /* Цвет текста (активный) */
+      --border-radius: 30px;
+      --slider-width: 320px;              /* Ширина всего слайдера */
+      --slider-height: 60px;              /* Высота слайдера */
+    }
 
-/* Стили для контейнера слайдера */
-#startExamSliderContainer {
-    position: relative;
-    width: 24vw;
-    height: 60px;
-    background-color: var(--slider-background);
-    border-radius: 30px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-    overflow: hidden;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-}
+    /* Контейнер слайдера */
+    #startExamSliderContainer {
+      position: relative;
+      width: var(--slider-width);
+      height: var(--slider-height);
+      background-color: var(--slider-background);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    /* Активное состояние контейнера */
+    #startExamSliderContainer.active {
+      background-color: var(--slider-active-background);
+    }
 
-/* Эффект при наведении на контейнер слайдера */
-#startExamSliderContainer:hover {
-    box-shadow: 0 12px 20px var(--hover-shadow);
-    transform: translateY(-2px);
-}
+    /* Текст внутри слайдера */
+    .slider-text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      color: var(--text-color);
+      transition: color 0.3s ease;
+      pointer-events: none; /* чтобы текст не мешал перетаскиванию */
+      /* Начальное состояние анимации (виден, без сдвига) */
+      opacity: 1;
+    }
+    /* Меняем цвет текста при активном состоянии */
+    #startExamSliderContainer.active .slider-text {
+      color: var(--text-color-active);
+    }
 
-/* Стиль для ручки слайдера */
-#startExamSliderHandle {
-    position: absolute;
-    top: 0;
-    left: 5px;
-    width: 60px;
-    height: 100%;
-    background-color: var(--handle-background);
-    border-radius: 30px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: left 0.4s ease, background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
+    /* Ручка слайдера */
+    #startExamSliderHandle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--slider-height);
+      height: var(--slider-height);
+      background-color: var(--handle-background);
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: left 0.4s ease, background-color 0.3s ease, transform 0.3s ease;
+    }
+    /* Ховер-эффект на ручку */
+    #startExamSliderHandle:hover {
+      background-color: #f0f0f0;
+    }
+    /* При активном состоянии ручка может чуть увеличиваться */
+    #startExamSliderHandle.active {
+      transform: scale(1.05);
+    }
+    /* Иконка внутри ручки */
+    #startExamSliderHandle i {
+      font-size: 24px;
+      color: var(--handle-icon-color);
+      transition: transform 0.4s ease, color 0.3s ease;
+    }
+    /* Меняем иконку при активном состоянии */
+    #startExamSliderContainer.active #startExamSliderHandle i {
+      color: var(--handle-icon-active-color);
+    }
 
-/* Эффект при наведении на ручку слайдера */
-#startExamSliderHandle:hover {
-    background-color: #45a049; /* Немного темнее цвет при наведении */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
+    /* ========== Анимации появления/исчезновения текста ========== */
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateY(-10px);
+      }
+    }
 
-/* Иконка для ручки слайдера */
-#startExamSliderHandle i {
-    font-size: 24px;
-    color: white;
-    transition: transform 0.3s ease;
-}
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateY(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateY(0);
+      }
+    }
 
-/* Анимация для активного состояния слайдера */
-#startExamSliderContainer.active {
-    background-color: var(--slider-active-background);
-    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
-}
+    .fade-out {
+      animation: fadeOut 0.3s forwards;
+    }
+    .fade-in {
+      animation: fadeIn 0.3s forwards;
+    }
 
-#startExamSliderHandle.active {
-    background-color: var(--handle-active-background);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transform: scale(1.1); /* Легкое увеличение ручки */
-}
-
-#startExamSliderHandle.active i {
-    transform: rotate(90deg); /* Поворот иконки при активации */
-}
-
-/* Стили для текста слайдера */
-.slider-text {
-    user-select: none;
-    font-size: 18px;
-    color: var(--text-color);
-    position: absolute;
-    top: 50%;
-    left: 80px; /* Adjusted to avoid overlap with handle */
-    transform: translateY(-50%);
-    transition: opacity 0.3s ease, transform 0.3s ease, color 0.3s ease;
-    font-weight: 500;
-}
-
-/* Когда текст скрыт */
-.slider-text.hidden {
-    opacity: 0;
-    transform: translateY(-50%) scale(0.9); /* Слегка уменьшаем текст */
-}
 
 /* Стиль для индикатора прогресса */
 .loader {
@@ -745,6 +764,184 @@ input[type="text"]:focus {
     color: var(--text-active-color);
     transform: translateY(-50%) scale(1.05);
 }
+
+/* Определяем анимацию пульсации */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Применяем анимацию к ручке, когда слайдер активен */
+#startExamSliderContainer.active #startExamSliderHandle {
+  animation: pulse 1.5s infinite;
+}
+
+.exam-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .exam-container {
+      background-color: #fff;
+      width: 400px;
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    h2 {
+      margin-top: 0;
+      font-family: sans-serif;
+    }
+
+/* Общий стиль для orange-timer-box */
+.orange-timer-box {
+    background: #ffa500;
+    padding: 20px;
+    border-radius: 12px;
+    color: #fff;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Стиль для таймера */
+.timer-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.timer-box {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.timer-box .time {
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+}
+
+.timer-box .label {
+    font-size: 14px;
+}
+
+/* Таблица результатов экзамена */
+.exam-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    color: #333;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.exam-results-table th, .exam-results-table td {
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+.exam-results-table th {
+    background: #b9b4b4;
+    font-weight: bold;
+}
+
+.exam-results-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.exam-results-table tbody tr:hover {
+    background: #f1f1f1;
+}
+
+/* Стиль для Passed / Failed */
+.status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status.passed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status.failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Ссылка на детали */
+.details-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.details-link:hover {
+    text-decoration: underline;
+}
+	
+.timer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #FFEFEF;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.timer-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.time {
+    font-size: 24px;
+    font-weight: bold;
+    color: #FF5A5F;
+}
+
+.label {
+    font-size: 12px;
+    color: #888;
+}
+
 
 .exam-result .details {
     margin-top: 18px; /* Increased details margin-top for exam result */
@@ -807,7 +1004,7 @@ input[type="text"]:focus {
 }
 
 .lds-facebook {
-    display: inline-block;
+    display: none;
     position: relative;
     width: 60px; /* Slightly smaller loading spinner */
     height: 60px; /* Slightly smaller loading spinner */

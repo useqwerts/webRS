@@ -57,9 +57,40 @@
     <img src="/static/icons/up.svg" alt="Going Up Icon" id="goingUpIcon" class="going-up-icon" style="display: none;" />
     <div id="coinBalance" class="coin-balance">0</div> <!-- Используем div вместо span -->
 </div>
-
-            <!-- <button id="logout-button" class="logout-button">Logout</button> -->
         </header>
+
+<!-- Balance Modal -->
+<div id="balanceModal" class="balance-modal">
+  <div class="balance-modal-content">
+    <span id="closeBalanceModal" class="close-balance-modal">&times;</span>
+    
+    <!-- Header with balance -->
+    <div class="balance-header">
+      <div class="balance-label">Available Balance</div>
+      <div class="balance-amount" id="balanceAmount">$0.00</div>
+      <span class="card-last4">** 1938</span>
+    </div>
+    
+    <!-- Tabs: All, Received, Sent -->
+    <div class="transaction-tabs">
+      <button class="tab-button active" data-tab="allTab">
+        All <span id="allCount">0</span>
+      </button>
+      <button class="tab-button" data-tab="receivedTab">
+        Received <span id="receivedCount">0</span>
+      </button>
+      <button class="tab-button" data-tab="sentTab">
+        Sent <span id="sentCount">0</span>
+      </button>
+    </div>
+    
+    <!-- Tab contents -->
+    <div class="tab-content" id="allTab"></div>
+    <div class="tab-content" id="receivedTab" style="display: none;"></div>
+    <div class="tab-content" id="sentTab" style="display: none;"></div>
+  </div>
+</div>
+
 
 <div id="account-menu" class="account-menu" style="display: none;">
     <ul>
@@ -68,7 +99,7 @@
             <ul class="personal-account-options">
                 <li id="change-avatar-option"><i class="fas fa-image change-avatar-icon"></i> Change Avatar</li>
                 <li id="change-password-option"><i class="fas fa-key change-password-icon"></i> Change Password</li>
-                <!--<li id="my-progress-option"><i class="fas fa-chart-line my-progress-icon"></i> My Progress</li> -->
+                <li id="my-progress-option"><i class="fas fa-chart-line my-progress-icon"></i> My Progress</li>
             </ul>
         </li>
         <li id="sessionsButton"><i class="fas fa-calendar-alt sessions-icon"></i> Sessions</li>
@@ -80,29 +111,74 @@
         </li>
         <li id="leaderboard-option"><i class="fas fa-trophy leaderboard-icon"></i> Leaderboard</li>
         <li id="examTaskOption"><i class="fas fa-pencil-alt exam-icon"></i>Demo Exam</li>
-        <li id="open-chatai"><i class="fas fa-comments ai-chat-icon"></i> AI Spell Check</li>
+        <li id="myExamResultsOption"><i class="fas fa-clipboard-list"></i> My Exam Results</li>
         <li id="logout-option"><i class="fas fa-sign-out-alt logout-icon"></i> Logout</li>
     </ul>
 </div>
 
-<!-- AI Chat Modal -->
-<div id="chatai" class="chatai-modal">
-    <span class="close-btn" id="close-chatai">&times;</span>
-    <h2>AI Chat</h2>
-    <div id="chatai-box"></div>
-    <div class="chat-input-container">
-        <input type="text" id="ai_chat_input" placeholder="Type a message...">
-        <button id="chatai-send">
-            <i class="fas fa-paper-plane"></i>
-        </button>
+<!-- Exam Results Modal (container) -->
+<div id="myExamResultsModal" class="my-exam-results-modal" style="display: none;">
+  <div class="my-exam-results-content">
+    <!-- Кнопка закрытия видна всегда -->
+    <span class="close-btn" id="closeMyExamResultsModal">&times;</span>
+    
+    <!-- Контейнер для динамического содержимого -->
+    <div id="modalBody">
+      <!-- Контент будет подставлен в зависимости от статуса экзамена -->
+      <div class="exam-header">
+        <h2 id="examTitle"></h2>
+        <p id="examDateInfo"></p>
+        <div class="exam-stats">
+          <div class="stat-item">
+            <span class="stat-label">Accuracy</span>
+            <span class="stat-value" id="examAccuracy"></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Points</span>
+            <span class="stat-value" id="examPoints"></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Answered</span>
+            <span class="stat-value" id="examAnswered"></span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Верхний ряд с цветными квадратами (для результатов экзамена) -->
+      <div class="exam-status-squares" id="examStatusSquares"></div>
+  
+      <!-- Дополнительный ряд со сводной информацией -->
+      <div class="exam-summary-row" id="examSummaryRow"></div>
+  
+      <!-- Список вопросов с результатами -->
+      <div class="exam-details" id="examDetails"></div>
     </div>
+  </div>
 </div>
+
+
 
 <div id="examModal">
   <h2 id="examTitle">Exam</h2>
-  <div id="exam-timer">
-    <i class="fas fa-clock"></i> 00:00 <!-- This will be updated dynamically -->
+<!-- Контейнер таймера -->
+<div id="exam-timer">
+  <div class="timer-block">
+    <span class="timer-number" id="hours">00</span>
+    <span class="timer-label">Hours</span>
   </div>
+  <div class="timer-divider"></div>
+  <div class="timer-block">
+    <span class="timer-number" id="minutes">00</span>
+    <span class="timer-label">Minutes</span>
+  </div>
+  <div class="timer-divider"></div>
+  <div class="timer-block">
+    <span class="timer-number" id="seconds">00</span>
+    <span class="timer-label">Seconds</span>
+  </div>
+</div>
+
+
   <span class="close-btn" id="closeExamModal">&times;</span>
   <div id="loadingSpinner" class="lds-spinner">
     <div></div><div></div><div></div><div></div>
@@ -136,30 +212,29 @@
       <div class="rule-item">
         <i class="fas fa-ban"></i>
         <div class="rule-text">
-          App Restrict: If you try to close the app and open it again, the exam will be blocked for 3 minutes.
+          Ilovani cheklash: Agar siz ilovani yopib, qayta ochishga harakat qilsangiz, imtihon 3 daqiqaga bloklanadi.
         </div>
       </div>
       <div class="rule-item">
         <i class="fas fa-user-secret"></i>
         <div class="rule-text">
-          You will be banned for any type of fraud.
+          Har qanday firibgarlik uchun siz bloklanasiz.
         </div>
       </div>
       <div class="rule-item">
         <i class="fas fa-user-lock"></i>
         <div class="rule-text">
-          Copying answers from another student, communicating with other students during the exam, or sharing exam questions or answers with others is prohibited.
+          Boshqa talabadan javoblarni ko'chirish, imtihon paytida boshqa talabalar bilan muloqot qilish yoki imtihon savollari yoki javoblarini boshqalar bilan bo'lishish taqiqlanadi.
         </div>
       </div>
       <div class="rule-item">
         <i class="fas fa-scroll"></i>
         <div class="rule-text">
-          We take academic integrity seriously. Please do your part to ensure a fair and honest testing environment for all students.
+          Biz akademik halollikka jiddiy qaraymiz. Iltimos, barcha talabalar uchun adolatli va halol sinov muhitini ta'minlash uchun o'z hissangizni qo'shing.
         </div>
       </div>
     </div>
-    <!-- Continue Exam Button -->
-    <button id="continueExamBtn" class="weekly-exam-button">Continue Exam</button>
+    <button id="continueExamBtn" class="weekly-exam-button">Continue exam</button>
   </div>
 </div>
 

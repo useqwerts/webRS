@@ -1,1 +1,23 @@
-{}
+{
+    "Muhammadali": {
+        "progress": 80.0,
+        "start_date": "2024-11-23",
+        "study_days": "odd"
+    },
+    "Abdulmalik": {
+        "progress": 79.0,
+        "start_date": "2024-11-23",
+        "study_days": "odd"
+    },
+    "Elbek": {
+        "progress": 0.0,
+        "start_date": "2025-02-14",
+        "study_days": "odd"
+    },
+    "Muhammadiso": {
+        "progress": 0.0
+    },
+    "Behruz": {
+        "progress": 0.0
+    }
+}

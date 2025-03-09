@@ -34,7 +34,7 @@
                 <i class="fas fa-user-slash"></i> Ban User
             </li>
             <li class="nav-item" data-section="create-exam">
-                <i class="fas fa-pencil-alt"></i> Create Exam
+                <i class="fas fa-pencil-alt"></i> Final Exam
             </li>
             <li class="nav-item" data-section="exam-results">
                 <i class="fas fa-trophy"></i> Exam Results
@@ -138,47 +138,26 @@
     </div>
 </section>
 
-
-<section id="create-exam" class="content-section">
-    <!-- Modal for creating exam -->
-    <div id="create-exam-modal" class="exam-modal" style="display: none;">
-        <div class="exam-container">
-            <h2>Create Exam</h2>
-
-            <!-- Exam Form Section -->
-            <div id="exam-form"></div>
-
-            <!-- Question Type Dropdown -->
-            <label for="question-type">Choose Question Type:</label>
-            <select id="question-type">
-                <option value="multiple_choice">Multiple Choice</option>
-                <option value="true_false">True/False</option>
-                <option value="fill_gaps">Fill in the Gaps</option>
-                <option value="unscramble">Unscramble</option>
-            </select>
-
-            <!-- Add Question Button with new class -->
-            <button id="add-question" class="toggle-details">Add Question</button>
-            
-            <!-- Save Exam Button with new class -->
-            <button id="save-exam" class="toggle-details">Save Exam</button>
-
-            <!-- Slider to start the exam -->
-            <div id="startExamSliderContainer" class="slider-container">
-                <span class="slider-text">Slide to start exam</span>
-                <div id="startExamSliderHandle" class="slider-handle">
-                    <i class="fas fa-chevron-right"></i> <!-- Font Awesome icon -->
-                </div>
-                
-                <div class="loader">
-                    <span></span>
-                </div>
-            </div>
-
-        </div>
+  <section id="create-exam" class="content-section">
+    <!-- Оранжевый блок таймера -->
+    <div class="orange-timer-box">
+      <!-- Время -->
+      <div class="time-display" id="timeValue">-- Hours -- Minutes -- Seconds</div>
+      <!-- Текст -->
+      <p>Exam is started let’s begin</p>
+      <!-- Контейнер для отображения результатов -->
+      <div id="examResultsDisplay"></div>
     </div>
-</section>
-        
+
+    <!-- Слайдер для старта экзамена -->
+    <div id="startExamSliderContainer">
+      <span class="slider-text" id="sliderText">Waiting for the exam..</span>
+      <div id="startExamSliderHandle">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+  </section>
+
         <div id="loadingIndicator" class="lds-facebook">
             <div></div>
             <div></div>
