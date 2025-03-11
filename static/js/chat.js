@@ -1781,7 +1781,91 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
     const loadingSpinner = document.getElementById('loadingSpinner');
     const loadingFinishExam = document.getElementById('loadingFinishExam');
 
-    // Получаем элементы таймера
+    // Модальное окно для списания монет
+    const checkAnswerModal = document.getElementById('checkAnswerModal');
+    const approveCheckAnswerBtn = document.getElementById('approveCheckAnswer');
+    const cancelCheckAnswerBtn = document.getElementById('cancelCheckAnswer');
+
+    // ID вопроса, который мы хотим проверить (при нажатии «Check my answer»)
+    let questionToCheck = null;
+
+    // (1) Функция показа модального окна для списания 100 coins
+    function showCheckAnswerModal(questionElement, correctAnswer) {
+      questionToCheck = { element: questionElement, correct: correctAnswer };
+      checkAnswerModal.style.display = 'flex';
+    }
+
+    // (2) Обработчики кнопок модального окна
+    approveCheckAnswerBtn.addEventListener('click', async function() {
+      if (!questionToCheck) return;
+      // Пытаемся списать 100 coins
+      try {
+        const transactionRes = await fetch('/api/add_transaction', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: currentUser,
+            amount: -100, // списываем 100
+            description: 'Check single answer'
+          })
+        });
+        const transactionData = await transactionRes.json();
+
+        if (!transactionRes.ok || transactionData.error) {
+          // Если пришла ошибка (например, недостаточно монет)
+          showToastNotification(transactionData.error || 'Not enough coins!');
+        } else {
+          // Транзакция успешна — проверяем ответ
+          checkSingleAnswer(questionToCheck.element, questionToCheck.correct);
+        }
+      } catch (err) {
+        console.error(err);
+        showToastNotification('Error while processing transaction.');
+      } finally {
+        // Закрываем модальное окно в любом случае
+        checkAnswerModal.style.display = 'none';
+      }
+    });
+
+    cancelCheckAnswerBtn.addEventListener('click', function() {
+      checkAnswerModal.style.display = 'none';
+    });
+
+    // (3) Функция для проверки ответа одного вопроса
+    // Здесь упрощённый вариант: если multiple_choice — сравниваем value radio c correct.
+    // Если fill_gaps/question — сравниваем текст в input.
+    function checkSingleAnswer(questionElement, correctAnswer) {
+      let userAnswer = null;
+      // Ищем радио или инпут внутри questionElement
+      const radios = questionElement.querySelectorAll('input[type="radio"]');
+      if (radios.length > 0) {
+        // multiple_choice / true_false
+        const checkedRadio = [...radios].find(r => r.checked);
+        userAnswer = checkedRadio ? checkedRadio.value : null;
+      } else {
+        // fill_gaps, unscramble, question и т.д.
+        const input = questionElement.querySelector('input[type="text"]');
+        if (input) {
+          userAnswer = input.value.trim();
+        }
+      }
+
+      if (!userAnswer) {
+        showToastNotification('You did not select/enter an answer!');
+        return;
+      }
+
+      // Сравниваем с правильным (упрощённо, без учета регистра и пр.)
+      if (userAnswer === correctAnswer) {
+        showToastNotification('Correct!');
+        questionElement.style.backgroundColor = '#1b5e20'; // зеленый фон
+      } else {
+        showToastNotification(`Incorrect! Correct answer: ${correctAnswer}`);
+        questionElement.style.backgroundColor = '#b71c1c'; // красный фон
+      }
+    }
+
+    // Элементы таймера
     const hoursEl = document.getElementById('hours');
     const minutesEl = document.getElementById('minutes');
     const secondsEl = document.getElementById('seconds');
@@ -1804,6 +1888,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         const data = await (response.ok
             ? response.json()
             : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
+
         if (data.error) {
             handleError(data.error);
             loadingSpinner.style.display = 'none';
@@ -1815,7 +1900,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         examHeader.style.display = 'block';
         finishExamButton.style.display = 'block';
         examTimer.style.display = 'flex';
-        //initExamSecurity(true);
 
         // Получаем шаблон вопроса
         const questionTemplate = document.getElementById('questionTemplate');
@@ -1853,12 +1937,12 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
                 }
                 parentContainer.innerHTML += `
-          <div class="custom-audio-player">
-            <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
-            <button class="custom-play-btn"><i class="fas fa-play"></i></button>
-            <span class="custom-time-display">0:00 / 0:00</span>
-          </div>
-        `;
+                  <div class="custom-audio-player">
+                    <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
+                    <button class="custom-play-btn"><i class="fas fa-play"></i></button>
+                    <span class="custom-time-display">0:00 / 0:00</span>
+                  </div>
+                `;
                 examContainer.appendChild(parentContainer);
 
                 if (question.subquestions && Array.isArray(question.subquestions)) {
@@ -1866,6 +1950,10 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         questionCounter++;
                         const instruction = getInstructionForType(subq.type);
                         const questionNode = document.importNode(questionTemplate.content, true);
+
+                        // (4) Сохраняем ссылку на div с классом .exam-question
+                        const examQuestionDiv = questionNode.querySelector('.exam-question');
+
                         questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
                         questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
@@ -1873,35 +1961,48 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         // Если true_false, multiple_choice и т.д. — генерируем по типу
                         if (subq.type === 'true_false') {
                             optionsContainer.innerHTML = `
-                <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
-                <label for="true${subq.id}">True</label>
-                <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
-                <label for="false${subq.id}">False</label>
-              `;
+                                <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+                                <label for="true${subq.id}">True</label>
+                                <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+                                <label for="false${subq.id}">False</label>
+                            `;
                         }
                         else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-                            // Генерируем варианты ответа с буквами
                             const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
                             let html = '';
                             subq.options.forEach((option, index) => {
-                                const letter = letters[index] || '?'; // Если вариантов больше, чем букв в массиве
+                                const letter = letters[index] || '?';
                                 const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
                                 html += `
-                  <div class="option-group">
-                    <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
-                    <label for="${optionId}">
-                      <span class="option-letter">${letter}</span>
-                      <span class="option-text">${option}</span>
-                    </label>
-                  </div>
-                `;
+                                  <div class="option-group">
+                                    <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                                    <label for="${optionId}">
+                                      <span class="option-letter">${letter}</span>
+                                      <span class="option-text">${option}</span>
+                                    </label>
+                                  </div>
+                                `;
                             });
                             optionsContainer.innerHTML = html;
                         }
-                        else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
+                        else {
+                            // fill_gaps, unscramble, question, etc.
                             optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
                         }
-                        questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
+
+                        // (5) Если у нас есть правильный ответ, вешаем кнопку "Check my answer"
+                        if (subq.correct) {
+                            const checkBtn = document.createElement('button');
+                            checkBtn.className = 'check-answer-btn';
+                            checkBtn.textContent = 'Check my answer';
+                            checkBtn.addEventListener('click', () => {
+                              // Показываем модалку, передаём div и правильный ответ
+                              showCheckAnswerModal(examQuestionDiv, subq.correct);
+                            });
+                            optionsContainer.appendChild(checkBtn);
+                        }
+
+                        examQuestionDiv.dataset.questionId = subq.id;
                         parentContainer.appendChild(questionNode);
                     });
                 }
@@ -1918,41 +2019,54 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     questionCounter++;
                     const instruction = getInstructionForType(subq.type);
                     const questionNode = document.importNode(questionTemplate.content, true);
+                    const examQuestionDiv = questionNode.querySelector('.exam-question');
+
                     questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
                     questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
                     let optionsContainer = questionNode.querySelector('.question-options');
                     if (subq.type === 'true_false') {
                         optionsContainer.innerHTML = `
-              <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
-              <label for="true${subq.id}">True</label>
-              <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
-              <label for="false${subq.id}">False</label>
-            `;
+                            <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+                            <label for="true${subq.id}">True</label>
+                            <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+                            <label for="false${subq.id}">False</label>
+                        `;
                     }
                     else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-                        // Генерируем варианты ответа с буквами
                         const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
                         let html = '';
                         subq.options.forEach((option, index) => {
                             const letter = letters[index] || '?';
                             const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
                             html += `
-                <div class="option-group">
-                  <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
-                  <label for="${optionId}">
-                    <span class="option-letter">${letter}</span>
-                    <span class="option-text">${option}</span>
-                  </label>
-                </div>
-              `;
+                              <div class="option-group">
+                                <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                                <label for="${optionId}">
+                                  <span class="option-letter">${letter}</span>
+                                  <span class="option-text">${option}</span>
+                                </label>
+                              </div>
+                            `;
                         });
                         optionsContainer.innerHTML = html;
                     }
-                    else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
+                    else {
                         optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
                     }
-                    questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
+
+                    // Если есть correct — вешаем кнопку
+                    if (subq.correct) {
+                        const checkBtn = document.createElement('button');
+                        checkBtn.className = 'check-answer-btn';
+                        checkBtn.textContent = 'Check my answer';
+                        checkBtn.addEventListener('click', () => {
+                          showCheckAnswerModal(examQuestionDiv, subq.correct);
+                        });
+                        optionsContainer.appendChild(checkBtn);
+                    }
+
+                    examQuestionDiv.dataset.questionId = subq.id;
                     examContainer.appendChild(questionNode);
                 });
             }
@@ -1961,47 +2075,61 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 questionCounter++;
                 const instruction = getInstructionForType(question.type);
                 const questionNode = document.importNode(questionTemplate.content, true);
+                const examQuestionDiv = questionNode.querySelector('.exam-question');
                 const qId = question.id ? question.id : questionCounter;
+
                 questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
                 questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
                 let optionsContainer = questionNode.querySelector('.question-options');
                 if (question.type === 'true_false') {
                     optionsContainer.innerHTML = `
-            <input type="radio" name="q${qId}" value="True" id="true${qId}">
-            <label for="true${qId}">True</label>
-            <input type="radio" name="q${qId}" value="False" id="false${qId}">
-            <label for="false${qId}">False</label>
-          `;
+                        <input type="radio" name="q${qId}" value="True" id="true${qId}">
+                        <label for="true${qId}">True</label>
+                        <input type="radio" name="q${qId}" value="False" id="false${qId}">
+                        <label for="false${qId}">False</label>
+                    `;
                 }
                 else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
-                    // Генерируем варианты ответа с буквами
                     const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
                     let html = '';
                     question.options.forEach((option, index) => {
                         const letter = letters[index] || '?';
                         const optionId = `${letter.replace(/\s+/g, '')}${qId}`;
                         html += `
-              <div class="option-group">
-                <input type="radio" name="q${qId}" value="${option}" id="${optionId}">
-                <label for="${optionId}">
-                  <span class="option-letter">${letter}</span>
-                  <span class="option-text">${option}</span>
-                </label>
-              </div>
-            `;
+                            <div class="option-group">
+                              <input type="radio" name="q${qId}" value="${option}" id="${optionId}">
+                              <label for="${optionId}">
+                                <span class="option-letter">${letter}</span>
+                                <span class="option-text">${option}</span>
+                              </label>
+                            </div>
+                        `;
                     });
                     optionsContainer.innerHTML = html;
                 }
-                else if (['fill_gaps', 'unscramble', 'reading'].includes(question.type)) {
+                else {
+                    // fill_gaps, unscramble, question, etc.
                     optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
                 }
-                questionNode.querySelector('.exam-question').dataset.questionId = qId;
+
+                // Если есть correct — добавляем кнопку
+                if (question.correct) {
+                    const checkBtn = document.createElement('button');
+                    checkBtn.className = 'check-answer-btn';
+                    checkBtn.textContent = 'Check my answer';
+                    checkBtn.addEventListener('click', () => {
+                      showCheckAnswerModal(examQuestionDiv, question.correct);
+                    });
+                    optionsContainer.appendChild(checkBtn);
+                }
+
+                examQuestionDiv.dataset.questionId = qId;
                 examContainer.appendChild(questionNode);
             }
         });
 
-        // Обработка оставшегося времени экзамена
+        // Обработка оставшегося времени экзамена (осталось как у вас)
         const timeResponse = await fetch('/get_remaining_time');
         const timeData = await (timeResponse.ok
             ? timeResponse.json()
@@ -2010,38 +2138,29 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         if (timeData.remaining_time) {
             let remainingTime = timeData.remaining_time * 1000; // перевод в миллисекунды
 
-            // Функция обновления таймера
             function updateTimer() {
                 if (remainingTime <= 0) {
-                    finishExam(); // Время истекло — завершаем экзамен
+                    finishExam();
                     return;
                 }
-
                 const totalSeconds = Math.floor(remainingTime / 1000);
-                // Считаем часы, минуты, секунды
                 const hours = Math.floor(totalSeconds / 3600);
                 const minutes = Math.floor((totalSeconds % 3600) / 60);
                 const seconds = totalSeconds % 60;
 
-                // Обновляем значения с ведущими нулями
                 hoursEl.textContent = hours < 10 ? '0' + hours : hours;
                 minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes;
                 secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
 
-                // Меняем фон таймера при малом времени (например, менее 3 минут)
                 if (remainingTime <= 180000) {
                     examTimer.style.backgroundColor = '#3d0000';
                 } else {
                     examTimer.style.backgroundColor = '#2c2c2c';
                 }
-
                 remainingTime -= 1000;
             }
-
-            // Запускаем интервал обновления каждую секунду
             const timerInterval = setInterval(updateTimer, 1000);
 
-            // Функция автоматической отправки экзамена
             function finishExam() {
                 loadingFinishExam.style.display = 'flex';
                 clearInterval(timerInterval);
@@ -2049,7 +2168,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 finishExamButton.click();
             }
 
-            // Обработчик нажатия на кнопку завершения экзамена
             finishExamButton.addEventListener('click', function handleFinishClick() {
                 if (remainingTime > 0) {
                     loadingFinishExam.style.display = 'flex';
@@ -2060,38 +2178,31 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 }
             });
 
-            // Функция показа модального окна подтверждения отправки экзамена
             function showSubmitConfirmation() {
-                // Удаляем существующее модальное окно, если есть
                 const existingModal = document.querySelector('.leaderboard-modal');
                 if (existingModal) {
                     existingModal.remove();
                 }
-
-                // Создаем новое модальное окно
                 const modal = document.createElement('div');
                 modal.className = 'leaderboard-modal';
                 modal.innerHTML = `
-          <div class="leaderboard-content">
-            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Submission</h2>
-            <p>You are about to submit your exam. This action cannot be undone. Please review your answers.</p>
-            <button class="submit-button confirm-submit">
-              <span class="text-skeleton" data-text="Submit Exam">Submit Exam</span>
-            </button>
-            <button class="cancel-button cancel-submit">Cancel</button>
-          </div>
-        `;
+                  <div class="leaderboard-content">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Confirm Submission</h2>
+                    <p>You are about to submit your exam. This action cannot be undone. Please review your answers.</p>
+                    <button class="submit-button confirm-submit">
+                      <span class="text-skeleton" data-text="Submit Exam">Submit Exam</span>
+                    </button>
+                    <button class="cancel-button cancel-submit">Cancel</button>
+                  </div>
+                `;
                 document.body.appendChild(modal);
 
-                // Обработчик подтверждения
                 modal.querySelector('.confirm-submit').addEventListener('click', function() {
                     clearInterval(timerInterval);
                     submitExamResults();
                     loadingFinishExam.style.display = 'flex';
                     modal.remove();
                 });
-
-                // Обработчик отмены
                 modal.querySelector('.cancel-submit').addEventListener('click', function() {
                     loadingFinishExam.style.display = 'none';
                     modal.remove();
@@ -2099,7 +2210,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
             }
         }
 
-        // Инициализируем кастомные аудиоплееры после рендеринга вопросов
+        // Инициализируем кастомные аудиоплееры
         initAllWavePlayers();
 
     } catch (error) {
@@ -2108,7 +2219,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         loadingSpinner.style.display = 'none';
     }
 });
-
 // Функция открытия модального окна
 function openMyExamResultsModal(userData) {
     buildExamResultsUI(userData); // формируем UI с данными
@@ -3039,9 +3149,9 @@ function fetchStudentProgress() {
             const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
             const weekNumber = studyWeeksElapsed + 1;
 
-			// Saving Unit to global
+            // Saving Unit to global
             Unit = unit;
-			Week = studyWeeksElapsed + 1;
+            Week = weekNumber;
 			
             // 4. Получаем дату следующего экзамена (функция getNextExamDate должна быть определена)
             const nextExamDate = getNextExamDate(unit, start_date, study_days);
@@ -3102,10 +3212,12 @@ function fetchStudentProgress() {
             let rank = 1;
             sortedLeaderboard.forEach(([student, studentInfo]) => {
                 const row = document.createElement('tr');
+                // Округляем progress до двух знаков после запятой
+                const formattedProgress = parseFloat(studentInfo.progress).toFixed(2);
                 row.innerHTML = `
                     <td><div class="student-avatar">${rank}</div></td>
                     <td class="student-name">${student}</td>
-                    <td>${studentInfo.progress}%</td>
+                    <td>${formattedProgress}%</td>
                 `;
                 leaderboardTable.appendChild(row);
                 rank++;
@@ -3123,7 +3235,6 @@ function fetchStudentProgress() {
             }, 500);
         });
 }
-
 
 
 /**

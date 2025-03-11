@@ -233,116 +233,156 @@
     },
     "Abdulmalik": {
         "correct": 2,
-        "incorrect": 1,
-        "skipped": 10,
-        "total_questions": 13,
-        "correct_percentage": 15.384615384615385,
+        "incorrect": 0,
+        "skipped": 16,
+        "total_questions": 18,
+        "correct_percentage": 11.11111111111111,
         "rewarded": false,
         "coins": 0,
-        "time_finished": "2025-03-12 06:08:19",
+        "time_finished": "2025-03-11 18:12:06",
         "results": [
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.1",
-                "question": "Who is this?",
-                "user_answer": "Elon Musk",
-                "correct_answer": "Elon Musk",
-                "is_correct": true
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "1.2",
-                "question": "Tesla's Founder and not a CEO",
-                "user_answer": "False",
-                "correct_answer": "False",
-                "is_correct": true
-            },
-            {
-                "question_type": "question",
-                "question_id": "1.3",
-                "question": "Elon is ______ ( One word only )",
+                "question": "1 The woman __",
                 "user_answer": null,
-                "correct_answer": "inventor",
+                "correct_answer": "asks about the weather",
                 "is_correct": false
             },
             {
-                "question_type": "true_false",
+                "question_type": "multiple_choice",
+                "question_id": "1.2",
+                "question": "The woman's friend __",
+                "user_answer": "went to Russia",
+                "correct_answer": "went to Russia",
+                "is_correct": true
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "1.3",
+                "question": "3 Russia __",
+                "user_answer": "is warm in summer",
+                "correct_answer": "is warm in summer",
+                "is_correct": true
+            },
+            {
+                "question_type": "multiple_choice",
                 "question_id": "1.4",
-                "question": "Is ELon genuise human?",
+                "question": "4 The man __",
                 "user_answer": null,
-                "correct_answer": "True",
+                "correct_answer": "is going to go on holiday",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.5",
-                "question": "When critics say 'you can't do this' what did you answer Elon? ",
+                "question": "5 The woman's holiday plans __",
                 "user_answer": null,
-                "correct_answer": "We have done it",
+                "correct_answer": "are going to change",
+                "is_correct": false
+            },
+            {
+                "question_type": "question",
+                "question_id": "2.1",
+                "question": "The person isn\u2019t from ___________.",
+                "user_answer": null,
+                "correct_answer": "Madrid",
+                "is_correct": false
+            },
+            {
+                "question_type": "question",
+                "question_id": "2.2",
+                "question": "The flat is not in a modern ___________.",
+                "user_answer": null,
+                "correct_answer": "building",
+                "is_correct": false
+            },
+            {
+                "question_type": "question",
+                "question_id": "2.3",
+                "question": "All the rooms have got a ___________.",
+                "user_answer": null,
+                "correct_answer": "balcony",
+                "is_correct": false
+            },
+            {
+                "question_type": "question",
+                "question_id": "2.4",
+                "question": "The person loves ___________ and parks.",
+                "user_answer": null,
+                "correct_answer": "art",
+                "is_correct": false
+            },
+            {
+                "question_type": "question",
+                "question_id": "2.5",
+                "question": "The flat hasn\u2019t got a ___________.",
+                "user_answer": null,
+                "correct_answer": "lift",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "2.1",
-                "question": "What do you hear?",
-                "user_answer": null,
-                "correct_answer": "fortnite",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
                 "question_id": "3.1",
-                "question": "Which festival celebrates the visit of spirits?",
+                "question": "What room __ in your house?",
                 "user_answer": null,
-                "correct_answer": "The Day of the Dead",
+                "correct_answer": "do you like",
                 "is_correct": false
             },
             {
-                "question_type": "question",
+                "question_type": "multiple_choice",
                 "question_id": "3.2",
-                "question": "At which festival do people hide their faces?",
+                "question": "The __ is my favourite room, because I love __.",
                 "user_answer": null,
-                "correct_answer": "The Kukeri Festival",
+                "correct_answer": "kitchen",
                 "is_correct": false
             },
             {
-                "question_type": "question",
+                "question_type": "multiple_choice",
                 "question_id": "3.3",
-                "question": "Which festival is popular among tourists?",
+                "question": "My family eats dinner there every day. It\u2019s got a big window and you __ our garden.",
                 "user_answer": null,
-                "correct_answer": "The Kukeri Festival",
+                "correct_answer": "can see",
                 "is_correct": false
             },
             {
-                "question_type": "question",
+                "question_type": "multiple_choice",
                 "question_id": "3.4",
-                "question": "Which festival is the shortest?",
+                "question": "Is __ a lot of furniture in the room?",
                 "user_answer": null,
-                "correct_answer": "La Tomatina",
+                "correct_answer": "There\u2019s",
                 "is_correct": false
             },
             {
-                "question_type": "question",
+                "question_type": "multiple_choice",
                 "question_id": "3.5",
-                "question": "Which festival happens at the beginning of the year?",
+                "question": "Yes, there\u2019s a __ and six chairs.",
                 "user_answer": null,
-                "correct_answer": "The Kukeri Festival",
+                "correct_answer": "table",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "3.6",
-                "question": "Which festival is about the past?",
+                "question": "__ chairs are quite old.",
                 "user_answer": null,
-                "correct_answer": "The Day of the Dead",
+                "correct_answer": "All the",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": 4,
-                "question": "If today is Wednesday, what day will it be in 10 days?",
-                "user_answer": "Sunday",
-                "correct_answer": "Monday",
+                "question_id": "3.7",
+                "question": "__ a TV in the room, but we listen to the radio.",
+                "user_answer": null,
+                "correct_answer": "There isn\u2019t",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "3.8",
+                "question": "We like __ to our favourite music.",
+                "user_answer": null,
+                "correct_answer": "to music",
                 "is_correct": false
             }
         ]

@@ -387,16 +387,20 @@ def add_transaction():
     balances = load_balances()
     transactions = load_transactions()
 
-    # If user does not exist, initialize balance and transaction list.
+    # Если пользователя нет — инициализируем баланс и список транзакций.
     if username not in balances:
         balances[username] = 0.0
     if username not in transactions:
         transactions[username] = []
 
-    # Update balance
+    # Проверяем, достаточно ли средств при отрицательной транзакции
+    if amount < 0 and balances[username] + amount < 0:
+        return jsonify({"error": "Insufficient funds"}), 400
+
+    # Обновляем баланс
     balances[username] += amount
 
-    # Create a transaction record
+    # Создаём запись транзакции
     transaction_record = {
         "amount": amount,
         "description": description,
@@ -404,7 +408,7 @@ def add_transaction():
     }
     transactions[username].append(transaction_record)
 
-    # Save the updated data back to their respective files.
+    # Сохраняем обновлённые данные
     store_balances(balances)
     store_transactions(transactions)
 
@@ -412,6 +416,7 @@ def add_transaction():
         "message": "Transaction added",
         "new_balance": balances[username]
     })
+
 
 # Initialize loggedUsers from file
 loggedUsers = load_file(USER_DATA_FILE, {})
@@ -423,135 +428,196 @@ current_version = "2025-01-10-v1"
 
 exam_questions = [
     {
-        "id":
-        1,
-        "text":
-        "Listen and choose correct answer.",
-        "type":
-        "listening",  # Вопрос на аудирование
-        "audio":
-        "/static/exam/ElonMusk.mp3",  # Путь к файлу mp3, который нужно будет проигрывать на клиенте.
-        "subquestions": [{
-            "id": "1.1",
-            "type": "multiple_choice",
-            "text": "Who is this?",
-            "options": ["Elon", "Elon Musk", "Tesla"],
-            "correct": "Elon Musk"
-        }, {
-            "id": "1.2",
-            "type": "true_false",
-            "text": "Tesla's Founder and not a CEO",
-            "correct": "False"
-        }, {
-            "id": "1.3",
-            "type": "question",
-            "text": "Elon is ______ ( One word only )",
-            "correct": "inventor"
-        }, {
-            "id": "1.4",
-            "type": "true_false",
-            "text": "Is ELon genuise human?",
-            "correct": "True"
-        }, {
-            "id":
-            "1.5",
-            "type":
-            "multiple_choice",
-            "text":
-            "When critics say 'you can't do this' what did you answer Elon? ",
-            "options":
-            ["We have done it", "We've did it", "None of this answers."],
-            "correct":
-            "We have done it"
-        }]
+        "id": 1,
+        "text": "Section 1. Listen and choose correct answer.",
+        "type": "listening",
+        "audio": "/static/exam/ProgressTest1.mp3",
+        "subquestions": [
+            {
+                "id": "1.1",
+                "type": "multiple_choice",
+                "text": "1 The woman __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "asks about the weather"
+            },
+            {
+                "id": "1.2",
+                "type": "multiple_choice",
+                "text": "The woman's friend __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "went to Russia"
+            },
+            {
+                "id": "1.3",
+                "type": "multiple_choice",
+                "text": "3 Russia __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "is warm in summer"
+            },
+            {
+                "id": "1.4",
+                "type": "multiple_choice",
+                "text": "4 The man __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "is going to go on holiday"
+            },
+            {
+                "id": "1.5",
+                "type": "multiple_choice",
+                "text": "5 The woman's holiday plans __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "are going to change"
+            }
+        ]
     },
     {
-        "id":
-        2,
-        "text":
-        "Listen and choose correct answer.",
-        "type":
-        "listening",  # Вопрос на аудирование
-        "audio":
-        "/static/exam/four.mp3",  # Путь к файлу mp3, который нужно будет проигрывать на клиенте.
-        "subquestions": [{
+    "id": 2,
+    "type": "reading",
+    "text": """<h1>Flat review</h1>
+
+    <h2>Calle de Serrano, Madrid ***</h2>
+
+    <p>
+        We really like visiting Madrid, and we often stay in this flat. There are two bedrooms, a bathroom, a living room, and a very small kitchen with a microwave and a fridge. The flat is small, but it's cheap. It’s in an exciting area, near lots of restaurants and shops.
+    </p>
+
+    <p>
+        The flat is in a beautiful old building, and there’s a balcony in each room. You can walk to the city centre in ten minutes. The flat is near Retiro Park and the Prado Art Museum. We always visit them because we love walking and paintings!
+    </p>
+
+    <p>
+        It’s a good flat for two people, but it’s too small for a family. It’s on the second floor and there isn’t a lift. Another problem is that the flat is very hot. It hasn’t got air conditioning.
+    </p>
+    """,
+    "subquestions": [
+        {
             "id": "2.1",
-            "type": "multiple_choice",
-            "text": "What do you hear?",
-            "options": ["49", "94", "iPhone", "fortnite"],
-            "correct": "fortnite"
-        }]
-    },
-    {
-        "id":
-        3,
-        "type":
-        "reading",
-        "text":
-        """ Section 1. Reading Passage
-        <h1>Traditions around the world</h1>
-
-<h2>The Kukeri Festival</h2>
-<p>
-  The Kukeri Festival is one of the oldest traditions in Bulgaria. It happens every year in winter. Men wear special costumes and wear big, scary masks that look like animals. The men dance and make loud noises with bells. They do this to scare away bad spirits and bring good luck for the new year. The Kukeri Festival is very colourful and exciting. People come from around the world to see it. The festival is a big part of Bulgarian culture and helps keep old traditions alive.
-</p>
-
-<h2>The Day of the Dead</h2>
-<p>
-  The Day of the Dead is a special holiday in Mexico. It happens every year on November 1st and 2nd. People remember and honour their family members who have died. They believe that on these days, their spirits come back to visit. Families make altars with photos, flowers, candles, and food. Bread of the Dead is a popular recipe. Some people also paint their faces to look like skeletons and dress in colourful clothes. The Day of the Dead is a happy celebration, not a sad one. It is a way to celebrate life and remember the past.
-</p>
-
-<h2>La Tomatina</h2>
-<p>
-  Every year, on the last Wednesday of August, the quiet village of Buñol, Spain, becomes busy and full of people. Everyone goes out to the streets to throw tomatoes at each other. It is a big, fun food fight! The festival lasts about one hour, and everyone gets very dirty, so they all wear old clothes. Before the tomato fight, there are other activities, like parades and music. After the battle, the streets are covered in tomato juice, but they get cleaned.
-</p>
-""",
-        "subquestions": [{
+            "type": "question",
+            "text": "The person isn’t from ___________.",
+            "correct": "Madrid"
+        },
+        {
+            "id": "2.2",
+            "type": "question",
+            "text": "The flat is not in a modern ___________.",
+            "correct": "building"
+        },
+        {
+            "id": "2.3",
+            "type": "question",
+            "text": "All the rooms have got a ___________.",
+            "correct": "balcony"
+        },
+        {
+            "id": "2.4",
+            "type": "question",
+            "text": "The person loves ___________ and parks.",
+            "correct": "art"
+        },
+        {
+            "id": "2.5",
+            "type": "question",
+            "text": "The flat hasn’t got a ___________.",
+            "correct": "lift"
+        }
+    ]
+},
+{
+    "id": 3,
+    "type": "multiple_choice",
+    "text": "Choose the correct options.\n\nA: What room ¹ __ in your house?\n\nB: The ² __ is my favourite room, because I love ³ __. My family eats dinner there every day. It’s got a big window and you ⁴ __ our garden.\n\nA: ⁵ __ a lot of furniture in the room?\n\nB: Yes, there’s a ⁶ __ and six chairs. ⁷ __ chairs are quite old. ⁸ __ a TV in the room, but we listen ⁹ __ on the radio. We like ¹⁰ __ to our favourite music.",
+    "subquestions": [
+        {
             "id": "3.1",
-            "type": "question",
-            "text": "Which festival celebrates the visit of spirits?",
-            "correct": "The Day of the Dead"
-        }, {
+            "type": "multiple_choice",
+            "text": "What room __ in your house?",
+            "options": ["do you like", "you like", "are you like"],
+            "correct": "do you like"
+        },
+        {
             "id": "3.2",
-            "type": "question",
-            "text": "At which festival do people hide their faces?",
-            "correct": "The Kukeri Festival"
-        }, {
+            "type": "multiple_choice",
+            "text": "The __ is my favourite room, because I love __.",
+            "options": ["bathroom", "bedroom", "kitchen"],
+            "correct": "kitchen"
+        },
+        {
             "id": "3.3",
-            "type": "question",
-            "text": "Which festival is popular among tourists?",
-            "correct": "The Kukeri Festival"
-        }, {
+            "type": "multiple_choice",
+            "text": "My family eats dinner there every day. It’s got a big window and you __ our garden.",
+            "options": ["can see", "can to see", "can seeing"],
+            "correct": "can see"
+        },
+        {
             "id": "3.4",
-            "type": "question",
-            "text": "Which festival is the shortest?",
-            "correct": "La Tomatina"
-        }, {
+            "type": "multiple_choice",
+            "text": "Is __ a lot of furniture in the room?",
+            "options": ["There are", "There’s", "Is there"],
+            "correct": "There’s"
+        },
+        {
             "id": "3.5",
-            "type": "question",
-            "text": "Which festival happens at the beginning of the year?",
-            "correct": "The Kukeri Festival"
-        }, {
-            "id":
-            "3.6",
-            "type":
-            "multiple_choice",
-            "text":
-            "Which festival is about the past?",
-            "options":
-            ["The Kukeri Festival", "The Day of the Dead", "La Tomatina"],
-            "correct":
-            "The Day of the Dead"
-        }]
-    },
-    {
-        "id": 4,
-        "type": "multiple_choice",
-        "text": "If today is Wednesday, what day will it be in 10 days?",
-        "options": ["Saturday", "Sunday", "Monday"],
-        "correct": "Monday"
-    }
+            "type": "multiple_choice",
+            "text": "Yes, there’s a __ and six chairs.",
+            "options": ["shower", "table", "bed"],
+            "correct": "table"
+        },
+        {
+            "id": "3.6",
+            "type": "multiple_choice",
+            "text": "__ chairs are quite old.",
+            "options": ["Each", "All the", "Every"],
+            "correct": "All the"
+        },
+        {
+            "id": "3.7",
+            "type": "multiple_choice",
+            "text": "__ a TV in the room, but we listen to the radio.",
+            "options": ["There isn’t", "It hasn’t", "It isn’t"],
+            "correct": "There isn’t"
+        },
+        {
+            "id": "3.8",
+            "type": "multiple_choice",
+            "text": "We like __ to our favourite music.",
+            "options": ["music", "the music", "to music"],
+            "correct": "to music"
+        }
+    ]
+}
+
 ]
+
 
 # Путь к файлу с балансами
 BALANCE_FILE = 'balance.json'
@@ -656,47 +722,6 @@ def pay_for_ban_reduction(data):
         emit('ban_reduction_success', {'success': True, 'new_count_blocks': new_count_blocks, 'coins': balance[username]})
     else:
         emit('ban_reduction_failed', {'success': False, 'message': 'Not enough coins'})
-
-
-@socketio.on('apply_theme')
-def apply_theme(data):
-    username = data['username']
-    theme = data['theme']
-    price = data['price']
-    
-    balance = load_balance()
-    bought_themes = load_bought_themes()
-    
-    if username in balance and balance[username] >= price:
-        # Если тема не куплена ранее
-        if username not in bought_themes:
-            bought_themes[username] = []
-
-        if theme not in bought_themes[username]:
-            # Если у пользователя еще нет этой темы, списываем монеты
-            balance[username] -= price
-            bought_themes[username].append(theme)  # Добавляем тему в список купленных
-            save_balance(balance)
-            save_bought_themes(bought_themes)  # Сохраняем обновленные данные
-
-            # Отправляем подтверждение клиенту
-            emit('theme_applied', {'success': True, 'coins': balance[username], 'theme': theme}, room=request.sid)
-        else:
-            # Если тема уже куплена, применяем ее без списания монет
-            emit('theme_applied', {'success': True, 'coins': balance[username], 'theme': theme, 'already_purchased': True}, room=request.sid)
-    else:
-        emit('theme_applied', {'success': False, 'message': 'Not enough coins.'}, room=request.sid)
-
-# Получение списка купленных тем при открытии модального окна
-@socketio.on('get_bought_themes')
-def get_bought_themes(data):
-    username = data['username']
-    bought_themes = load_bought_themes()
-
-    if username in bought_themes:
-        emit('bought_themes', {'success': True, 'themes': bought_themes[username]})
-    else:
-        emit('bought_themes', {'success': False, 'message': 'No themes purchased yet.'})
 
 @app.route('/ping', methods=['GET'])
 def ping():
