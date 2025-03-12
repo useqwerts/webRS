@@ -29,36 +29,6 @@ exam_start_time = None  # Global variable to store exam start time
 exam_started = False  # Флаг начала экзамена
 exam_end_time = None
 
-
-# Sample data for prayer times (replace with actual data or API integration)
-PRAYER_TIMES = {
-    "Bomdod": "06:15",
-    "Peshin": "12:36",
-    "Asr": "15:53",
-    "Shom": "17:39",
-    "Xufton": "18:54"
-}
-
-DUAS = {
-    "Azan": """Аллоҳу акбар! 
-Аллоҳу акбар!
-Аллоҳу акбар! 
-Аллоҳу акбар!
-Ашҳаду ал лаа илаҳа иллаллоҳ!
-Ашҳаду ал лаа илаҳа иллаллоҳ!
-Ашҳаду анна Муҳаммадар росулуллоҳ!
-Ашҳаду анна Муҳаммадар росулуллоҳ!
-Ҳайя ъалас-солаҳ!
-Ҳайя ъалас-солаҳ!
-Ҳайя ъалал фалаҳ!
-Ҳайя ъалал фалаҳ!
-Аллоҳу акбар!
-Аллоҳу акбар!
-Лаа илаҳа иллаллоҳ.""",
-    "Dua Before Prayer": "",
-    "Dua After Prayer": "",
-    "Dua for Patience": ""
-}
 tracks = [
     {'title': 'Karina va Jambul Buxoro Yigitlari', 'url': '/static/music/BuxoroYigitlari.mp3'},
     {'title': 'Ziyoda - Tor Kocha', 'url': '/static/music/Ziyoda_Tor_kocha.mp3'},
@@ -365,37 +335,6 @@ def load_file(file_path, default_value):
 def save_file(file_path, data):
     with open(file_path, 'w') as file:
         json.dump(data, file, indent=4)
-        
-def get_next_prayer():
-    now = datetime.now()
-    for prayer, time_str in PRAYER_TIMES.items():
-        prayer_time = datetime.strptime(time_str, "%H:%M").replace(year=now.year, month=now.month, day=now.day)
-        if now < prayer_time:
-            time_remaining = prayer_time - now
-            return {
-                "name": prayer,
-                "time": time_str,
-                "remaining": str(time_remaining).split('.')[0]  # Remove microseconds
-            }
-    # If no prayers are left for today, return the first prayer for tomorrow
-    first_prayer = list(PRAYER_TIMES.items())[0]
-    prayer_time = datetime.strptime(first_prayer[1], "%H:%M").replace(year=now.year, month=now.month, day=now.day) + timedelta(days=1)
-    time_remaining = prayer_time - now
-    return {
-        "name": first_prayer[0],
-        "time": first_prayer[1],
-        "remaining": str(time_remaining).split('.')[0]
-    }
-
-@app.route('/apis/main')
-def main_page():
-    next_prayer = get_next_prayer()
-    return render_template('main.html', prayer_times=PRAYER_TIMES, next_prayer=next_prayer,duas=DUAS)
-
-@app.route('/apis/api/next_prayer')
-def api_next_prayer():
-    next_prayer = get_next_prayer()
-    return jsonify(next_prayer)
     
 TRANSACTIONS_FILE = "users_transactions.json"   
  
@@ -549,7 +488,8 @@ exam_questions = [
         "type":
         "reading",
         "text":
-        """<h1>Traditions around the world</h1>
+        """ Section 1. Reading Passage
+        <h1>Traditions around the world</h1>
 
 <h2>The Kukeri Festival</h2>
 <p>
@@ -1233,6 +1173,134 @@ def change_password():
         json.dump(loggedUsers, f)
 
     return jsonify({'message': 'Password updated successfully'})
+    
+DATA_FILE = 'historyofprogress.json'
+
+def read_history_from_file():
+    """Читаем историю из JSON-файла."""
+    if not os.path.exists(DATA_FILE):
+        return {}
+    with open(DATA_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def write_history_to_file(data):
+    """Записываем историю в JSON-файл."""
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+    
+@app.route('/api/update-history', methods=['POST'])
+def update_history():
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    username = data.get("username")
+    if not username:
+        return jsonify({"error": "Username is required"}), 400
+
+    # Загружаем всю историю
+    all_data = read_history_from_file()
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    user_history = all_data.get(username, [])
+
+    # Ищем запись за сегодня или создаём новую, если её нет
+    existing_today = next((r for r in user_history if r.get("date") == today_str), None)
+    if not existing_today:
+        # Если в запросе передано инкрементальное обновление, создаём запись только с нужным полем
+        if "updateType" in data and "progressIncrease" in data:
+            if data["updateType"] == "finalExam":
+                existing_today = {"date": today_str, "finalExam": 0}
+            elif data["updateType"] == "weeklyExams":
+                existing_today = {"date": today_str, "weeklyExams": 0}
+            else:
+                existing_today = {"date": today_str}
+        else:
+            # Полное обновление – инициализируем обе оценки
+            existing_today = {"date": today_str, "finalExam": 0, "weeklyExams": 0}
+        user_history.append(existing_today)
+
+    # Если переданы updateType и progressIncrease, делаем инкрементальное обновление только указанного поля
+    if "updateType" in data and "progressIncrease" in data:
+        update_type = data["updateType"]
+        try:
+            progress_increase = float(data["progressIncrease"])
+        except (ValueError, TypeError):
+            return jsonify({"error": "Invalid progressIncrease value"}), 400
+
+        if update_type == "finalExam":
+            current = float(existing_today.get("finalExam", 0))
+            new_value = current + progress_increase
+            existing_today["finalExam"] = min(new_value, 30)
+        elif update_type == "weeklyExams":
+            current = float(existing_today.get("weeklyExams", 0))
+            new_value = current + progress_increase
+            existing_today["weeklyExams"] = min(new_value, 70)
+        else:
+            return jsonify({"error": "Invalid updateType. Must be 'finalExam' or 'weeklyExams'."}), 400
+    else:
+        # Полное обновление: обновляем оба поля, если они переданы
+        final_exam = data.get("finalExam", 0)
+        weekly_exams = data.get("weeklyExams", 0)
+
+        try:
+            final_exam = float(final_exam)
+            weekly_exams = float(weekly_exams)
+        except (ValueError, TypeError):
+            return jsonify({"error": "Invalid exam scores provided"}), 400
+
+        existing_today["finalExam"] = min(final_exam, 30)
+        existing_today["weeklyExams"] = min(weekly_exams, 70)
+
+    all_data[username] = user_history
+    write_history_to_file(all_data)
+
+    return jsonify({"message": "History updated successfully"}), 200
+
+
+@app.route('/api/get-history', methods=['GET'])
+def get_history():
+
+    username = request.args.get('username')
+    if not username:
+        return jsonify({"error": "Username not provided"}), 400
+
+    all_data = read_history_from_file()
+    user_history = all_data.get(username, [])
+    return jsonify(user_history), 200
+
+
+@app.route('/api/get-student-progress-history', methods=['GET'])
+def get_student_progress_history():
+
+    username = request.args.get('username')
+    if not username:
+        return jsonify({"error": "Username not provided"}), 400
+
+    all_data = read_history_from_file()
+    user_history = all_data.get(username, [])
+    if not user_history:
+        # Если у пользователя нет записей, вернём нули
+        return jsonify({
+            username: {
+                "finalExam": 0,
+                "weeklyExams": 0,
+                "totalScore": 0
+            }
+        }), 200
+
+    # Берём последнюю запись
+    last_record = user_history[-1]
+    final_exam = last_record.get("finalExam", 0)
+    weekly_exams = last_record.get("weeklyExams", 0)
+    total_score = final_exam + weekly_exams
+
+    return jsonify({
+        username: {
+            "finalExam": final_exam,
+            "weeklyExams": weekly_exams,
+            "totalScore": total_score
+        }
+    }), 200
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

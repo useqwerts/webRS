@@ -42,38 +42,38 @@ window.onload = () => {
     });
 };
 
-	
-	const socket = io();
-    const messagesDiv = document.getElementById('messages');
-    const skeletonLoader = document.getElementById('skeleton-loader');
-    const fileUploadButton = document.getElementById('file-upload-button');
-    const fileInput = document.getElementById('file-input');
-    const passwordModal = document.getElementById('passwordModal');
-    const closeButton = document.querySelector('.close-button');
-    const passwordForm = document.getElementById('password-form');
-    const currentPasswordInput = document.getElementById('current-password');
-    const newPasswordInput = document.getElementById('new-password');
-    const statusContainer = document.getElementById('status-container');
-    const updatePasswordButton = document.getElementById('update-password-button');
-	const audioModal = document.getElementById('audioModal');
-    const audioPlayer = document.getElementById('audioPlayer');
-    const closeAudioModal = document.getElementById('closeAudioModal');
-    const audioTrackName = document.getElementById('audioTrackName');
-    const audioSource = document.getElementById('audioSource');
-	const musicPackOption = document.getElementById('music-pack-option');
-	const musicModal = document.getElementById('music-modal');
-	const playerModal = document.getElementById('player-modal');
-	const closeMusicModal = document.getElementById('close-music-modal');
-	const closePlayerModal = document.getElementById('close-player-modal');
-	const musicList = document.getElementById('music-list');
-	const audioElement = document.getElementById('audio-element');
-	const playPauseButton = document.getElementById('play-pause');
-	const progressBar = document.getElementById('progress-bar');
-	const progressBarContainer = document.getElementById('progress-bar-container');
-	const currentTimeDisplay = document.getElementById('current-time');
-	const totalTimeDisplay = document.getElementById('total-time');
-	let currentTrackIndex = 0;
-	let tracks = [];  // Массив для хранения треков
+
+const socket = io();
+const messagesDiv = document.getElementById('messages');
+const skeletonLoader = document.getElementById('skeleton-loader');
+const fileUploadButton = document.getElementById('file-upload-button');
+const fileInput = document.getElementById('file-input');
+const passwordModal = document.getElementById('passwordModal');
+const closeButton = document.querySelector('.close-button');
+const passwordForm = document.getElementById('password-form');
+const currentPasswordInput = document.getElementById('current-password');
+const newPasswordInput = document.getElementById('new-password');
+const statusContainer = document.getElementById('status-container');
+const updatePasswordButton = document.getElementById('update-password-button');
+const audioModal = document.getElementById('audioModal');
+const audioPlayer = document.getElementById('audioPlayer');
+const closeAudioModal = document.getElementById('closeAudioModal');
+const audioTrackName = document.getElementById('audioTrackName');
+const audioSource = document.getElementById('audioSource');
+const musicPackOption = document.getElementById('music-pack-option');
+const musicModal = document.getElementById('music-modal');
+const playerModal = document.getElementById('player-modal');
+const closeMusicModal = document.getElementById('close-music-modal');
+const closePlayerModal = document.getElementById('close-player-modal');
+const musicList = document.getElementById('music-list');
+const audioElement = document.getElementById('audio-element');
+const playPauseButton = document.getElementById('play-pause');
+const progressBar = document.getElementById('progress-bar');
+const progressBarContainer = document.getElementById('progress-bar-container');
+const currentTimeDisplay = document.getElementById('current-time');
+const totalTimeDisplay = document.getElementById('total-time');
+let currentTrackIndex = 0;
+let tracks = [];  // Массив для хранения треков
 
 // Открытие модального окна списка музыки
 if (musicPackOption && musicModal && musicList) {
@@ -159,7 +159,7 @@ function attachPlayButtons() {
 function playTrack(index) {
     if (index < 0 || index >= tracks.length) {
         console.warn("The index of the track is out of range.");
-        showToastNotification("The index of the track is out of range.",'error');
+        showToastNotification("The index of the track is out of range.", 'error');
         return;
     }
 
@@ -193,7 +193,7 @@ document.getElementById('prev-track-button').addEventListener('click', () => {
     if (currentTrackIndex > 0) {
         playTrack(currentTrackIndex - 1); // Переход к предыдущему треку
     } else {
-        showToastNotification("This is the first track.",'success');
+        showToastNotification("This is the first track.", 'success');
     }
 });
 
@@ -241,7 +241,7 @@ playPauseButton.addEventListener('click', () => {
 
 // Событие завершения трека
 audioElement.addEventListener('ended', () => {
-	if (isAutoplayEnabled) {
+    if (isAutoplayEnabled) {
         playNextTrack(); // Переход к следующему треку
     }
     playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // Восстанавливаем иконку после завершения
@@ -266,7 +266,7 @@ const autoplayIcon = document.getElementById('autoplay-icon');
 // Обработчик изменения состояния тумблера
 autoplayToggle.addEventListener('change', (event) => {
     const isAutoplayEnabled = event.target.checked; // Сохраняем состояние (включен/выключен)
-    
+
     // Обновляем иконку в зависимости от состояния тумблера
     if (isAutoplayEnabled) {
         autoplayIcon.classList.remove('fa-play');
@@ -275,7 +275,7 @@ autoplayToggle.addEventListener('change', (event) => {
         autoplayIcon.classList.remove('fa-pause');
         autoplayIcon.classList.add('fa-play');
     }
-    
+
     showToastNotification(`Autoplay is now ${isAutoplayEnabled ? 'enabled' : 'disabled'}`);
 });
 
@@ -284,7 +284,7 @@ function playNextTrack() {
     if (currentTrackIndex < tracks.length - 1) {
         playTrack(currentTrackIndex + 1); // Воспроизводим следующий трек
     } else {
-		showToastNotification("This is the last track.", 'success');
+        showToastNotification("This is the last track.", 'success');
         console.log('Конец плейлиста');
     }
 }
@@ -323,19 +323,19 @@ function updateProgressBar(e) {
     audioElement.currentTime = (percentage / 100) * audioElement.duration;
 }
 
-		function scrollToBottom() {
-		messagesDiv.scrollTop = messagesDiv.scrollHeight;
-		}
-		
-		const accountIcon = document.getElementById('account-icon');
-		const accountMenu = document.getElementById('account-menu');
-		const changePasswordOption = document.getElementById('change-password-option');
-		const logoutOption = document.getElementById('logout-option');
+function scrollToBottom() {
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+const accountIcon = document.getElementById('account-icon');
+const accountMenu = document.getElementById('account-menu');
+const changePasswordOption = document.getElementById('change-password-option');
+const logoutOption = document.getElementById('logout-option');
 
 
 function showToastNotification(message, type = 'success', duration = 5000) {
     const toastContainer = document.getElementById('toast-container');
-    
+
     // Удаляем все текущие уведомления перед показом нового
     const existingToasts = toastContainer.querySelectorAll('.toast');
     existingToasts.forEach(toast => {
@@ -346,21 +346,21 @@ function showToastNotification(message, type = 'success', duration = 5000) {
     // Создание элементов уведомления
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
+
     const toastContent = document.createElement('div');
     toastContent.className = 'toast-content';
-    
+
     const toastIcon = document.createElement('div');
     toastIcon.className = `toast-check ${type}`;
     toastIcon.innerHTML = type === 'success' ? '&#10004;' : '&#10006;';
-    
+
     const messageContainer = document.createElement('div');
     messageContainer.className = 'messageToast';
-    
+
     const messageText = document.createElement('span');
     messageText.className = 'messageToast-text text-1';
     messageText.textContent = message;
-    
+
     const closeButton = document.createElement('span');
     closeButton.className = 'toast-close';
     closeButton.onclick = () => {
@@ -375,12 +375,12 @@ function showToastNotification(message, type = 'success', duration = 5000) {
     toast.appendChild(toastContent);
     toast.appendChild(closeButton);
     toastContainer.appendChild(toast);
-    
+
     // Активация уведомления с анимацией
     setTimeout(() => {
         toast.classList.add('active');
     }, 10);
-    
+
     // Удаление уведомления после завершения
     setTimeout(() => {
         toast.classList.remove('active');
@@ -418,75 +418,75 @@ document.getElementById('logout-option').addEventListener('click', function() {
             'Content-Type': 'application/json',
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Failed to log out. Response status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) { 
-            sessionStorage.removeItem('username');
-            window.location.href = '/login';
-        } else {
-            throw new Error('Logout failed: Server did not confirm success.');
-        }
-    })
-    .catch(error => {
-        console.error('Error logging out:', error);
-        alert('Ошибка выхода! Попробуйте еще раз.');
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to log out. Response status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                sessionStorage.removeItem('username');
+                window.location.href = '/login';
+            } else {
+                throw new Error('Logout failed: Server did not confirm success.');
+            }
+        })
+        .catch(error => {
+            console.error('Error logging out:', error);
+            alert('Ошибка выхода! Попробуйте еще раз.');
+        });
 });
 
-        // Close the modal
-        closeButton.addEventListener('click', () => {
-            passwordModal.style.display = 'none';
-            currentPasswordInput.value = '';
-            newPasswordInput.value = '';
-            statusContainer.innerHTML = ''; // Clear status messages
+// Close the modal
+closeButton.addEventListener('click', () => {
+    passwordModal.style.display = 'none';
+    currentPasswordInput.value = '';
+    newPasswordInput.value = '';
+    statusContainer.innerHTML = ''; // Clear status messages
+});
+
+// Handle form submission
+passwordForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const currentPassword = currentPasswordInput.value;
+    const newPassword = newPasswordInput.value;
+
+    // Show skeleton loading animation
+    statusContainer.innerHTML = '<div class="skeleton"></div>';
+
+    // Simulate server request
+    fetch('/change_password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            currentPassword,
+            newPassword
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Remove skeleton animation
+            statusContainer.innerHTML = '';
+            if (data.error) {
+                statusContainer.innerHTML = `<div class="status-message error">${data.error}</div>`;
+                showToastNotification(data.error, 'error');
+            } else {
+                statusContainer.innerHTML = `<div class="status-message success">${data.message}</div>`;
+                showToastNotification(data.message, 'success');
+                // Clear form fields after success
+                currentPasswordInput.value = '';
+                newPasswordInput.value = '';
+            }
+        })
+        .catch(error => {
+            statusContainer.innerHTML = `<div class="status-message error">An error occurred. Please try again.</div>`;
+            console.error('Error:', error);
         });
+});
 
-        // Handle form submission
-        passwordForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const currentPassword = currentPasswordInput.value;
-            const newPassword = newPasswordInput.value;
-
-            // Show skeleton loading animation
-            statusContainer.innerHTML = '<div class="skeleton"></div>';
-
-            // Simulate server request
-            fetch('/change_password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    currentPassword,
-                    newPassword
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Remove skeleton animation
-                statusContainer.innerHTML = '';
-                if (data.error) {
-                    statusContainer.innerHTML = `<div class="status-message error">${data.error}</div>`;
-					showToastNotification(data.error, 'error');
-                } else {
-                    statusContainer.innerHTML = `<div class="status-message success">${data.message}</div>`;
-					showToastNotification(data.message, 'success');
-                    // Clear form fields after success
-                    currentPasswordInput.value = '';
-                    newPasswordInput.value = '';
-                }
-            })
-            .catch(error => {
-                statusContainer.innerHTML = `<div class="status-message error">An error occurred. Please try again.</div>`;
-                console.error('Error:', error);
-            });
-        });
-		
 // Обработка обновления версии
 socket.on('updateReleased', (data) => {
     const newVersion = data.version;
@@ -587,18 +587,18 @@ socket.on('load_messages', (loadedMessages) => {
                     // Создаем обертку для изображения
                     const imageWrapper = document.createElement('div');
                     imageWrapper.classList.add('image-wrapper');
-                    
+
                     // Создаем блок для анимации спиннера
                     const imgLoadingSpinner = document.createElement('div');
                     imgLoadingSpinner.classList.add('lds-dual-ring'); // Применяем новый класс для спиннера
                     content.appendChild(imgLoadingSpinner); // Добавляем спиннер в message-content
-                    
+
                     // Создаем само изображение
                     const image = document.createElement('img');
                     image.src = message.url;
                     image.alt = message.filename;
                     image.classList.add('message-image');
-                    
+
                     // Скрываем изображение до того, как оно загрузится
                     image.style.display = 'none';
 
@@ -618,10 +618,10 @@ socket.on('load_messages', (loadedMessages) => {
                     imageWrapper.appendChild(image);
                     content.appendChild(imageWrapper); // Добавляем обертку в message-content
                 } else if (message.type === 'file' && message.filename.match(/\.(mp4|webm|ogg)$/i)) {
-        // Создаем кастомный видеоплеер
-        const customPlayer = createCustomVideoPlayer(message.url);
-        content.appendChild(customPlayer);
-    }  else if (message.filename.match(/\.(mp3)$/i)) {
+                    // Создаем кастомный видеоплеер
+                    const customPlayer = createCustomVideoPlayer(message.url);
+                    content.appendChild(customPlayer);
+                } else if (message.filename.match(/\.(mp3)$/i)) {
                     const audioWrapper = document.createElement('div');
                     audioWrapper.classList.add('audio-wrapper');
 
@@ -702,17 +702,17 @@ function uploadAvatar(username, file) {
         method: "POST",
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.avatar_url) {
-            // Убираем строку, которая обновляла аватар на странице
-            // document.getElementById("user-avatar").src = data.avatar_url;
-            showToastNotification("Successfully uploaded photo");
-        } else {
-            showToastNotification("Ошибка загрузки: " + data.error);
-        }
-    })
-    .catch(error => showToastNotification("Ошибка: " + error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.avatar_url) {
+                // Убираем строку, которая обновляла аватар на странице
+                // document.getElementById("user-avatar").src = data.avatar_url;
+                showToastNotification("Successfully uploaded photo");
+            } else {
+                showToastNotification("Ошибка загрузки: " + data.error);
+            }
+        })
+        .catch(error => showToastNotification("Ошибка: " + error));
 }
 
 
@@ -739,7 +739,7 @@ let isBlocked = false; // Флаг блокировки
 
 // Функция отправки сообщения
 function sendMessage() {
-	let countBlocks = localStorage.getItem('countBlocks') ? parseInt(localStorage.getItem('countBlocks')) : 0;
+    let countBlocks = localStorage.getItem('countBlocks') ? parseInt(localStorage.getItem('countBlocks')) : 0;
     if (isBlocked) {
         return; // Блокируем отправку, если пользователь уже заблокирован
     }
@@ -762,20 +762,20 @@ function sendMessage() {
 }
 
 const backgroundMusic = new Audio('/static/music/DeepSleep.mp3');
-    backgroundMusic.loop = true; // Зацикливаем музыку
+backgroundMusic.loop = true; // Зацикливаем музыку
 
-    // Функция для воспроизведения музыки
-    function playSpecialMusic() {
-      backgroundMusic.play();
-      console.log('Music started');
-    }
+// Функция для воспроизведения музыки
+function playSpecialMusic() {
+    backgroundMusic.play();
+    console.log('Music started');
+}
 
-    // Функция для остановки музыки
-    function stopSpecialMusic() {
-      backgroundMusic.pause();
-      backgroundMusic.currentTime = 0; // Сброс к началу трека
-      console.log('Music stopped');
-    }
+// Функция для остановки музыки
+function stopSpecialMusic() {
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0; // Сброс к началу трека
+    console.log('Music stopped');
+}
 
 
 let isBlockedyet = false; // Флаг, показывающий, что блокировка активна
@@ -840,10 +840,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Функция для разблокировки пользователя
 function unblockUser() {
-	isBlockedyet = false;
-	document.body.style.pointerEvents = 'auto';
-	stopSpecialMusic();
-	enableMessageInput();
+    isBlockedyet = false;
+    document.body.style.pointerEvents = 'auto';
+    stopSpecialMusic();
+    enableMessageInput();
     isBlocked = false;
     localStorage.removeItem("blockEndTime"); // Удалить блокировку из localStorage
     blockScreen.classList.remove("visible"); // Скрыть экран блокировки
@@ -928,7 +928,7 @@ socket.on('new_message', (message) => {
             image.src = message.url;
             image.alt = message.filename;
             image.classList.add('message-image');
-            
+
             // Скрыть изображение до его загрузки
             image.style.display = 'none';
 
@@ -948,10 +948,10 @@ socket.on('new_message', (message) => {
             content.appendChild(imageWrapper); // Добавляем обертку с изображением в message-content
         }
         else if (message.type === 'file' && message.filename.match(/\.(mp4|webm|ogg)$/i)) {
-        // Создаем кастомный видеоплеер
-        const customPlayer = createCustomVideoPlayer(message.url);
-        content.appendChild(customPlayer);
-    }
+            // Создаем кастомный видеоплеер
+            const customPlayer = createCustomVideoPlayer(message.url);
+            content.appendChild(customPlayer);
+        }
         else if (message.filename.match(/\.(mp3)$/i)) {
             const audioWrapper = document.createElement('div');
             audioWrapper.classList.add('audio-wrapper');
@@ -1134,37 +1134,37 @@ function createCustomVideoPlayer(videoUrl) {
 
 
 function openAudioModal(audioUrl, trackName) {
-        audioTrackName.textContent = trackName; // Устанавливаем имя трека
-        audioSource.src = audioUrl; // Устанавливаем источник для аудио
-        audioPlayer.load(); // Перезагружаем плеер
-        audioModal.style.display = 'block'; // Показываем модальное окно
-    }
+    audioTrackName.textContent = trackName; // Устанавливаем имя трека
+    audioSource.src = audioUrl; // Устанавливаем источник для аудио
+    audioPlayer.load(); // Перезагружаем плеер
+    audioModal.style.display = 'block'; // Показываем модальное окно
+}
 
-    // Закрытие модального окна
-    closeAudioModal.onclick = function() {
+// Закрытие модального окна
+closeAudioModal.onclick = function() {
+    audioModal.style.display = 'none';
+    audioPlayer.pause(); // Останавливаем аудио при закрытии
+}
+
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    if (event.target === audioModal) {
         audioModal.style.display = 'none';
-        audioPlayer.pause(); // Останавливаем аудио при закрытии
+        audioPlayer.pause();
     }
+}
 
-    // Закрытие модального окна при клике вне его
-    window.onclick = function(event) {
-        if (event.target === audioModal) {
-            audioModal.style.display = 'none';
-            audioPlayer.pause();
-        }
+// Send text message
+document.getElementById('message-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('message-input');
+    const text = input.value;
+    if (text.trim() !== '') {
+        sendMessage();
+        socket.emit('send_message', { text });
+        input.value = '';
     }
-
-        // Send text message
-        document.getElementById('message-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const input = document.getElementById('message-input');
-            const text = input.value;
-            if (text.trim() !== '') {
-				sendMessage();
-                socket.emit('send_message', { text });
-                input.value = '';
-            }
-        });
+});
 
 const uploadStatus = document.getElementById('upload-status');
 const progressFill = document.getElementById('progress-fill');
@@ -1233,17 +1233,17 @@ fileInput.addEventListener('change', () => {
     }
 });
 
-		
-		/*
-        // Logout functionality
-        document.getElementById('logout-button').addEventListener('click', () => {
-            fetch('/logout')
-                .then(() => {
-                    window.location.href = '/';
-                })
-                .catch((error) => console.error('Error during logout:', error));
-        });
-		*/
+
+/*
+// Logout functionality
+document.getElementById('logout-button').addEventListener('click', () => {
+    fetch('/logout')
+        .then(() => {
+            window.location.href = '/';
+        })
+        .catch((error) => console.error('Error during logout:', error));
+});
+*/
 
 // Получить элемент message-input
 const messageInput = document.getElementById('message-input');
@@ -1268,8 +1268,8 @@ setTimeout(enableMessageInput, 0700); // Включить через 2 секу�
 
 
 document.addEventListener("DOMContentLoaded", () => {
-	
-	const sessionUsername = sessionStorage.getItem('username'); // Получаем имя пользователя из sessionStorage
+
+    const sessionUsername = sessionStorage.getItem('username'); // Получаем имя пользователя из sessionStorage
 
     // Проверяем, существует ли session 'username' и соответствует ли currentUser
     if (!sessionUsername || sessionUsername !== currentUser) {
@@ -1279,17 +1279,17 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(`Access granted for user: ${sessionUsername}`);
         // Продолжаем загрузку чата (можно добавить другие действия, если нужно)
     }
-	
+
     // Убедитесь, что экран блокировки скрыт при загрузке
     if (!isBlocked) {
         blockScreen.classList.add("hidden");
     }
-	if (!document.getElementById('toast-container')) {
+    if (!document.getElementById('toast-container')) {
         const toastContainer = document.createElement('div');
         toastContainer.id = 'toast-container';
         document.body.appendChild(toastContainer);
     }
-	const blockEndTime = localStorage.getItem("blockEndTime");
+    const blockEndTime = localStorage.getItem("blockEndTime");
 
     if (blockEndTime) {
         const timeLeft = Math.floor((blockEndTime - Date.now()) / 1000);
@@ -1313,7 +1313,7 @@ document.getElementById('sessionsButton').addEventListener('click', function() {
         .then(data => {
             const sessionModal = document.getElementById('sessionsModal');
             const sessionsList = document.getElementById('sessionsList');
-            
+
             // Очищаем список сессий перед добавлением новых
             sessionsList.innerHTML = '';
 
@@ -1321,7 +1321,7 @@ document.getElementById('sessionsButton').addEventListener('click', function() {
                 // Отображаем сессии пользователя
                 data.sessions.forEach(session => {
                     const listItem = document.createElement('li');
-                    
+
                     // Создаем содержимое для каждой сессии
                     listItem.innerHTML = `
                         <strong>Device:</strong> ${session.deviceType || 'Unknown'} <br>
@@ -1340,7 +1340,7 @@ document.getElementById('sessionsButton').addEventListener('click', function() {
                 listItem.textContent = 'No active sessions found.';
                 sessionsList.appendChild(listItem);
             }
-            
+
             // Показываем модальное окно с сессиями
             sessionModal.style.display = 'flex'; // Показываем модальное окно
         })
@@ -1348,16 +1348,6 @@ document.getElementById('sessionsButton').addEventListener('click', function() {
             console.error('Error fetching sessions:', error);
         });
 });
-
-// Открыть модальное окно выбора темы сообщений
-document.getElementById('messages-themes-button').addEventListener('click', function() {
-    document.getElementById('messages-themes-modal').style.display = 'flex';
-});
-
-// Закрыть модальное окно выбора темы сообщений
-function closeMessagesThemesModal() {
-    document.getElementById('messages-themes-modal').style.display = 'none';
-}
 
 const coinDisplay = document.getElementById('coinDisplay');
 const coinBalance = document.getElementById('coinBalance');
@@ -1419,7 +1409,7 @@ socket.on('balance', (data) => {
     console.log('Received balance:', data);
     if (data.success) {
         updateCoinBalance(data.coins);
-		currentBalance = data.coins; 
+        currentBalance = data.coins;
         showCoinDisplay();
     } else {
         console.error(data.message);
@@ -1448,7 +1438,7 @@ socket.on('bought_themes', (data) => {
 
         themeItems.forEach(item => {
             const themeName = item.getAttribute('data-theme');
-            
+
             // Если тема уже куплена, показываем, что её можно применить без траты монет
             if (boughtThemes.includes(themeName)) {
                 item.classList.add('purchased');
@@ -1471,7 +1461,7 @@ function applyMessagesTheme(theme, price) {
         // Применяем выбранную тему в UI
         document.body.classList.add(theme);  // Применяем выбранную тему
     } else {
-        showToastNotification('You do not have enough coins to apply this theme.','error');
+        showToastNotification('You do not have enough coins to apply this theme.', 'error');
     }
 }
 
@@ -1551,7 +1541,7 @@ payBanButton.addEventListener('click', () => {
         // Закрываем модальное окно после отправки
         banStatusModal.classList.remove('active');
     } else {
-        showToastNotification('No violations to pay for.','error');
+        showToastNotification('No violations to pay for.', 'error');
     }
 });
 
@@ -1588,10 +1578,10 @@ updatePing();
 
 socket.on('user_banned', (data) => {
     if (data.success) {
-		if (data.username === currentUser) {
+        if (data.username === currentUser) {
             window.location.href = '/';
         }
-	}
+    }
 });
 
 async function checkBanStatus(username) {  // Передаем имя пользователя в функцию
@@ -1630,7 +1620,7 @@ checkBanStatus(usernameToCheck)
             // Продолжаем работу
         }
     });
-	
+
 
 // Универсальная функция для обработки ошибок
 function handleError(errorMessage) {
@@ -1655,7 +1645,7 @@ document.getElementById('examQuestions').addEventListener('change', function(eve
 
         // Находим все элементы label для этого вопроса
         const labels = document.querySelectorAll(`input[name="${questionName}"] + label`);
-        
+
         // Убираем стили с предыдущего выбранного варианта
         labels.forEach(label => {
             label.style.borderColor = '#ddd';
@@ -1697,7 +1687,7 @@ async function addCoins(username, coins) {
     }
 }
 
- let violationCount = 0;
+let violationCount = 0;
 const maxViolations = 2;
 
 function incrementViolation() {
@@ -1705,7 +1695,7 @@ function incrementViolation() {
     showToastNotification(`Violation ${violationCount}/${maxViolations}`, "error");
     if (violationCount >= maxViolations) {
         // Ban user for 3 minutes (180 seconds)
-        blockUser(180);
+        blockUser(20);
         // Reset the violation counter
         violationCount = 0;
     }
@@ -1739,7 +1729,6 @@ function initExamSecurity(enable = true) {
         document.addEventListener('visibilitychange', handleVisibilityChange);
         document.addEventListener('copy', onCopy);
         document.addEventListener('paste', onPaste);
-        document.addEventListener('contextmenu', onContextMenu);
         showToastNotification("Anti-cheating system is active.", "success");
     } else {
         // Remove restrictions
@@ -1756,7 +1745,7 @@ function toggleRulesModal(action) {
 
     if (action === 'open') {
         rulesModal.style.display = 'flex';
-		rulesModal.classList.add('show');
+        rulesModal.classList.add('show');
     } else if (action === 'close') {
         rulesModal.style.display = 'none';
     }
@@ -1781,123 +1770,123 @@ window.addEventListener('click', (event) => {
     }
 });
 
-document.getElementById('examTaskOption').addEventListener('click', async function () {
-  // Получаем необходимые элементы
-  toggleRulesModal('open');
-  const examModal = document.getElementById('examModal');
-  const examContainer = document.getElementById('examQuestions');
-  const examHeader = document.getElementById('examTitle');
-  const finishExamButton = document.getElementById('finishExam');
-  const examTimer = document.getElementById('exam-timer');
-  const loadingSpinner = document.getElementById('loadingSpinner');
-  const loadingFinishExam = document.getElementById('loadingFinishExam');
+document.getElementById('examTaskOption').addEventListener('click', async function() {
+    // Получаем необходимые элементы
+    toggleRulesModal('open');
+    const examModal = document.getElementById('examModal');
+    const examContainer = document.getElementById('examQuestions');
+    const examHeader = document.getElementById('examTitle');
+    const finishExamButton = document.getElementById('finishExam');
+    const examTimer = document.getElementById('exam-timer');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const loadingFinishExam = document.getElementById('loadingFinishExam');
 
-  // Получаем элементы таймера
-  const hoursEl   = document.getElementById('hours');
-  const minutesEl = document.getElementById('minutes');
-  const secondsEl = document.getElementById('seconds');
+    // Получаем элементы таймера
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
 
-  // Настраиваем видимость элементов
-  examHeader.style.display = 'none';
-  finishExamButton.style.display = 'none';
-  examTimer.style.display = 'none';
-  loadingSpinner.style.display = 'block';
+    // Настраиваем видимость элементов
+    examHeader.style.display = 'none';
+    finishExamButton.style.display = 'none';
+    examTimer.style.display = 'none';
+    loadingSpinner.style.display = 'block';
 
-  examModal.style.display = 'flex';
-  examContainer.innerHTML = '';
-  enableFinishButton();
+    examModal.style.display = 'flex';
+    examContainer.innerHTML = '';
+    enableFinishButton();
 
-  const url = `/get_exam_questions?username=${currentUser}`;
+    const url = `/get_exam_questions?username=${currentUser}`;
 
-  try {
-    const response = await fetch(url);
-    console.log("Response Status:", response.status);
-    const data = await (response.ok
-      ? response.json()
-      : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
-    if (data.error) {
-      handleError(data.error);
-      loadingSpinner.style.display = 'none';
-      return;
-    }
-
-    // Показываем элементы после загрузки
-    loadingSpinner.style.display = 'none';
-    examHeader.style.display = 'block';
-    finishExamButton.style.display = 'block';
-    examTimer.style.display = 'flex';
-    initExamSecurity(true);
-
-    // Получаем шаблон вопроса
-    const questionTemplate = document.getElementById('questionTemplate');
-    let questionCounter = 0;
-
-    // Функция для получения инструкции по типу вопроса
-    function getInstructionForType(type) {
-      switch (type) {
-        case "true_false":
-          return `<p><i class="fas fa-exclamation-circle"></i> Choose True or False.</p>`;
-        case "multiple_choice":
-          return `<p><i class="fas fa-check-circle"></i> Select the correct answer.</p>`;
-        case "fill_gaps":
-          return `<p><i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
-        case "unscramble":
-          return `<p><i class="fas fa-random"></i> Unscramble the letters.</p>`;
-        case "reading":
-          return `<p><i class="fas fa-book"></i> Read the text and answer the question.</p>`;
-        case "listening":
-          return `<p><i class="fas fa-headphones"></i> Listen to the audio and enter the missing word.</p>`;
-        case "question":
-          return `<p><i class="fas fa-question-circle"></i> Answer the question below.</p>`;
-        default:
-          return "";
-      }
-    }
-
-    // Генерация вопросов
-    data.questions.forEach((question) => {
-      if (question.type === 'listening') {
-        // Создаем родительский контейнер для Listening вопроса
-        const parentContainer = document.createElement('div');
-        parentContainer.className = 'exam-parent-question';
-        if (question.text) {
-          parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+    try {
+        const response = await fetch(url);
+        console.log("Response Status:", response.status);
+        const data = await (response.ok
+            ? response.json()
+            : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
+        if (data.error) {
+            handleError(data.error);
+            loadingSpinner.style.display = 'none';
+            return;
         }
-        parentContainer.innerHTML += `
+
+        // Показываем элементы после загрузки
+        loadingSpinner.style.display = 'none';
+        examHeader.style.display = 'block';
+        finishExamButton.style.display = 'block';
+        examTimer.style.display = 'flex';
+        //initExamSecurity(true);
+
+        // Получаем шаблон вопроса
+        const questionTemplate = document.getElementById('questionTemplate');
+        let questionCounter = 0;
+
+        // Функция для получения инструкции по типу вопроса
+        function getInstructionForType(type) {
+            switch (type) {
+                case "true_false":
+                    return `<p><i class="fas fa-exclamation-circle"></i> Choose True or False.</p>`;
+                case "multiple_choice":
+                    return `<p><i class="fas fa-check-circle"></i> Select the correct answer.</p>`;
+                case "fill_gaps":
+                    return `<p><i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
+                case "unscramble":
+                    return `<p><i class="fas fa-random"></i> Unscramble the letters.</p>`;
+                case "reading":
+                    return `<p><i class="fas fa-book"></i> Read the text and answer the question.</p>`;
+                case "listening":
+                    return `<p><i class="fas fa-headphones"></i> Listen to the audio and enter the missing word.</p>`;
+                case "question":
+                    return `<p><i class="fas fa-question-circle"></i> Answer the question below.</p>`;
+                default:
+                    return "";
+            }
+        }
+
+        // Генерация вопросов
+        data.questions.forEach((question) => {
+            if (question.type === 'listening') {
+                // Создаем родительский контейнер для Listening вопроса
+                const parentContainer = document.createElement('div');
+                parentContainer.className = 'exam-parent-question';
+                if (question.text) {
+                    parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+                }
+                parentContainer.innerHTML += `
           <div class="custom-audio-player">
             <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
             <button class="custom-play-btn"><i class="fas fa-play"></i></button>
             <span class="custom-time-display">0:00 / 0:00</span>
           </div>
         `;
-        examContainer.appendChild(parentContainer);
+                examContainer.appendChild(parentContainer);
 
-        if (question.subquestions && Array.isArray(question.subquestions)) {
-          question.subquestions.forEach((subq) => {
-            questionCounter++;
-            const instruction = getInstructionForType(subq.type);
-            const questionNode = document.importNode(questionTemplate.content, true);
-            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
-            questionNode.querySelector('.question-instruction').innerHTML = instruction;
+                if (question.subquestions && Array.isArray(question.subquestions)) {
+                    question.subquestions.forEach((subq) => {
+                        questionCounter++;
+                        const instruction = getInstructionForType(subq.type);
+                        const questionNode = document.importNode(questionTemplate.content, true);
+                        questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                        questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
-            let optionsContainer = questionNode.querySelector('.question-options');
-            // Если true_false, multiple_choice и т.д. — генерируем по типу
-            if (subq.type === 'true_false') {
-              optionsContainer.innerHTML = `
+                        let optionsContainer = questionNode.querySelector('.question-options');
+                        // Если true_false, multiple_choice и т.д. — генерируем по типу
+                        if (subq.type === 'true_false') {
+                            optionsContainer.innerHTML = `
                 <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
                 <label for="true${subq.id}">True</label>
                 <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
                 <label for="false${subq.id}">False</label>
               `;
-            } 
-            else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-              // Генерируем варианты ответа с буквами
-              const letters = ['A','B','C','D','E','F','G','H'];
-              let html = '';
-              subq.options.forEach((option, index) => {
-                const letter = letters[index] || '?'; // Если вариантов больше, чем букв в массиве
-                const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
-                html += `
+                        }
+                        else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                            // Генерируем варианты ответа с буквами
+                            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                            let html = '';
+                            subq.options.forEach((option, index) => {
+                                const letter = letters[index] || '?'; // Если вариантов больше, чем букв в массиве
+                                const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
+                                html += `
                   <div class="option-group">
                     <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
                     <label for="${optionId}">
@@ -1906,49 +1895,49 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     </label>
                   </div>
                 `;
-              });
-              optionsContainer.innerHTML = html;
-            } 
-            else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
-              optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+                            });
+                            optionsContainer.innerHTML = html;
+                        }
+                        else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
+                            optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+                        }
+                        questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
+                        parentContainer.appendChild(questionNode);
+                    });
+                }
             }
-            questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
-            parentContainer.appendChild(questionNode);
-          });
-        }
-      } 
-      else if (question.subquestions && Array.isArray(question.subquestions)) {
-        // Вопрос с под-вопросами (например, Reading)
-        if (question.text) {
-          const parentContainer = document.createElement('div');
-          parentContainer.className = 'exam-parent-question';
-          parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
-          examContainer.appendChild(parentContainer);
-        }
-        question.subquestions.forEach((subq) => {
-          questionCounter++;
-          const instruction = getInstructionForType(subq.type);
-          const questionNode = document.importNode(questionTemplate.content, true);
-          questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
-          questionNode.querySelector('.question-instruction').innerHTML = instruction;
+            else if (question.subquestions && Array.isArray(question.subquestions)) {
+                // Вопрос с под-вопросами (например, Reading)
+                if (question.text) {
+                    const parentContainer = document.createElement('div');
+                    parentContainer.className = 'exam-parent-question';
+                    parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+                    examContainer.appendChild(parentContainer);
+                }
+                question.subquestions.forEach((subq) => {
+                    questionCounter++;
+                    const instruction = getInstructionForType(subq.type);
+                    const questionNode = document.importNode(questionTemplate.content, true);
+                    questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                    questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
-          let optionsContainer = questionNode.querySelector('.question-options');
-          if (subq.type === 'true_false') {
-            optionsContainer.innerHTML = `
+                    let optionsContainer = questionNode.querySelector('.question-options');
+                    if (subq.type === 'true_false') {
+                        optionsContainer.innerHTML = `
               <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
               <label for="true${subq.id}">True</label>
               <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
               <label for="false${subq.id}">False</label>
             `;
-          } 
-          else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-            // Генерируем варианты ответа с буквами
-            const letters = ['A','B','C','D','E','F','G','H'];
-            let html = '';
-            subq.options.forEach((option, index) => {
-              const letter = letters[index] || '?';
-              const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
-              html += `
+                    }
+                    else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                        // Генерируем варианты ответа с буквами
+                        const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                        let html = '';
+                        subq.options.forEach((option, index) => {
+                            const letter = letters[index] || '?';
+                            const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
+                            html += `
                 <div class="option-group">
                   <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
                   <label for="${optionId}">
@@ -1957,42 +1946,42 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                   </label>
                 </div>
               `;
-            });
-            optionsContainer.innerHTML = html;
-          } 
-          else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
-            optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
-          }
-          questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
-          examContainer.appendChild(questionNode);
-        });
-      } 
-      else {
-        // Обычный вопрос (без под-вопросов)
-        questionCounter++;
-        const instruction = getInstructionForType(question.type);
-        const questionNode = document.importNode(questionTemplate.content, true);
-        const qId = question.id ? question.id : questionCounter;
-        questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
-        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+                        });
+                        optionsContainer.innerHTML = html;
+                    }
+                    else if (['fill_gaps', 'unscramble', 'reading', 'listening'].includes(subq.type) || subq.type === 'question') {
+                        optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+                    }
+                    questionNode.querySelector('.exam-question').dataset.questionId = subq.id;
+                    examContainer.appendChild(questionNode);
+                });
+            }
+            else {
+                // Обычный вопрос (без под-вопросов)
+                questionCounter++;
+                const instruction = getInstructionForType(question.type);
+                const questionNode = document.importNode(questionTemplate.content, true);
+                const qId = question.id ? question.id : questionCounter;
+                questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
+                questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
-        let optionsContainer = questionNode.querySelector('.question-options');
-        if (question.type === 'true_false') {
-          optionsContainer.innerHTML = `
+                let optionsContainer = questionNode.querySelector('.question-options');
+                if (question.type === 'true_false') {
+                    optionsContainer.innerHTML = `
             <input type="radio" name="q${qId}" value="True" id="true${qId}">
             <label for="true${qId}">True</label>
             <input type="radio" name="q${qId}" value="False" id="false${qId}">
             <label for="false${qId}">False</label>
           `;
-        } 
-        else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
-          // Генерируем варианты ответа с буквами
-          const letters = ['A','B','C','D','E','F','G','H'];
-          let html = '';
-          question.options.forEach((option, index) => {
-            const letter = letters[index] || '?';
-            const optionId = `${letter.replace(/\s+/g, '')}${qId}`;
-            html += `
+                }
+                else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
+                    // Генерируем варианты ответа с буквами
+                    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                    let html = '';
+                    question.options.forEach((option, index) => {
+                        const letter = letters[index] || '?';
+                        const optionId = `${letter.replace(/\s+/g, '')}${qId}`;
+                        html += `
               <div class="option-group">
                 <input type="radio" name="q${qId}" value="${option}" id="${optionId}">
                 <label for="${optionId}">
@@ -2001,88 +1990,88 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 </label>
               </div>
             `;
-          });
-          optionsContainer.innerHTML = html;
-        } 
-        else if (['fill_gaps', 'unscramble', 'reading'].includes(question.type)) {
-          optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
-        }
-        questionNode.querySelector('.exam-question').dataset.questionId = qId;
-        examContainer.appendChild(questionNode);
-      }
-    });
+                    });
+                    optionsContainer.innerHTML = html;
+                }
+                else if (['fill_gaps', 'unscramble', 'reading'].includes(question.type)) {
+                    optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
+                }
+                questionNode.querySelector('.exam-question').dataset.questionId = qId;
+                examContainer.appendChild(questionNode);
+            }
+        });
 
-    // Обработка оставшегося времени экзамена
-    const timeResponse = await fetch('/get_remaining_time');
-    const timeData = await (timeResponse.ok
-      ? timeResponse.json()
-      : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
+        // Обработка оставшегося времени экзамена
+        const timeResponse = await fetch('/get_remaining_time');
+        const timeData = await (timeResponse.ok
+            ? timeResponse.json()
+            : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
 
-    if (timeData.remaining_time) {
-      let remainingTime = timeData.remaining_time * 1000; // перевод в миллисекунды
+        if (timeData.remaining_time) {
+            let remainingTime = timeData.remaining_time * 1000; // перевод в миллисекунды
 
-      // Функция обновления таймера
-      function updateTimer() {
-        if (remainingTime <= 0) {
-          finishExam(); // Время истекло — завершаем экзамен
-          return;
-        }
+            // Функция обновления таймера
+            function updateTimer() {
+                if (remainingTime <= 0) {
+                    finishExam(); // Время истекло — завершаем экзамен
+                    return;
+                }
 
-        const totalSeconds = Math.floor(remainingTime / 1000);
-        // Считаем часы, минуты, секунды
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
+                const totalSeconds = Math.floor(remainingTime / 1000);
+                // Считаем часы, минуты, секунды
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
 
-        // Обновляем значения с ведущими нулями
-        hoursEl.textContent   = hours   < 10 ? '0' + hours   : hours;
-        minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes;
-        secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
+                // Обновляем значения с ведущими нулями
+                hoursEl.textContent = hours < 10 ? '0' + hours : hours;
+                minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes;
+                secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
 
-        // Меняем фон таймера при малом времени (например, менее 3 минут)
-        if (remainingTime <= 180000) {
-          examTimer.style.backgroundColor = '#3d0000';
-        } else {
-          examTimer.style.backgroundColor = '#2c2c2c';
-        }
+                // Меняем фон таймера при малом времени (например, менее 3 минут)
+                if (remainingTime <= 180000) {
+                    examTimer.style.backgroundColor = '#3d0000';
+                } else {
+                    examTimer.style.backgroundColor = '#2c2c2c';
+                }
 
-        remainingTime -= 1000;
-      }
+                remainingTime -= 1000;
+            }
 
-      // Запускаем интервал обновления каждую секунду
-      const timerInterval = setInterval(updateTimer, 1000);
+            // Запускаем интервал обновления каждую секунду
+            const timerInterval = setInterval(updateTimer, 1000);
 
-      // Функция автоматической отправки экзамена
-      function finishExam() {
-        loadingFinishExam.style.display = 'flex';
-        clearInterval(timerInterval);
-        showToastNotification('Time is up! The exam will be automatically submitted.');
-        finishExamButton.click();
-      }
+            // Функция автоматической отправки экзамена
+            function finishExam() {
+                loadingFinishExam.style.display = 'flex';
+                clearInterval(timerInterval);
+                showToastNotification('Time is up! The exam will be automatically submitted.');
+                finishExamButton.click();
+            }
 
-      // Обработчик нажатия на кнопку завершения экзамена
-      finishExamButton.addEventListener('click', function handleFinishClick() {
-        if (remainingTime > 0) {
-          loadingFinishExam.style.display = 'flex';
-          showSubmitConfirmation();
-        } else {
-          clearInterval(timerInterval);
-          submitExamResults();
-        }
-      });
+            // Обработчик нажатия на кнопку завершения экзамена
+            finishExamButton.addEventListener('click', function handleFinishClick() {
+                if (remainingTime > 0) {
+                    loadingFinishExam.style.display = 'flex';
+                    showSubmitConfirmation();
+                } else {
+                    clearInterval(timerInterval);
+                    submitExamResults();
+                }
+            });
 
-      // Функция показа модального окна подтверждения отправки экзамена
-      function showSubmitConfirmation() {
-        // Удаляем существующее модальное окно, если есть
-        const existingModal = document.querySelector('.leaderboard-modal');
-        if (existingModal) {
-          existingModal.remove();
-        }
+            // Функция показа модального окна подтверждения отправки экзамена
+            function showSubmitConfirmation() {
+                // Удаляем существующее модальное окно, если есть
+                const existingModal = document.querySelector('.leaderboard-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
 
-        // Создаем новое модальное окно
-        const modal = document.createElement('div');
-        modal.className = 'leaderboard-modal';
-        modal.innerHTML = `
+                // Создаем новое модальное окно
+                const modal = document.createElement('div');
+                modal.className = 'leaderboard-modal';
+                modal.innerHTML = `
           <div class="leaderboard-content">
             <h2><i class="fas fa-exclamation-triangle"></i> Confirm Submission</h2>
             <p>You are about to submit your exam. This action cannot be undone. Please review your answers.</p>
@@ -2092,85 +2081,85 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
             <button class="cancel-button cancel-submit">Cancel</button>
           </div>
         `;
-        document.body.appendChild(modal);
+                document.body.appendChild(modal);
 
-        // Обработчик подтверждения
-        modal.querySelector('.confirm-submit').addEventListener('click', function () {
-          clearInterval(timerInterval);
-          submitExamResults();
-          loadingFinishExam.style.display = 'flex';
-          modal.remove();
-        });
+                // Обработчик подтверждения
+                modal.querySelector('.confirm-submit').addEventListener('click', function() {
+                    clearInterval(timerInterval);
+                    submitExamResults();
+                    loadingFinishExam.style.display = 'flex';
+                    modal.remove();
+                });
 
-        // Обработчик отмены
-        modal.querySelector('.cancel-submit').addEventListener('click', function () {
-          loadingFinishExam.style.display = 'none';
-          modal.remove();
-        });
-      }
+                // Обработчик отмены
+                modal.querySelector('.cancel-submit').addEventListener('click', function() {
+                    loadingFinishExam.style.display = 'none';
+                    modal.remove();
+                });
+            }
+        }
+
+        // Инициализируем кастомные аудиоплееры после рендеринга вопросов
+        initAllWavePlayers();
+
+    } catch (error) {
+        console.error('Error:', error.message);
+        handleError(error.message);
+        loadingSpinner.style.display = 'none';
     }
-
-    // Инициализируем кастомные аудиоплееры после рендеринга вопросов
-    initAllWavePlayers();
-
-  } catch (error) {
-    console.error('Error:', error.message);
-    handleError(error.message);
-    loadingSpinner.style.display = 'none';
-  }
 });
 
 // Функция открытия модального окна
 function openMyExamResultsModal(userData) {
-  buildExamResultsUI(userData); // формируем UI с данными
-  const modal = document.getElementById('myExamResultsModal');
-  modal.style.display = 'flex'; // показываем модальное окно
+    buildExamResultsUI(userData); // формируем UI с данными
+    const modal = document.getElementById('myExamResultsModal');
+    modal.style.display = 'flex'; // показываем модальное окно
 }
 
 // Функция закрытия модального окна по клику на крестик
-document.getElementById('closeMyExamResultsModal').addEventListener('click', function () {
-  stopAllAudio();
-  document.getElementById('myExamResultsModal').style.display = 'none';
+document.getElementById('closeMyExamResultsModal').addEventListener('click', function() {
+    stopAllAudio();
+    document.getElementById('myExamResultsModal').style.display = 'none';
 });
 
 document.getElementById('myExamResultsOption').addEventListener('click', async function() {
-  try {
-    // Запрос времени экзамена
-    const timeResponse = await fetch('/api/get_exam_times');
-    if (!timeResponse.ok) throw new Error("Failed to fetch exam times");
+    try {
+        // Запрос времени экзамена
+        const timeResponse = await fetch('/api/get_exam_times');
+        if (!timeResponse.ok) throw new Error("Failed to fetch exam times");
 
-    const { current_time, exam_start_time, exam_end_time } = await timeResponse.json();
+        const { current_time, exam_start_time, exam_end_time } = await timeResponse.json();
 
-    // Если экзамен ещё идёт, показываем заглушку
-    if (current_time >= exam_start_time && current_time <= exam_end_time) {
-      showExamSkeletonLoading();
-      return;
+        // Если экзамен ещё идёт, показываем заглушку
+        if (current_time >= exam_start_time && current_time <= exam_end_time) {
+            showExamSkeletonLoading();
+            return;
+        }
+
+        // Если экзамен завершён, загружаем результаты
+        const response = await fetch('/api/get_exam_results');
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || "Error fetching exam results");
+        }
+        const allResults = await response.json();
+
+        const userData = allResults[currentUser];
+        if (!userData) {
+            throw new Error(`No results found for user ${currentUser}`);
+        }
+
+        openMyExamResultsModal(userData);
+    } catch (error) {
+        console.error("Failed to fetch exam results:", error.message);
+        //showToastNotification("Failed to load exam results: " + error.message,'error');
+        showToastNotification("To see you results please refresh the site.");
     }
-
-    // Если экзамен завершён, загружаем результаты
-    const response = await fetch('/api/get_exam_results');
-    if (!response.ok) {
-      const errData = await response.json();
-      throw new Error(errData.error || "Error fetching exam results");
-    }
-    const allResults = await response.json();
-
-    const userData = allResults[currentUser];
-    if (!userData) {
-      throw new Error(`No results found for user ${currentUser}`);
-    }
-
-    openMyExamResultsModal(userData);
-  } catch (error) {
-    console.error("Failed to fetch exam results:", error.message);
-    //showToastNotification("Failed to load exam results: " + error.message,'error');
-	showToastNotification("To see you results please refresh the site.");
-  }
 });
 
 function showExamSkeletonLoading() {
-  const modal = document.getElementById('myExamResultsModal');
-     const musicPlayer = new Audio('/static/music/onmyway.mp3');
+    const modal = document.getElementById('myExamResultsModal');
+    const musicPlayer = new Audio('/static/music/onmyway.mp3');
     musicPlayer.loop = true;
     musicPlayer.volume = 1;
 
@@ -2199,35 +2188,35 @@ function showExamSkeletonLoading() {
             localStorage.setItem('musicTime', musicPlayer.currentTime);
         }
     }, 2000);
-  const loadingTexts = [
-    "Your exam is still in progress...",
-    "Please wait until the exam is completed...",
-    "Results will be available after the exam ends...",
-    "Your exam session is not yet finished...",
-    "Stay patient! The results will be shown soon..."
-  ];
-  const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
+    const loadingTexts = [
+        "Your exam is still in progress...",
+        "Please wait until the exam is completed...",
+        "Results will be available after the exam ends...",
+        "Your exam session is not yet finished...",
+        "Stay patient! The results will be shown soon..."
+    ];
+    const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
 
-  // Формируем содержимое с контейнером для Lottie-анимации и сообщением, центрируя контент по горизонтали и вертикали
-  const modalContent = `
+    // Формируем содержимое с контейнером для Lottie-анимации и сообщением, центрируя контент по горизонтали и вертикали
+    const modalContent = `
     <div id="skeletonContent" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
       <div id="animationContainer" style="width: 100px; height: 100px;"></div>
       <div class="text-skeleton" data-text="${randomText}" style="margin-top: 10px;">${randomText}</div>
     </div>
   `;
 
-  // Обновляем контейнер с динамическим содержимым (без кнопки OK)
-  document.getElementById('modalBody').innerHTML = modalContent;
-  modal.style.display = 'flex';
+    // Обновляем контейнер с динамическим содержимым (без кнопки OK)
+    document.getElementById('modalBody').innerHTML = modalContent;
+    modal.style.display = 'flex';
 
-  // Инициализируем Lottie-анимацию
-  lottie.loadAnimation({
-    container: document.getElementById('animationContainer'),
-    renderer: 'svg',
-    loop: true,
-    autoplay: true,
-    path: '/static/animations/ExamLoading.json'
-  });
+    // Инициализируем Lottie-анимацию
+    lottie.loadAnimation({
+        container: document.getElementById('animationContainer'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '/static/animations/ExamLoading.json'
+    });
 }
 
 
@@ -2239,77 +2228,77 @@ document.getElementById('closeMyExamResultsModal').addEventListener('click', fun
 */
 
 function buildExamResultsUI(data) {
-  // Приводим Accuracy к числу и округляем до двух знаков после запятой
-  const accuracy = parseFloat(data.correct_percentage).toFixed(2);
+    // Приводим Accuracy к числу и округляем до двух знаков после запятой
+    const accuracy = parseFloat(data.correct_percentage).toFixed(2);
 
-  // Header elements
-  const examTitleElem = document.getElementById('examTitle');
-  const examDateInfoElem = document.getElementById('examDateInfo');
-  const examAccuracyElem = document.getElementById('examAccuracy');
-  const examPointsElem = document.getElementById('examPoints');
-  const examAnsweredElem = document.getElementById('examAnswered');
+    // Header elements
+    const examTitleElem = document.getElementById('examTitle');
+    const examDateInfoElem = document.getElementById('examDateInfo');
+    const examAccuracyElem = document.getElementById('examAccuracy');
+    const examPointsElem = document.getElementById('examPoints');
+    const examAnsweredElem = document.getElementById('examAnswered');
 
-  // Container elements
-  const statusSquaresContainer = document.getElementById('examStatusSquares');
-  const summaryRowContainer = document.getElementById('examSummaryRow');
-  const detailsContainer = document.getElementById('examDetails');
+    // Container elements
+    const statusSquaresContainer = document.getElementById('examStatusSquares');
+    const summaryRowContainer = document.getElementById('examSummaryRow');
+    const detailsContainer = document.getElementById('examDetails');
 
-  // Clear old content
-  statusSquaresContainer.innerHTML = '';
-  summaryRowContainer.innerHTML = '';
-  detailsContainer.innerHTML = '';
+    // Clear old content
+    statusSquaresContainer.innerHTML = '';
+    summaryRowContainer.innerHTML = '';
+    detailsContainer.innerHTML = '';
 
-  // ----- Populate the Header -----
-  examTitleElem.textContent = data.exam_title || 'Final Exam';
-  examDateInfoElem.textContent = `Finished at ${data.time_finished} - ${data.total_questions} Questions`;
-  examAccuracyElem.textContent = `${accuracy}%`;
-  examPointsElem.textContent = data.points || '0';
-  examAnsweredElem.textContent = `${data.total_questions - data.skipped}/${data.total_questions}`;
+    // ----- Populate the Header -----
+    examTitleElem.textContent = data.exam_title || 'Final Exam';
+    examDateInfoElem.textContent = `Finished at ${data.time_finished} - ${data.total_questions} Questions`;
+    examAccuracyElem.textContent = `${accuracy}%`;
+    examPointsElem.textContent = data.points || '0';
+    examAnsweredElem.textContent = `${data.total_questions - data.skipped}/${data.total_questions}`;
 
-  // ----- Generate the question status squares -----
-  data.results.forEach((result, index) => {
-    let squareClass = 'square-incorrect';
-    if (result.user_answer === null) {
-      squareClass = 'square-skipped';
-    } else if (result.is_correct) {
-      squareClass = 'square-correct';
-    } else if (result.is_partial) {
-      squareClass = 'square-partial';
-    }
+    // ----- Generate the question status squares -----
+    data.results.forEach((result, index) => {
+        let squareClass = 'square-incorrect';
+        if (result.user_answer === null) {
+            squareClass = 'square-skipped';
+        } else if (result.is_correct) {
+            squareClass = 'square-correct';
+        } else if (result.is_partial) {
+            squareClass = 'square-partial';
+        }
 
-    const square = document.createElement('div');
-    square.classList.add('question-status-square', squareClass);
-    square.textContent = (index + 1).toString();
-    statusSquaresContainer.appendChild(square);
-  });
+        const square = document.createElement('div');
+        square.classList.add('question-status-square', squareClass);
+        square.textContent = (index + 1).toString();
+        statusSquaresContainer.appendChild(square);
+    });
 
-  // ----- Build the summary row (like "Correct 24 - 72%", etc.) -----
-  const correctRate = ((data.correct / data.total_questions) * 100).toFixed(2);
-  const incorrectRate = ((data.incorrect / data.total_questions) * 100).toFixed(2);
-  const skippedRate = ((data.skipped / data.total_questions) * 100).toFixed(2);
+    // ----- Build the summary row (like "Correct 24 - 72%", etc.) -----
+    const correctRate = ((data.correct / data.total_questions) * 100).toFixed(2);
+    const incorrectRate = ((data.incorrect / data.total_questions) * 100).toFixed(2);
+    const skippedRate = ((data.skipped / data.total_questions) * 100).toFixed(2);
 
-  const correctSummary = `<div class="summary-item correct">Correct ${data.correct} - ${correctRate}%</div>`;
-  const incorrectSummary = `<div class="summary-item incorrect">Incorrect ${data.incorrect} - ${incorrectRate}%</div>`;
-  const skippedSummary = `<div class="summary-item skipped">Skipped ${data.skipped} - ${skippedRate}%</div>`;
-  
-  summaryRowContainer.innerHTML = correctSummary + incorrectSummary + skippedSummary;
+    const correctSummary = `<div class="summary-item correct">Correct ${data.correct} - ${correctRate}%</div>`;
+    const incorrectSummary = `<div class="summary-item incorrect">Incorrect ${data.incorrect} - ${incorrectRate}%</div>`;
+    const skippedSummary = `<div class="summary-item skipped">Skipped ${data.skipped} - ${skippedRate}%</div>`;
 
-  // ----- Detailed Questions List -----
-  data.results.forEach((result, index) => {
-    let statusClass = '';
-    let statusText = 'Incorrect';
-    if (result.user_answer === null) {
-      statusClass = 'skipped';
-      statusText = 'Skipped';
-    } else if (result.is_correct) {
-      statusClass = 'correct';
-      statusText = 'Correct';
-    } else if (result.is_partial) {
-      statusClass = 'partial';
-      statusText = 'Half Correct';
-    }
+    summaryRowContainer.innerHTML = correctSummary + incorrectSummary + skippedSummary;
 
-    const questionHtml = `
+    // ----- Detailed Questions List -----
+    data.results.forEach((result, index) => {
+        let statusClass = '';
+        let statusText = 'Incorrect';
+        if (result.user_answer === null) {
+            statusClass = 'skipped';
+            statusText = 'Skipped';
+        } else if (result.is_correct) {
+            statusClass = 'correct';
+            statusText = 'Correct';
+        } else if (result.is_partial) {
+            statusClass = 'partial';
+            statusText = 'Half Correct';
+        }
+
+        const questionHtml = `
       <div class="question-result">
         <div class="question-top-row">
           <div class="question-title">
@@ -2322,82 +2311,81 @@ function buildExamResultsUI(data) {
         </div>
         <div class="question-text"><strong>Q:</strong> ${result.question}</div>
         <div class="question-user-answer">
-          <strong>Your answer:</strong> ${
-            result.user_answer !== null
-              ? result.user_answer
-              : '<em>no answer</em>'
-          }
+          <strong>Your answer:</strong> ${result.user_answer !== null
+                ? result.user_answer
+                : '<em>no answer</em>'
+            }
         </div>
       </div>
     `;
-    detailsContainer.innerHTML += questionHtml;
-  });
+        detailsContainer.innerHTML += questionHtml;
+    });
 }
 
 
 // Функция форматирования времени (mm:ss)
 function formatTime(time) {
-  if (isNaN(time)) return "0:00";
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60);
-  return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+    if (isNaN(time)) return "0:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
 }
 
 // Инициализация всех кастомных аудиоплееров
 function initAllWavePlayers() {
-  const waveContainers = document.querySelectorAll('.custom-audio-waves');
-  waveContainers.forEach(container => {
-    const audioSrc = container.getAttribute('data-audio-src') || container.parentElement.getAttribute('data-audio-src');
-    if (!audioSrc) return;
-    
-    // Создаем элемент <audio>
-    const audioEl = document.createElement('audio');
-    audioEl.src = audioSrc;
-    audioEl.controls = false;
-    container.appendChild(audioEl);
+    const waveContainers = document.querySelectorAll('.custom-audio-waves');
+    waveContainers.forEach(container => {
+        const audioSrc = container.getAttribute('data-audio-src') || container.parentElement.getAttribute('data-audio-src');
+        if (!audioSrc) return;
 
-    // Создаем элемент для отображения прогресса
-    let progressEl = document.createElement('div');
-    progressEl.className = 'progress';
-    container.appendChild(progressEl);
+        // Создаем элемент <audio>
+        const audioEl = document.createElement('audio');
+        audioEl.src = audioSrc;
+        audioEl.controls = false;
+        container.appendChild(audioEl);
 
-    const playBtn = container.parentElement.querySelector('.custom-play-btn');
-    const timeDisplay = container.parentElement.querySelector('.custom-time-display');
+        // Создаем элемент для отображения прогресса
+        let progressEl = document.createElement('div');
+        progressEl.className = 'progress';
+        container.appendChild(progressEl);
 
-    playBtn.addEventListener('click', () => {
-      if (audioEl.paused) {
-		stopAllAudio();
-        audioEl.play();
-        playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
-      } else {
-        audioEl.pause();
-        playBtn.innerHTML = `<i class="fas fa-play"></i>`;
-      }
+        const playBtn = container.parentElement.querySelector('.custom-play-btn');
+        const timeDisplay = container.parentElement.querySelector('.custom-time-display');
+
+        playBtn.addEventListener('click', () => {
+            if (audioEl.paused) {
+                stopAllAudio();
+                audioEl.play();
+                playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
+            } else {
+                audioEl.pause();
+                playBtn.innerHTML = `<i class="fas fa-play"></i>`;
+            }
+        });
+
+        audioEl.addEventListener('timeupdate', () => {
+            if (audioEl.duration) {
+                const progressPercent = (audioEl.currentTime / audioEl.duration) * 100;
+                progressEl.style.width = `${progressPercent}%`;
+                timeDisplay.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
+            }
+        });
+
+
+        // Устанавливаем начальное значение времени
+        audioEl.addEventListener('loadedmetadata', () => {
+            timeDisplay.textContent = `0:00 / ${formatTime(audioEl.duration)}`;
+        });
+
+        // Перемотка при клике по полосе прогресса
+        container.addEventListener('click', function(e) {
+            if (e.target.closest('.custom-play-btn')) return;
+            const rect = container.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const newTime = (clickX / rect.width) * audioEl.duration;
+            audioEl.currentTime = newTime;
+        });
     });
-
-audioEl.addEventListener('timeupdate', () => {
-  if (audioEl.duration) {
-    const progressPercent = (audioEl.currentTime / audioEl.duration) * 100;
-    progressEl.style.width = `${progressPercent}%`;
-    timeDisplay.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
-  }
-});
-
-
-    // Устанавливаем начальное значение времени
-    audioEl.addEventListener('loadedmetadata', () => {
-      timeDisplay.textContent = `0:00 / ${formatTime(audioEl.duration)}`;
-    });
-
-    // Перемотка при клике по полосе прогресса
-    container.addEventListener('click', function (e) {
-      if (e.target.closest('.custom-play-btn')) return;
-      const rect = container.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const newTime = (clickX / rect.width) * audioEl.duration;
-      audioEl.currentTime = newTime;
-    });
-  });
 }
 
 
@@ -2467,159 +2455,162 @@ function stopAllAudio() {
 
 // При отправке экзамена сохраняем ответы глобально
 function submitExamResults() {
-  stopAllAudio();
-  const answers = {};
-  const examResultsHtml = [];
-  const finishExamButton = document.getElementById('finishExam');
-  const loadingFinishExam = document.getElementById('loadingFinishExam');
+    stopAllAudio();
+    const answers = {};
+    const examResultsHtml = [];
+    const finishExamButton = document.getElementById('finishExam');
+    const loadingFinishExam = document.getElementById('loadingFinishExam');
 
-  // Собираем ответы из всех элементов с классом "exam-question" и "exam-subquestion"
-  document.querySelectorAll('.exam-question, .exam-subquestion').forEach((questionElem) => {
-    let qKey = questionElem.dataset.questionId;
-    // Если для subquestion dataset.questionId не установлен, выводим его из name инпута (начинается с "q")
-    if (!qKey) {
-      const inputElem = questionElem.querySelector('input');
-      if (inputElem && inputElem.name && inputElem.name.startsWith('q')) {
-        qKey = inputElem.name.substring(1); // удаляем начальное 'q'
-      }
-    }
-    const selectedOption =
-      questionElem.querySelector('input:checked') ||
-      questionElem.querySelector('input[type="text"]');
-    if (qKey && selectedOption && selectedOption.value) {
-      answers[`q${qKey}`] = selectedOption.value;
-    }
-  });
-
-  // Сохраняем ответы глобально, чтобы можно было использовать их при повторном открытии модалки
-  window.examAnswers = answers;
-
-  fetchExamQuestions().then((examQuestions) => {
-    if (!examQuestions) return;
-
-    window.examQuestionsData = examQuestions; // для подробного просмотра в модальном окне
-
-    fetch('/submit_exam', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: currentUser, answers: answers }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        loadingFinishExam.style.display = 'none';
-        finishExamButton.disabled = false;
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-
-        if (result.error) {
-          showToastNotification(`Error: ${result.error}`);
-          return;
-        }
-
-        const totalQuestions = result.correct + result.incorrect + result.skipped;
-        const percentage = totalQuestions > 0 ? (result.correct / totalQuestions) * 100 : 0;
-
-        // Пример расчёта прогресса (остальное оставляем без изменений)
-        let progressIncrease;
-        let maxAllowedProgress;
-        if (Unit === '6.3' || Unit === '12.3') {
-          const maxExamProgress = 30;
-          progressIncrease = (percentage / 100) * maxExamProgress;
-          maxAllowedProgress = 100;
-        } else if (
-          Unit.endsWith('.1') &&
-          parseFloat(Unit) >= 2.1 &&
-          parseFloat(Unit) <= 12.1
-        ) {
-          progressIncrease = 5.83 * (percentage / 100);
-          maxAllowedProgress = 70;
-        } else {
-          progressIncrease = 0;
-          maxAllowedProgress = 100;
-        }
-
-        fetch(`/api/get-student-progress?username=${currentUser}`)
-          .then((res) => res.json())
-          .then((data) => {
-            let currentProgress = parseFloat(data.progress) || 0;
-            let newProgress = Math.min(maxAllowedProgress, currentProgress + progressIncrease);
-            console.log(
-              `Current progress: ${currentProgress.toFixed(2)}%, Increase: ${progressIncrease.toFixed(2)}%, New progress: ${newProgress.toFixed(2)}%`
-            );
-            return fetch('/api/update-student-progress-exam', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ username: currentUser, progress: newProgress }),
-            });
-          })
-          .then((res) => res.json())
-          .then((updateResponse) => {
-            if (updateResponse.success) {
-              // Можно добавить уведомление об обновлении прогресса
+    // Собираем ответы из всех элементов с классом "exam-question" и "exam-subquestion"
+    document.querySelectorAll('.exam-question, .exam-subquestion').forEach((questionElem) => {
+        let qKey = questionElem.dataset.questionId;
+        // Если для subquestion dataset.questionId не установлен, выводим его из name инпута (начинается с "q")
+        if (!qKey) {
+            const inputElem = questionElem.querySelector('input');
+            if (inputElem && inputElem.name && inputElem.name.startsWith('q')) {
+                qKey = inputElem.name.substring(1); // удаляем начальное 'q'
             }
-          })
-          .catch((error) => {
-            console.error('Error updating progress:', error);
-            showToastNotification('Failed to update progress.');
-          });
-
-        // Анимация прогресс-бара
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-
-        progressBar.style.width = '0%';
-        progressBar.offsetHeight; // Пересчёт для перезапуска анимации
-        progressBar.style.transition = 'none';
-
-        setTimeout(() => {
-          progressBar.style.transition = 'width 1s ease-in-out';
-          progressBar.style.width = `${percentage}%`;
-        }, 50);
-
-        let currentText = parseInt(progressText.textContent.replace('%', '')) || 0;
-        const interval = setInterval(() => {
-          if (currentText < Math.round(percentage)) {
-            currentText++;
-            progressText.textContent = `${currentText}%`;
-          } else {
-            clearInterval(interval);
-          }
-        }, 20);
-
-        // Определяем вознаграждение
-        let motivationText = 'Keep up the good work!';
-        let iconClass = 'fa-smile';
-        let pointsText = '';
-
-        if (percentage >= 80) {
-          iconClass = 'fa-trophy';
-          pointsText = 'Points: 15';
-		  addTransaction(150,"Exam between 80 and 100");
-          motivationText = 'Excellent! You scored 80% or above! 🎉';
-          addCoinsToUser(currentUser, 15);
-          new Audio('/static/music/Coins_Rewarded.mp3').play().catch(console.log);
-        } else if (percentage >= 50) {
-          motivationText = 'Good job! Aim for 80% next time!';
-          iconClass = 'fa-smile';
-        } else {
-          motivationText = "Don't give up! Keep practicing!";
-          iconClass = 'fa-sad-cry';
         }
+        const selectedOption =
+            questionElem.querySelector('input:checked') ||
+            questionElem.querySelector('input[type="text"]');
+        if (qKey && selectedOption && selectedOption.value) {
+            answers[`q${qKey}`] = selectedOption.value;
+        }
+    });
 
-        document.getElementById('resultIcon').className = `fa-solid ${iconClass}`;
-        document.getElementById('examSubtitle').textContent = motivationText;
-        document.getElementById('examPoints').textContent = pointsText;
+    // Сохраняем ответы глобально, чтобы можно было использовать их при повторном открытии модалки
+    window.examAnswers = answers;
 
-        // Построение HTML для результатов экзамена
-        examQuestions.forEach((question, index) => {
-          if (question.subquestions && Array.isArray(question.subquestions)) {
-            let subCorrectCount = 0;
-            question.subquestions.forEach((subq) => {
-              const userAnswer = window.examAnswers ? window.examAnswers[`q${subq.id}`] || '' : '';
-              const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
-              if (isCorrect) subCorrectCount++;
-            });
-            const aggregatedScore = `${subCorrectCount}/${question.subquestions.length}`;
-            const questionBlock = `
+    fetchExamQuestions().then((examQuestions) => {
+        if (!examQuestions) return;
+
+        window.examQuestionsData = examQuestions; // для подробного просмотра в модальном окне
+
+        fetch('/submit_exam', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: currentUser, answers: answers }),
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                loadingFinishExam.style.display = 'none';
+                finishExamButton.disabled = false;
+                document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+                if (result.error) {
+                    showToastNotification(`Error: ${result.error}`);
+                    return;
+                }
+
+                const totalQuestions = result.correct + result.incorrect + result.skipped;
+                const percentage = totalQuestions > 0 ? (result.correct / totalQuestions) * 100 : 0;
+
+                // Пример расчёта прогресса (остальное оставляем без изменений)
+                let progressIncrease;
+                let maxAllowedProgress;
+                if (Unit === '6.3' || Unit === '12.3') {
+                    const maxExamProgress = 30;
+                    progressIncrease = (percentage / 100) * maxExamProgress;
+					updateExamHistory("finalExam", progressIncrease);
+                    maxAllowedProgress = 100;
+                } else if (
+                    Unit.endsWith('.1') &&
+                    parseFloat(Unit) >= 2.1 &&
+                    parseFloat(Unit) <= 12.1
+                ) {
+                    progressIncrease = 5.83 * (percentage / 100);
+					updateExamHistory("weeklyExams", progressIncrease);
+                    maxAllowedProgress = 70;
+                } else {
+                    progressIncrease = 0;
+                    maxAllowedProgress = 100;
+                }
+				
+
+                fetch(`/api/get-student-progress?username=${currentUser}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                        let currentProgress = parseFloat(data.progress) || 0;
+                        let newProgress = Math.min(maxAllowedProgress, currentProgress + progressIncrease);
+                        console.log(
+                            `Current progress: ${currentProgress.toFixed(2)}%, Increase: ${progressIncrease.toFixed(2)}%, New progress: ${newProgress.toFixed(2)}%`
+                        );
+                        return fetch('/api/update-student-progress-exam', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username: currentUser, progress: newProgress }),
+                        });
+                    })
+                    .then((res) => res.json())
+                    .then((updateResponse) => {
+                        if (updateResponse.success) {
+                            // Можно добавить уведомление об обновлении прогресса
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error updating progress:', error);
+                        showToastNotification('Failed to update progress.');
+                    });
+
+                // Анимация прогресс-бара
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+
+                progressBar.style.width = '0%';
+                progressBar.offsetHeight; // Пересчёт для перезапуска анимации
+                progressBar.style.transition = 'none';
+
+                setTimeout(() => {
+                    progressBar.style.transition = 'width 1s ease-in-out';
+                    progressBar.style.width = `${percentage}%`;
+                }, 50);
+
+                let currentText = parseInt(progressText.textContent.replace('%', '')) || 0;
+                const interval = setInterval(() => {
+                    if (currentText < Math.round(percentage)) {
+                        currentText++;
+                        progressText.textContent = `${currentText}%`;
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 20);
+
+                // Определяем вознаграждение
+                let motivationText = 'Keep up the good work!';
+                let iconClass = 'fa-smile';
+                let pointsText = '';
+
+                if (percentage >= 80) {
+                    iconClass = 'fa-trophy';
+                    pointsText = 'Points: 15';
+                    addTransaction(150, "Exam between 80 and 100");
+                    motivationText = 'Excellent! You scored 80% or above! 🎉';
+                    addCoinsToUser(currentUser, 15);
+                    new Audio('/static/music/Coins_Rewarded.mp3').play().catch(console.log);
+                } else if (percentage >= 50) {
+                    motivationText = 'Good job! Aim for 80% next time!';
+                    iconClass = 'fa-smile';
+                } else {
+                    motivationText = "Don't give up! Keep practicing!";
+                    iconClass = 'fa-sad-cry';
+                }
+
+                document.getElementById('resultIcon').className = `fa-solid ${iconClass}`;
+                document.getElementById('examSubtitle').textContent = motivationText;
+                document.getElementById('examPoints').textContent = pointsText;
+
+                // Построение HTML для результатов экзамена
+                examQuestions.forEach((question, index) => {
+                    if (question.subquestions && Array.isArray(question.subquestions)) {
+                        let subCorrectCount = 0;
+                        question.subquestions.forEach((subq) => {
+                            const userAnswer = window.examAnswers ? window.examAnswers[`q${subq.id}`] || '' : '';
+                            const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
+                            if (isCorrect) subCorrectCount++;
+                        });
+                        const aggregatedScore = `${subCorrectCount}/${question.subquestions.length}`;
+                        const questionBlock = `
               <div class="collapsible-question">
                 <div class="question-header">
                   <span>Question ${question.id}</span>
@@ -2630,14 +2621,14 @@ function submitExamResults() {
                 </div>
               </div>
             `;
-            examResultsHtml.push(questionBlock);
-          } else {
-            const qId = question.id ? question.id : (index + 1);
-            const userAnswer = window.examAnswers ? window.examAnswers[`q${qId}`] || '' : '';
-            const isCorrect = userAnswer.trim().toLowerCase() === question.correct.trim().toLowerCase();
-            const questionScore = isCorrect ? '1/1' : '0/1';
+                        examResultsHtml.push(questionBlock);
+                    } else {
+                        const qId = question.id ? question.id : (index + 1);
+                        const userAnswer = window.examAnswers ? window.examAnswers[`q${qId}`] || '' : '';
+                        const isCorrect = userAnswer.trim().toLowerCase() === question.correct.trim().toLowerCase();
+                        const questionScore = isCorrect ? '1/1' : '0/1';
 
-            const questionBlock = `
+                        const questionBlock = `
               <div class="collapsible-question">
                 <div class="question-header">
                   <span>Question ${qId}</span>
@@ -2648,151 +2639,151 @@ function submitExamResults() {
                 </div>
               </div>
             `;
-            examResultsHtml.push(questionBlock);
-          }
-        });
+                        examResultsHtml.push(questionBlock);
+                    }
+                });
 
-        const examResultsModal = document.getElementById('ExamResultsModal');
-        if (examResultsModal) {
-          examResultsModal.style.display = 'flex';
-          document.getElementById('examResultsContainer').innerHTML = examResultsHtml.join('');
-        } else {
-          console.error("Exam results modal not found.");
-        }
-      })
-      .catch((error) => {
-        console.error('Error submitting exam:', error);
-        showToastNotification('An error occurred. Please try again.');
-        loadingFinishExam.style.display = 'none';
-        finishExamButton.disabled = false;
-      });
-  });
+                const examResultsModal = document.getElementById('ExamResultsModal');
+                if (examResultsModal) {
+                    examResultsModal.style.display = 'flex';
+                    document.getElementById('examResultsContainer').innerHTML = examResultsHtml.join('');
+                } else {
+                    console.error("Exam results modal not found.");
+                }
+            })
+            .catch((error) => {
+                console.error('Error submitting exam:', error);
+                showToastNotification('An error occurred. Please try again.');
+                loadingFinishExam.style.display = 'none';
+                finishExamButton.disabled = false;
+            });
+    });
 }
 
 // Modal for detailed question view
 function openQuestionModal(qKey, event) {
-  event.stopPropagation();
+    event.stopPropagation();
 
-  // Для вопросов с группировкой (с под-вопросами)
-  let parentQuestion = null;
-  window.examQuestionsData.forEach((question) => {
-    if (question.subquestions && String(question.id) === String(qKey)) {
-      parentQuestion = question;
-    }
-  });
+    // Для вопросов с группировкой (с под-вопросами)
+    let parentQuestion = null;
+    window.examQuestionsData.forEach((question) => {
+        if (question.subquestions && String(question.id) === String(qKey)) {
+            parentQuestion = question;
+        }
+    });
 
-  if (parentQuestion) {
-    let modalHtml = '';
-    if (parentQuestion.text) {
-      modalHtml += `
+    if (parentQuestion) {
+        let modalHtml = '';
+        if (parentQuestion.text) {
+            modalHtml += `
         <div class="parent-question-modal">
           <p>${parentQuestion.text}</p>
         </div>
       `;
-    }
-    modalHtml += `<div class="subquestions-modal-list">`;
-    parentQuestion.subquestions.forEach((subq) => {
-      // Используем глобально сохранённый объект с ответами
-      const userAnswer = window.examAnswers ? window.examAnswers[`q${subq.id}`] || '' : '';
-      const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
-      let subHtml = `
+        }
+        modalHtml += `<div class="subquestions-modal-list">`;
+        parentQuestion.subquestions.forEach((subq) => {
+            // Используем глобально сохранённый объект с ответами
+            const userAnswer = window.examAnswers ? window.examAnswers[`q${subq.id}`] || '' : '';
+            const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
+            let subHtml = `
         <div class="subquestion-modal-item">
           <p><strong>${subq.id}.</strong> ${subq.text}</p>
       `;
-      if (subq.type === 'true_false') {
-        subHtml += `
+            if (subq.type === 'true_false') {
+                subHtml += `
           <input type="radio" name="q${subq.id}" value="True" ${userAnswer === 'True' ? 'checked' : ''} disabled>
           <label>True</label>
           <input type="radio" name="q${subq.id}" value="False" ${userAnswer === 'False' ? 'checked' : ''} disabled>
           <label>False</label>
         `;
-      } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-        subHtml += `<div class="options">`;
-        subq.options.forEach((option) => {
-          subHtml += `
+            } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                subHtml += `<div class="options">`;
+                subq.options.forEach((option) => {
+                    subHtml += `
             <input type="radio" name="q${subq.id}" value="${option}" ${userAnswer === option ? 'checked' : ''} disabled>
             <label>${option}</label>
           `;
-        });
-        subHtml += `</div>`;
-      } else if (['fill_gaps', 'unscramble', 'reading', 'listening', 'question'].includes(subq.type)) {
-        let displayValue = userAnswer;
-        if (subq.type === 'fill_gaps' && isCorrect) {
-          displayValue = '';
-        }
-        subHtml += `<input type="text" name="q${subq.id}" value="${displayValue}" disabled>`;
-      }
-      subHtml += `
+                });
+                subHtml += `</div>`;
+            } else if (['fill_gaps', 'unscramble', 'reading', 'listening', 'question'].includes(subq.type)) {
+                let displayValue = userAnswer;
+                if (subq.type === 'fill_gaps' && isCorrect) {
+                    displayValue = '';
+                }
+                subHtml += `<input type="text" name="q${subq.id}" value="${displayValue}" disabled>`;
+            }
+            subHtml += `
         <p class="${isCorrect ? 'correct' : 'incorrect'}">
           ${isCorrect ? '<i class="fas fa-check"></i> Correct' : '<i class="fas fa-times"></i> Incorrect'}
         </p>
         </div>
       `;
-      modalHtml += subHtml;
-    });
-    modalHtml += `</div>`;
+            modalHtml += subHtml;
+        });
+        modalHtml += `</div>`;
 
-    const modalContent = `
+        const modalContent = `
       <div class="leaderboard-content examQuestions-container" style="position: relative;">
         <h2><i class="fas fa-question-circle"></i> Question ${parentQuestion.id}</h2>
         ${modalHtml}
         <span class="close-btn" id="close-results_modal" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
       </div>
     `;
-    const modal = document.createElement('div');
-    modal.className = 'leaderboard-modal';
-    modal.innerHTML = modalContent;
-    document.body.appendChild(modal);
+        const modal = document.createElement('div');
+        modal.className = 'leaderboard-modal';
+        modal.innerHTML = modalContent;
+        document.body.appendChild(modal);
 
-    modal.querySelector('#close-results_modal').addEventListener('click', () => modal.remove());
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-  } else {
-    // Для индивидуального вопроса
-    let foundQuestion = null;
-    window.examQuestionsData.forEach((question) => {
-      if (question.subquestions) {
-        question.subquestions.forEach((subq) => {
-          if (String(subq.id) === String(qKey)) {
-            foundQuestion = subq;
-          }
+        modal.querySelector('#close-results_modal').addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    } else {
+        // Для индивидуального вопроса
+        let foundQuestion = null;
+        window.examQuestionsData.forEach((question) => {
+            if (question.subquestions) {
+                question.subquestions.forEach((subq) => {
+                    if (String(subq.id) === String(qKey)) {
+                        foundQuestion = subq;
+                    }
+                });
+            } else if (String(question.id) === String(qKey)) {
+                foundQuestion = question;
+            }
         });
-      } else if (String(question.id) === String(qKey)) {
-        foundQuestion = question;
-      }
-    });
-    if (!foundQuestion) return;
+        if (!foundQuestion) return;
 
-    let questionHtml = `<p>${foundQuestion.text}</p>`;
-    const userAnswer = window.examAnswers ? window.examAnswers[`q${qKey}`] || '' : '';
-    const isCorrect = userAnswer.trim().toLowerCase() === foundQuestion.correct.trim().toLowerCase();
+        let questionHtml = `<p>${foundQuestion.text}</p>`;
+        const userAnswer = window.examAnswers ? window.examAnswers[`q${qKey}`] || '' : '';
+        const isCorrect = userAnswer.trim().toLowerCase() === foundQuestion.correct.trim().toLowerCase();
 
-    if (foundQuestion.type === 'true_false') {
-      questionHtml += `
+        if (foundQuestion.type === 'true_false') {
+            questionHtml += `
         <input type="radio" name="q${qKey}" value="True" ${userAnswer === 'True' ? 'checked' : ''} disabled style="pointer-events: none;">
         <label>True</label>
         <input type="radio" name="q${qKey}" value="False" ${userAnswer === 'False' ? 'checked' : ''} disabled style="pointer-events: none;">
         <label>False</label>
       `;
-    } else if (foundQuestion.type === 'multiple_choice' && Array.isArray(foundQuestion.options)) {
-      foundQuestion.options.forEach((option) => {
-        questionHtml += `
+        } else if (foundQuestion.type === 'multiple_choice' && Array.isArray(foundQuestion.options)) {
+            foundQuestion.options.forEach((option) => {
+                questionHtml += `
           <input type="radio" name="q${qKey}" value="${option}" ${userAnswer === option ? 'checked' : ''} disabled style="pointer-events: none;">
           <label>${option}</label>
         `;
-      });
-    } else if (['fill_gaps', 'unscramble', 'reading', 'listening', 'question'].includes(foundQuestion.type)) {
-      let displayValue = userAnswer;
-      if (foundQuestion.type === 'fill_gaps' && isCorrect) {
-        displayValue = '';
-      }
-      questionHtml += `<input type="text" name="q${qKey}" value="${displayValue}" disabled style="pointer-events: none;">`;
-    }
-    const answerIndicator = `
+            });
+        } else if (['fill_gaps', 'unscramble', 'reading', 'listening', 'question'].includes(foundQuestion.type)) {
+            let displayValue = userAnswer;
+            if (foundQuestion.type === 'fill_gaps' && isCorrect) {
+                displayValue = '';
+            }
+            questionHtml += `<input type="text" name="q${qKey}" value="${displayValue}" disabled style="pointer-events: none;">`;
+        }
+        const answerIndicator = `
       <p class="${isCorrect ? 'correct' : 'incorrect'}">
         ${isCorrect ? '<i class="fas fa-check"></i> Correct' : '<i class="fas fa-times"></i> Incorrect'}
       </p>
     `;
-    const modalContent = `
+        const modalContent = `
       <div class="leaderboard-content examQuestions-container" style="position: relative;">
         <h2><i class="fas fa-question-circle"></i> Question ${qKey}</h2>
         ${questionHtml}
@@ -2800,14 +2791,14 @@ function openQuestionModal(qKey, event) {
         <span class="close-btn" id="close-results_modal" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
       </div>
     `;
-    const modal = document.createElement('div');
-    modal.className = 'leaderboard-modal';
-    modal.innerHTML = modalContent;
-    document.body.appendChild(modal);
+        const modal = document.createElement('div');
+        modal.className = 'leaderboard-modal';
+        modal.innerHTML = modalContent;
+        document.body.appendChild(modal);
 
-    modal.querySelector('#close-results_modal').addEventListener('click', () => modal.remove());
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-  }
+        modal.querySelector('#close-results_modal').addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    }
 }
 
 
@@ -2855,6 +2846,41 @@ function enableFinishButton() {
 socket.on('exam_started', function(data) {
     showToastNotification(data.message);
 });
+
+function updateExamHistory(updateType, progressIncrease) {
+  const username = getCurrentUser();
+  // Округляем значение до двух знаков
+  const roundedIncrease = Math.round(progressIncrease * 100) / 100;
+  
+  fetch('/api/update-history', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username: username,
+      updateType: updateType,        // 'finalExam' или 'weeklyExams'
+      progressIncrease: roundedIncrease
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(data => {
+        throw new Error(data.error || 'Failed to update history');
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Update successful:', data.message);
+    // Обновляем UI, например, перезагружаем последние данные
+    loadLatestProgress();
+  })
+  .catch(error => {
+    console.error('Error updating history:', error);
+    // Можно добавить обработку ошибок на UI (например, вывести сообщение)
+  });
+}
 
 // Функция для получения имени пользователя
 function getCurrentUser() {
@@ -2915,20 +2941,23 @@ function getNextExamDate(unit, startDate, studyDays) {
     return "No upcoming exams"; // Если курс закончен
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     fetchStudentProgress();
 });
 
 function fetchStudentProgress() {
-    const username = getCurrentUser(); // Функция, получающая текущего пользователя
-    document.getElementById("error-message").style.display = "none";
-
-    // Показываем загрузку и скрываем содержимое
-    document.getElementById("loading").style.display = "flex";
-    document.getElementById("progress-container").style.display = "none";
-
-    // Показываем спиннер в таблице
+    const username = getCurrentUser();
+    const errorMessageEl = document.getElementById("error-message");
+    const loadingEl = document.getElementById("loading");
+    const progressContainerEl = document.getElementById("progress-container");
     const leaderboardTable = document.getElementById("leaderboard-table-body");
+
+    // Скрываем сообщение об ошибке и показываем загрузку
+    errorMessageEl.style.display = "none";
+    loadingEl.style.display = "flex";
+    progressContainerEl.style.display = "none";
+
+    // Отображаем спиннер в таблице лидеров
     leaderboardTable.innerHTML = `
         <tr>
             <td colspan="3" class="loading-spinner">
@@ -2941,169 +2970,287 @@ function fetchStudentProgress() {
         </tr>
     `;
 
-    fetch(`/api/get-student-progress?username=${username}`)
+    // Запрашиваем данные общего прогресса и историю экзаменов параллельно
+    const progressPromise = fetch(`/api/get-student-progress?username=${username}`)
         .then(response => {
             if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.error);
-                });
+                return response.json().then(data => { throw new Error(data.error); });
             }
             return response.json();
-        })
-        .then(data => {
-            console.log('📊 Student Data:', data);
+        });
 
-            // Данные студента
-            const studentData = data[username] || {};
-            const progress = studentData.progress || 0;         // "Total Score" (например, 51.72)
-            const startDate = studentData.start_date;
-            const studyDays = studentData.study_days || "odd";
+    const historyPromise = fetch(`/api/get-student-progress-history?username=${username}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => { throw new Error(data.error); });
+            }
+            return response.json();
+        });
+
+    Promise.all([progressPromise, historyPromise])
+        .then(([progressData, historyData]) => {
+            console.log('📊 Progress Data:', progressData);
+            console.log('📊 History Data:', historyData);
+
+            // Извлекаем данные из обоих ответов
+            const progressInfo = progressData[username] || {};
+            const historyInfo = historyData[username] || {};
+
+            // Приоритет отдаем актуальным данным из history для экзаменов
+            progressInfo.finalExam = historyInfo.finalExam ?? progressInfo.finalExam ?? 0;
+            progressInfo.weeklyExams = historyInfo.weeklyExams ?? progressInfo.weeklyExams ?? 0;
+            progressInfo.totalScore = historyInfo.totalScore ?? progressInfo.totalScore ?? 0;
+
+            const { progress = 0, start_date, study_days = "odd", finalExam, weeklyExams } = progressInfo;
+            if (!start_date) throw new Error("Start date is missing");
+
+            // 1. Вычисляем процент завершения курса (90 дней)
             const currentDate = new Date();
-			currentDate.setHours(23, 59, 59, 999);
+            currentDate.setHours(23, 59, 59, 999);
             const totalCourseDays = 90;
-            const courseStartDate = new Date(startDate);
-
-            // 1. Процент завершения курса (по календарным дням)
+            const courseStartDate = new Date(start_date);
             const daysElapsed = Math.floor((currentDate - courseStartDate) / (1000 * 60 * 60 * 24)) + 1;
             const completionPercentage = Math.min((daysElapsed / totalCourseDays) * 100, 100).toFixed(2);
 
-            // 2. Определение учебных дней (для Unit и Week)
-            const oddDays = [1, 3, 5];
-            const evenDays = [2, 4, 6];
+            // 2. Подсчет учебных дней для расчёта юнита и недели
+            const oddDays = [1, 3, 5];   // понедельник, среда, пятница
+            const evenDays = [2, 4, 6];    // вторник, четверг, суббота
             let studyDaysElapsed = 0;
             let tempDate = new Date(courseStartDate);
 
-            // Прокручиваем вперёд до первого подходящего учебного дня
-            while (!(
-                (studyDays === "odd" && oddDays.includes(tempDate.getDay())) ||
-                (studyDays === "even" && evenDays.includes(tempDate.getDay()))
-            )) {
+            // Сдвигаем до первого учебного дня согласно настройке study_days
+            while (!((study_days === "odd" && oddDays.includes(tempDate.getDay())) ||
+                     (study_days === "even" && evenDays.includes(tempDate.getDay())))) {
                 tempDate.setDate(tempDate.getDate() + 1);
             }
             const firstStudyDate = new Date(tempDate);
-
-            // Подсчитываем количество учебных дней до текущей даты
             tempDate = new Date(firstStudyDate);
             while (tempDate <= currentDate) {
-                const dayOfWeek = tempDate.getDay();
-                if (
-                    (studyDays === "odd" && oddDays.includes(dayOfWeek)) ||
-                    (studyDays === "even" && evenDays.includes(dayOfWeek))
-                ) {
+                if ((study_days === "odd" && oddDays.includes(tempDate.getDay())) ||
+                    (study_days === "even" && evenDays.includes(tempDate.getDay()))) {
                     studyDaysElapsed++;
                 }
                 tempDate.setDate(tempDate.getDate() + 1);
             }
 
-            // 3. Считаем, какая сейчас неделя и день в ней
+            // 3. Определяем текущую неделю и день недели (при 3 учебных днях в неделю)
             const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3);
             const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1;
             const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
+            const weekNumber = studyWeeksElapsed + 1;
 
-            // 4. Определяем дату следующего экзамена (используя вашу функцию getNextExamDate)
-            const nextExamDate = getNextExamDate(unit, startDate, studyDays);
-
+			// Saving Unit to global
             Unit = unit;
-            Week = studyWeeksElapsed + 1;
+			Week = studyWeeksElapsed + 1;
+			
+            // 4. Получаем дату следующего экзамена (функция getNextExamDate должна быть определена)
+            const nextExamDate = getNextExamDate(unit, start_date, study_days);
 
-            // ===============================
-            //    Обновляем новый дизайн
-            // ===============================
-
-            // a) Отображаем общий прогресс (Total Score)
-            const totalScore = progress.toFixed(2);
+            // Обновляем секцию "My Progress"
+            const totalScore = parseFloat(progress).toFixed(2);
             document.getElementById("progress-score").textContent = `Total Score: ${totalScore}%`;
             document.getElementById("progress-bar-fill").style.width = `${totalScore}%`;
 
-            // b) Обновляем дату экзамена
-            let examMessage = studyWeeksElapsed + 1 <= 6
-                ? `Middle Exam : ${nextExamDate}`
-                : `Final Exam : ${nextExamDate}`;
-            let examIcon = studyWeeksElapsed + 1 <= 6
-                ? '<i class="fas fa-calendar-day"></i>'
-                : '<i class="fas fa-calendar-check"></i>';
+            // Обновляем блок Final Exam (максимум 30)
+            const finalExamVal = parseFloat(finalExam || 0);
+            const finalExamPercent = ((finalExamVal / 30) * 100).toFixed(2);
+            document.getElementById("finalExamLabel").textContent = `${finalExamVal} / 30 (${finalExamPercent}%)`;
+
+            // Обновляем блок Weekly Exams (максимум 70)
+            const weeklyExamsVal = parseFloat(weeklyExams || 0);
+            const weeklyExamsPercent = ((weeklyExamsVal / 70) * 100).toFixed(2);
+            document.getElementById("weeklyExamsLabel").textContent = `${weeklyExamsVal} / 70 (${weeklyExamsPercent}%)`;
+
+            // Обновляем блок с датой экзамена
+            let examMessage, examIcon;
+            if (weekNumber <= 6) {
+                examMessage = `Middle Exam: ${nextExamDate}`;
+                examIcon = '<i class="fas fa-calendar-day"></i>';
+            } else {
+                examMessage = `Final Exam: ${nextExamDate}`;
+                examIcon = '<i class="fas fa-calendar-check"></i>';
+            }
             document.getElementById("exam-date").innerHTML = `${examIcon} ${examMessage}`;
 
-            // c) Отображаем текущий юнит, неделю и общее завершение курса
+            // Обновляем текущий юнит, неделю и завершение курса
             document.getElementById("current-unit").textContent = `Current Unit: ${unit}`;
-            document.getElementById("current-week").textContent = `Week: ${studyWeeksElapsed + 1}`;
+            document.getElementById("current-week").textContent = `Week: ${weekNumber}`;
             document.getElementById("course-completion").textContent = `Course Completion: ${completionPercentage}%`;
 
-            // 6. Логика появления кнопки "Weekly Exam"
-            const isWeeklyExamUnit = studyWeeksElapsed >= 1;
-            const existingExamButton = document.querySelector('.weekly-exam-button');
-            if (isWeeklyExamUnit && dayInWeek === 1 && !existingExamButton) {
+            // Логика для кнопки "Weekly Exam" – добавляем, если неделя >= 2 и сегодня первый учебный день недели
+            if (weekNumber >= 2 && dayInWeek === 1 && !document.querySelector('.weekly-exam-button')) {
                 const weeklyExamButton = document.createElement("button");
                 weeklyExamButton.textContent = "Weekly Exam START";
                 weeklyExamButton.classList.add("weekly-exam-button");
-                weeklyExamButton.addEventListener('click', function () {
-                    showModal();
-                });
-
-                const progressContainer = document.getElementById("progress-container");
-                if (progressContainer) {
-                    progressContainer.appendChild(weeklyExamButton);
-                } else {
-                    console.error('Progress container not found.');
-                }
+                weeklyExamButton.addEventListener('click', () => showModal());
+                progressContainerEl.appendChild(weeklyExamButton);
             }
 
-            // 7. Загружаем таблицу лидеров
+            // Загружаем таблицу лидеров
             return fetch('/api/get-leaderboard');
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch leaderboard');
-            }
+            if (!response.ok) throw new Error('Failed to fetch leaderboard');
             return response.json();
         })
         .then(leaderboardData => {
             console.log('🏅 Leaderboard Data:', leaderboardData);
-
-            // Сортируем студентов по прогрессу в порядке убывания
+            // Сортируем студентов по убыванию общего прогресса
             const sortedLeaderboard = Object.entries(leaderboardData)
                 .sort(([, a], [, b]) => b.progress - a.progress);
-
-            // Убираем спиннер после загрузки
-            leaderboardTable.innerHTML = '';
-
+            leaderboardTable.innerHTML = "";
             let rank = 1;
-            for (let [student, studentInfo] of sortedLeaderboard) {
+            sortedLeaderboard.forEach(([student, studentInfo]) => {
                 const row = document.createElement('tr');
-
-                // 🔵 Номер студента
-                const numberCell = document.createElement('td');
-                numberCell.innerHTML = `<div class="student-avatar">${rank}</div>`;
-                row.appendChild(numberCell);
-
-                // 📚 Имя студента
-                const nameCell = document.createElement('td');
-                nameCell.classList.add("student-name");
-                nameCell.textContent = student;
-                row.appendChild(nameCell);
-
-                // 📊 Прогресс студента
-                const progressCell = document.createElement('td');
-                progressCell.innerHTML = `${studentInfo.progress}%`;
-                row.appendChild(progressCell);
-
+                row.innerHTML = `
+                    <td><div class="student-avatar">${rank}</div></td>
+                    <td class="student-name">${student}</td>
+                    <td>${studentInfo.progress}%</td>
+                `;
                 leaderboardTable.appendChild(row);
                 rank++;
-            }
+            });
         })
         .catch(error => {
             console.error('⚠️ Error:', error);
-            document.getElementById("error-message").textContent = "You are not an active student";
-            document.getElementById("error-message").style.display = "block";
+            errorMessageEl.textContent = "You are not an active student";
+            errorMessageEl.style.display = "block";
         })
         .finally(() => {
-            // Скрываем скелетон-загрузку и показываем контент
             setTimeout(() => {
-                document.getElementById("loading").style.display = "none";
-                document.getElementById("progress-container").style.display = "block";
+                loadingEl.style.display = "none";
+                progressContainerEl.style.display = "block";
             }, 500);
         });
 }
+
+
+
+/**
+ * Загрузка последнего прогресса пользователя
+ */
+function loadLatestProgress() {
+  const username = getCurrentUser();
+  fetch(`/api/get-student-progress-history?username=${username}`)
+    .then(res => {
+      if (!res.ok) throw new Error('Failed to get student progress');
+      return res.json();
+    })
+    .then(data => {
+      console.log('Latest progress data:', data);
+      // Ожидается, что API возвращает: { "Abdulmalik": [ { date: "...", finalExam: X, weeklyExams: Y }, ... ] }
+      const userHistory = data[username];
+      let latestRecord = {};
+      if (Array.isArray(userHistory) && userHistory.length > 0) {
+        // Берем последнюю запись
+        latestRecord = userHistory[userHistory.length - 1];
+      }
+      
+      // Если какого-то поля нет, считаем его равным 0
+      const finalExam = latestRecord.finalExam || 0;
+      const weeklyExams = latestRecord.weeklyExams || 0;
+      // Вычисляем общий результат, складывая оба показателя
+      const totalScore = finalExam + weeklyExams;
+
+      // Обновление общего результата
+      document.getElementById("total-score").textContent = `Total Score: ${totalScore}%`;
+
+      // Обновление блока Final Exam
+      const finalExamPercent = ((finalExam / 30) * 100).toFixed(2);
+      document.getElementById("finalExamBar").style.width = finalExamPercent + "%";
+      document.getElementById("finalExamLabel").textContent = `${finalExam} / 30 (${finalExamPercent}%)`;
+
+      // Обновление блока Weekly Exams
+      // Здесь максимальное значение установлено равным 5.83 (согласно новому API)
+      const weeklyExamsPercent = ((weeklyExams / 5.83) * 100).toFixed(2);
+      document.getElementById("weeklyExamsBar").style.width = weeklyExamsPercent + "%";
+      document.getElementById("weeklyExamsLabel").textContent = `${weeklyExams} / 5.83 (${weeklyExamsPercent}%)`;
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}
+
+function openHistoryModal(type) {
+  const username = getCurrentUser();
+  fetch(`/api/get-history?username=${username}`)
+    .then(res => {
+      if (!res.ok) throw new Error('Failed to get history');
+      return res.json();
+    })
+    .then(historyArray => {
+      // Фильтруем записи по выбранному типу:
+      const filteredHistory = historyArray.filter(item => item[type] !== undefined);
+      
+      // Сортируем по дате (по убыванию)
+      filteredHistory.sort((a, b) => b.date.localeCompare(a.date));
+      
+      let html = "";
+      if (filteredHistory.length === 0) {
+        html = `<p>No history available for ${type}.</p>`;
+      } else {
+        filteredHistory.forEach(item => {
+          // Получаем числовое значение
+          let value = parseFloat(item[type]) || 0;
+          // Определяем максимум (30 для finalExam, 5.83 для weeklyExams)
+          let max = (type === 'finalExam') ? 30 : 5.83;
+          
+          // Считаем процент с двумя знаками после запятой
+          const percent = ((value / max) * 100).toFixed(2);
+
+          // Форматируем дату
+          const dateStr = formatDate(item.date); 
+          
+          // Формируем HTML для каждого элемента
+          html += `
+            <div class="history-item">
+              <div class="history-icon">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+              <div class="history-date">${dateStr}</div>
+              <div class="history-progress">${percent}%</div>
+            </div>
+          `;
+        });
+      }
+
+      document.getElementById("historyTitle").textContent =
+        (type === 'finalExam') ? "Final Exam History" : "Weekly Exams History";
+      document.getElementById("historyContent").innerHTML = html;
+
+      // Показать модальное окно
+      document.getElementById("historyModal").style.display = "block";
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}
+
+
+
+/**
+ * Пример форматирования даты "YYYY-MM-DD" в "Tuesday, March 11, 2025"
+ */
+function formatDate(isoDateStr) {
+  const dateObj = new Date(isoDateStr + "T00:00:00");
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(dateObj);
+}
+
+
+/**
+ * Закрыть модалку
+ */
+function closeHistoryModal() {
+  document.getElementById("historyModal").style.display = "none";
+}
+
+// При загрузке страницы получить последние данные
+window.addEventListener('DOMContentLoaded', loadLatestProgress);
 
 
 const messagesContainer = document.getElementById("messages");
@@ -3227,10 +3374,10 @@ function showModal() {
 
 // Handle confirm button click
 function handleConfirm() {
-	loadExamQuestions(Unit);
-	const modal = document.querySelector('.progress-modal');
-	modal.style.display = 'none';
-	closeModalCONFIRM();
+    loadExamQuestions(Unit);
+    const modal = document.querySelector('.progress-modal');
+    modal.style.display = 'none';
+    closeModalCONFIRM();
     document.getElementById('examTaskOption').click();  // Trigger examTaskOption
 }
 
@@ -3240,7 +3387,7 @@ function handleCancel() {
 }
 
 // Close the modal
-function closeModalCONFIRM () {
+function closeModalCONFIRM() {
     const modal = document.querySelector('.leaderboard-modal');
     if (modal) {
         modal.style.display = 'none';
@@ -3274,18 +3421,18 @@ function sendQuestionsToServer(examQuestions) {
             questions: examQuestions
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log("Exam has been created successfully!");
-        } else {
-            alert(`Error creating exam: ${data.error}`);
-        }
-    })
-    .catch(error => {
-        console.error("Error sending exam questions to server:", error);
-        alert("There was an error processing the exam.");
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Exam has been created successfully!");
+            } else {
+                alert(`Error creating exam: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            console.error("Error sending exam questions to server:", error);
+            alert("There was an error processing the exam.");
+        });
 }
 
 
@@ -3311,7 +3458,7 @@ window.addEventListener("click", function(event) {
     }
 });
 
-document.getElementById("leaderboard-option").addEventListener("click", function () {
+document.getElementById("leaderboard-option").addEventListener("click", function() {
     // Добавление скелетона загрузки
     let loadingHTML = `<div id="leaderboard_loading" class="leaderboard-loading">
         <div class="skeleton skeleton-avatar"></div>
@@ -3400,7 +3547,7 @@ async function fetchAvatar(username) {
     try {
         let response = await fetch(`/get_avatar/${username}`);
         let data = await response.json();
-        
+
         if (data.avatar_url) {
             return `<img src="${data.avatar_url}" alt="Avatar" class="leaderboard-img">`;
         } else {
@@ -3425,16 +3572,16 @@ function getRankSuffix(rank) {
     return "th";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     // Убедитесь, что currentUser - это объект, а не строка.
     const username = currentUser; // Присваиваем только имя пользователя
-    
+
     fetch('/api/leaderboard')
         .then(response => {
             return response.json();
         })
         .then(data => {
-            
+
             const leaderboardOption = document.getElementById("leaderboard-option");
             if (!leaderboardOption) {
                 console.log("Leaderboard option not found.");
@@ -3456,7 +3603,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Если пользователь найден, обновляем текст на кнопке
             if (userRank > 0) {
                 // Добавляем иконку для "Leaderboard"
-				leaderboardOption.innerHTML = `<i class="fas fa-trophy" style="margin-right: 8px;"></i>Leaderboard #${userRank}`;
+                leaderboardOption.innerHTML = `<i class="fas fa-trophy" style="margin-right: 8px;"></i>Leaderboard #${userRank}`;
             } else {
                 leaderboardOption.innerText = `Leaderboard #?`; // Если не нашли
             }
@@ -3468,94 +3615,94 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Open modal
 document.getElementById('coinDisplay').addEventListener('click', async function() {
-  document.getElementById('balanceModal').style.display = 'block';
-  await updateBalanceUI();
+    document.getElementById('balanceModal').style.display = 'block';
+    await updateBalanceUI();
 });
 
 // Close modal
 document.getElementById('closeBalanceModal').addEventListener('click', function() {
-  document.getElementById('balanceModal').style.display = 'none';
+    document.getElementById('balanceModal').style.display = 'none';
 });
 
 // Tab switching
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
 tabButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    tabButtons.forEach(btn => btn.classList.remove('active'));
-    tabContents.forEach(tab => tab.style.display = 'none');
-    button.classList.add('active');
-    document.getElementById(button.dataset.tab).style.display = 'block';
-  });
+    button.addEventListener('click', () => {
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(tab => tab.style.display = 'none');
+        button.classList.add('active');
+        document.getElementById(button.dataset.tab).style.display = 'block';
+    });
 });
 
 // Fetch balance and transactions, then populate the UI
 async function updateBalanceUI() {
-  try {
-    const data = await fetchBalanceAndTransactions(currentUser);
-    
-    // Update balance
-    const balanceAmountEl = document.getElementById('balanceAmount');
-    balanceAmountEl.textContent = `$${Number(data.balance).toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })}`;
-    
-    // Separate transactions
-    const allTab = document.getElementById('allTab');
-    const receivedTab = document.getElementById('receivedTab');
-    const sentTab = document.getElementById('sentTab');
-    allTab.innerHTML = "";
-    receivedTab.innerHTML = "";
-    sentTab.innerHTML = "";
-    
-    let allCount = 0;
-    let receivedCount = 0;
-    let sentCount = 0;
-    
-    data.transactions.forEach(tx => {
-      const row = createTransactionRow(tx);
-      // Always append to allTab
-      allTab.appendChild(row.cloneNode(true));
-      allCount++;
-      
-      if (tx.amount > 0) {
-        receivedTab.appendChild(row);
-        receivedCount++;
-      } else {
-        sentTab.appendChild(row);
-        sentCount++;
-      }
-    });
-    
-    // Update tab counts
-    document.getElementById('allCount').textContent = allCount;
-    document.getElementById('receivedCount').textContent = receivedCount;
-    document.getElementById('sentCount').textContent = sentCount;
-    
-    // If no transactions in a category, show a placeholder message
-    if (receivedCount === 0) {
-      receivedTab.innerHTML = "<p>No received transactions yet.</p>";
+    try {
+        const data = await fetchBalanceAndTransactions(currentUser);
+
+        // Update balance
+        const balanceAmountEl = document.getElementById('balanceAmount');
+        balanceAmountEl.textContent = `$${Number(data.balance).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}`;
+
+        // Separate transactions
+        const allTab = document.getElementById('allTab');
+        const receivedTab = document.getElementById('receivedTab');
+        const sentTab = document.getElementById('sentTab');
+        allTab.innerHTML = "";
+        receivedTab.innerHTML = "";
+        sentTab.innerHTML = "";
+
+        let allCount = 0;
+        let receivedCount = 0;
+        let sentCount = 0;
+
+        data.transactions.forEach(tx => {
+            const row = createTransactionRow(tx);
+            // Always append to allTab
+            allTab.appendChild(row.cloneNode(true));
+            allCount++;
+
+            if (tx.amount > 0) {
+                receivedTab.appendChild(row);
+                receivedCount++;
+            } else {
+                sentTab.appendChild(row);
+                sentCount++;
+            }
+        });
+
+        // Update tab counts
+        document.getElementById('allCount').textContent = allCount;
+        document.getElementById('receivedCount').textContent = receivedCount;
+        document.getElementById('sentCount').textContent = sentCount;
+
+        // If no transactions in a category, show a placeholder message
+        if (receivedCount === 0) {
+            receivedTab.innerHTML = "<p>No received transactions yet.</p>";
+        }
+        if (sentCount === 0) {
+            sentTab.innerHTML = "<p>No sent transactions yet.</p>";
+        }
+
+    } catch (error) {
+        console.error(error);
     }
-    if (sentCount === 0) {
-      sentTab.innerHTML = "<p>No sent transactions yet.</p>";
-    }
-    
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 // Example: create a transaction row
 function createTransactionRow(tx) {
-  // tx object: { amount, description, time, method, status, etc. }
-  const row = document.createElement('div');
-  row.classList.add('transaction-row');
-  
-  const sign = tx.amount < 0 ? 'sent' : 'received';
-  const arrowIcon = sign === 'sent' ? 'fa-arrow-up' : 'fa-arrow-down';
-  
-  row.innerHTML = `
+    // tx object: { amount, description, time, method, status, etc. }
+    const row = document.createElement('div');
+    row.classList.add('transaction-row');
+
+    const sign = tx.amount < 0 ? 'sent' : 'received';
+    const arrowIcon = sign === 'sent' ? 'fa-arrow-up' : 'fa-arrow-down';
+
+    row.innerHTML = `
     <div class="transaction-info">
       <div class="transaction-arrow ${sign}">
         <i class="fa-solid ${arrowIcon}"></i>
@@ -3576,41 +3723,41 @@ function createTransactionRow(tx) {
       </div>
     </div>
   `;
-  
-  return row;
+
+    return row;
 }
 
 // Example: mock function that fetches data
 async function fetchBalanceAndTransactions(username) {
-  const response = await fetch(`/api/get_balance/${username}`);
-  if (!response.ok) throw new Error('Failed to fetch balance');
-  return response.json(); // { balance: number, transactions: array }
+    const response = await fetch(`/api/get_balance/${username}`);
+    if (!response.ok) throw new Error('Failed to fetch balance');
+    return response.json(); // { balance: number, transactions: array }
 }
 
 
 
 // Example function to add a transaction with a description
 async function addTransaction(amount, description) {
-  try {
-    const response = await fetch('/api/add_transaction', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: currentUser, // currentUser must be defined globally
-        amount: amount,
-        description: description
-      })
-    });
-    if (!response.ok) {
-      throw new Error(`Error adding transaction: ${response.status}`);
+    try {
+        const response = await fetch('/api/add_transaction', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: currentUser, // currentUser must be defined globally
+                amount: amount,
+                description: description
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Error adding transaction: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Transaction added:', data.message);
+        // Update balance UI after adding a transaction
+        await updateBalanceUI();
+    } catch (error) {
+        console.error(error.message);
     }
-    const data = await response.json();
-    console.log('Transaction added:', data.message);
-    // Update balance UI after adding a transaction
-    await updateBalanceUI();
-  } catch (error) {
-    console.error(error.message);
-  }
 }
 
 // Example usage:
@@ -3622,7 +3769,7 @@ async function addTransaction(amount, description) {
 
 // Update balance UI on page load
 document.addEventListener('DOMContentLoaded', () => {
-  updateBalanceUI();
+    updateBalanceUI();
 });
 
 

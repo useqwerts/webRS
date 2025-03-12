@@ -1,0 +1,25 @@
+{
+    "Muhammadiso": [
+        {
+            "date": "2025-03-08",
+            "finalExam": 5,
+            "weeklyExams": 30
+        },
+        {
+            "date": "2025-03-09",
+            "finalExam": 10,
+            "weeklyExams": 40
+        },
+        {
+            "date": "2025-03-10",
+            "finalExam": 15,
+            "weeklyExams": 50
+        }
+    ],
+    "Abdulmalik": [
+        {
+            "date": "2025-03-11",
+            "weeklyExams": 5.8
+        }
+    ]
+}
