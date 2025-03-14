@@ -231,7 +231,10 @@ banButton.addEventListener('click', () => {
         }
       });
 
-      // Функция сброса слайдера в исходное состояние
+
+    });
+	
+	      // Функция сброса слайдера в исходное состояние
       function resetSlider() {
         sliderHandle.style.left = '0';
         sliderContainer.classList.remove('active');
@@ -255,7 +258,6 @@ banButton.addEventListener('click', () => {
           icon.classList.add('fa-chevron-right');
         }, 300);
       }
-    });
 	
 document.addEventListener('DOMContentLoaded', () => {
   initializeExamTime();
@@ -367,6 +369,11 @@ async function fetchExamResults() {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
+	
+	if (totalSeconds === 0) {
+    resetSlider();
+	}
+	
     timeValue.innerHTML = `
       <div class="timer-container">
         <div class="timer-box"><span class="time">${hours}</span><span class="label">Hours</span></div>
@@ -840,4 +847,39 @@ async function updateRoadmap(username) {
     fetchStudents();
 });
 
+function handleTempBanClick(event) {
+  event.preventDefault(); // Если кнопка находится в форме, предотвращает отправку
 
+  const username = document.getElementById("tempBanUsername").value.trim();
+  const duration = parseInt(document.getElementById("tempBanDuration").value, 10) || 30;
+  const tempBanMessage = document.getElementById("tempBanMessage");
+
+  if (!username) {
+    tempBanMessage.textContent = "Please enter a username for temporary ban.";
+    tempBanMessage.style.display = "block";
+    return;
+  }
+  tempBanMessage.style.display = "none";
+
+  // Отправляем через socket событие временного бана
+  // Клиент отправляет запрос
+socket.emit("tempBanUser", { username, duration });
+  
+  // Для тестирования можно вызвать функцию blockUser напрямую:
+  // blockUser(duration);
+  
+  console.log(`Temporary ban triggered for ${username} for ${duration} seconds`);
+}
+
+document.getElementById("tempBanButton").addEventListener("click", handleTempBanClick);
+
+// Обработчик клика для отправки события разблокировки через socket
+function handleUnblockClick(event) {
+  event.preventDefault();
+  // Отправляем запрос на разблокировку через socket
+  socket.emit("unblockUserRequest", {});
+  console.log("Unblock request sent to server.");
+}
+
+// Добавляем обработчик на кнопку разблокировки
+document.getElementById("unblockButton").addEventListener("click", handleUnblockClick);

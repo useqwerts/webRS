@@ -754,7 +754,7 @@ function sendMessage() {
 
     if (messageTimestamps.length > maxMessages) {
         ++countBlocks;
-        blockUser(30 * countBlocks);
+        blockUser(currentUser,30 * countBlocks);
         localStorage.setItem('countBlocks', countBlocks); // Сохраняем обновленное значение в localStorage
     } else {
         console.log("Message sent"); // Здесь код отправки сообщения
@@ -777,44 +777,81 @@ function stopSpecialMusic() {
     console.log('Music stopped');
 }
 
+// Клиент слушает событие, которое сервер отправит в ответ
+socket.on('tempBanUser', (data) => {
+  console.log("Received tempBanUser event:", data);
+  blockUser(data.username, data.duration);
+});
+
+socket.on("unblockUser", (data) => {
+  unblockUser();
+});
 
 let isBlockedyet = false; // Флаг, показывающий, что блокировка активна
 
-function blockUser(duration) {
-    if (isBlockedyet) return; // Если пользователь уже заблокирован, не запускаем блокировку повторно
+let timerInterval = null; // Глобальная переменная для хранения идентификатора интервала
 
-    // Блокируем взаимодействие с элементами страницы
-    document.body.style.pointerEvents = 'none';
-    //playSpecialMusic(); // Запускаем музыку
-    disableMessageInput(); // Блокируем ввод сообщений
-    isBlockedyet = true;
-    const blockEndTime = Date.now() + duration * 1000;
+function blockUser(username, duration) {
+  // Если имя пользователя передано, проверяем, соответствует ли оно текущему пользователю
+  const currentUser = getCurrentUser(); // Предполагается, что эта функция возвращает имя текущего пользователя
+  if (username && username !== currentUser) {
+    console.log(`Block not applied. Banned username (${username}) does not match current user (${currentUser}).`);
+    return;
+  }
+  
+  if (isBlockedyet) return; // Если пользователь уже заблокирован, не запускаем блокировку повторно
 
-    // Сохраняем время окончания блокировки в localStorage
-    localStorage.setItem("blockEndTime", blockEndTime);
+  // Блокируем взаимодействие с элементами страницы
+  document.body.style.pointerEvents = 'none';
+  // playSpecialMusic(); // Запускаем музыку (если нужно)
+  disableMessageInput(); // Блокируем ввод сообщений
+  isBlockedyet = true;
+  
+  const blockEndTime = Date.now() + duration * 1000;
+  // Сохраняем время окончания блокировки в localStorage
+  localStorage.setItem("blockEndTime", blockEndTime);
 
-    let timeLeft = duration;
+  let timeLeft = duration;
+  // Показать экран блокировки
+  blockScreen.classList.add("visible");
+  timerElement.textContent = formatTime(timeLeft); // Отображаем начальное время
 
-    // Показать экран блокировки
-    blockScreen.classList.add("visible");
-    timerElement.textContent = formatTime(timeLeft); // Отображаем начальное время
+  // Таймер обратного отсчёта
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    // Обновляем отображение времени
+    timerElement.textContent = formatTime(timeLeft);
 
-    // Таймер обратного отсчета
-    const interval = setInterval(() => {
-        timeLeft--;
-
-        // Обновляем отображение времени
-        timerElement.textContent = formatTime(timeLeft);
-
-        // Если время истекло, разблокируем пользователя
-        if (timeLeft <= 0) {
-            clearInterval(interval);
-            unblockUser(); // Разблокировка
-            isBlockedyet = false; // Сбрасываем флаг блокировки после окончания
-            localStorage.removeItem("blockEndTime"); // Очистка localStorage
-        }
-    }, 1000);
+    // Если время истекло, разблокируем пользователя
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timerInterval = null; // Сброс идентификатора интервала
+      unblockUser(); // Разблокировка
+      isBlockedyet = false; // Сбрасываем флаг блокировки после окончания
+      localStorage.removeItem("blockEndTime"); // Очистка localStorage
+    }
+  }, 1000);
 }
+
+// Функция для разблокировки пользователя
+function unblockUser() {
+  // Если таймер активен, очищаем его
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  isBlockedyet = false;
+  document.body.style.pointerEvents = 'auto';
+  stopSpecialMusic();
+  enableMessageInput();
+  isBlocked = false;
+  localStorage.removeItem("blockEndTime"); // Удалить блокировку из localStorage
+  blockScreen.classList.remove("visible"); // Скрыть экран блокировки
+  messageTimestamps = []; // Сбросить историю сообщений
+  timerElement.textContent = ''; // Сброс отображения таймера (при необходимости)
+}
+
+
 
 // Форматирование времени в MM:SS
 function formatTime(seconds) {
@@ -831,24 +868,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const remainingTime = Math.max(0, Math.floor((blockEndTime - Date.now()) / 1000));
 
         if (remainingTime > 0) {
-            blockUser(remainingTime); // Продолжить блокировку
+            blockUser(currentUser,remainingTime); // Продолжить блокировку
         } else {
             localStorage.removeItem("blockEndTime"); // Если время истекло, очистить запись
         }
     }
 });
-
-// Функция для разблокировки пользователя
-function unblockUser() {
-    isBlockedyet = false;
-    document.body.style.pointerEvents = 'auto';
-    stopSpecialMusic();
-    enableMessageInput();
-    isBlocked = false;
-    localStorage.removeItem("blockEndTime"); // Удалить блокировку из localStorage
-    blockScreen.classList.remove("visible"); // Скрыть экран блокировки
-    messageTimestamps = []; // Сбросить историю сообщений
-}
 
 // Обработчик для нового сообщения
 socket.on('new_message', (message) => {
@@ -1296,7 +1321,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (timeLeft > 0) {
             // Если блокировка еще активна, восстановить ее
-            blockUser(timeLeft);
+            blockUser(currentUser,timeLeft);
         } else {
             // Если время блокировки истекло, удалить запись
             localStorage.removeItem("blockEndTime");
@@ -1688,18 +1713,37 @@ async function addCoins(username, coins) {
 }
 
 let violationCount = 0;
-const maxViolations = 2;
+const maxViolations = 3;
 
 function incrementViolation() {
     violationCount++;
-    showToastNotification(`Violation ${violationCount}/${maxViolations}`, "error");
+    showInformModal(`Violation ${violationCount}/${maxViolations}`);
     if (violationCount >= maxViolations) {
         // Ban user for 3 minutes (180 seconds)
-        blockUser(20);
+        blockUser(currentUser,180);
         // Reset the violation counter
         violationCount = 0;
     }
 }
+
+function showInformModal(text) {
+  const modal = document.getElementById('informModal');
+  const modalTitle = document.getElementById('informModalTitle');
+  const modalText = document.getElementById('informModalText');
+
+  // Принудительно добавляем фиксированный текст, затем то, что пришло в аргументе.
+  // При желании используем перенос строки <br> или другое оформление:
+  modalText.innerHTML = `Iltimos, qoidalarni buzmaslikka harakat qiling.<br>${text}`;
+
+  modal.style.display = 'flex'; // Показываем модалку
+}
+
+
+// Закрытие модалки при клике на "OK"
+document.getElementById('informModalOkBtn').addEventListener('click', () => {
+  document.getElementById('informModal').style.display = 'none';
+});
+
 
 function handleVisibilityChange() {
     if (document.hidden) {
@@ -1729,14 +1773,13 @@ function initExamSecurity(enable = true) {
         document.addEventListener('visibilitychange', handleVisibilityChange);
         document.addEventListener('copy', onCopy);
         document.addEventListener('paste', onPaste);
-        showToastNotification("Anti-cheating system is active.", "success");
+        showToastNotification("Anti-cheating system v2.0 is active.", "success");
     } else {
         // Remove restrictions
         document.removeEventListener('visibilitychange', handleVisibilityChange);
         document.removeEventListener('copy', onCopy);
         document.removeEventListener('paste', onPaste);
         document.removeEventListener('contextmenu', onContextMenu);
-        showToastNotification("Anti-cheating system is disabled.", "success");
     }
 }
 
@@ -1832,8 +1875,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
     });
 
     // (3) Функция для проверки ответа одного вопроса
-    // Здесь упрощённый вариант: если multiple_choice — сравниваем value radio c correct.
-    // Если fill_gaps/question — сравниваем текст в input.
     function checkSingleAnswer(questionElement, correctAnswer) {
       let userAnswer = null;
       // Ищем радио или инпут внутри questionElement
@@ -1900,12 +1941,13 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         examHeader.style.display = 'block';
         finishExamButton.style.display = 'block';
         examTimer.style.display = 'flex';
+		initExamSecurity(true);
 
         // Получаем шаблон вопроса
         const questionTemplate = document.getElementById('questionTemplate');
         let questionCounter = 0;
 
-        // Функция для получения инструкции по типу вопроса
+        // (A) Функция для получения инструкции по типу вопроса
         function getInstructionForType(type) {
             switch (type) {
                 case "true_false":
@@ -1922,6 +1964,8 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     return `<p><i class="fas fa-headphones"></i> Listen to the audio and enter the missing word.</p>`;
                 case "question":
                     return `<p><i class="fas fa-question-circle"></i> Answer the question below.</p>`;
+                case "picture":
+                    return `<p><i class="fas fa-image"></i> Look at the image and answer the following questions.</p>`;
                 default:
                     return "";
             }
@@ -1929,8 +1973,8 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
 
         // Генерация вопросов
         data.questions.forEach((question) => {
+            // Вопрос с аудио (listening)
             if (question.type === 'listening') {
-                // Создаем родительский контейнер для Listening вопроса
                 const parentContainer = document.createElement('div');
                 parentContainer.className = 'exam-parent-question';
                 if (question.text) {
@@ -1938,8 +1982,8 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 }
                 parentContainer.innerHTML += `
                   <div class="custom-audio-player">
+				    <button class="custom-play-btn"><i class="fas fa-play"></i></button>
                     <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
-                    <button class="custom-play-btn"><i class="fas fa-play"></i></button>
                     <span class="custom-time-display">0:00 / 0:00</span>
                   </div>
                 `;
@@ -1958,7 +2002,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
                         let optionsContainer = questionNode.querySelector('.question-options');
-                        // Если true_false, multiple_choice и т.д. — генерируем по типу
                         if (subq.type === 'true_false') {
                             optionsContainer.innerHTML = `
                                 <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
@@ -1986,17 +2029,14 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                             optionsContainer.innerHTML = html;
                         }
                         else {
-                            // fill_gaps, unscramble, question, etc.
                             optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
                         }
 
-                        // (5) Если у нас есть правильный ответ, вешаем кнопку "Check my answer"
                         if (subq.correct) {
                             const checkBtn = document.createElement('button');
                             checkBtn.className = 'check-answer-btn';
                             checkBtn.textContent = 'Check my answer';
                             checkBtn.addEventListener('click', () => {
-                              // Показываем модалку, передаём div и правильный ответ
                               showCheckAnswerModal(examQuestionDiv, subq.correct);
                             });
                             optionsContainer.appendChild(checkBtn);
@@ -2007,8 +2047,99 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     });
                 }
             }
+// Вопрос типа "picture" с одним или несколькими изображениями
+else if (question.type === 'picture') {
+    const parentContainer = document.createElement('div');
+    parentContainer.className = 'exam-parent-question';
+
+    // Если есть текст — отображаем
+    if (question.text) {
+        parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+    }
+
+    // Проверяем, есть ли массив изображений
+    if (Array.isArray(question.images) && question.images.length > 0) {
+        // Создаем контейнер под все картинки
+        const imagesContainer = document.createElement('div');
+        imagesContainer.className = 'exam-images-grid';
+
+        question.images.forEach(imgSrc => {
+            const imgElem = document.createElement('img');
+            imgElem.src = imgSrc;
+            imgElem.alt = 'Exam image';
+            imgElem.className = 'exam-question-image'; // класс для стилизации
+            imagesContainer.appendChild(imgElem);
+        });
+
+        parentContainer.appendChild(imagesContainer);
+    }
+    // Если вдруг используется старое поле question.image (одна картинка), оставим поддержку
+    else if (question.image) {
+        parentContainer.innerHTML += `<img src="${question.image}" alt="Exam image" class="exam-question-image" style="max-width:100%; height:auto; margin-bottom: 10px;">`;
+    }
+
+    examContainer.appendChild(parentContainer);
+
+    // Далее — генерация subquestions (как раньше)
+    if (question.subquestions && Array.isArray(question.subquestions)) {
+        question.subquestions.forEach((subq) => {
+            questionCounter++;
+            const instruction = getInstructionForType(subq.type);
+            const questionNode = document.importNode(questionTemplate.content, true);
+            const examQuestionDiv = questionNode.querySelector('.exam-question');
+
+            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+            questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+            let optionsContainer = questionNode.querySelector('.question-options');
+            if (subq.type === 'true_false') {
+                optionsContainer.innerHTML = `
+                    <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+                    <label for="true${subq.id}">True</label>
+                    <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+                    <label for="false${subq.id}">False</label>
+                `;
+            }
+            else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                let html = '';
+                subq.options.forEach((option, index) => {
+                    const letter = letters[index] || '?';
+                    const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
+                    html += `
+                      <div class="option-group">
+                        <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                        <label for="${optionId}">
+                          <span class="option-letter">${letter}</span>
+                          <span class="option-text">${option}</span>
+                        </label>
+                      </div>
+                    `;
+                });
+                optionsContainer.innerHTML = html;
+            }
+            else {
+                optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+            }
+
+            if (subq.correct) {
+                const checkBtn = document.createElement('button');
+                checkBtn.className = 'check-answer-btn';
+                checkBtn.textContent = 'Check my answer';
+                checkBtn.addEventListener('click', () => {
+                    showCheckAnswerModal(examQuestionDiv, subq.correct);
+                });
+                optionsContainer.appendChild(checkBtn);
+            }
+
+            examQuestionDiv.dataset.questionId = subq.id;
+            parentContainer.appendChild(questionNode);
+        });
+    }
+}
+
+            // Вопрос с под-вопросами (например, Reading) или обычный вопрос без под-вопросов
             else if (question.subquestions && Array.isArray(question.subquestions)) {
-                // Вопрос с под-вопросами (например, Reading)
                 if (question.text) {
                     const parentContainer = document.createElement('div');
                     parentContainer.className = 'exam-parent-question';
@@ -2055,7 +2186,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
                     }
 
-                    // Если есть correct — вешаем кнопку
                     if (subq.correct) {
                         const checkBtn = document.createElement('button');
                         checkBtn.className = 'check-answer-btn';
@@ -2070,8 +2200,8 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     examContainer.appendChild(questionNode);
                 });
             }
+            // Обычный вопрос (без под-вопросов)
             else {
-                // Обычный вопрос (без под-вопросов)
                 questionCounter++;
                 const instruction = getInstructionForType(question.type);
                 const questionNode = document.importNode(questionTemplate.content, true);
@@ -2109,11 +2239,9 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     optionsContainer.innerHTML = html;
                 }
                 else {
-                    // fill_gaps, unscramble, question, etc.
                     optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
                 }
 
-                // Если есть correct — добавляем кнопку
                 if (question.correct) {
                     const checkBtn = document.createElement('button');
                     checkBtn.className = 'check-answer-btn';
@@ -2129,7 +2257,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
             }
         });
 
-        // Обработка оставшегося времени экзамена (осталось как у вас)
+        // Обработка оставшегося времени экзамена
         const timeResponse = await fetch('/get_remaining_time');
         const timeData = await (timeResponse.ok
             ? timeResponse.json()
@@ -2219,6 +2347,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         loadingSpinner.style.display = 'none';
     }
 });
+
 // Функция открытия модального окна
 function openMyExamResultsModal(userData) {
     buildExamResultsUI(userData); // формируем UI с данными
@@ -2433,70 +2562,207 @@ function buildExamResultsUI(data) {
 }
 
 
-// Функция форматирования времени (mm:ss)
-function formatTime(time) {
-    if (isNaN(time)) return "0:00";
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
-}
-
-// Инициализация всех кастомных аудиоплееров
 function initAllWavePlayers() {
-    const waveContainers = document.querySelectorAll('.custom-audio-waves');
-    waveContainers.forEach(container => {
-        const audioSrc = container.getAttribute('data-audio-src') || container.parentElement.getAttribute('data-audio-src');
-        if (!audioSrc) return;
+  // Текущее аудио (одно в каждый момент)
+  let currentAudio = null;
+  // Текущая кнопка плеера, связанная с аудио
+  let currentPlayBtn = null;
 
-        // Создаем элемент <audio>
-        const audioEl = document.createElement('audio');
-        audioEl.src = audioSrc;
-        audioEl.controls = false;
-        container.appendChild(audioEl);
+  // Находим саму панель и кнопки
+  const popupBar     = document.getElementById("popupBar");
+  const stopBtn      = document.getElementById("stopBtn");
+  const playPauseBtn = document.getElementById("playPauseBtn");
 
-        // Создаем элемент для отображения прогресса
-        let progressEl = document.createElement('div');
-        progressEl.className = 'progress';
-        container.appendChild(progressEl);
+  // Функции показать/скрыть панель
+  function showPopupBar() {
+    popupBar.style.display = "flex";
+  }
+  function hidePopupBar() {
+    popupBar.style.display = "none";
+  }
 
-        const playBtn = container.parentElement.querySelector('.custom-play-btn');
-        const timeDisplay = container.parentElement.querySelector('.custom-time-display');
+  // Кнопка "Стоп" – останавливаем и возвращаем на 0
+  stopBtn.addEventListener("click", () => {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      hidePopupBar();
+      // Обновляем иконки в обеих кнопках
+      if (currentPlayBtn) currentPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+      playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    }
+  });
 
-        playBtn.addEventListener('click', () => {
-            if (audioEl.paused) {
-                stopAllAudio();
-                audioEl.play();
-                playBtn.innerHTML = `<i class="fas fa-pause"></i>`;
-            } else {
-                audioEl.pause();
-                playBtn.innerHTML = `<i class="fas fa-play"></i>`;
-            }
-        });
+  // Кнопка "Плей/Пауза" во всплывающем баре
+  playPauseBtn.addEventListener("click", () => {
+    if (currentAudio) {
+      if (currentAudio.paused) {
+        currentAudio.play();
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        if (currentPlayBtn) currentPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      } else {
+        currentAudio.pause();
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        if (currentPlayBtn) currentPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+      }
+    }
+  });
 
-        audioEl.addEventListener('timeupdate', () => {
-            if (audioEl.duration) {
-                const progressPercent = (audioEl.currentTime / audioEl.duration) * 100;
-                progressEl.style.width = `${progressPercent}%`;
-                timeDisplay.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
-            }
-        });
+  // Ищем все контейнеры с классом .custom-audio-waves
+  const waveContainers = document.querySelectorAll(".custom-audio-waves");
 
+  waveContainers.forEach(container => {
+    // Получаем путь к аудиофайлу
+    const audioSrc = container.getAttribute("data-audio-src") 
+      || container.parentElement.getAttribute("data-audio-src");
+    if (!audioSrc) return;
 
-        // Устанавливаем начальное значение времени
-        audioEl.addEventListener('loadedmetadata', () => {
-            timeDisplay.textContent = `0:00 / ${formatTime(audioEl.duration)}`;
-        });
+    // Создаём элемент <audio>
+    const audioEl = document.createElement("audio");
+    audioEl.src = audioSrc;
+    audioEl.controls = false;
+    container.appendChild(audioEl);
 
-        // Перемотка при клике по полосе прогресса
-        container.addEventListener('click', function(e) {
-            if (e.target.closest('.custom-play-btn')) return;
-            const rect = container.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const newTime = (clickX / rect.width) * audioEl.duration;
-            audioEl.currentTime = newTime;
-        });
+    // Прогресс-бар
+    const progressEl = document.createElement("div");
+    progressEl.className = "progress";
+    container.appendChild(progressEl);
+
+    // Кнопка Play и таймер
+    const playBtn = container.parentElement.querySelector(".custom-play-btn");
+    const timeDisplay = container.parentElement.querySelector(".custom-time-display");
+
+    // При клике на Play/Pause в плеере
+    playBtn.addEventListener("click", () => {
+      if (audioEl.paused) {
+        audioEl.play();
+        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+        // Запоминаем текущее аудио и кнопку плеера
+        currentAudio = audioEl;
+        currentPlayBtn = playBtn;
+
+        // Показываем панель и ставим иконку паузы
+        showPopupBar();
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      } else {
+        audioEl.pause();
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      }
     });
+
+    // При изменении текущего времени
+    audioEl.addEventListener("timeupdate", () => {
+      if (audioEl.duration) {
+        const progressPercent = (audioEl.currentTime / audioEl.duration) * 100;
+        progressEl.style.width = `${progressPercent}%`;
+        timeDisplay.textContent = formatTime(audioEl.currentTime);
+      }
+    });
+
+    // Начальное время
+    audioEl.addEventListener("loadedmetadata", () => {
+      timeDisplay.textContent = "0:00";
+    });
+
+    // Клик по контейнеру для перемотки
+    container.addEventListener("click", (e) => {
+      if (e.target.closest(".custom-play-btn")) return; // Не обрабатывать клик по кнопке
+      const rect = container.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const newTime = (clickX / rect.width) * audioEl.duration;
+      audioEl.currentTime = newTime;
+    });
+
+    // При остановке (pause) аудио, обновляем иконку плеера
+    audioEl.addEventListener("pause", () => {
+      playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      // Если аудио было остановлено не через всплывающий бар, синхронизируем иконку
+      if (playPauseBtn.innerHTML.indexOf("pause") !== -1) {
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      }
+    });
+
+    // Когда трек заканчивается
+    audioEl.addEventListener("ended", () => {
+      playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      hidePopupBar();
+    });
+  });
+
+  // Делаем сам popupBar перетаскиваемым (функция makeElementDraggable должна быть определена)
+  makeElementDraggable(popupBar);
 }
+
+
+function makeElementDraggable(el) {
+  let startX, startY, initialLeft, initialTop;
+
+  function onStart(e) {
+    // Если событие начинается на кнопке (или внутри неё), не инициируем перетаскивание.
+    if (e.target.closest('.popup-btn')) {
+      return;
+    }
+    e.preventDefault();
+    if (e.type === "touchstart") {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      document.addEventListener("touchmove", onMove, { passive: false });
+      document.addEventListener("touchend", onEnd, { passive: false });
+    } else {
+      startX = e.clientX;
+      startY = e.clientY;
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onEnd);
+    }
+    const computedStyle = window.getComputedStyle(el);
+    initialLeft = parseInt(computedStyle.left, 10) || 0;
+    initialTop  = parseInt(computedStyle.top, 10) || 0;
+    el.style.cursor = "grabbing";
+  }
+
+  function onMove(e) {
+    e.preventDefault();
+    let clientX, clientY;
+    if (e.type === "touchmove") {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+    el.style.left = (initialLeft + dx) + "px";
+    el.style.top  = (initialTop + dy) + "px";
+  }
+
+  function onEnd(e) {
+    if (e.type === "touchend") {
+      document.removeEventListener("touchmove", onMove);
+      document.removeEventListener("touchend", onEnd);
+    } else {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onEnd);
+    }
+    el.style.cursor = "grab";
+  }
+
+  el.addEventListener("mousedown", onStart);
+  el.addEventListener("touchstart", onStart, { passive: false });
+}
+
+
+
+// Пример функции formatTime
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' + secs : secs}`;
+}
+
 
 
 
@@ -3056,190 +3322,192 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function fetchStudentProgress() {
-    const username = getCurrentUser();
-    const errorMessageEl = document.getElementById("error-message");
-    const loadingEl = document.getElementById("loading");
-    const progressContainerEl = document.getElementById("progress-container");
-    const leaderboardTable = document.getElementById("leaderboard-table-body");
+  const username = getCurrentUser();
+  const errorMessageEl = document.getElementById("error-message");
+  const loadingEl = document.getElementById("loading");
+  const progressContainerEl = document.getElementById("progress-container");
+  const leaderboardTable = document.getElementById("leaderboard-table-body");
 
-    // Скрываем сообщение об ошибке и показываем загрузку
-    errorMessageEl.style.display = "none";
-    loadingEl.style.display = "flex";
-    progressContainerEl.style.display = "none";
+  // Скрываем сообщение об ошибке и показываем загрузку
+  errorMessageEl.style.display = "none";
+  loadingEl.style.display = "flex";
+  progressContainerEl.style.display = "none";
 
-    // Отображаем спиннер в таблице лидеров
-    leaderboardTable.innerHTML = `
-        <tr>
-            <td colspan="3" class="loading-spinner">
-                <div class="lds-spinner">
-                    <div></div><div></div><div></div><div></div>
-                    <div></div><div></div><div></div><div></div>
-                    <div></div><div></div><div></div><div></div>
-                </div>
-            </td>
-        </tr>
-    `;
+  // Отображаем спиннер в таблице лидеров
+  leaderboardTable.innerHTML = `
+    <tr>
+      <td colspan="3" class="loading-spinner">
+        <div class="lds-spinner">
+          <div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div>
+        </div>
+      </td>
+    </tr>
+  `;
 
-    // Запрашиваем данные общего прогресса и историю экзаменов параллельно
-    const progressPromise = fetch(`/api/get-student-progress?username=${username}`)
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => { throw new Error(data.error); });
-            }
-            return response.json();
-        });
+  // Запрашиваем данные общего прогресса и историю экзаменов параллельно
+  const progressPromise = fetch(`/api/get-student-progress?username=${username}`)
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(data => { throw new Error(data.error); });
+      }
+      return response.json();
+    });
 
-    const historyPromise = fetch(`/api/get-student-progress-history?username=${username}`)
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => { throw new Error(data.error); });
-            }
-            return response.json();
-        });
+  const historyPromise = fetch(`/api/get-student-progress-history?username=${username}`)
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(data => { throw new Error(data.error); });
+      }
+      return response.json();
+    });
 
-    Promise.all([progressPromise, historyPromise])
-        .then(([progressData, historyData]) => {
-            console.log('📊 Progress Data:', progressData);
-            console.log('📊 History Data:', historyData);
+  Promise.all([progressPromise, historyPromise])
+    .then(([progressData, historyData]) => {
+      console.log('📊 Progress Data:', progressData);
+      console.log('📊 History Data:', historyData);
 
-            // Извлекаем данные из обоих ответов
-            const progressInfo = progressData[username] || {};
-            const historyInfo = historyData[username] || {};
+      // Извлекаем данные из обоих ответов
+      const progressInfo = progressData[username] || {};
+      const historyInfo = historyData[username] || {};
 
-            // Приоритет отдаем актуальным данным из history для экзаменов
-            progressInfo.finalExam = historyInfo.finalExam ?? progressInfo.finalExam ?? 0;
-            progressInfo.weeklyExams = historyInfo.weeklyExams ?? progressInfo.weeklyExams ?? 0;
-            progressInfo.totalScore = historyInfo.totalScore ?? progressInfo.totalScore ?? 0;
+      // Приоритет отдаем актуальным данным из history для экзаменов
+      progressInfo.finalExam = historyInfo.finalExam ?? progressInfo.finalExam ?? 0;
+      progressInfo.weeklyExams = historyInfo.weeklyExams ?? progressInfo.weeklyExams ?? 0;
+      progressInfo.totalScore = historyInfo.totalScore ?? progressInfo.totalScore ?? 0;
 
-            const { progress = 0, start_date, study_days = "odd", finalExam, weeklyExams } = progressInfo;
-            if (!start_date) throw new Error("Start date is missing");
+      const { progress = 0, start_date, study_days = "odd", finalExam, weeklyExams } = progressInfo;
+      if (!start_date) throw new Error("Start date is missing");
 
-            // 1. Вычисляем процент завершения курса (90 дней)
-            const currentDate = new Date();
-            currentDate.setHours(23, 59, 59, 999);
-            const totalCourseDays = 90;
-            const courseStartDate = new Date(start_date);
-            const daysElapsed = Math.floor((currentDate - courseStartDate) / (1000 * 60 * 60 * 24)) + 1;
-            const completionPercentage = Math.min((daysElapsed / totalCourseDays) * 100, 100).toFixed(2);
+      // 1. Вычисляем процент завершения курса (90 дней)
+      const currentDate = new Date();
+      currentDate.setHours(23, 59, 59, 999);
+      const totalCourseDays = 90;
+      const courseStartDate = new Date(start_date);
+      const daysElapsed = Math.floor((currentDate - courseStartDate) / (1000 * 60 * 60 * 24)) + 1;
+      const completionPercentage = Math.min((daysElapsed / totalCourseDays) * 100, 100).toFixed(2);
 
-            // 2. Подсчет учебных дней для расчёта юнита и недели
-            const oddDays = [1, 3, 5];   // понедельник, среда, пятница
-            const evenDays = [2, 4, 6];    // вторник, четверг, суббота
-            let studyDaysElapsed = 0;
-            let tempDate = new Date(courseStartDate);
+      // 2. Подсчет учебных дней для расчёта юнита и недели
+      const oddDays = [1, 3, 5];   // понедельник, среда, пятница
+      const evenDays = [2, 4, 6];    // вторник, четверг, суббота
+      let studyDaysElapsed = 0;
+      let tempDate = new Date(courseStartDate);
 
-            // Сдвигаем до первого учебного дня согласно настройке study_days
-            while (!((study_days === "odd" && oddDays.includes(tempDate.getDay())) ||
-                     (study_days === "even" && evenDays.includes(tempDate.getDay())))) {
-                tempDate.setDate(tempDate.getDate() + 1);
-            }
-            const firstStudyDate = new Date(tempDate);
-            tempDate = new Date(firstStudyDate);
-            while (tempDate <= currentDate) {
-                if ((study_days === "odd" && oddDays.includes(tempDate.getDay())) ||
-                    (study_days === "even" && evenDays.includes(tempDate.getDay()))) {
-                    studyDaysElapsed++;
-                }
-                tempDate.setDate(tempDate.getDate() + 1);
-            }
+      // Сдвигаем до первого учебного дня согласно настройке study_days
+      while (!((study_days === "odd" && oddDays.includes(tempDate.getDay())) ||
+               (study_days === "even" && evenDays.includes(tempDate.getDay())))) {
+        tempDate.setDate(tempDate.getDate() + 1);
+      }
+      const firstStudyDate = new Date(tempDate);
+      tempDate = new Date(firstStudyDate);
+      while (tempDate <= currentDate) {
+        if ((study_days === "odd" && oddDays.includes(tempDate.getDay())) ||
+            (study_days === "even" && evenDays.includes(tempDate.getDay()))) {
+          studyDaysElapsed++;
+        }
+        tempDate.setDate(tempDate.getDate() + 1);
+      }
 
-            // 3. Определяем текущую неделю и день недели (при 3 учебных днях в неделю)
-            const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3);
-            const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1;
-            const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
-            const weekNumber = studyWeeksElapsed + 1;
+      // 3. Определяем текущую неделю и день недели (при 3 учебных днях в неделю)
+      const studyWeeksElapsed = Math.floor((studyDaysElapsed - 1) / 3);
+      const dayInWeek = ((studyDaysElapsed - 1) % 3) + 1;
+      const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
+      const weekNumber = studyWeeksElapsed + 1;
 
-            // Saving Unit to global
-            Unit = unit;
-            Week = weekNumber;
-			
-            // 4. Получаем дату следующего экзамена (функция getNextExamDate должна быть определена)
-            const nextExamDate = getNextExamDate(unit, start_date, study_days);
+      // Сохраняем юнит и неделю в глобальные переменные
+      Unit = unit;
+      Week = weekNumber;
 
-            // Обновляем секцию "My Progress"
-            const totalScore = parseFloat(progress).toFixed(2);
-            document.getElementById("progress-score").textContent = `Total Score: ${totalScore}%`;
-            document.getElementById("progress-bar-fill").style.width = `${totalScore}%`;
+      // 4. Получаем дату следующего экзамена (функция getNextExamDate должна быть определена)
+      const nextExamDate = getNextExamDate(unit, start_date, study_days);
 
-            // Обновляем блок Final Exam (максимум 30)
-            const finalExamVal = parseFloat(finalExam || 0);
-            const finalExamPercent = ((finalExamVal / 30) * 100).toFixed(2);
-            document.getElementById("finalExamLabel").textContent = `${finalExamVal} / 30 (${finalExamPercent}%)`;
+      // Обновляем секцию "My Progress"
+      const totalScore = parseFloat(progress).toFixed(2);
+      document.getElementById("progress-score").textContent = `Total Score: ${totalScore}%`;
+      document.getElementById("progress-bar-fill").style.width = `${totalScore}%`;
 
-            // Обновляем блок Weekly Exams (максимум 70)
-            const weeklyExamsVal = parseFloat(weeklyExams || 0);
-            const weeklyExamsPercent = ((weeklyExamsVal / 70) * 100).toFixed(2);
-            document.getElementById("weeklyExamsLabel").textContent = `${weeklyExamsVal} / 70 (${weeklyExamsPercent}%)`;
+      // Обновляем блок Final Exam (максимум 30)
+      const finalExamVal = parseFloat(finalExam || 0);
+      const finalExamPercent = ((finalExamVal / 30) * 100).toFixed(2);
+      document.getElementById("finalExamLabel").textContent = `${finalExamVal} / 30 (${finalExamPercent}%)`;
+      const finalExamBar = document.getElementById("progressFinalExamBar");
+      if (finalExamBar) {
+        finalExamBar.style.width = `${finalExamPercent}%`;
+      }
 
-            // Обновляем блок с датой экзамена
-            let examMessage, examIcon;
-            if (weekNumber <= 6) {
-                examMessage = `Middle Exam: ${nextExamDate}`;
-                examIcon = '<i class="fas fa-calendar-day"></i>';
-            } else {
-                examMessage = `Final Exam: ${nextExamDate}`;
-                examIcon = '<i class="fas fa-calendar-check"></i>';
-            }
-            document.getElementById("exam-date").innerHTML = `${examIcon} ${examMessage}`;
+      // Обновляем блок Weekly Exams (максимум 70)
+      const weeklyExamsVal = parseFloat(weeklyExams || 0);
+      const weeklyExamsPercent = ((weeklyExamsVal / 70) * 100).toFixed(2);
+      document.getElementById("weeklyExamsLabel").textContent = `${weeklyExamsVal} / 70 (${weeklyExamsPercent}%)`;
+      const weeklyExamsBar = document.getElementById("progressWeeklyExamsBar");
+      if (weeklyExamsBar) {
+        weeklyExamsBar.style.width = `${weeklyExamsPercent}%`;
+      }
 
-            // Обновляем текущий юнит, неделю и завершение курса
-            document.getElementById("current-unit").textContent = `Current Unit: ${unit}`;
-            document.getElementById("current-week").textContent = `Week: ${weekNumber}`;
-            document.getElementById("course-completion").textContent = `Course Completion: ${completionPercentage}%`;
+      // Обновляем блок с датой экзамена
+      let examMessage, examIcon;
+      if (weekNumber <= 6) {
+        examMessage = `Middle Exam: ${nextExamDate}`;
+        examIcon = '<i class="fas fa-calendar-day"></i>';
+      } else {
+        examMessage = `Final Exam: ${nextExamDate}`;
+        examIcon = '<i class="fas fa-calendar-check"></i>';
+      }
+      document.getElementById("exam-date").innerHTML = `${examIcon} ${examMessage}`;
 
-            // Логика для кнопки "Weekly Exam" – добавляем, если неделя >= 2 и сегодня первый учебный день недели
-            if (weekNumber >= 2 && dayInWeek === 1 && !document.querySelector('.weekly-exam-button')) {
-                const weeklyExamButton = document.createElement("button");
-                weeklyExamButton.textContent = "Weekly Exam START";
-                weeklyExamButton.classList.add("weekly-exam-button");
-                weeklyExamButton.addEventListener('click', () => showModal());
-                progressContainerEl.appendChild(weeklyExamButton);
-            }
+      // Обновляем текущий юнит, неделю и завершение курса
+      document.getElementById("current-unit").textContent = `Current Unit: ${unit}`;
+      document.getElementById("current-week").textContent = `Week: ${weekNumber}`;
+      document.getElementById("course-completion").textContent = `Course Completion: ${completionPercentage}%`;
 
-            // Загружаем таблицу лидеров
-            return fetch('/api/get-leaderboard');
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch leaderboard');
-            return response.json();
-        })
-        .then(leaderboardData => {
-            console.log('🏅 Leaderboard Data:', leaderboardData);
-            // Сортируем студентов по убыванию общего прогресса
-            const sortedLeaderboard = Object.entries(leaderboardData)
-                .sort(([, a], [, b]) => b.progress - a.progress);
-            leaderboardTable.innerHTML = "";
-            let rank = 1;
-            sortedLeaderboard.forEach(([student, studentInfo]) => {
-                const row = document.createElement('tr');
-                // Округляем progress до двух знаков после запятой
-                const formattedProgress = parseFloat(studentInfo.progress).toFixed(2);
-                row.innerHTML = `
-                    <td><div class="student-avatar">${rank}</div></td>
-                    <td class="student-name">${student}</td>
-                    <td>${formattedProgress}%</td>
-                `;
-                leaderboardTable.appendChild(row);
-                rank++;
-            });
-        })
-        .catch(error => {
-            console.error('⚠️ Error:', error);
-            errorMessageEl.textContent = "You are not an active student";
-            errorMessageEl.style.display = "block";
-        })
-        .finally(() => {
-            setTimeout(() => {
-                loadingEl.style.display = "none";
-                progressContainerEl.style.display = "block";
-            }, 500);
-        });
+      // Добавляем кнопку "Weekly Exam" если условия соблюдены
+      if (weekNumber >= 2 && dayInWeek === 1 && !document.querySelector('.weekly-exam-button')) {
+        const weeklyExamButton = document.createElement("button");
+        weeklyExamButton.textContent = "Weekly Exam START";
+        weeklyExamButton.classList.add("weekly-exam-button");
+        weeklyExamButton.addEventListener('click', () => showModal());
+        progressContainerEl.appendChild(weeklyExamButton);
+      }
+
+      // Загружаем таблицу лидеров
+      return fetch('/api/get-leaderboard');
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Failed to fetch leaderboard');
+      return response.json();
+    })
+    .then(leaderboardData => {
+      console.log('🏅 Leaderboard Data:', leaderboardData);
+      // Сортируем студентов по убыванию общего прогресса
+      const sortedLeaderboard = Object.entries(leaderboardData)
+        .sort(([, a], [, b]) => b.progress - a.progress);
+      leaderboardTable.innerHTML = "";
+      let rank = 1;
+      sortedLeaderboard.forEach(([student, studentInfo]) => {
+        const row = document.createElement('tr');
+        const formattedProgress = parseFloat(studentInfo.progress).toFixed(2);
+        row.innerHTML = `
+          <td><div class="student-avatar">${rank}</div></td>
+          <td class="student-name">${student}</td>
+          <td>${formattedProgress}%</td>
+        `;
+        leaderboardTable.appendChild(row);
+        rank++;
+      });
+    })
+    .catch(error => {
+      console.error('⚠️ Error:', error);
+      errorMessageEl.textContent = "You are not an active student";
+      errorMessageEl.style.display = "block";
+    })
+    .finally(() => {
+      // Скрываем спиннер и показываем контент сразу после завершения всех запросов
+      loadingEl.style.display = "none";
+      progressContainerEl.style.display = "block";
+    });
 }
 
-
-/**
- * Загрузка последнего прогресса пользователя
- */
 function loadLatestProgress() {
   const username = getCurrentUser();
   fetch(`/api/get-student-progress-history?username=${username}`)
@@ -3249,40 +3517,42 @@ function loadLatestProgress() {
     })
     .then(data => {
       console.log('Latest progress data:', data);
-      // Ожидается, что API возвращает: { "Abdulmalik": [ { date: "...", finalExam: X, weeklyExams: Y }, ... ] }
       const userHistory = data[username];
-      let latestRecord = {};
+      let finalExam = 0;
+      let weeklyExams = 0;
+
       if (Array.isArray(userHistory) && userHistory.length > 0) {
-        // Берем последнюю запись
-        latestRecord = userHistory[userHistory.length - 1];
+        // Просуммировать все значения weeklyExams
+        weeklyExams = userHistory.reduce((sum, record) => sum + (record.weeklyExams || 0), 0);
+        // Если в API появится finalExam, можно сделать аналогично:
+        finalExam = userHistory.reduce((sum, record) => sum + (record.finalExam || 0), 0);
       }
-      
-      // Если какого-то поля нет, считаем его равным 0
-      const finalExam = latestRecord.finalExam || 0;
-      const weeklyExams = latestRecord.weeklyExams || 0;
-      // Вычисляем общий результат, складывая оба показателя
-      const totalScore = finalExam + weeklyExams;
 
-      // Обновление общего результата
-      document.getElementById("total-score").textContent = `Total Score: ${totalScore}%`;
-
-      // Обновление блока Final Exam
-      const finalExamPercent = ((finalExam / 30) * 100).toFixed(2);
-      document.getElementById("finalExamBar").style.width = finalExamPercent + "%";
-      document.getElementById("finalExamLabel").textContent = `${finalExam} / 30 (${finalExamPercent}%)`;
-
-      // Обновление блока Weekly Exams
-      // Здесь максимальное значение установлено равным 5.83 (согласно новому API)
-      const weeklyExamsPercent = ((weeklyExams / 5.83) * 100).toFixed(2);
-      document.getElementById("weeklyExamsBar").style.width = weeklyExamsPercent + "%";
-      document.getElementById("weeklyExamsLabel").textContent = `${weeklyExams} / 5.83 (${weeklyExamsPercent}%)`;
     })
     .catch(err => {
       console.error(err);
     });
 }
 
+
 function openHistoryModal(type) {
+  // 1. Ставим заголовок модального окна в соответствии с типом
+  document.getElementById("historyTitle").textContent =
+    (type === 'finalExam') ? "Final Exam History" : "Weekly Exams History";
+  
+  // 2. Временно ставим в содержимое модального окна спиннер (пока данные грузятся)
+  document.getElementById("historyContent").innerHTML = `
+    <div class="lds-spinner">
+      <div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div>
+    </div>
+  `;
+  
+  // 3. Показываем модальное окно (сейчас там только спиннер)
+  document.getElementById("historyModal").style.display = "block";
+
+  // 4. Начинаем загрузку данных
   const username = getCurrentUser();
   fetch(`/api/get-history?username=${username}`)
     .then(res => {
@@ -3290,12 +3560,12 @@ function openHistoryModal(type) {
       return res.json();
     })
     .then(historyArray => {
-      // Фильтруем записи по выбранному типу:
+      // Фильтруем записи по выбранному типу
       const filteredHistory = historyArray.filter(item => item[type] !== undefined);
-      
+
       // Сортируем по дате (по убыванию)
       filteredHistory.sort((a, b) => b.date.localeCompare(a.date));
-      
+
       let html = "";
       if (filteredHistory.length === 0) {
         html = `<p>No history available for ${type}.</p>`;
@@ -3312,12 +3582,23 @@ function openHistoryModal(type) {
           // Форматируем дату
           const dateStr = formatDate(item.date); 
           
+          // Формируем HTML для иконки с условием для finalExam
+          let iconHtml = "";
+          if (type === 'finalExam') {
+            // Для finalExam используем другую иконку и красный фон
+            iconHtml = `<div class="history-icon" style="background-color: red;">
+                          <i class="fas fa-trophy"></i>
+                        </div>`;
+          } else {
+            iconHtml = `<div class="history-icon">
+                          <i class="fas fa-graduation-cap"></i>
+                        </div>`;
+          }
+
           // Формируем HTML для каждого элемента
           html += `
             <div class="history-item">
-              <div class="history-icon">
-                <i class="fas fa-graduation-cap"></i>
-              </div>
+              ${iconHtml}
               <div class="history-date">${dateStr}</div>
               <div class="history-progress">${percent}%</div>
             </div>
@@ -3325,17 +3606,16 @@ function openHistoryModal(type) {
         });
       }
 
-      document.getElementById("historyTitle").textContent =
-        (type === 'finalExam') ? "Final Exam History" : "Weekly Exams History";
+      // 5. Заменяем содержимое модального окна на итоговый HTML
       document.getElementById("historyContent").innerHTML = html;
-
-      // Показать модальное окно
-      document.getElementById("historyModal").style.display = "block";
     })
     .catch(err => {
       console.error(err);
+      // Если произошла ошибка, выводим сообщение об ошибке
+      document.getElementById("historyContent").innerHTML = `<p>Error: ${err.message}</p>`;
     });
 }
+
 
 
 

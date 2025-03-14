@@ -109,7 +109,6 @@ def get_student_progress():
     
 @app.route('/api/get-leaderboard', methods=['GET'])
 def get_leaderboard_myprogress():
-    time.sleep(2)  # Simulate delay, you can adjust or remove this
 
     # Получаем прогресс всех студентов
     progress_data = get_student_progress()  # Предполагается, что эта функция возвращает словарь всех студентов и их прогресса
@@ -132,7 +131,7 @@ def get_leaderboard_myprogress():
 
 @app.route('/api/get-student-progress', methods=['GET'])
 def get_progress():
-    time.sleep(2)
+
     # Получаем имя пользователя из параметров запроса
     current_user = request.args.get("username")
     
@@ -428,196 +427,153 @@ current_version = "2025-01-10-v1"
 
 exam_questions = [
     {
-        "id": 1,
-        "text": "Section 1. Listen and choose correct answer.",
-        "type": "listening",
-        "audio": "/static/exam/ProgressTest1.mp3",
-        "subquestions": [
-            {
-                "id": "1.1",
-                "type": "multiple_choice",
-                "text": "1 The woman __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "asks about the weather"
-            },
-            {
-                "id": "1.2",
-                "type": "multiple_choice",
-                "text": "The woman's friend __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "went to Russia"
-            },
-            {
-                "id": "1.3",
-                "type": "multiple_choice",
-                "text": "3 Russia __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "is warm in summer"
-            },
-            {
-                "id": "1.4",
-                "type": "multiple_choice",
-                "text": "4 The man __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "is going to go on holiday"
-            },
-            {
-                "id": "1.5",
-                "type": "multiple_choice",
-                "text": "5 The woman's holiday plans __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "are going to change"
-            }
-        ]
+      "id": 1,
+      "type": "listening",
+      "text": "Listen and choose correct answers.",
+      "audio": "/static/exam/ex1.mp3",
+      "subquestions": [
+        {
+          "id": "1.1",
+          "type": "multiple_choice",
+          "text": "Who wants to go to Park Road?",
+          "options": [
+            "the woman",
+            "the man",
+            "the woman and the man"
+          ],
+          "correct": "the woman and the man"
+        },
+        {
+          "id": "1.2",
+          "type": "multiple_choice",
+          "text": "What time is the bus going to arrive?",
+          "options": [
+            "8.15",
+            "8.30",
+            "8.50"
+          ],
+          "correct": "8.50"
+        },
+        {
+          "id": "1.3",
+          "type": "multiple_choice",
+          "text": "When did the man arrive at the bus stop?",
+          "options": [
+            "45 minutes ago",
+            "30 minutes ago",
+            "20 minutes ago"
+          ],
+          "correct": "45 minutes ago"
+        },
+        {
+          "id": "1.4",
+          "type": "multiple_choice",
+          "text": "What is the woman going to do?",
+          "options": [
+            "wait for a bus",
+            "call a taxi",
+            "walk to her meeting"
+          ],
+          "correct": "call a taxi"
+        },
+        {
+          "id": "1.5",
+          "type": "multiple_choice",
+          "text": "What does the man say?",
+          "options": [
+            "There aren’t any taxis",
+            "He didn’t read the news",
+            "It’s cloudy today"
+          ],
+          "correct": "There aren’t any taxis"
+        }
+      ]
     },
     {
-    "id": 2,
-    "type": "reading",
-    "text": """<h1>Flat review</h1>
-
-    <h2>Calle de Serrano, Madrid ***</h2>
-
-    <p>
-        We really like visiting Madrid, and we often stay in this flat. There are two bedrooms, a bathroom, a living room, and a very small kitchen with a microwave and a fridge. The flat is small, but it's cheap. It’s in an exciting area, near lots of restaurants and shops.
-    </p>
-
-    <p>
-        The flat is in a beautiful old building, and there’s a balcony in each room. You can walk to the city centre in ten minutes. The flat is near Retiro Park and the Prado Art Museum. We always visit them because we love walking and paintings!
-    </p>
-
-    <p>
-        It’s a good flat for two people, but it’s too small for a family. It’s on the second floor and there isn’t a lift. Another problem is that the flat is very hot. It hasn’t got air conditioning.
-    </p>
-    """,
-    "subquestions": [
+      "id": 2,
+      "type": "reading",
+      "text": "<h1>Read the texts about festivals. Answer the questions. Write A, B or C.</h1>\n\n<p><strong>A</strong><br>Hi Jordi,<br>Would you like to come to a festival in my grandparents’ town? The festival is called ‘El Colacho’, and it started in 1620. It’s a great festival for families and children. There’s music and dancing all day. I’m going to travel there with Javier on Friday. Come with us!<br>Love,<br>Carmen</p>\n\n<p><strong>B</strong><br><em>Digby Food Festival</em><br>David Smith<br>This is my favourite festival, because I love eating and talking about food. The festival was amazing. My friends went last year and I went too, so I know! There were chefs at the festival, and they cooked a lot of food. I had some amazing cheese, and some meat. I liked the event, but it was £35, so it was expensive.</p>\n\n<p><strong>C</strong><br>Next month, we’re going to visit Thailand for the Songkran festival. It’s a really fun festival in the hot weather. It’s always in April – from about 13th April to 15th April. But in Thailand it’s very hot! Songkran is a festival of water. People have beautiful clothes with lots of colours. It’s an old festival, and it’s really exciting.</p>",
+      "subquestions": [
         {
-            "id": "2.1",
-            "type": "question",
-            "text": "The person isn’t from ___________.",
-            "correct": "Madrid"
+          "id": "2.1",
+          "type": "multiple_choice",
+          "text": "This festival started in 1620.",
+          "options": ["A", "B", "C"],
+          "correct": "B" 
         },
         {
-            "id": "2.2",
-            "type": "question",
-            "text": "The flat is not in a modern ___________.",
-            "correct": "building"
+          "id": "2.2",
+          "type": "multiple_choice",
+          "text": "This festival was expensive (£35).",
+          "options": ["A", "B", "C"],
+          "correct": "A"
         },
         {
-            "id": "2.3",
-            "type": "question",
-            "text": "All the rooms have got a ___________.",
-            "correct": "balcony"
+          "id": "2.3",
+          "type": "multiple_choice",
+          "text": "The writer’s friends went to this festival last year.",
+          "options": ["A", "B", "C"],
+          "correct": "B"
         },
         {
-            "id": "2.4",
-            "type": "question",
-            "text": "The person loves ___________ and parks.",
-            "correct": "art"
+          "id": "2.4",
+          "type": "multiple_choice",
+          "text": "This festival is always from 13th to 15th April.",
+          "options": ["A", "B", "C"],
+          "correct": "C"
         },
         {
-            "id": "2.5",
-            "type": "question",
-            "text": "The flat hasn’t got a ___________.",
-            "correct": "lift"
+          "id": "2.5",
+          "type": "multiple_choice",
+          "text": "People wear beautiful clothes in this festival.",
+          "options": ["A", "B", "C"],
+          "correct": "B"  
         }
-    ]
-},
-{
-    "id": 3,
-    "type": "multiple_choice",
-    "text": "Choose the correct options.\n\nA: What room ¹ __ in your house?\n\nB: The ² __ is my favourite room, because I love ³ __. My family eats dinner there every day. It’s got a big window and you ⁴ __ our garden.\n\nA: ⁵ __ a lot of furniture in the room?\n\nB: Yes, there’s a ⁶ __ and six chairs. ⁷ __ chairs are quite old. ⁸ __ a TV in the room, but we listen ⁹ __ on the radio. We like ¹⁰ __ to our favourite music.",
-    "subquestions": [
+      ]
+    },
+    {
+      "id": 3,
+      "type": "reading",
+      "text": "<h1>Read the texts again. Then answer the questions.</h1>",
+      "images": [
+        "/static/exam/festivals_text.png",
+        "/static/exam/festivals_questions.png",
+        "/static/exam/festivals_answers.png"
+      ],
+      "subquestions": [
         {
-            "id": "3.1",
-            "type": "multiple_choice",
-            "text": "What room __ in your house?",
-            "options": ["do you like", "you like", "are you like"],
-            "correct": "do you like"
+          "id": "3.1",
+          "type": "open_ended",
+          "text": "When are Carmen and Javier going to go to the festival?",
+          "correct": "on Friday"
         },
         {
-            "id": "3.2",
-            "type": "multiple_choice",
-            "text": "The __ is my favourite room, because I love __.",
-            "options": ["bathroom", "bedroom", "kitchen"],
-            "correct": "kitchen"
+          "id": "3.2",
+          "type": "open_ended",
+          "text": "Who went to the Digby Food Festival last year?",
+          "correct": "the writer's (David Smith's) friends"
         },
         {
-            "id": "3.3",
-            "type": "multiple_choice",
-            "text": "My family eats dinner there every day. It’s got a big window and you __ our garden.",
-            "options": ["can see", "can to see", "can seeing"],
-            "correct": "can see"
+          "id": "3.3",
+          "type": "open_ended",
+          "text": "How much was the Digby Food Festival?",
+          "correct": "£35"
         },
         {
-            "id": "3.4",
-            "type": "multiple_choice",
-            "text": "Is __ a lot of furniture in the room?",
-            "options": ["There are", "There’s", "Is there"],
-            "correct": "There’s"
+          "id": "3.4",
+          "type": "open_ended",
+          "text": "When is the Songkran festival?",
+          "correct": "13th to 15th April"
         },
         {
-            "id": "3.5",
-            "type": "multiple_choice",
-            "text": "Yes, there’s a __ and six chairs.",
-            "options": ["shower", "table", "bed"],
-            "correct": "table"
-        },
-        {
-            "id": "3.6",
-            "type": "multiple_choice",
-            "text": "__ chairs are quite old.",
-            "options": ["Each", "All the", "Every"],
-            "correct": "All the"
-        },
-        {
-            "id": "3.7",
-            "type": "multiple_choice",
-            "text": "__ a TV in the room, but we listen to the radio.",
-            "options": ["There isn’t", "It hasn’t", "It isn’t"],
-            "correct": "There isn’t"
-        },
-        {
-            "id": "3.8",
-            "type": "multiple_choice",
-            "text": "We like __ to our favourite music.",
-            "options": ["music", "the music", "to music"],
-            "correct": "to music"
+          "id": "3.5",
+          "type": "open_ended",
+          "text": "What’s the weather like in Thailand in April?",
+          "correct": "very hot"
         }
-    ]
-}
-
+      ]
+    }
 ]
-
 
 # Путь к файлу с балансами
 BALANCE_FILE = 'balance.json'
@@ -652,6 +608,23 @@ def get_leaderboard():
     }
 
     return jsonify(leaderboard)
+    
+@socketio.on('tempBanUser')
+def handle_temp_ban(data):
+    username = data.get('username')
+    duration = data.get('duration')
+    print(f"Temporary ban for {username} for {duration} seconds")
+    # Эмиттируем событие обратно клиенту с именем пользователя и длительностью
+    socketio.emit('tempBanUser', {'username': username, 'duration': duration})
+
+
+@socketio.on('unblockUserRequest')
+def handle_unblock(data):
+    print("Unblock request received.")
+    # Если нужно отправить событие всем клиентам, можно использовать аргумент room='all' 
+    # или вручную перебрать sid-ы, но в большинстве случаев достаточно обычного emit:
+    socketio.emit('unblockUser', {})  # отправляем всем подключенным клиентам
+
 
 # Получение баланса для пользователя
 @socketio.on('get_balance')
@@ -1285,6 +1258,7 @@ def update_history():
 @app.route('/api/get-history', methods=['GET'])
 def get_history():
 
+    time.sleep(2)
     username = request.args.get('username')
     if not username:
         return jsonify({"error": "Username not provided"}), 400
@@ -1296,7 +1270,6 @@ def get_history():
 
 @app.route('/api/get-student-progress-history', methods=['GET'])
 def get_student_progress_history():
-
     username = request.args.get('username')
     if not username:
         return jsonify({"error": "Username not provided"}), 400
@@ -1307,25 +1280,30 @@ def get_student_progress_history():
         # Если у пользователя нет записей, вернём нули
         return jsonify({
             username: {
-                "finalExam": 0,
-                "weeklyExams": 0,
-                "totalScore": 0
+                "finalExam": "0.00%",
+                "weeklyExams": "0.00%",
+                "totalScore": "0.00%"
             }
         }), 200
 
-    # Берём последнюю запись
-    last_record = user_history[-1]
-    final_exam = last_record.get("finalExam", 0)
-    weekly_exams = last_record.get("weeklyExams", 0)
-    total_score = final_exam + weekly_exams
+    # Суммируем значения weeklyExams и finalExam по всем записям
+    total_weekly_exams = sum(record.get("weeklyExams", 0) for record in user_history)
+    total_final_exam = sum(record.get("finalExam", 0) for record in user_history)
+    total_score = total_final_exam + total_weekly_exams
+
+    # Форматирование значений с двумя знаками после запятой и добавлением знака '%'
+    final_exam_formatted = f"{total_final_exam:.2f}%"
+    weekly_exams_formatted = f"{total_weekly_exams:.2f}%"
+    total_score_formatted = f"{total_score:.2f}%"
 
     return jsonify({
         username: {
-            "finalExam": final_exam,
-            "weeklyExams": weekly_exams,
-            "totalScore": total_score
+            "finalExam": final_exam_formatted,
+            "weeklyExams": weekly_exams_formatted,
+            "totalScore": total_score_formatted
         }
     }), 200
+
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

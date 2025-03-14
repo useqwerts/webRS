@@ -24,6 +24,76 @@
             "amount": 150,
             "description": "Exam between 80 and 100",
             "time": "2025-03-09T03:08:32.281358"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T08:37:05.251960"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T08:37:11.027714"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T08:37:17.464425"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T08:37:22.210258"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T18:47:14.379766"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T18:47:20.695478"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T18:47:27.791631"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T18:47:32.784655"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-12T18:47:38.578058"
+        },
+        {
+            "amount": 150,
+            "description": "Exam between 80 and 100",
+            "time": "2025-03-12T18:48:42.373832"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-13T17:44:38.340944"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T09:31:32.728882"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T09:31:39.993616"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T10:02:19.006337"
         }
     ],
     "Zakariyo": [
@@ -31,6 +101,36 @@
             "amount": 150,
             "description": "Exam between 80 and 100",
             "time": "2025-03-08T07:54:16.729443"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T12:43:02.279842"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T12:43:06.217428"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T12:43:11.402712"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T12:43:15.419956"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T12:43:20.246282"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-03-14T12:43:29.134837"
         }
     ],
     "Abdulmalik": [

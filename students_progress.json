@@ -1,25 +1,12 @@
 {
     "Muhammadali": {
-        "progress": 40.809999999999995,
-        "start_date": "2025-03-03",
+        "progress": 56.074,
+        "start_date": "2024-12-27",
         "study_days": "odd"
     },
     "Abdulmalik": {
-        "progress": 40.809999999999995,
-        "start_date": "2025-03-03",
+        "progress": 56.48622222222222,
+        "start_date": "2024-12-27",
         "study_days": "odd"
-    },
-    "Elbek": {
-        "progress": 0.0,
-        "start_date": "2025-02-14",
-        "study_days": "odd"
-    },
-    "Muhammadiso": {
-        "progress": 0.0,
-        "start_date": "2025-02-24",
-        "study_days": "odd"
-    },
-    "Behruz": {
-        "progress": 0.0
     }
 }

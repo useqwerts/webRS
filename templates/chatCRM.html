@@ -104,15 +104,38 @@
             <p>Are you sure you want to log out?</p>
         </section>
 
-        <!-- Ban User Section -->
-        <section id="ban" class="content-section">
-            <h1>Ban User</h1>
-            <label for="banUsername">Username:</label>
-            <input type="text" id="banUsername" placeholder="Enter username to ban" />
-            <button id="banButton" class="action-button">Ban User</button>
-            <p id="banMessage" class="message" style="color: red; display: none;"></p>
-        </section>
-		
+<!-- Ban User Section -->
+<section id="ban" class="content-section">
+  <h1>Ban User</h1>
+
+  <!-- Permanent Ban Controls -->
+  <div class="permanent-ban">
+    <h2>Permanent Ban</h2>
+    <label for="banUsername">Username:</label>
+    <input type="text" id="banUsername" placeholder="Enter username to ban permanently" />
+    <button id="banButton" class="action-button">Ban User Permanently</button>
+    <p id="banMessage" class="message" style="color: red; display: none;"></p>
+  </div>
+
+  <!-- Temporary Ban Controls -->
+  <div class="temporary-ban" style="margin-top: 30px;">
+    <h2>Temporary Ban</h2>
+    <label for="tempBanUsername">Username:</label>
+    <input type="text" id="tempBanUsername" placeholder="Enter username for temporary ban" />
+    <label for="tempBanDuration">Duration (seconds):</label>
+    <input type="number" id="tempBanDuration" placeholder="Enter ban duration" value="30" />
+    <button id="tempBanButton" class="action-button">Temporary Ban</button>
+    <p id="tempBanMessage" class="message" style="color: red; display: none;"></p>
+  </div>
+
+  <!-- Unblock Controls -->
+  <div class="unblock-user" style="margin-top: 30px;">
+    <h2>Unblock User</h2>
+    <button id="unblockButton" class="action-button">Unblock User</button>
+    <p id="unblockMessage" class="message" style="color: green; display: none;"></p>
+  </div>
+</section>
+	
 
 <section id="roadmap" class="content-section">
     <h1>Student Roadmap</h1>

@@ -1214,3 +1214,75 @@ select:hover {
   margin: 20px auto;
   color: #007bff; /* Цвет анимации */
 }
+
+/* Контейнер календаря */
+.calendar-container {
+  width: 320px; /* Можно подстроить под нужный размер */
+  margin: 20px auto;
+  font-family: sans-serif;
+}
+
+/* Шапка календаря (название месяца и кнопки переключения) */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.calendar-header .month-year {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.calendar-header .prev-month,
+.calendar-header .next-month {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+/* Сетка календаря (7 колонок) */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+/* Общий стиль для ячеек (дней) */
+.day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  color: #424242;
+  font-weight: 500;
+}
+
+/* Метки дней недели (SUN, MON, ...) */
+.day-label {
+  background-color: transparent;
+  font-weight: bold;
+  color: #616161;
+}
+
+/* "Неактивные" дни (из предыдущего/следующего месяца) */
+.day.disabled {
+  color: #bdbdbd;
+  background-color: #f5f5f5;
+}
+
+/* Weekly Exams (жёлтый) */
+.exam-weekly {
+  background-color: #ffeb3b; /* ярко-жёлтый */
+  color: #212121;
+}
+
+/* Mid/Final Exams (красный) */
+.exam-mid-final {
+  background-color: #ff5252; /* красный */
+  color: #ffffff;
+}
