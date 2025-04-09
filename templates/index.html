@@ -6,7 +6,7 @@
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="format-detection" content="telephone=no">
-    <title>Web Chat</title>
+    <title>Students APP</title>
     <link rel="stylesheet" href="/static/styles/style.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -14,6 +14,19 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+<div class="lines">
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+</div>
+
   
   <!-- Само модальное окно -->
   <div id="updateModal" class="update-modal">
@@ -207,37 +220,87 @@
   </div>
 </template>
 
-<div id="rulesModal">
-  <div id="rulesModalContent">
+<div id="rulesModal" class="rules-modal">
+  <div id="rulesModalContent" class="rules-modal-content">
+    <!-- Кнопка-крестик для закрытия -->
     <span class="close-btn" id="closeRulesModal">&times;</span>
-    <h2>Exam Rules</h2>
-    <div class="rules-list">
-      <div class="rule-item">
-        <i class="fas fa-ban"></i>
-        <div class="rule-text">
-          Ilovani cheklash: Agar siz ilovani yopib, qayta ochishga harakat qilsangiz, imtihon 3 daqiqaga bloklanadi.
-        </div>
-      </div>
-      <div class="rule-item">
-        <i class="fas fa-user-secret"></i>
-        <div class="rule-text">
-          Har qanday firibgarlik uchun siz bloklanasiz.
-        </div>
-      </div>
-      <div class="rule-item">
-        <i class="fas fa-user-lock"></i>
-        <div class="rule-text">
-          Boshqa talabadan javoblarni ko'chirish, imtihon paytida boshqa talabalar bilan muloqot qilish yoki imtihon savollari yoki javoblarini boshqalar bilan bo'lishish taqiqlanadi.
-        </div>
-      </div>
-      <div class="rule-item">
-        <i class="fas fa-scroll"></i>
-        <div class="rule-text">
-          Biz akademik halollikka jiddiy qaraymiz. Iltimos, barcha talabalar uchun adolatli va halol sinov muhitini ta'minlash uchun o'z hissangizni qo'shing.
-        </div>
-      </div>
+
+    <!-- Точки прогресса (dots) -->
+    <div class="progress-dots" id="progressDots">
+      <!-- Количество точек = количеству слайдов -->
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
     </div>
-    <button id="continueExamBtn" class="weekly-exam-button">Continue exam</button>
+
+    <!-- Слайдер с правилами -->
+<div class="rules-slider">
+  <!-- Первый слайд -->
+  <div class="rule-slide active">
+    <div class="lottie-animation" id="lottie1"></div>
+<div class="rule-text-box">
+  <p>
+    Agar siz ilovadan chiqishga urinsangiz, imtihon ekrani avtomatik ravishda 3 daqiqaga bloklanadi. Iltimos, diqqat bilan imtihon jarayonini kuzating.
+  </p>
+</div>
+
+  </div>
+
+  <!-- Второй слайд -->
+  <div class="rule-slide">
+    <div class="lottie-animation" id="lottie2"></div>
+	<div class="rule-text-box">
+    <h2>Akademik halollikka jiddiy yondoshamiz</h2>
+    <p>
+      Akademik halollikka jiddiy yondoshamiz Boshqa o'quvchilardan javoblarni ko'chirish, imtihon davomida boshqa o'quvchilar bilan muloqot qilish yoki savollar va javoblarni bo'lishish qat'iyan man etiladi.
+    </p>
+	</div>
+  </div>
+
+  <!-- Третий слайд -->
+  <div class="rule-slide">
+    <div class="lottie-animation" id="lottie3"></div>
+	<div class="rule-text-box">
+    <h2>Akademik halollikka jiddiy yondoshamiz</h2>
+    <p>
+      Iltimos, barcha o'quvchilar uchun adolatli va shaffof sinov muhitini ta'minlashda o'z hissangizni qo'shing. Sizning shaxsiy integritetingiz va mehnatingiz sinov jarayonida asosiy e'tiborga olinadi.
+    </p>
+	</div>
+  </div>
+
+  <!-- Четвёртый слайд -->
+  <div class="rule-slide">
+    <div class="lottie-animation" id="lottie4"></div>
+	<div class="rule-text-box">
+    <h2>Firibgarlik holatlariga qat'iy chora</h2>
+    <p>
+      Har qanday firibgarlik aniqlansa, siz darhol bloklanasiz va imtihonni topshirishdan mahrum qilinasiz. Qoidabuzarlik holatlarida natijalar qayta ko'rib chiqilib, zarur choralar qo'llaniladi.
+    </p>
+	</div>
+  </div>
+</div>
+
+    <!-- Кнопка для переключения слайдов (с анимированным кругом вокруг стрелки) -->
+    <button id="nextRuleBtn" class="next-rule-btn">
+      <div class="circular-progress">
+        <svg class="progress-ring" width="70" height="70">
+          <circle
+            class="progress-ring__background"
+            cx="35"
+            cy="35"
+            r="30"
+          />
+          <circle
+            class="progress-ring__progress"
+            cx="35"
+            cy="35"
+            r="30"
+          />
+        </svg>
+        <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+      </div>
+    </button>
   </div>
 </div>
 
@@ -299,18 +362,20 @@
   </div>
 </div>
 
+<!-- Модальное окно со списком сессий -->
 <div id="sessionsModal" class="sessions-modal">
-    <div class="sessions-modal-content">
-	 <i class="fa fa-users" aria-hidden="true"></i>
-        <h2>Your Active Sessions</h2>
-        <ul id="sessionsList">
-            <!-- Список сессий будет заполняться динамически -->
-        </ul>
-        <button class="close-modal" onclick="document.getElementById('sessionsModal').style.display='none'">
-            Close
-        </button>
-    </div>
+  <div class="sessions-modal-content">
+    <h2>Active sessions</h2>
+    <ul id="sessionsList"></ul>
+    <button
+      class="close-modal"
+      onclick="document.getElementById('sessionsModal').style.display='none'"
+    >
+      Close
+    </button>
+  </div>
 </div>
+
 
 <!-- Модальное окно для списка музыки -->
 <div id="music-modal" class="music-modal hidden">
@@ -504,7 +569,7 @@
     <!-- Контейнер прогресс-бара -->
     <div class="progress-bar-container">
         <div class="progress-bar-background">
-            <div class="progress-bar-fill" id="progress-bar-fill" style="width: 78%;"></div>
+            <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%;"></div>
         </div>
 
         <!-- Метки-стрелки (absolute) -->
@@ -643,8 +708,8 @@
 </div>
 
     </div>
-	<script src="https://unpkg.com/wavesurfer.js"></script>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
     <script src="/static/js/chat.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.11/lottie.min.js"></script>
 </body>

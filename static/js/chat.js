@@ -1332,47 +1332,67 @@ document.addEventListener("DOMContentLoaded", () => {
 showToastNotification('Welcome ' + currentUser, 'success', 5000);
 
 document.getElementById('sessionsButton').addEventListener('click', function() {
-    // Делаем запрос на сервер для получения информации о сессиях
-    fetch('/sessions')
-        .then(response => response.json())  // Получаем данные в формате JSON
-        .then(data => {
-            const sessionModal = document.getElementById('sessionsModal');
-            const sessionsList = document.getElementById('sessionsList');
+  // Делаем запрос на сервер для получения информации о сессиях
+  fetch('/sessions')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch sessions');
+      }
+      return response.json();
+    })
+    .then(data => {
+      const sessionModal = document.getElementById('sessionsModal');
+      const sessionsList = document.getElementById('sessionsList');
 
-            // Очищаем список сессий перед добавлением новых
-            sessionsList.innerHTML = '';
+      // Очищаем список сессий перед добавлением новых
+      sessionsList.innerHTML = '';
 
-            if (data.sessions && data.sessions.length > 0) {
-                // Отображаем сессии пользователя
-                data.sessions.forEach(session => {
-                    const listItem = document.createElement('li');
+      if (data.sessions && data.sessions.length > 0) {
+        data.sessions.forEach(session => {
+          const listItem = document.createElement('li');
+          listItem.classList.add('session-item');
 
-                    // Создаем содержимое для каждой сессии
-                    listItem.innerHTML = `
-                        <strong>Device:</strong> ${session.deviceType || 'Unknown'} <br>
-                        <strong>Platform:</strong> ${session.platform || 'Unknown'} <br>
-                        <strong>OS:</strong> ${session.os || 'Unknown'} <br>
-                        <strong>Browser:</strong> ${session.browser || 'Unknown'} <br>
-                        <strong>IP Address:</strong> ${session.ipAddress || 'Unknown'} <br>
-                        <strong>Language:</strong> ${session.language || 'Unknown'}
-                    `;
-
-                    sessionsList.appendChild(listItem);
-                });
-            } else {
-                // Если сессий нет, показываем сообщение
-                const listItem = document.createElement('li');
-                listItem.textContent = 'No active sessions found.';
-                sessionsList.appendChild(listItem);
-            }
-
-            // Показываем модальное окно с сессиями
-            sessionModal.style.display = 'flex'; // Показываем модальное окно
-        })
-        .catch(error => {
-            console.error('Error fetching sessions:', error);
+          // Пример структуры для сессии (адаптируйте поля под ваши данные)
+          // Здесь предполагается, что в объекте session есть:
+          //   deviceType, os, location, lastSeen, ipAddress
+          // Если их нет, замените/уберите нужные поля
+          listItem.innerHTML = `
+            <div class="session-row">
+              <div class="session-icon">
+                <i class="fa fa-desktop"></i> <!-- Можно менять иконку под тип устройства -->
+              </div>
+              <div class="session-info">
+                <div class="session-title">
+                  ${session.deviceType || 'Desktop app'} on ${session.os || 'Unknown OS'}
+                </div>
+                <div class="session-subtitle">
+                  ${session.location || 'Unknown location'}${
+                    session.ipAddress ? ` — ${session.ipAddress}` : ''
+                  }
+                </div>
+                <div class="session-last-seen">
+                  Last seen ${session.lastSeen || 'N/A'}
+                </div>
+              </div>
+            </div>
+          `;
+          sessionsList.appendChild(listItem);
         });
+      } else {
+        // Если сессий нет, показываем сообщение
+        const listItem = document.createElement('li');
+        listItem.textContent = 'No active sessions found.';
+        sessionsList.appendChild(listItem);
+      }
+
+      // Показываем модальное окно с сессиями
+      sessionModal.style.display = 'flex';
+    })
+    .catch(error => {
+      console.error('Error fetching sessions:', error);
+    });
 });
+
 
 const coinDisplay = document.getElementById('coinDisplay');
 const coinBalance = document.getElementById('coinBalance');
@@ -1733,6 +1753,7 @@ function showInformModal(text) {
 
   // Принудительно добавляем фиксированный текст, затем то, что пришло в аргументе.
   // При желании используем перенос строки <br> или другое оформление:
+  
   modalText.innerHTML = `Iltimos, qoidalarni buzmaslikka harakat qiling.<br>${text}`;
 
   modal.style.display = 'flex'; // Показываем модалку
@@ -1783,16 +1804,7 @@ function initExamSecurity(enable = true) {
     }
 }
 
-function toggleRulesModal(action) {
-    const rulesModal = document.getElementById('rulesModal');
 
-    if (action === 'open') {
-        rulesModal.style.display = 'flex';
-        rulesModal.classList.add('show');
-    } else if (action === 'close') {
-        rulesModal.style.display = 'none';
-    }
-}
 
 
 
@@ -1800,22 +1812,250 @@ document.getElementById('closeExamModal').addEventListener('click', function() {
     document.getElementById('examModal').style.display = 'none';
 });
 
-// Привязываем функции к кнопкам
-document.getElementById('closeRulesModal').addEventListener('click', () => toggleRulesModal('close'));
-document.getElementById('continueExamBtn').addEventListener('click', () => {
-    document.getElementById('rulesModal').style.display = 'none';
+
+let rulesModalResolve = null;
+
+function toggleRulesModal(action) {
+  const rulesModal = document.getElementById('rulesModal');
+  const modalContent = rulesModal.querySelector('.rules-modal-content');
+  
+  if (action === 'open') {
+    // Открываем модалку и сбрасываем состояние
+    rulesModal.classList.add('show');
+    modalContent.classList.remove('closing');
+    currentSlide = 0;
+    showSlide(currentSlide);
+    
+    // Создаем промис, который будет разрешён при закрытии модалки
+    return new Promise((resolve) => {
+      rulesModalResolve = resolve;
+      
+      // Если в модалке есть кнопка закрытия (например, с классом .close-btn),
+      // можно также повесить обработчик для закрытия:
+      const closeBtn = rulesModal.querySelector('.close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', async function onClose() {
+          closeBtn.removeEventListener('click', onClose);
+          // Закрываем модальное окно
+          await toggleRulesModal('close');
+          // Разрешаем внешний промис
+          if (rulesModalResolve) {
+            //rulesModalResolve();
+            rulesModalResolve = null;
+          }
+        });
+      }
+    });
+  } else if (action === 'close') {
+    // Возвращаем промис, который разрешится после завершения анимации закрытия
+    return new Promise((resolve) => {
+      modalContent.classList.add('closing');
+      modalContent.addEventListener('animationend', () => {
+        rulesModal.classList.remove('show');
+        modalContent.classList.remove('closing');
+        resolve();
+      }, { once: true });
+    });
+  }
+}
+
+
+// Массив идентификаторов контейнеров для Lottie-анимаций
+const lottieIds = ['lottie1', 'lottie2', 'lottie3', 'lottie4'];
+const lottieAnimations = {};
+
+// Загружаем Lottie-анимацию для каждого контейнера
+lottieIds.forEach(id => {
+  const animationContainer = document.getElementById(id);
+  // Устанавливаем размеры контейнера через JS (если нужно)
+  animationContainer.style.width = '80px';
+  animationContainer.style.height = '80px';
+
+  lottieAnimations[id] = lottie.loadAnimation({
+    container: animationContainer,
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: '/static/animations/Rules.json'
+  });
 });
 
-// Закрытие при клике вне модального окна
-window.addEventListener('click', (event) => {
-    if (event.target === document.getElementById('rulesModal')) {
-        toggleRulesModal('close');
-    }
+
+/*********************************************
+ * СЛАЙДЕР ПРАВИЛ
+ *********************************************/
+
+// Находим все слайды
+const slides = document.querySelectorAll('.rule-slide');
+let currentSlide = 0;
+
+// Точки (dots)
+const dots = document.querySelectorAll('.dot');
+
+// Для анимации круга: вычислим длину окружности (circumference)
+const progressCircle = document.querySelector('.progress-ring__progress');
+const radius = 30; // радиус круга (r="30" в SVG)
+const circumference = 2 * Math.PI * radius;
+
+// Установим длину штриха (stroke-dasharray) = длине окружности
+progressCircle.style.strokeDasharray = `${circumference}`;
+// Начальное смещение (полностью не заполнен)
+progressCircle.style.strokeDashoffset = circumference;
+
+// Пример, как можно анимировать "до места"
+function showSlide(index) {
+  // Скрываем все слайды, показываем нужный
+  slides.forEach(slide => slide.classList.remove('active'));
+  slides[index].classList.add('active');
+
+  // Обновляем точки (dots)
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+
+  // Вычисляем прогресс от 0 до 1
+  const maxIndex = slides.length - 1;
+  const progressPercent = index / maxIndex; // 0..1
+
+  // strokeDashoffset = полная_длина - (прогресс * полная_длина)
+  // (Это и есть «до места», соответствующего текущему index)
+  const newOffset = circumference - progressPercent * circumference;
+
+  // -- ВАЖНО: transition в CSS анимирует изменение от старого значения к новому --
+  // Просто меняем strokeDashoffset, и всё анимируется автоматически
+  progressCircle.style.strokeDashoffset = newOffset;
+
+  // Меняем текст кнопки на "Continue exam" если это последний слайд
+  const nextBtn = document.getElementById('nextRuleBtn');
+  if (index === slides.length - 1) {
+    nextBtn.innerHTML = `
+      <div class="circular-progress">
+        <svg class="progress-ring" width="70" height="70">
+          <circle
+            class="progress-ring__background"
+            cx="35"
+            cy="35"
+            r="30"
+          />
+          <circle
+            class="progress-ring__progress"
+            cx="35"
+            cy="35"
+            r="30"
+            style="stroke-dasharray:${circumference}; stroke-dashoffset:0;"
+          />
+        </svg>
+        <span class="arrows"><i class="fas fa-arrow-right"></i></span>
+      </div>
+    `;
+  } else {
+    // Если не последний, возвращаем вид стрелки (учитывая текущий offset)
+    nextBtn.innerHTML = `
+      <div class="circular-progress">
+        <svg class="progress-ring" width="70" height="70">
+          <circle
+            class="progress-ring__background"
+            cx="35"
+            cy="35"
+            r="30"
+          />
+          <circle
+            class="progress-ring__progress"
+            cx="35"
+            cy="35"
+            r="30"
+            style="stroke-dasharray:${circumference}; stroke-dashoffset:${newOffset};"
+          />
+        </svg>
+        <span class="arrows"><i class="fas fa-arrow-right"></i></span>
+      </div>
+    `;
+  }
+}
+
+
+/*********************************************
+ * ОБРАБОТЧИКИ СОБЫТИЙ
+ *********************************************/
+
+// Крестик (закрыть окно)
+document.getElementById('closeRulesModal').addEventListener('click', () => {
+  toggleRulesModal('close');
 });
+
+document.getElementById('nextRuleBtn').addEventListener('click', async () => {
+  if (currentSlide < slides.length - 1) {
+    currentSlide++;
+    showSlide(currentSlide);
+  } else {
+    // Если последний слайд, закрываем модальное окно и, после завершения анимации, разрешаем внешний промис
+    await toggleRulesModal('close');
+    if (rulesModalResolve) {
+      rulesModalResolve();
+      rulesModalResolve = null;
+    }
+  }
+});
+
+
+function showModalStatus(text) {
+  // Проверяем, существует ли уже модальное окно, иначе создаём его
+  let modal = document.getElementById('statusModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'statusModal';
+    modal.className = 'status-modal';
+    // Внутренняя разметка модального окна
+    modal.innerHTML = `
+      <div class="status-modal-content">
+        <!-- Контейнер для Lottie-анимации -->
+        <div id="statusAnimation" class="lottie-animation"></div>
+        
+        <!-- Основной текст -->
+        <p id="statusText" class="status-text"></p>
+        
+        <!-- Дополнительный подзаголовок / текст (если нужно) -->
+        <p class="status-subtext">Success</p>
+        
+        <!-- Кнопка OK для закрытия модалки -->
+        <button id="statusOkBtn" class="status-modal-btn">OK</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  
+  // Обновляем основной текст в модальном окне
+  document.getElementById('statusText').textContent = text;
+  
+  // Загружаем Lottie-анимацию
+  const animationContainer = document.getElementById('statusAnimation');
+  // Очищаем предыдущую анимацию (если была)
+  animationContainer.innerHTML = '';
+  
+  lottie.loadAnimation({
+    container: animationContainer,
+    renderer: 'svg',
+    loop: false,       // проигрываем один раз
+    autoplay: true,
+    path: '/static/animations/success.json'
+  });
+  
+  // Отображаем модальное окно
+  modal.style.display = 'flex';
+  
+  // Обработчик для кнопки "Back to home" (OK) — закрываем окно
+  const okBtn = document.getElementById('statusOkBtn');
+  okBtn.onclick = () => {
+    modal.style.display = 'none';
+  };
+}
+
+
+
 
 document.getElementById('examTaskOption').addEventListener('click', async function() {
     // Получаем необходимые элементы
-    toggleRulesModal('open');
+    await toggleRulesModal('open');
     const examModal = document.getElementById('examModal');
     const examContainer = document.getElementById('examQuestions');
     const examHeader = document.getElementById('examTitle');
@@ -1898,10 +2138,10 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
 
       // Сравниваем с правильным (упрощённо, без учета регистра и пр.)
       if (userAnswer === correctAnswer) {
-        showToastNotification('Correct!');
+		showModalStatus("Correct answer Good Job!");
         questionElement.style.backgroundColor = '#1b5e20'; // зеленый фон
       } else {
-        showToastNotification(`Incorrect! Correct answer: ${correctAnswer}`);
+        showModalStatus(`Incorrect! Correct answer: ${correctAnswer}`);
         questionElement.style.backgroundColor = '#b71c1c'; // красный фон
       }
     }
@@ -2581,12 +2821,32 @@ function initAllWavePlayers() {
     popupBar.style.display = "none";
   }
 
+  // Функция показать спиннер ожидания
+  function showSpinner() {
+    // Если спиннера ещё нет, создаём и добавляем
+    if (!popupBar.querySelector(".lds-ring")) {
+      const spinner = document.createElement("div");
+      spinner.className = "lds-ring";
+      spinner.innerHTML = '<div></div><div></div><div></div>';
+      popupBar.appendChild(spinner);
+    }
+  }
+
+  // Функция скрыть спиннер ожидания
+  function hideSpinner() {
+    const spinner = popupBar.querySelector(".lds-ring");
+    if (spinner) {
+      popupBar.removeChild(spinner);
+    }
+  }
+
   // Кнопка "Стоп" – останавливаем и возвращаем на 0
   stopBtn.addEventListener("click", () => {
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       hidePopupBar();
+      hideSpinner();
       // Обновляем иконки в обеих кнопках
       if (currentPlayBtn) currentPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
       playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
@@ -2675,6 +2935,16 @@ function initAllWavePlayers() {
       audioEl.currentTime = newTime;
     });
 
+    // При ожидании загрузки (буферизации) – показываем спиннер
+    audioEl.addEventListener("waiting", () => {
+      showSpinner();
+    });
+
+    // Когда аудио начинает проигрываться, скрываем спиннер
+    audioEl.addEventListener("playing", () => {
+      hideSpinner();
+    });
+
     // При остановке (pause) аудио, обновляем иконку плеера
     audioEl.addEventListener("pause", () => {
       playBtn.innerHTML = '<i class="fas fa-play"></i>';
@@ -2689,12 +2959,14 @@ function initAllWavePlayers() {
       playBtn.innerHTML = '<i class="fas fa-play"></i>';
       playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
       hidePopupBar();
+      hideSpinner();
     });
   });
 
   // Делаем сам popupBar перетаскиваемым (функция makeElementDraggable должна быть определена)
   makeElementDraggable(popupBar);
 }
+
 
 
 function makeElementDraggable(el) {
@@ -2878,6 +3150,9 @@ function submitExamResults() {
                     showToastNotification(`Error: ${result.error}`);
                     return;
                 }
+				else {
+					showModalStatus("Exam submitted! Please hold on while we evaluate your exam. Your results will be displayed shortly.");
+				}
 
                 const totalQuestions = result.correct + result.incorrect + result.skipped;
                 const percentage = totalQuestions > 0 ? (result.correct / totalQuestions) * 100 : 0;
@@ -3317,6 +3592,7 @@ function getNextExamDate(unit, startDate, studyDays) {
     return "No upcoming exams"; // Если курс закончен
 }
 
+
 document.addEventListener("DOMContentLoaded", function() {
     fetchStudentProgress();
 });
@@ -3346,7 +3622,7 @@ function fetchStudentProgress() {
     </tr>
   `;
 
-  // Запрашиваем данные общего прогресса и историю экзаменов параллельно
+  // 1. Получаем данные общего прогресса
   const progressPromise = fetch(`/api/get-student-progress?username=${username}`)
     .then(response => {
       if (!response.ok) {
@@ -3355,7 +3631,8 @@ function fetchStudentProgress() {
       return response.json();
     });
 
-  const historyPromise = fetch(`/api/get-student-progress-history?username=${username}`)
+  // 2. Получаем сводные данные для блоков My Progress
+  const progressHistoryPromise = fetch(`/api/get-student-progress-history?username=${username}`)
     .then(response => {
       if (!response.ok) {
         return response.json().then(data => { throw new Error(data.error); });
@@ -3363,19 +3640,20 @@ function fetchStudentProgress() {
       return response.json();
     });
 
-  Promise.all([progressPromise, historyPromise])
-    .then(([progressData, historyData]) => {
+  Promise.all([progressPromise, progressHistoryPromise])
+    .then(([progressData, progressHistoryData]) => {
       console.log('📊 Progress Data:', progressData);
-      console.log('📊 History Data:', historyData);
+      console.log('📊 Progress History Data:', progressHistoryData);
 
-      // Извлекаем данные из обоих ответов
+      // Извлекаем данные для текущего пользователя
       const progressInfo = progressData[username] || {};
-      const historyInfo = historyData[username] || {};
+      // summaryInfo содержит данные для блоков My Progress (в виде строк с процентами)
+      const summaryInfo = progressHistoryData[username] || {};
 
-      // Приоритет отдаем актуальным данным из history для экзаменов
-      progressInfo.finalExam = historyInfo.finalExam ?? progressInfo.finalExam ?? 0;
-      progressInfo.weeklyExams = historyInfo.weeklyExams ?? progressInfo.weeklyExams ?? 0;
-      progressInfo.totalScore = historyInfo.totalScore ?? progressInfo.totalScore ?? 0;
+      // Обновляем поля для блоков My Progress, отдавая приоритет summaryInfo
+      progressInfo.finalExam = summaryInfo.finalExam !== undefined ? summaryInfo.finalExam : (progressInfo.finalExam ?? 0);
+      progressInfo.weeklyExams = summaryInfo.weeklyExams !== undefined ? summaryInfo.weeklyExams : (progressInfo.weeklyExams ?? 0);
+      progressInfo.totalScore = summaryInfo.totalScore !== undefined ? summaryInfo.totalScore : (progressInfo.totalScore ?? 0);
 
       const { progress = 0, start_date, study_days = "odd", finalExam, weeklyExams } = progressInfo;
       if (!start_date) throw new Error("Start date is missing");
@@ -3393,8 +3671,6 @@ function fetchStudentProgress() {
       const evenDays = [2, 4, 6];    // вторник, четверг, суббота
       let studyDaysElapsed = 0;
       let tempDate = new Date(courseStartDate);
-
-      // Сдвигаем до первого учебного дня согласно настройке study_days
       while (!((study_days === "odd" && oddDays.includes(tempDate.getDay())) ||
                (study_days === "even" && evenDays.includes(tempDate.getDay())))) {
         tempDate.setDate(tempDate.getDate() + 1);
@@ -3415,19 +3691,18 @@ function fetchStudentProgress() {
       const unit = `${studyWeeksElapsed + 1}.${dayInWeek}`;
       const weekNumber = studyWeeksElapsed + 1;
 
-      // Сохраняем юнит и неделю в глобальные переменные
       Unit = unit;
       Week = weekNumber;
 
       // 4. Получаем дату следующего экзамена (функция getNextExamDate должна быть определена)
       const nextExamDate = getNextExamDate(unit, start_date, study_days);
 
-      // Обновляем секцию "My Progress"
+      // Обновляем блоки My Progress
       const totalScore = parseFloat(progress).toFixed(2);
       document.getElementById("progress-score").textContent = `Total Score: ${totalScore}%`;
       document.getElementById("progress-bar-fill").style.width = `${totalScore}%`;
 
-      // Обновляем блок Final Exam (максимум 30)
+      // Блок Final Exam (максимум 30)
       const finalExamVal = parseFloat(finalExam || 0);
       const finalExamPercent = ((finalExamVal / 30) * 100).toFixed(2);
       document.getElementById("finalExamLabel").textContent = `${finalExamVal} / 30 (${finalExamPercent}%)`;
@@ -3436,7 +3711,7 @@ function fetchStudentProgress() {
         finalExamBar.style.width = `${finalExamPercent}%`;
       }
 
-      // Обновляем блок Weekly Exams (максимум 70)
+      // Блок Weekly Exams (максимум 70)
       const weeklyExamsVal = parseFloat(weeklyExams || 0);
       const weeklyExamsPercent = ((weeklyExamsVal / 70) * 100).toFixed(2);
       document.getElementById("weeklyExamsLabel").textContent = `${weeklyExamsVal} / 70 (${weeklyExamsPercent}%)`;
@@ -3456,12 +3731,11 @@ function fetchStudentProgress() {
       }
       document.getElementById("exam-date").innerHTML = `${examIcon} ${examMessage}`;
 
-      // Обновляем текущий юнит, неделю и завершение курса
-      document.getElementById("current-unit").textContent = `Current Unit: ${unit}`;
-      document.getElementById("current-week").textContent = `Week: ${weekNumber}`;
-      document.getElementById("course-completion").textContent = `Course Completion: ${completionPercentage}%`;
+      document.getElementById("current-unit").textContent = `Unit ${unit}`;
+      document.getElementById("current-week").textContent = `Week ${weekNumber}`;
+      document.getElementById("course-completion").textContent = `${completionPercentage}% Completed`;
 
-      // Добавляем кнопку "Weekly Exam" если условия соблюдены
+      // Добавляем кнопку "Weekly Exam", если условия соблюдены
       if (weekNumber >= 2 && dayInWeek === 1 && !document.querySelector('.weekly-exam-button')) {
         const weeklyExamButton = document.createElement("button");
         weeklyExamButton.textContent = "Weekly Exam START";
@@ -3470,27 +3744,74 @@ function fetchStudentProgress() {
         progressContainerEl.appendChild(weeklyExamButton);
       }
 
-      // Загружаем таблицу лидеров
-      return fetch('/api/get-leaderboard');
+      // Переходим к Leaderboard – здесь будем работать с данными из API get-student-progress
+      return fetch('/api/get-leaderboard')
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch leaderboard');
+          return response.json();
+        })
+        .then(leaderboardData => ({ leaderboardData }));
     })
-    .then(response => {
-      if (!response.ok) throw new Error('Failed to fetch leaderboard');
-      return response.json();
+    // Затем получаем историю для сравнения (API get-history) – API возвращает массив напрямую
+    .then(({ leaderboardData }) => {
+      return fetch(`/api/get-history?username=${username}`)
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch history');
+          return response.json();
+        })
+        .then(historyData => ({ leaderboardData, historyData: historyData || [] }));
     })
-    .then(leaderboardData => {
+    .then(({ leaderboardData, historyData }) => {
       console.log('🏅 Leaderboard Data:', leaderboardData);
-      // Сортируем студентов по убыванию общего прогресса
+      console.log('📜 Exam History Data:', historyData);
+      // Сортируем студентов по убыванию progress (реальное значение из API get-student-progress)
       const sortedLeaderboard = Object.entries(leaderboardData)
         .sort(([, a], [, b]) => b.progress - a.progress);
       leaderboardTable.innerHTML = "";
       let rank = 1;
       sortedLeaderboard.forEach(([student, studentInfo]) => {
         const row = document.createElement('tr');
+        // Форматируем progress для отображения (реальное значение progress)
         const formattedProgress = parseFloat(studentInfo.progress).toFixed(2);
+        let progressHtml = `${formattedProgress}%`;
+
+        // Если это текущий пользователь, используем историю (API get-history) для сравнения значений weeklyExams
+        if (student === username && historyData.length >= 2) {
+          // Фильтруем записи, где есть weeklyExams
+          const weeklyHistory = historyData.filter(item => item.weeklyExams !== undefined);
+          if (weeklyHistory.length >= 2) {
+            // Сортируем по дате в порядке убывания (самые свежие записи – первыми)
+            weeklyHistory.sort((a, b) => b.date.localeCompare(a.date));
+            // Берём первые две записи с уникальными датами
+            let distinct = [];
+            for (let rec of weeklyHistory) {
+              if (!distinct.length || rec.date !== distinct[distinct.length - 1].date) {
+                distinct.push(rec);
+              }
+              if (distinct.length === 2) break;
+            }
+if (distinct.length === 2) {
+  const [mostRecent, previous] = distinct;
+  const currentWeekly = parseFloat(mostRecent.weeklyExams);
+  const previousWeekly = parseFloat(previous.weeklyExams);
+  // Используем основной progress, полученный из API get-student-progress
+  // (formattedProgress определён ранее как основной процент progress)
+  if (currentWeekly > previousWeekly) {
+    progressHtml = `<span class="up-percentage"><i class="fas fa-arrow-up up-icon"></i> ${formattedProgress}%</span>`;
+  } else if (currentWeekly < previousWeekly) {
+    progressHtml = `<span class="down-percentage"><i class="fas fa-arrow-down down-icon"></i> ${formattedProgress}%</span>`;
+  } else {
+    progressHtml = `${formattedProgress}%`;
+  }
+}
+
+          }
+        }
+
         row.innerHTML = `
           <td><div class="student-avatar">${rank}</div></td>
           <td class="student-name">${student}</td>
-          <td>${formattedProgress}%</td>
+          <td>${progressHtml}</td>
         `;
         leaderboardTable.appendChild(row);
         rank++;
@@ -3498,15 +3819,27 @@ function fetchStudentProgress() {
     })
     .catch(error => {
       console.error('⚠️ Error:', error);
-      errorMessageEl.textContent = "You are not an active student";
-      errorMessageEl.style.display = "block";
+	  errorMessageEl.textContent = "You are not an active student";
+	  errorMessageEl.style.cssText = `
+    color: #ff4d4d;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid #ff4d4d;
+    border-radius: 10px;
+	`;
+errorMessageEl.style.display = "block";
+
     })
     .finally(() => {
-      // Скрываем спиннер и показываем контент сразу после завершения всех запросов
       loadingEl.style.display = "none";
       progressContainerEl.style.display = "block";
     });
 }
+
 
 function loadLatestProgress() {
   const username = getCurrentUser();
@@ -3914,6 +4247,18 @@ document.getElementById("leaderboard-option").addEventListener("click", function
             updateLeaderboardModal("<p>Error loading leaderboard. Please try again later.</p>");
         });
 });
+
+function showLeaderboardModal(content) {
+    const modal = document.querySelector(".leaderboard-modal");
+    modal.innerHTML = content;
+    modal.style.display = "block";
+}
+
+function updateLeaderboardModal(content) {
+    const modal = document.querySelector(".leaderboard-modal");
+    modal.innerHTML = content;
+}
+
 
 // Функция для показа модального окна
 function showLeaderboardModal(content) {

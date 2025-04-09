@@ -1,12 +1,10 @@
 {
-    "Muhammadali": {
-        "progress": 56.074,
-        "start_date": "2024-12-27",
+    "Muhammadiso": {
+        "progress": 50.0,
+        "start_date": "2025-03-31",
         "study_days": "odd"
     },
-    "Abdulmalik": {
-        "progress": 56.48622222222222,
-        "start_date": "2024-12-27",
-        "study_days": "odd"
+    "Muhammadali": {
+        "progress": 0.0
     }
 }

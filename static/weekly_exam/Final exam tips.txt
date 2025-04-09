@@ -85,19 +85,25 @@ exam_questions = [
       }
     ]
   },
-  {
-    "id": 3,
-    "type": "picture",
-    "text": "Look at the image and answer the following question:",
-    "image": "/static/exam/picture1.png",
-    "subquestions": [
-      {
-        "id": "3.1",
-        "type": "multiple_choice",
-        "text": "What does the picture depict?",
-        "options": ["A busy street", "A quiet park", "A mountain view"],
-        "correct": "A busy street"
-      }
-    ]
-  }
+{
+  "id": 3,
+  "type": "picture",
+  "text": "Look at the images and answer the following question:",
+  "images": [
+    "/static/exam/picture1.png",
+    "/static/exam/picture2.png",
+    "/static/exam/picture3.png",
+    "/static/exam/picture4.png"
+  ],
+  "subquestions": [
+    {
+      "id": "3.1",
+      "type": "multiple_choice",
+      "text": "What do these pictures depict?",
+      "options": ["A busy street", "A quiet park", "A mountain view", "A set of objects"],
+      "correct": "A busy street"
+    }
+  ]
+}
+
 ]

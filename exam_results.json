@@ -1,528 +1,312 @@
 {
-    "Muhammadali": {
-        "correct": 2,
-        "incorrect": 3,
-        "skipped": 10,
-        "total_questions": 15,
-        "correct_percentage": 13.333333333333334,
-        "rewarded": false,
-        "coins": 0,
-        "time_finished": "2025-03-14 20:05:00",
-        "results": [
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.1",
-                "question": "Who wants to go to Park Road?",
-                "user_answer": "the woman and the man",
-                "correct_answer": "the woman and the man",
-                "is_correct": true
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.2",
-                "question": "What time is the bus going to arrive?",
-                "user_answer": "8.50",
-                "correct_answer": "8.50",
-                "is_correct": true
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.3",
-                "question": "When did the man arrive at the bus stop?",
-                "user_answer": "20 minutes ago",
-                "correct_answer": "45 minutes ago",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.4",
-                "question": "What is the woman going to do?",
-                "user_answer": "walk to her meeting",
-                "correct_answer": "call a taxi",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.5",
-                "question": "What does the man say?",
-                "user_answer": "It\u2019s cloudy today",
-                "correct_answer": "There aren\u2019t any taxis",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.1",
-                "question": "This festival started in 1620.",
-                "user_answer": null,
-                "correct_answer": "B",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.2",
-                "question": "This festival was expensive (\u00a335).",
-                "user_answer": null,
-                "correct_answer": "A",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.3",
-                "question": "The writer\u2019s friends went to this festival last year.",
-                "user_answer": null,
-                "correct_answer": "B",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.4",
-                "question": "This festival is always from 13th to 15th April.",
-                "user_answer": null,
-                "correct_answer": "C",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.5",
-                "question": "People wear beautiful clothes in this festival.",
-                "user_answer": null,
-                "correct_answer": "B",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.1",
-                "question": "When are Carmen and Javier going to go to the festival?",
-                "user_answer": null,
-                "correct_answer": "on Friday",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.2",
-                "question": "Who went to the Digby Food Festival last year?",
-                "user_answer": null,
-                "correct_answer": "the writer's (David Smith's) friends",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.3",
-                "question": "How much was the Digby Food Festival?",
-                "user_answer": null,
-                "correct_answer": "\u00a335",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.4",
-                "question": "When is the Songkran festival?",
-                "user_answer": null,
-                "correct_answer": "13th to 15th April",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.5",
-                "question": "What\u2019s the weather like in Thailand in April?",
-                "user_answer": null,
-                "correct_answer": "very hot",
-                "is_correct": false
-            }
-        ]
-    },
     "Muhammadiso": {
         "correct": 0,
         "incorrect": 1,
-        "skipped": 14,
-        "total_questions": 15,
+        "skipped": 17,
+        "total_questions": 18,
         "correct_percentage": 0.0,
         "rewarded": false,
         "coins": 0,
-        "time_finished": "2025-03-14 17:28:24",
+        "time_finished": "2025-04-09 22:37:30",
         "results": [
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.1",
-                "question": "Who wants to go to Park Road?",
-                "user_answer": "the woman",
-                "correct_answer": "the woman and the man",
+                "question": "1 The woman __",
+                "user_answer": "is going to go on holiday",
+                "correct_answer": "asks about the weather",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.2",
-                "question": "What time is the bus going to arrive?",
+                "question": "The woman's friend __",
                 "user_answer": null,
-                "correct_answer": "8.50",
+                "correct_answer": "went to Russia",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.3",
-                "question": "When did the man arrive at the bus stop?",
+                "question": "3 Russia __",
                 "user_answer": null,
-                "correct_answer": "45 minutes ago",
+                "correct_answer": "is warm in summer",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.4",
-                "question": "What is the woman going to do?",
+                "question": "4 The man __",
                 "user_answer": null,
-                "correct_answer": "call a taxi",
+                "correct_answer": "is going to go on holiday",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.5",
-                "question": "What does the man say?",
+                "question": "5 The woman's holiday plans __",
                 "user_answer": null,
-                "correct_answer": "There aren\u2019t any taxis",
+                "correct_answer": "are going to change",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "question",
                 "question_id": "2.1",
-                "question": "This festival started in 1620.",
+                "question": "The person isn\u2019t from ___________.",
                 "user_answer": null,
-                "correct_answer": "B",
+                "correct_answer": "Madrid",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "question",
                 "question_id": "2.2",
-                "question": "This festival was expensive (\u00a335).",
+                "question": "The flat is not in a modern ___________.",
                 "user_answer": null,
-                "correct_answer": "A",
+                "correct_answer": "building",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "question",
                 "question_id": "2.3",
-                "question": "The writer\u2019s friends went to this festival last year.",
+                "question": "All the rooms have got a ___________.",
                 "user_answer": null,
-                "correct_answer": "B",
+                "correct_answer": "balcony",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "question",
                 "question_id": "2.4",
-                "question": "This festival is always from 13th to 15th April.",
+                "question": "The person loves ___________ and parks.",
                 "user_answer": null,
-                "correct_answer": "C",
+                "correct_answer": "art",
+                "is_correct": false
+            },
+            {
+                "question_type": "question",
+                "question_id": "2.5",
+                "question": "The flat hasn\u2019t got a ___________.",
+                "user_answer": null,
+                "correct_answer": "lift",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "2.5",
-                "question": "People wear beautiful clothes in this festival.",
-                "user_answer": null,
-                "correct_answer": "B",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
                 "question_id": "3.1",
-                "question": "When are Carmen and Javier going to go to the festival?",
+                "question": "What room __ in your house?",
                 "user_answer": null,
-                "correct_answer": "on Friday",
+                "correct_answer": "do you like",
                 "is_correct": false
             },
             {
-                "question_type": "open_ended",
+                "question_type": "multiple_choice",
                 "question_id": "3.2",
-                "question": "Who went to the Digby Food Festival last year?",
+                "question": "The __ is my favourite room, because I love __.",
                 "user_answer": null,
-                "correct_answer": "the writer's (David Smith's) friends",
+                "correct_answer": "kitchen",
                 "is_correct": false
             },
             {
-                "question_type": "open_ended",
+                "question_type": "multiple_choice",
                 "question_id": "3.3",
-                "question": "How much was the Digby Food Festival?",
+                "question": "My family eats dinner there every day. It\u2019s got a big window and you __ our garden.",
                 "user_answer": null,
-                "correct_answer": "\u00a335",
+                "correct_answer": "can see",
                 "is_correct": false
             },
             {
-                "question_type": "open_ended",
+                "question_type": "multiple_choice",
                 "question_id": "3.4",
-                "question": "When is the Songkran festival?",
+                "question": "Is __ a lot of furniture in the room?",
                 "user_answer": null,
-                "correct_answer": "13th to 15th April",
+                "correct_answer": "There\u2019s",
                 "is_correct": false
             },
             {
-                "question_type": "open_ended",
+                "question_type": "multiple_choice",
                 "question_id": "3.5",
-                "question": "What\u2019s the weather like in Thailand in April?",
+                "question": "Yes, there\u2019s a __ and six chairs.",
                 "user_answer": null,
-                "correct_answer": "very hot",
+                "correct_answer": "table",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "3.6",
+                "question": "__ chairs are quite old.",
+                "user_answer": null,
+                "correct_answer": "All the",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "3.7",
+                "question": "__ a TV in the room, but we listen to the radio.",
+                "user_answer": null,
+                "correct_answer": "There isn\u2019t",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "3.8",
+                "question": "We like __ to our favourite music.",
+                "user_answer": null,
+                "correct_answer": "to music",
                 "is_correct": false
             }
         ]
     },
-    "Abdulmalik": {
-        "correct": 0,
+    "Muhammadali": {
+        "correct": 1,
         "incorrect": 1,
-        "skipped": 14,
-        "total_questions": 15,
-        "correct_percentage": 0.0,
+        "skipped": 16,
+        "total_questions": 18,
+        "correct_percentage": 5.555555555555555,
         "rewarded": false,
         "coins": 0,
-        "time_finished": "2025-03-14 18:00:41",
+        "time_finished": "2025-04-09 17:11:47",
         "results": [
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.1",
-                "question": "Who wants to go to Park Road?",
-                "user_answer": "the man",
-                "correct_answer": "the woman and the man",
+                "question": "1 The woman __",
+                "user_answer": null,
+                "correct_answer": "asks about the weather",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.2",
-                "question": "What time is the bus going to arrive?",
-                "user_answer": null,
-                "correct_answer": "8.50",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.3",
-                "question": "When did the man arrive at the bus stop?",
-                "user_answer": null,
-                "correct_answer": "45 minutes ago",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.4",
-                "question": "What is the woman going to do?",
-                "user_answer": null,
-                "correct_answer": "call a taxi",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.5",
-                "question": "What does the man say?",
-                "user_answer": null,
-                "correct_answer": "There aren\u2019t any taxis",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.1",
-                "question": "This festival started in 1620.",
-                "user_answer": null,
-                "correct_answer": "B",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.2",
-                "question": "This festival was expensive (\u00a335).",
-                "user_answer": null,
-                "correct_answer": "A",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.3",
-                "question": "The writer\u2019s friends went to this festival last year.",
-                "user_answer": null,
-                "correct_answer": "B",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.4",
-                "question": "This festival is always from 13th to 15th April.",
-                "user_answer": null,
-                "correct_answer": "C",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.5",
-                "question": "People wear beautiful clothes in this festival.",
-                "user_answer": null,
-                "correct_answer": "B",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.1",
-                "question": "When are Carmen and Javier going to go to the festival?",
-                "user_answer": null,
-                "correct_answer": "on Friday",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.2",
-                "question": "Who went to the Digby Food Festival last year?",
-                "user_answer": null,
-                "correct_answer": "the writer's (David Smith's) friends",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.3",
-                "question": "How much was the Digby Food Festival?",
-                "user_answer": null,
-                "correct_answer": "\u00a335",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.4",
-                "question": "When is the Songkran festival?",
-                "user_answer": null,
-                "correct_answer": "13th to 15th April",
-                "is_correct": false
-            },
-            {
-                "question_type": "open_ended",
-                "question_id": "3.5",
-                "question": "What\u2019s the weather like in Thailand in April?",
-                "user_answer": null,
-                "correct_answer": "very hot",
-                "is_correct": false
-            }
-        ]
-    },
-    "Zakariyo": {
-        "correct": 11,
-        "incorrect": 0,
-        "skipped": 4,
-        "total_questions": 15,
-        "correct_percentage": 73.33333333333333,
-        "rewarded": false,
-        "coins": 0,
-        "time_finished": "2025-03-14 17:43:40",
-        "results": [
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.1",
-                "question": "Who wants to go to Park Road?",
-                "user_answer": "the woman and the man",
-                "correct_answer": "the woman and the man",
-                "is_correct": true
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "1.2",
-                "question": "What time is the bus going to arrive?",
-                "user_answer": "8.50",
-                "correct_answer": "8.50",
+                "question": "The woman's friend __",
+                "user_answer": "went to Russia",
+                "correct_answer": "went to Russia",
                 "is_correct": true
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.3",
-                "question": "When did the man arrive at the bus stop?",
-                "user_answer": "45 minutes ago",
-                "correct_answer": "45 minutes ago",
-                "is_correct": true
+                "question": "3 Russia __",
+                "user_answer": null,
+                "correct_answer": "is warm in summer",
+                "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.4",
-                "question": "What is the woman going to do?",
-                "user_answer": "call a taxi",
-                "correct_answer": "call a taxi",
-                "is_correct": true
+                "question": "4 The man __",
+                "user_answer": null,
+                "correct_answer": "is going to go on holiday",
+                "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "1.5",
-                "question": "What does the man say?",
-                "user_answer": "There aren\u2019t any taxis",
-                "correct_answer": "There aren\u2019t any taxis",
-                "is_correct": true
+                "question": "5 The woman's holiday plans __",
+                "user_answer": null,
+                "correct_answer": "are going to change",
+                "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "question",
                 "question_id": "2.1",
-                "question": "This festival started in 1620.",
-                "user_answer": "B",
-                "correct_answer": "B",
-                "is_correct": true
+                "question": "The person isn\u2019t from ___________.",
+                "user_answer": null,
+                "correct_answer": "Madrid",
+                "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "question",
                 "question_id": "2.2",
-                "question": "This festival was expensive (\u00a335).",
-                "user_answer": "A",
-                "correct_answer": "A",
-                "is_correct": true
+                "question": "The flat is not in a modern ___________.",
+                "user_answer": null,
+                "correct_answer": "building",
+                "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "question",
                 "question_id": "2.3",
-                "question": "The writer\u2019s friends went to this festival last year.",
-                "user_answer": "B",
-                "correct_answer": "B",
-                "is_correct": true
+                "question": "All the rooms have got a ___________.",
+                "user_answer": null,
+                "correct_answer": "balcony",
+                "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "question",
                 "question_id": "2.4",
-                "question": "This festival is always from 13th to 15th April.",
-                "user_answer": "C",
-                "correct_answer": "C",
-                "is_correct": true
+                "question": "The person loves ___________ and parks.",
+                "user_answer": null,
+                "correct_answer": "art",
+                "is_correct": false
+            },
+            {
+                "question_type": "question",
+                "question_id": "2.5",
+                "question": "The flat hasn\u2019t got a ___________.",
+                "user_answer": null,
+                "correct_answer": "lift",
+                "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "2.5",
-                "question": "People wear beautiful clothes in this festival.",
-                "user_answer": "B",
-                "correct_answer": "B",
-                "is_correct": true
-            },
-            {
-                "question_type": "open_ended",
                 "question_id": "3.1",
-                "question": "When are Carmen and Javier going to go to the festival?",
-                "user_answer": "on Friday ",
-                "correct_answer": "on Friday",
-                "is_correct": true
+                "question": "What room __ in your house?",
+                "user_answer": null,
+                "correct_answer": "do you like",
+                "is_correct": false
             },
             {
-                "question_type": "open_ended",
+                "question_type": "multiple_choice",
                 "question_id": "3.2",
-                "question": "Who went to the Digby Food Festival last year?",
+                "question": "The __ is my favourite room, because I love __.",
                 "user_answer": null,
-                "correct_answer": "the writer's (David Smith's) friends",
+                "correct_answer": "kitchen",
                 "is_correct": false
             },
             {
-                "question_type": "open_ended",
+                "question_type": "multiple_choice",
                 "question_id": "3.3",
-                "question": "How much was the Digby Food Festival?",
+                "question": "My family eats dinner there every day. It\u2019s got a big window and you __ our garden.",
                 "user_answer": null,
-                "correct_answer": "\u00a335",
+                "correct_answer": "can see",
                 "is_correct": false
             },
             {
-                "question_type": "open_ended",
+                "question_type": "multiple_choice",
                 "question_id": "3.4",
-                "question": "When is the Songkran festival?",
+                "question": "Is __ a lot of furniture in the room?",
                 "user_answer": null,
-                "correct_answer": "13th to 15th April",
+                "correct_answer": "There\u2019s",
                 "is_correct": false
             },
             {
-                "question_type": "open_ended",
+                "question_type": "multiple_choice",
                 "question_id": "3.5",
-                "question": "What\u2019s the weather like in Thailand in April?",
+                "question": "Yes, there\u2019s a __ and six chairs.",
                 "user_answer": null,
-                "correct_answer": "very hot",
+                "correct_answer": "table",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "3.6",
+                "question": "__ chairs are quite old.",
+                "user_answer": null,
+                "correct_answer": "All the",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "3.7",
+                "question": "__ a TV in the room, but we listen to the radio.",
+                "user_answer": null,
+                "correct_answer": "There isn\u2019t",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "3.8",
+                "question": "We like __ to our favourite music.",
+                "user_answer": "music",
+                "correct_answer": "to music",
                 "is_correct": false
             }
         ]

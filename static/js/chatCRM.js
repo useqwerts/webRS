@@ -216,7 +216,7 @@ banButton.addEventListener('click', () => {
             .then(response => response.json())
             .then(data => {
               console.log('Exam started:', data);
-              // Если нужно что-то делать по ответу
+              fetchAndRenderExamQuestions();
             })
             .catch(error => {
               console.error('Error:', error);
@@ -883,3 +883,144 @@ function handleUnblockClick(event) {
 
 // Добавляем обработчик на кнопку разблокировки
 document.getElementById("unblockButton").addEventListener("click", handleUnblockClick);
+
+// Функция для форматирования времени (секунды в формат мм:сс)
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+  return `${minutes}:${sec}`;
+}
+
+// Функция инициализации аудиоплееров
+function initAudioPlayers() {
+  const audioPlayers = document.querySelectorAll('.custom-audio-player');
+  audioPlayers.forEach(player => {
+    const audioSrc = player.getAttribute('data-audio-src');
+    
+    // Создаем кнопку воспроизведения и устанавливаем для неё id
+    const playBtn = document.createElement('button');
+    playBtn.id = "custom-play-btn"; // установка id для применения стилей #custom-play-btn
+    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    
+    // Создаем контейнер для полосы прогресса (волны)
+    const wavesContainer = document.createElement('div');
+    wavesContainer.classList.add('custom-audio-waves');
+    wavesContainer.setAttribute('data-audio-src', audioSrc);
+    
+    // Создаем дисплей времени
+    const timeDisplay = document.createElement('span');
+    timeDisplay.classList.add('custom-time-display');
+    timeDisplay.textContent = '0:00';
+    
+    // Очищаем содержимое плеера и вставляем созданные элементы
+    player.innerHTML = ''; 
+    player.appendChild(playBtn);
+    player.appendChild(wavesContainer);
+    player.appendChild(timeDisplay);
+
+    // Создаем аудио элемент
+    const audioEl = document.createElement('audio');
+    audioEl.src = audioSrc;
+    audioEl.controls = false;
+    wavesContainer.appendChild(audioEl);
+
+    // Создаем элемент для прогресса
+    const progressEl = document.createElement('div');
+    progressEl.className = 'progress';
+    wavesContainer.appendChild(progressEl);
+
+    // Инициализация дисплея времени
+    audioEl.addEventListener('loadedmetadata', () => {
+      timeDisplay.textContent = '0:00';
+    });
+
+    // Обработчик кнопки воспроизведения
+    playBtn.addEventListener('click', () => {
+      if (audioEl.paused) {
+        audioEl.play();
+        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      } else {
+        audioEl.pause();
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      }
+    });
+
+    // Обновление прогресса и времени
+    audioEl.addEventListener('timeupdate', () => {
+      if (audioEl.duration) {
+        const progressPercent = (audioEl.currentTime / audioEl.duration) * 100;
+        progressEl.style.width = `${progressPercent}%`;
+        timeDisplay.textContent = formatTime(audioEl.currentTime);
+      }
+    });
+
+    // Перемотка при клике по полосе
+    wavesContainer.addEventListener('click', (e) => {
+      // Если кликнули по кнопке, не обрабатываем
+      if (e.target.closest('#custom-play-btn')) return;
+      const rect = wavesContainer.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const newTime = (clickX / rect.width) * audioEl.duration;
+      audioEl.currentTime = newTime;
+    });
+
+    // По окончании трека возвращаем кнопку в состояние "play"
+    audioEl.addEventListener('ended', () => {
+      playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    });
+  });
+}
+
+
+// Функция для отрисовки вопросов экзамена – показываем только вопросы с audio_Exam и выводим только ID
+function renderExamQuestions(questions) {
+  const container = document.getElementById('examQuestionsContainer');
+  container.innerHTML = '';
+
+  questions.forEach(question => {
+    // Если у вопроса отсутствует audio_Exam, пропускаем его
+    if (!question.audio_Exam) return;
+
+    // Создаем контейнер для вопроса
+    const questionDiv = document.createElement('div');
+    questionDiv.classList.add('exam-question');
+
+    // Выводим только ID вопроса с использованием соответствующего класса для стилизации
+    const idDisplay = document.createElement('div');
+    idDisplay.classList.add('exam-question-id');
+    idDisplay.textContent = question.id;
+    questionDiv.appendChild(idDisplay);
+
+    // Добавляем аудиоплеер для данного вопроса
+    const audioPlayer = document.createElement('div');
+    audioPlayer.classList.add('custom-audio-player');
+    audioPlayer.setAttribute('data-audio-src', question.audio_Exam);
+    audioPlayer.innerHTML = `
+      <button class="custom-play-btn"><i class="fas fa-play"></i></button>
+      <div class="custom-audio-waves" data-audio-src="${question.audio_Exam}"></div>
+      <span class="custom-time-display">0:00</span>
+    `;
+    questionDiv.appendChild(audioPlayer);
+
+    container.appendChild(questionDiv);
+  });
+
+  // Инициализируем аудиоплееры после отрисовки
+  initAudioPlayers();
+}
+
+// Функция для запроса данных с API и отрисовки вопросов
+function fetchAndRenderExamQuestions() {
+  fetch('/get_exam_questions')
+    .then(response => response.json())
+    .then(data => {
+      if (data.questions) {
+        renderExamQuestions(data.questions);
+      } else if (data.error) {
+        document.getElementById('examQuestionsContainer').innerHTML = `<p>${data.error}</p>`;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}

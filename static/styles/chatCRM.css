@@ -66,18 +66,39 @@ body {
 /* Main Content */
 .content {
     flex-grow: 1;
-    padding: 30px; /* Increased padding for main content */
-    background: rgba(30, 35, 50, 0.2); /* Slightly darker, more subtle background */
-    border-radius: 15px; /* More rounded content corners */
-    margin: 25px; /* Increased margin around content */
-    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3); /* Enhanced content shadow */
+    padding: 30px;
+    background: rgba(30, 35, 50, 0.2);
+    border-radius: 15px;
+    margin: 10px;
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-    align-items: stretch; /* Stretch items to fill content width */
+    align-items: stretch;
     max-height: 100%;
     overflow-y: auto;
     box-sizing: border-box;
 }
+
+/* Адаптивность для устройств с максимальной шириной экрана 768px (планшеты и мобильные) */
+@media (max-width: 768px) {
+  .content {
+    padding: 20px;
+    margin: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* Адаптивность для мобильных устройств с максимальной шириной экрана 480px */
+@media (max-width: 480px) {
+  .content {
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  }
+}
+
 
 /* Content Sections */
 .content-section {
@@ -139,7 +160,7 @@ button {
 	    user-select: none;
     background: linear-gradient(90deg, #38E57F, #2BB673); /* Vibrant green gradient for buttons */
     color: #FFFFFF;
-    padding: 14px 28px; /* Increased button padding */
+    padding: 15px 15px; /* Increased button padding */
     border: none;
     border-radius: 25px; /* More rounded buttons */
     cursor: pointer;
@@ -149,12 +170,6 @@ button {
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* Added box-shadow transition */
     box-sizing: border-box;
     letter-spacing: 0.6px; /* Subtle letter spacing for buttons */
-}
-
-button:hover {
-    background: linear-gradient(90deg, #2BB673, #38E57F); /* Inverted gradient on hover */
-    transform: translateY(-3px) scale(1.03); /* More pronounced hover effect */
-    box-shadow: 0 9px 25px rgba(0, 0, 0, 0.5); /* Enhanced hover shadow */
 }
 
 /* Dashboard */
@@ -597,120 +612,125 @@ input[type="text"]:focus {
 
 
 :root {
-      --slider-background: #f2f2f2;       /* Цвет фона (неактивный) */
-      --slider-active-background: #2ecc71;/* Цвет фона (активный) */
-      --handle-background: #ffffff;       /* Цвет ручки (неактивный) */
-      --handle-active-background: #ffffff;/* Цвет ручки (активный) */
-      --handle-icon-color: #888;          /* Цвет иконки по умолчанию */
-      --handle-icon-active-color: #2ecc71;/* Цвет иконки при активации */
-      --text-color: #555;                 /* Цвет текста (неактивный) */
-      --text-color-active: #fff;          /* Цвет текста (активный) */
-      --border-radius: 30px;
-      --slider-width: 320px;              /* Ширина всего слайдера */
-      --slider-height: 60px;              /* Высота слайдера */
-    }
+  --slider-background: #f2f2f2;       /* Цвет фона (неактивный) */
+  --slider-active-background: #2ecc71; /* Цвет фона (активный) */
+  --handle-background: #ffffff;        /* Цвет ручки (неактивный) */
+  --handle-active-background: #ffffff; /* Цвет ручки (активный) */
+  --handle-icon-color: #888;           /* Цвет иконки по умолчанию */
+  --handle-icon-active-color: #2ecc71;  /* Цвет иконки при активации */
+  --text-color: #555;                  /* Цвет текста (неактивный) */
+  --text-color-active: #fff;           /* Цвет текста (активный) */
+  --border-radius: 30px;
+  --slider-width: 320px;               /* Ширина всего слайдера */
+  --slider-height: 60px;               /* Высота слайдера */
+}
 
-    /* Контейнер слайдера */
-    #startExamSliderContainer {
-      position: relative;
-      width: var(--slider-width);
-      height: var(--slider-height);
-      background-color: var(--slider-background);
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      overflow: hidden;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    /* Активное состояние контейнера */
-    #startExamSliderContainer.active {
-      background-color: var(--slider-active-background);
-    }
+/* Контейнер слайдера */
+#startExamSliderContainer {
+  position: relative;
+  width: var(--slider-width);
+  height: var(--slider-height);
+  background-color: var(--slider-background);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+/* Активное состояние контейнера */
+#startExamSliderContainer.active {
+  background-color: var(--slider-active-background);
+}
 
-    /* Текст внутри слайдера */
-    .slider-text {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 18px;
-      color: var(--text-color);
-      transition: color 0.3s ease;
-      pointer-events: none; /* чтобы текст не мешал перетаскиванию */
-      /* Начальное состояние анимации (виден, без сдвига) */
-      opacity: 1;
-    }
-    /* Меняем цвет текста при активном состоянии */
-    #startExamSliderContainer.active .slider-text {
-      color: var(--text-color-active);
-    }
+/* Текст внутри слайдера */
+.slider-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: var(--text-color);
+  transition: color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  opacity: 1;
+}
+/* Меняем цвет текста при активном состоянии */
+#startExamSliderContainer.active .slider-text {
+  color: var(--text-color-active);
+}
 
-    /* Ручка слайдера */
-    #startExamSliderHandle {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: var(--slider-height);
-      height: var(--slider-height);
-      background-color: var(--handle-background);
-      border-radius: var(--border-radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      transition: left 0.4s ease, background-color 0.3s ease, transform 0.3s ease;
-    }
-    /* Ховер-эффект на ручку */
-    #startExamSliderHandle:hover {
-      background-color: #f0f0f0;
-    }
-    /* При активном состоянии ручка может чуть увеличиваться */
-    #startExamSliderHandle.active {
-      transform: scale(1.05);
-    }
-    /* Иконка внутри ручки */
-    #startExamSliderHandle i {
-      font-size: 24px;
-      color: var(--handle-icon-color);
-      transition: transform 0.4s ease, color 0.3s ease;
-    }
-    /* Меняем иконку при активном состоянии */
-    #startExamSliderContainer.active #startExamSliderHandle i {
-      color: var(--handle-icon-active-color);
-    }
+/* Ручка слайдера */
+#startExamSliderHandle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--slider-height);
+  height: var(--slider-height);
+  background-color: var(--handle-background);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+/* Ховер-эффект на ручку */
+#startExamSliderHandle:hover {
+  background-color: #f0f0f0;
+}
+/* При активном состоянии ручка увеличивается */
+#startExamSliderHandle.active {
+  transform: scale(1.05);
+}
+/* Иконка внутри ручки */
+#startExamSliderHandle i {
+  font-size: 24px;
+  color: var(--handle-icon-color);
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+/* Меняем иконку при активном состоянии */
+#startExamSliderContainer.active #startExamSliderHandle i {
+  color: var(--handle-icon-active-color);
+}
 
-    /* ========== Анимации появления/исчезновения текста ========== */
-    @keyframes fadeOut {
-      0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) translateY(0);
-      }
-      100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) translateY(-10px);
-      }
-    }
+/* ========== Анимации появления/исчезновения текста ========== */
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(-10px);
+  }
+}
 
-    @keyframes fadeIn {
-      0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) translateY(10px);
-      }
-      100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) translateY(0);
-      }
-    }
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+}
 
-    .fade-out {
-      animation: fadeOut 0.3s forwards;
-    }
-    .fade-in {
-      animation: fadeIn 0.3s forwards;
-    }
+.fade-out {
+  animation: fadeOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+.fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
 
 
 /* Стиль для индикатора прогресса */
@@ -1286,3 +1306,100 @@ select:hover {
   background-color: #ff5252; /* красный */
   color: #ffffff;
 }
+
+/* Стили для блока ID вопроса */
+.exam-question-id {
+    border-radius: 50px;
+    margin: 10px;
+    text-align: center;
+    width: 10%;
+    background: white;
+    font-size: 24px;
+    font-weight: bold;
+    color: #007AFF;
+    margin-bottom: 10px;
+}
+
+/* Общий контейнер плеера */
+.custom-audio-player {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    width: 40%;
+    max-width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    background: #2B2E3B;
+    border-radius: 12px;
+    border: 1px solid rgba(173, 193, 205, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-size: 16px;
+}
+
+#custom-play-btn {
+  background: #007AFF;
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 122, 255, 0.4);
+}
+
+.custom-play-btn:hover {
+    background: #0060D0; /* Более тёмный оттенок при наведении */
+    transform: scale(1.05);
+}
+
+.custom-play-btn:active {
+    transform: scale(0.95);
+}
+/* Полоса для волны/прогресса */
+.custom-audio-waves {
+  flex: 1;
+  position: relative;
+  height: 8px;
+  margin-right: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #3A3F51;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+.custom-audio-waves:hover {
+  background: #444A5B;
+}
+
+/* Сам прогресс (заполняющаяся часть) */
+.custom-audio-waves .progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  background: #007AFF;
+  transition: width 0.2s linear;
+  z-index: 2;
+  display: block;
+}
+
+/* Отображение времени (текущее время трека) */
+.custom-time-display {
+  flex-shrink: 0;
+  font-weight: 600;
+  font-size: 14px;
+  color: #007AFF;
+  text-align: right;
+  min-width: 40px;
+}
+
