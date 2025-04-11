@@ -176,24 +176,24 @@
 
 <div id="examModal">
   <h2 id="examTitle">Exam</h2>
-<!-- Контейнер таймера -->
-<div id="exam-timer">
-  <div class="timer-block">
-    <span class="timer-number" id="hours">00</span>
-    <span class="timer-label">Hours</span>
-  </div>
-  <div class="timer-divider"></div>
-  <div class="timer-block">
-    <span class="timer-number" id="minutes">00</span>
-    <span class="timer-label">Minutes</span>
-  </div>
-  <div class="timer-divider"></div>
-  <div class="timer-block">
-    <span class="timer-number" id="seconds">00</span>
-    <span class="timer-label">Seconds</span>
-  </div>
-</div>
 
+  <!-- Контейнер таймера -->
+  <div id="exam-timer">
+    <div class="timer-block">
+      <span class="timer-number" id="hours">00</span>
+      <span class="timer-label">Hours</span>
+    </div>
+    <div class="timer-divider"></div>
+    <div class="timer-block">
+      <span class="timer-number" id="minutes">00</span>
+      <span class="timer-label">Minutes</span>
+    </div>
+    <div class="timer-divider"></div>
+    <div class="timer-block">
+      <span class="timer-number" id="seconds">00</span>
+      <span class="timer-label">Seconds</span>
+    </div>
+  </div>
 
   <span class="close-btn" id="closeExamModal">&times;</span>
   <div id="loadingSpinner" class="lds-spinner">
@@ -201,7 +201,18 @@
     <div></div><div></div><div></div><div></div>
     <div></div><div></div><div></div><div></div>
   </div>
-  <div id="examQuestions" class="examQuestions-container"></div>
+
+<div id="progressExamLengthWrapper">
+  <div id="progressExamLengthContainer">
+    <div id="progressExamLength"></div>
+  </div>
+  <span id="progressExamLengthLabel">0%</span>
+</div>
+
+  <div id="examQuestions" class="examQuestions-container">
+    <!-- Вопросы будут здесь -->
+  </div>
+
   <div id="loadingFinishExam" class="lds-facebook-container" style="display: none;">
     <div class="lds-facebook">
       <div></div><div></div><div></div>
@@ -210,6 +221,7 @@
   <div id="finishExam" role="button" tabindex="0">Finish Task</div>
   <div id="examResults" class="examResults"></div>
 </div>
+
 
 <!-- Template for exam question (for optimized HTML insertion) -->
 <template id="questionTemplate">
@@ -496,7 +508,7 @@
             </button>
             
             <input type="file" id="file-input" style="display: none;">
-            <input type="text" class="message-input" id="message-input" placeholder="Type your message..." autocomplete="off">
+            <textarea class="message-input" id="message-input" rows="1" placeholder="Type your message..." autocomplete="off"></textarea>
 
             <!-- Send button inside input -->
             <button type="submit" id="send-button" aria-label="Send Message">

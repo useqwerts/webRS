@@ -428,193 +428,807 @@ current_version = "2025-01-10-v1"
 exam_questions = [
     {
         "id": 1,
-        "text": "Section 1. Listen and choose correct answer.",
-        "type": "listening",
-        "audio": "/static/exam/ProgressTest1.mp3",
-        "subquestions": [
-            {
-                "id": "1.1",
-                "type": "multiple_choice",
-                "text": "1 The woman __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "asks about the weather"
-            },
-            {
-                "id": "1.2",
-                "type": "multiple_choice",
-                "text": "The woman's friend __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "went to Russia"
-            },
-            {
-                "id": "1.3",
-                "type": "multiple_choice",
-                "text": "3 Russia __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "is warm in summer"
-            },
-            {
-                "id": "1.4",
-                "type": "multiple_choice",
-                "text": "4 The man __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "is going to go on holiday"
-            },
-            {
-                "id": "1.5",
-                "type": "multiple_choice",
-                "text": "5 The woman's holiday plans __",
-                "options": [
-                    "asks about the weather",
-                    "is warm in summer",
-                    "are going to change",
-                    "is going to go on holiday",
-                    "went to Russia"
-                ],
-                "correct": "are going to change"
-            }
-        ]
+        "type": "multiple_choice",
+        "text": "What does 'absolutely' mean?",
+        "options": [
+            "used to emphasize that something is completely true",
+            "something completely incorrect",
+            "a synonym for 'slightly'"
+        ],
+        "correct": "used to emphasize that something is completely true"
     },
     {
-    "id": 2,
-    "type": "reading",
-    "text": """<h1>Flat review</h1>
-
-    <h2>Calle de Serrano, Madrid ***</h2>
-
-    <p>
-        We really like visiting Madrid, and we often stay in this flat. There are two bedrooms, a bathroom, a living room, and a very small kitchen with a microwave and a fridge. The flat is small, but it's cheap. It’s in an exciting area, near lots of restaurants and shops.
-    </p>
-
-    <p>
-        The flat is in a beautiful old building, and there’s a balcony in each room. You can walk to the city centre in ten minutes. The flat is near Retiro Park and the Prado Art Museum. We always visit them because we love walking and paintings!
-    </p>
-
-    <p>
-        It’s a good flat for two people, but it’s too small for a family. It’s on the second floor and there isn’t a lift. Another problem is that the flat is very hot. It hasn’t got air conditioning.
-    </p>
-    """,
-    "subquestions": [
-        {
-            "id": "2.1",
-            "type": "question",
-            "text": "The person isn’t from ___________.",
-            "correct": "Madrid"
-        },
-        {
-            "id": "2.2",
-            "type": "question",
-            "text": "The flat is not in a modern ___________.",
-            "correct": "building"
-        },
-        {
-            "id": "2.3",
-            "type": "question",
-            "text": "All the rooms have got a ___________.",
-            "correct": "balcony"
-        },
-        {
-            "id": "2.4",
-            "type": "question",
-            "text": "The person loves ___________ and parks.",
-            "correct": "art"
-        },
-        {
-            "id": "2.5",
-            "type": "question",
-            "text": "The flat hasn’t got a ___________.",
-            "correct": "lift"
-        }
-    ]
-},
-{
-    "id": 3,
-    "type": "multiple_choice",
-    "text": "Choose the correct options.\n\nA: What room ¹ __ in your house?\n\nB: The ² __ is my favourite room, because I love ³ __. My family eats dinner there every day. It’s got a big window and you ⁴ __ our garden.\n\nA: ⁵ __ a lot of furniture in the room?\n\nB: Yes, there’s a ⁶ __ and six chairs. ⁷ __ chairs are quite old. ⁸ __ a TV in the room, but we listen ⁹ __ on the radio. We like ¹⁰ __ to our favourite music.",
-    "subquestions": [
-        {
-            "id": "3.1",
-            "type": "multiple_choice",
-            "text": "What room __ in your house?",
-            "options": ["do you like", "you like", "are you like"],
-            "correct": "do you like"
-        },
-        {
-            "id": "3.2",
-            "type": "multiple_choice",
-            "text": "The __ is my favourite room, because I love __.",
-            "options": ["bathroom", "bedroom", "kitchen"],
-            "correct": "kitchen"
-        },
-        {
-            "id": "3.3",
-            "type": "multiple_choice",
-            "text": "My family eats dinner there every day. It’s got a big window and you __ our garden.",
-            "options": ["can see", "can to see", "can seeing"],
-            "correct": "can see"
-        },
-        {
-            "id": "3.4",
-            "type": "multiple_choice",
-            "text": "Is __ a lot of furniture in the room?",
-            "options": ["There are", "There’s", "Is there"],
-            "correct": "There’s"
-        },
-        {
-            "id": "3.5",
-            "type": "multiple_choice",
-            "text": "Yes, there’s a __ and six chairs.",
-            "options": ["shower", "table", "bed"],
-            "correct": "table"
-        },
-        {
-            "id": "3.6",
-            "type": "multiple_choice",
-            "text": "__ chairs are quite old.",
-            "options": ["Each", "All the", "Every"],
-            "correct": "All the"
-        },
-        {
-            "id": "3.7",
-            "type": "multiple_choice",
-            "text": "__ a TV in the room, but we listen to the radio.",
-            "options": ["There isn’t", "It hasn’t", "It isn’t"],
-            "correct": "There isn’t"
-        },
-        {
-            "id": "3.8",
-            "type": "multiple_choice",
-            "text": "We like __ to our favourite music.",
-            "options": ["music", "the music", "to music"],
-            "correct": "to music"
-        }
-    ]
-}
-
+        "id": 2,
+        "type": "multiple_choice",
+        "text": "What does 'accessible' mean?",
+        "options": [
+            "a place that can be entered, used, or seen",
+            "something that is difficult to find",
+            "something that is expensive"
+        ],
+        "correct": "a place that can be entered, used, or seen"
+    },
+    {
+        "id": 3,
+        "type": "multiple_choice",
+        "text": "What is an 'action film'?",
+        "options": [
+            "a film that has a lot of exciting action and adventure",
+            "a slow-moving drama film",
+            "a film about everyday life"
+        ],
+        "correct": "a film that has a lot of exciting action and adventure"
+    },
+    {
+        "id": 4,
+        "type": "multiple_choice",
+        "text": "What is an 'action hero'?",
+        "options": [
+            "the main character of the film",
+            "a side character",
+            "a villain in the story"
+        ],
+        "correct": "the main character of the film"
+    },
+    {
+        "id": 5,
+        "type": "multiple_choice",
+        "text": "What does 'addicted' mean?",
+        "options": [
+            "unable to stop using or doing something as a habit, especially something harmful",
+            "interested in doing something occasionally",
+            "being immune to something harmful"
+        ],
+        "correct": "unable to stop using or doing something as a habit, especially something harmful"
+    },
+    {
+        "id": 6,
+        "type": "multiple_choice",
+        "text": "What does 'amusing' mean?",
+        "options": [
+            "something funny and giving pleasure",
+            "something boring",
+            "something painful to watch"
+        ],
+        "correct": "something funny and giving pleasure"
+    },
+    {
+        "id": 7,
+        "type": "multiple_choice",
+        "text": "What is an 'app'?",
+        "options": [
+            "a piece of software that you can download to a device",
+            "a type of phone call",
+            "a network of computers"
+        ],
+        "correct": "a piece of software that you can download to a device"
+    },
+    {
+        "id": 8,
+        "type": "multiple_choice",
+        "text": "What does 'appeal' mean?",
+        "options": [
+            "a quality that makes somebody/something attractive or interesting",
+            "something that causes discomfort",
+            "a formal complaint"
+        ],
+        "correct": "a quality that makes somebody/something attractive or interesting"
+    },
+    {
+        "id": 9,
+        "type": "multiple_choice",
+        "text": "What does 'astonishing' mean?",
+        "options": [
+            "very surprising; difficult to believe",
+            "something very small",
+            "something very easy to understand"
+        ],
+        "correct": "very surprising; difficult to believe"
+    },
+    {
+        "id": 10,
+        "type": "multiple_choice",
+        "text": "What does 'atmosphere' mean?",
+        "options": [
+            "the feeling or mood that you have in a particular place or situation",
+            "the weather conditions outside",
+            "the type of food served in a restaurant"
+        ],
+        "correct": "the feeling or mood that you have in a particular place or situation"
+    },
+    {
+        "id": 11,
+        "type": "multiple_choice",
+        "text": "What does 'authentic' mean?",
+        "options": [
+            "known to be real and what somebody claims it is",
+            "a fake version of something",
+            "something that is highly decorated"
+        ],
+        "correct": "known to be real and what somebody claims it is"
+    },
+    {
+        "id": 12,
+        "type": "multiple_choice",
+        "text": "What is a 'banker'?",
+        "options": [
+            "the one who works in a bank",
+            "someone who manages a farm",
+            "a person who sells tickets"
+        ],
+        "correct": "the one who works in a bank"
+    },
+    {
+        "id": 13,
+        "type": "multiple_choice",
+        "text": "What does 'base on' mean?",
+        "options": [
+            "to use an idea, a fact, a situation, etc. as the point from which something can be developed",
+            "to remove something from a situation",
+            "to misunderstand the original idea"
+        ],
+        "correct": "to use an idea, a fact, a situation, etc. as the point from which something can be developed"
+    },
+    {
+        "id": 14,
+        "type": "multiple_choice",
+        "text": "What does 'brilliant' mean?",
+        "options": [
+            "extremely clever or impressive",
+            "something very dark and gloomy",
+            "something very ordinary"
+        ],
+        "correct": "extremely clever or impressive"
+    },
+    {
+        "id": 15,
+        "type": "multiple_choice",
+        "text": "What does 'cast' mean?",
+        "options": [
+            "the process of choosing actors to play different parts in a film, play, etc.",
+            "the action of performing a play",
+            "the script of a movie or play"
+        ],
+        "correct": "the process of choosing actors to play different parts in a film, play, etc."
+    },
+    {
+        "id": 16,
+        "type": "multiple_choice",
+        "text": "What does 'character' mean?",
+        "options": [
+            "a person or an animal in a book, play or film",
+            "the plot of a movie",
+            "the environment of a story"
+        ],
+        "correct": "a person or an animal in a book, play or film"
+    },
+    {
+        "id": 17,
+        "type": "multiple_choice",
+        "text": "What does 'chat' mean?",
+        "options": [
+            "to talk in a friendly, informal way to somebody",
+            "to argue with someone",
+            "to give instructions to someone"
+        ],
+        "correct": "to talk in a friendly, informal way to somebody"
+    },
+    {
+        "id": 18,
+        "type": "multiple_choice",
+        "text": "What does 'classic' mean?",
+        "options": [
+            "accepted or deserving to be accepted as one of the best or most important of its kind",
+            "something new and experimental",
+            "something outdated"
+        ],
+        "correct": "accepted or deserving to be accepted as one of the best or most important of its kind"
+    },
+    {
+        "id": 19,
+        "type": "multiple_choice",
+        "text": "What does 'clip' mean?",
+        "options": [
+            "a short part of a film that is shown separately",
+            "a tool used to fasten things together",
+            "a section of a movie script"
+        ],
+        "correct": "a short part of a film that is shown separately"
+    },
+    {
+        "id": 20,
+        "type": "multiple_choice",
+        "text": "What does 'dash' mean?",
+        "options": [
+            "an act of going somewhere suddenly and/or quickly",
+            "a slow, careful movement",
+            "a jump or leap"
+        ],
+        "correct": "an act of going somewhere suddenly and/or quickly"
+    },
+    {
+        "id": 21,
+        "type": "multiple_choice",
+        "text": "What does 'fantasise' mean?",
+        "options": [
+            "to imagine that you are doing something that you would like to do, or that something that you would like to happen is happening, even though this is very unlikely",
+            "to think negatively about the future",
+            "to daydream about a realistic situation"
+        ],
+        "correct": "to imagine that you are doing something that you would like to do, or that something that you would like to happen is happening, even though this is very unlikely"
+    },
+    {
+        "id": 22,
+        "type": "multiple_choice",
+        "text": "What does 'genre' mean?",
+        "options": [
+            "a particular type or style of literature, art, film or music that you can recognize because of its special features",
+            "a specific artist's name",
+            "a type of food"
+        ],
+        "correct": "a particular type or style of literature, art, film or music that you can recognize because of its special features"
+    },
+    {
+        "id": 23,
+        "type": "multiple_choice",
+        "text": "What does 'grow apart' mean?",
+        "options": [
+            "to stop having a close relationship with somebody over a period of time",
+            "to grow closer to someone",
+            "to move away from a place"
+        ],
+        "correct": "to stop having a close relationship with somebody over a period of time"
+    },
+    {
+        "id": 24,
+        "type": "multiple_choice",
+        "text": "What does 'hand-held' mean?",
+        "options": [
+            "a device, especially a computer, that is small enough to be held in the hand while being used",
+            "a computer placed on a desk",
+            "a device for listening to music"
+        ],
+        "correct": "a device, especially a computer, that is small enough to be held in the hand while being used"
+    },
+    {
+        "id": 25,
+        "type": "multiple_choice",
+        "text": "What does 'harmless' mean?",
+        "options": [
+            "unable or unlikely to cause damage or harm",
+            "something dangerous",
+            "something that causes harm to others"
+        ],
+        "correct": "unable or unlikely to cause damage or harm"
+    },
+    {
+        "id": 26,
+        "type": "multiple_choice",
+        "text": "What does 'modern-day' mean?",
+        "options": [
+            "of the present time",
+            "from the past",
+            "related to future technology"
+        ],
+        "correct": "of the present time"
+    },
+    {
+        "id": 27,
+        "type": "multiple_choice",
+        "text": "What does 'moving' mean?",
+        "options": [
+            "causing strong, often sad, feelings about somebody/something",
+            "something that stays still",
+            "a lighthearted action"
+        ],
+        "correct": "causing strong, often sad, feelings about somebody/something"
+    },
+    {
+        "id": 28,
+        "type": "multiple_choice",
+        "text": "What does 'mug' mean?",
+        "options": [
+            "to violently steal from somebody, especially in a public place",
+            "to make something very expensive",
+            "to move slowly in a crowd"
+        ],
+        "correct": "to violently steal from somebody, especially in a public place"
+    },
+    {
+        "id": 29,
+        "type": "multiple_choice",
+        "text": "What does 'novel' mean?",
+        "options": [
+            "a story long enough to fill a complete book, in which the characters and events are usually imaginary",
+            "a short story told in a film",
+            "a brief poem"
+        ],
+        "correct": "a story long enough to fill a complete book, in which the characters and events are usually imaginary"
+    },
+    {
+        "id": 30,
+        "type": "multiple_choice",
+        "text": "What does 'on balance' mean?",
+        "options": [
+            "after considering all the information",
+            "the final decision made without consideration",
+            "a first impression of something"
+        ],
+        "correct": "after considering all the information"
+    },
+    {
+        "id": 31,
+        "type": "multiple_choice",
+        "text": "What does 'original' mean?",
+        "options": [
+            "existing at the beginning or a particular period, process or activity",
+            "something that has been copied",
+            "something that is second-hand"
+        ],
+        "correct": "existing at the beginning or a particular period, process or activity"
+    },
+    {
+        "id": 32,
+        "type": "multiple_choice",
+        "text": "What does 'performance' mean?",
+        "options": [
+            "the act of performing a play, concert or some other form of entertainment",
+            "the way someone drives a car",
+            "the way someone dresses"
+        ],
+        "correct": "the act of performing a play, concert or some other form of entertainment"
+    },
+    {
+        "id": 33,
+        "type": "multiple_choice",
+        "text": "What does 'plot' mean?",
+        "options": [
+            "the series of events that form the story of a novel, play, film, etc.",
+            "a section of a screenplay",
+            "the audience's reaction to a film"
+        ],
+        "correct": "the series of events that form the story of a novel, play, film, etc."
+    },
+    {
+        "id": 34,
+        "type": "multiple_choice",
+        "text": "What does 'post' mean?",
+        "options": [
+            "to put information or pictures on a website",
+            "to read information on a website",
+            "to send a letter by mail"
+        ],
+        "correct": "to put information or pictures on a website"
+    },
+    {
+        "id": 35,
+        "type": "multiple_choice",
+        "text": "What does 'pothole' mean?",
+        "options": [
+            "a large rough hole in the surface of a road that is formed by traffic and bad weather",
+            "a large crack in a building",
+            "a deep hole in the ground used for storage"
+        ],
+        "correct": "a large rough hole in the surface of a road that is formed by traffic and bad weather"
+    },
+    {
+        "id": 36,
+        "type": "multiple_choice",
+        "text": "What does 'predictable' mean?",
+        "options": [
+            "if something is predictable, you know in advance that it will happen or what it will be like",
+            "if something is spontaneous and unexpected",
+            "something that is fun to watch"
+        ],
+        "correct": "if something is predictable, you know in advance that it will happen or what it will be like"
+    },
+    {
+        "id": 37,
+        "type": "multiple_choice",
+        "text": "What is a 'prisoner'?",
+        "options": [
+            "a person who is kept in prison as a punishment or while waiting for trial",
+            "someone who is free from arrest",
+            "someone who is on vacation"
+        ],
+        "correct": "a person who is kept in prison as a punishment or while waiting for trial"
+    },
+    {
+        "id": 38,
+        "type": "multiple_choice",
+        "text": "What does 'recommend' mean?",
+        "options": [
+            "to tell somebody that something is good or useful or that somebody would be suitable for a particular job",
+            "to criticize someone",
+            "to avoid giving advice"
+        ],
+        "correct": "to tell somebody that something is good or useful or that somebody would be suitable for a particular job"
+    },
+    {
+        "id": 39,
+        "type": "multiple_choice",
+        "text": "What does 'release' mean?",
+        "options": [
+            "to let somebody come out of a place where they have been kept or stuck and unable to leave or move",
+            "to lock someone in a room",
+            "to hide something"
+        ],
+        "correct": "to let somebody come out of a place where they have been kept or stuck and unable to leave or move"
+    },
+    {
+        "id": 40,
+        "type": "multiple_choice",
+        "text": "What does 'remake' mean?",
+        "options": [
+            "a new or different version of an old film or song",
+            "a new version of a document",
+            "to build a house from scratch"
+        ],
+        "correct": "a new or different version of an old film or song"
+    },
+    {
+        "id": 41,
+        "type": "multiple_choice",
+        "text": "What does 'result in' mean?",
+        "options": [
+            "lead to",
+            "prevent",
+            "limit"
+        ],
+        "correct": "lead to"
+    },
+    {
+        "id": 42,
+        "type": "multiple_choice",
+        "text": "What is a 'rom com'?",
+        "options": [
+            "a humorous film or TV show that is about love; a romantic comedy",
+            "a horror film",
+            "a documentary"
+        ],
+        "correct": "a humorous film or TV show that is about love; a romantic comedy"
+    },
+    {
+        "id": 43,
+        "type": "multiple_choice",
+        "text": "What does 'salsa' mean?",
+        "options": [
+            "a type of Latin American dance music",
+            "a type of Italian pizza",
+            "a type of dessert"
+        ],
+        "correct": "a type of Latin American dance music"
+    },
+    {
+        "id": 44,
+        "type": "multiple_choice",
+        "text": "What does 'scene' mean?",
+        "options": [
+            "a part of a film, play or book in which the action happens in one place or is of one particular type",
+            "a part of a song",
+            "a collection of events in real life"
+        ],
+        "correct": "a part of a film, play or book in which the action happens in one place or is of one particular type"
+    },
+    {
+        "id": 45,
+        "type": "multiple_choice",
+        "text": "What does 'set out' mean?",
+        "options": [
+            "to leave a place and begin a journey",
+            "to stay in one place",
+            "to decide not to go anywhere"
+        ],
+        "correct": "to leave a place and begin a journey"
+    },
+    {
+        "id": 46,
+        "type": "multiple_choice",
+        "text": "What does 'showcase' mean?",
+        "options": [
+            "to present somebody's abilities or the good qualities of something in an attractive way",
+            "to hide something",
+            "to destroy something"
+        ],
+        "correct": "to present somebody's abilities or the good qualities of something in an attractive way"
+    },
+    {
+        "id": 47,
+        "type": "multiple_choice",
+        "text": "What does 'silly' mean?",
+        "options": [
+            "showing a lack of thought, understanding, or judgement",
+            "wise and thoughtful",
+            "extremely careful"
+        ],
+        "correct": "showing a lack of thought, understanding, or judgement"
+    },
+    {
+        "id": 48,
+        "type": "multiple_choice",
+        "text": "What does 'skyscraper' mean?",
+        "options": [
+            "a very tall building in a city",
+            "a type of bridge",
+            "a large car"
+        ],
+        "correct": "a very tall building in a city"
+    },
+    {
+        "id": 49,
+        "type": "multiple_choice",
+        "text": "What does 'soundtrack' mean?",
+        "options": [
+            "all the music, speech and sounds that are recorded for a film",
+            "the special effects of a film",
+            "the background dialogue"
+        ],
+        "correct": "all the music, speech and sounds that are recorded for a film"
+    },
+    {
+        "id": 50,
+        "type": "multiple_choice",
+        "text": "What does 'slavery' mean?",
+        "options": [
+            "the state of being forced to work as a slave",
+            "a voluntary job position",
+            "the ability to travel freely"
+        ],
+        "correct": "the state of being forced to work as a slave"
+    },
+    {
+        "id": 51,
+        "type": "multiple_choice",
+        "text": "What does 'stunning' mean?",
+        "options": [
+            "extremely attractive or impressive",
+            "extremely loud",
+            "dangerously quick"
+        ],
+        "correct": "extremely attractive or impressive"
+    },
+    {
+        "id": 52,
+        "type": "multiple_choice",
+        "text": "What does 'sweep' mean?",
+        "options": [
+            "to move quickly and/or smoothly, especially in a way that impresses or is intended to impress other people",
+            "to make something dirty",
+            "to stop something from moving"
+        ],
+        "correct": "to move quickly and/or smoothly, especially in a way that impresses or is intended to impress other people"
+    },
+    {
+        "id": 53,
+        "type": "multiple_choice",
+        "text": "What does 'tend' mean?",
+        "options": [
+            "to be likely to do something or to happen in a particular way because this is what often or usually happens",
+            "to avoid doing something",
+            "to ignore something"
+        ],
+        "correct": "to be likely to do something or to happen in a particular way because this is what often or usually happens"
+    },
+    {
+        "id": 54,
+        "type": "multiple_choice",
+        "text": "What does 'terrific' mean?",
+        "options": [
+            "excellent, wonderful",
+            "boring, dull",
+            "disastrous, terrible"
+        ],
+        "correct": "excellent, wonderful"
+    },
+    {
+        "id": 55,
+        "type": "multiple_choice",
+        "text": "What does 'terrifying' mean?",
+        "options": [
+            "making somebody feel extremely frightened",
+            "making somebody feel calm",
+            "making somebody feel joyful"
+        ],
+        "correct": "making somebody feel extremely frightened"
+    },
+    {
+        "id": 56,
+        "type": "multiple_choice",
+        "text": "What is a 'thriller'?",
+        "options": [
+            "a book, play or film with an exciting story, especially one about crime or spying",
+            "a documentary about animals",
+            "a musical performance"
+        ],
+        "correct": "a book, play or film with an exciting story, especially one about crime or spying"
+    },
+    {
+        "id": 57,
+        "type": "multiple_choice",
+        "text": "What does 'unexciting' mean?",
+        "options": [
+            "not interesting; boring",
+            "extremely thrilling",
+            "extremely loud"
+        ],
+        "correct": "not interesting; boring"
+    },
+    {
+        "id": 58,
+        "type": "multiple_choice",
+        "text": "What does 'violent' mean?",
+        "options": [
+            "involving or caused by physical force that is intended to hurt or kill somebody",
+            "calm and peaceful",
+            "involving only verbal disagreement"
+        ],
+        "correct": "involving or caused by physical force that is intended to hurt or kill somebody"
+    },
+    {
+        "id": 59,
+        "type": "multiple_choice",
+        "text": "What does 'voice' mean?",
+        "options": [
+            "to produce a sound with a movement of your vocal cords as well as your breath",
+            "to listen carefully",
+            "to ignore someone's speech"
+        ],
+        "correct": "to produce a sound with a movement of your vocal cords as well as your breath"
+    },
+    {
+        "id": 60,
+        "type": "multiple_choice",
+        "text": "What does 'vote' mean?",
+        "options": [
+            "to show formally by making a paper, raising your hand or using a voting machine, etc. which person or political party you want in an election, or which idea you support",
+            "to guess something without any proof",
+            "to ignore something in an election"
+        ],
+        "correct": "to show formally by making a paper, raising your hand or using a voting machine, etc. which person or political party you want in an election, or which idea you support"
+    },
+    {
+        "id": 61,
+        "type": "multiple_choice",
+        "text": "What does 'world-wide' mean?",
+        "options": [
+            "widespread around the world",
+            "limited to one city",
+            "only in one country"
+        ],
+        "correct": "widespread around the world"
+    },
+    {
+        "id": 62,
+        "type": "multiple_choice",
+        "text": "What does 'adaptation' mean?",
+        "options": [
+            "a film, book, play, etc. that has been made from another film, book, play, etc.",
+            "a new version of the same product",
+            "a work with no changes from the original"
+        ],
+        "correct": "a film, book, play, etc. that has been made from another film, book, play, etc."
+    },
+    {
+        "id": 63,
+        "type": "multiple_choice",
+        "text": "What does 'beverage' mean?",
+        "options": [
+            "a drink of any type",
+            "a type of food",
+            "a solid snack"
+        ],
+        "correct": "a drink of any type"
+    },
+    {
+        "id": 64,
+        "type": "multiple_choice",
+        "text": "What does 'crossover' mean?",
+        "options": [
+            "the process or result of changing from one activity or style to another",
+            "a sudden stop",
+            "the exchange of goods"
+        ],
+        "correct": "the process or result of changing from one activity or style to another"
+    },
+    {
+        "id": 65,
+        "type": "multiple_choice",
+        "text": "What does 'engagement' mean?",
+        "options": [
+            "an arrangement to meet someone or do something at a particular time",
+            "a feeling of complete boredom",
+            "a surprise announcement"
+        ],
+        "correct": "an arrangement to meet someone or do something at a particular time"
+    },
+    {
+        "id": 66,
+        "type": "multiple_choice",
+        "text": "What does 'epic' mean?",
+        "options": [
+            "in the style of an epic; a film, poem or book which is long and contains a lot of action, usually dealing with a historical subject",
+            "a short, fast-paced story",
+            "an average movie with no special features"
+        ],
+        "correct": "in the style of an epic; a film, poem or book which is long and contains a lot of action, usually dealing with a historical subject"
+    },
+    {
+        "id": 67,
+        "type": "multiple_choice",
+        "text": "What does 'gambling' mean?",
+        "options": [
+            "the activity of betting money, for example in a game or on a horse race",
+            "the act of playing board games",
+            "a process of calculating odds"
+        ],
+        "correct": "the activity of betting money, for example in a game or on a horse race"
+    },
+    {
+        "id": 68,
+        "type": "multiple_choice",
+        "text": "What does 'merchandising' mean?",
+        "options": [
+            "products connected with a popular film, singer, event, etc., or the selling of these products",
+            "a way of producing films",
+            "the creation of video games"
+        ],
+        "correct": "products connected with a popular film, singer, event, etc., or the selling of these products"
+    },
+    {
+        "id": 69,
+        "type": "multiple_choice",
+        "text": "What does 'parody' mean?",
+        "options": [
+            "writing, music, art, an act, etc. which humorously imitates the style of someone famous or copies a particular situation, making the features or qualities of the original more noticeable in a way that is humorous",
+            "a serious and dramatic performance",
+            "an artistic expression with no humor"
+        ],
+        "correct": "writing, music, art, an act, etc. which humorously imitates the style of someone famous or copies a particular situation, making the features or qualities of the original more noticeable in a way that is humorous"
+    },
+    {
+        "id": 70,
+        "type": "multiple_choice",
+        "text": "What does 'prequel' mean?",
+        "options": [
+            "a film, book or play which develops the story of an earlier film, etc. by telling you what happened before the events in the first film",
+            "a film, book or play that continues the story of a previous work",
+            "a film that takes place at the same time as the original"
+        ],
+        "correct": "a film, book or play which develops the story of an earlier film, etc. by telling you what happened before the events in the first film"
+    },
+    {
+        "id": 71,
+        "type": "multiple_choice",
+        "text": "What does 'recreation' mean?",
+        "options": [
+            "(a way of) enjoying yourself when you are not working",
+            "a type of job",
+            "a formal event"
+        ],
+        "correct": "(a way of) enjoying yourself when you are not working"
+    },
+    {
+        "id": 72,
+        "type": "multiple_choice",
+        "text": "What does 'sequel' mean?",
+        "options": [
+            "a book, film or play which continues the story of a previous book",
+            "a new version of an older story",
+            "a prequel to an earlier event"
+        ],
+        "correct": "a book, film or play which continues the story of a previous book"
+    },
+    {
+        "id": 73,
+        "type": "multiple_choice",
+        "text": "What does 'wholesome' mean?",
+        "options": [
+            "good for you, and likely to improve your life either physically, morally or emotionally",
+            "harmful or dangerous",
+            "something that makes you feel tired"
+        ],
+        "correct": "good for you, and likely to improve your life either physically, morally or emotionally"
+    }
 ]
 
 
