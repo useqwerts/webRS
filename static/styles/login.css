@@ -1,461 +1,596 @@
-/* Basic Reset */
+/* Сброс стилей */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Global Styles */
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #8E2DE2, #4A00E0);
-    height: 100vh;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    padding: 20px;
 }
 
-.text-skeleton {
-    position: relative;
-    display: inline-block;
-    font-weight: bold;
-    font-size: 16px;
-    color: transparent; /* Делает текст прозрачным, чтобы его не было видно */
-}
-
-.text-skeleton::before {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 25%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0.3) 75%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent; /* Делает текст прозрачным */
-    background-size: 200% 100%;
-    animation: skeleton-loading 6s infinite linear; /* Увеличено время анимации до 6 секунд */
-    opacity: 1;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-@keyframes skeleton-loading {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
-}
-
-#chatVersionModal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.6);
-  }
-  
-  #chatVersionModalContent {
-    background: rgb(255 251 251 / 15%);
-    backdrop-filter: blur(30px);
-    margin: 5% auto;
-    padding: 25px;
-    border-radius: 5px;
-    width: 100%;
-    max-width: 500px;
-    position: relative;
-    color: #fff;
-  }
-  
-  .chat-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-  }
-  
-  .weekly-exam-button {
-    background-color: #1f1f1f;
-    color: #fff;
-    padding: 10px 20px;
-    border: 1px solid #2a2a2a;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .weekly-exam-button:hover {
-    background-color: #333;
-  }
-  
-  #closeChatVersionModal {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-  }
-  
-  #closeChatVersionModal:hover {
-    color: #ccc;
-  }
-
-/* Login Wrapper */
+/* Login Wrapper - адаптивный контейнер */
 .login-wrapper {
-    width: 100%;
-    max-width: 450px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 40px;
+    width: 90%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px 30px;
     border-radius: 20px;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    animation: slideIn 0.6s ease-out;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    animation: fadeIn 0.6s ease;
+    text-align: center; /* Центрирование текста внутри */
 }
 
-/* Title */
+/* Заголовок */
 .login-title {
-    text-align: center;
-    color: #333;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
-/* Input Fields */
+/* Группы инпутов */
 .input-group {
     position: relative;
     margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
 }
 
 input {
     width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    border: 2px solid #ddd;
+    padding: 14px 45px 14px 15px;
+    border: none;
     border-radius: 12px;
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
 }
 
 input:focus {
-    border-color: #4A00E0;
-    box-shadow: 0 0 8px rgba(74, 0, 224, 0.3);
-    outline: none;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
 .input-icon {
     position: absolute;
-    right: 12px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: #888;
+    color: #ccc;
 }
 
-/* Login Button */
+/* Кнопка входа */
 .login-button {
-    width: 100%;
-    height: 50px;
-    background: #4A00E0;
+    display: block;        /* Делаем элемент блочным */
+    margin: 0 auto;        /* Центрируем элемент по горизонтали */
+    background: linear-gradient(to right, #6a11cb, #2575fc);
     color: #fff;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    border-radius: 12px;
+    padding: 14px 30px;     /* Увеличим внутренние отступы, чтобы кнопка стала больше */
     border: none;
+    border-radius: 12px;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
+    transition: transform 0.2s, background 0.3s;
 }
 
 .login-button:hover {
-    background: #8E2DE2;
-    transform: scale(1.05);
+    transform: scale(1.04);
+    background: linear-gradient(to right, #2575fc, #6a11cb);
 }
 
-/* Forgot Password Link */
+/* Skeleton Text Animation */
+.text-skeleton::before {
+    content: attr(data-text);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.2));
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: skeleton-loading 4s linear infinite;
+}
+
+/* Forgot Password */
 .forgot-password {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .forgot-password a {
+    color: #fff;
     font-size: 14px;
-    color: #4A00E0;
-    text-decoration: none;
-    transition: color 0.3s ease;
+    text-decoration: underline;
+    opacity: 0.85;
+    transition: 0.3s;
 }
 
 .forgot-password a:hover {
-    color: #8E2DE2;
-    text-decoration: underline;
+    opacity: 1;
 }
 
-/* Error Messages */
-.error-container {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    animation: errorAnimation 0.5s ease-out;
-}
-
-.error-icon {
-    display: inline-block;
-    margin-right: 10px;
-    font-size: 20px;
-}
-
-.error-message {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-@keyframes errorAnimation {
-    0% {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    50% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-}
-
-/* Recovery Modal */
-.recovery-modal {
+/* Error Message */
+#error-container {
     display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    justify-content: center;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    color: #ff6b6b;
+    margin-bottom: 15px;
+    font-size: 14px;
+    display: flex;
     align-items: center;
-    z-index: 10000;
+    gap: 10px;
 }
 
-.recovery-container {
-    background: #fff;
-    padding: 30px;
+/* Avatar */
+.avatar-container {
+    background: rgba(40, 167, 69, 0.1);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    padding: 10px;
     border-radius: 10px;
     text-align: center;
-    width: 350px;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    animation: slideUp 0.6s ease-out;
-}
-
-.recovery-container h2 {
-    margin-bottom: 20px;
-    font-size: 22px;
-    color: #333;
-}
-
-.recovery-container input {
-    width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    border: 2px solid #ddd;
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
-
-.recovery-container button {
-    width: 100%;
-    height: 50px;
-    background: #4A00E0;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.recovery-container button:hover {
-    background: #8E2DE2;
-}
-
-#recovery-result {
-    margin-top: 10px;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-@keyframes slideUp {
-    0% {
-        transform: translateY(50px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Loading Animation */
-.lds-facebook {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
-}
-
-.lds-facebook div {
-    display: inline-block;
-    position: absolute;
-    left: 8px;
-    width: 16px;
-    background: currentColor;
-    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-}
-
-.lds-facebook div:nth-child(1) {
-    left: 8px;
-    animation-delay: -0.24s;
-}
-
-.lds-facebook div:nth-child(2) {
-    left: 32px;
-    animation-delay: -0.12s;
-}
-
-.lds-facebook div:nth-child(3) {
-    left: 56px;
-    animation-delay: 0s;
-}
-
-@keyframes lds-facebook {
-    0% {
-        top: 8px;
-        height: 64px;
-    }
-    50%, 100% {
-        top: 24px;
-        height: 32px;
-    }
-}
-
-/* Avatar Container */
-.avatar-container {
-    display: none;
-    margin-top: 10px;
-    text-align: center;
-    background-color: #28a745;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
 }
 
 .avatar-text {
+    color: #28a745;
     font-size: 14px;
-    color: white;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 .avatar-image {
-	object-fit: cover;
-	margin-left: auto;
-    width: 50px;
-    height: 50px;
+    margin-left: auto;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    border: 2px solid #ddd;
+    border: 2px solid #28a745;
+    object-fit: cover;
 }
 
-/* Error Animation */
-.error-container.error-animate {
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-/* Стили для модального окна "Remember Me" */
+/* Модальные окна */
+.recovery-modal,
 .remember-modal {
     display: none;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
+.recovery-container,
 .remember-container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    padding: 40px 30px;
+    border-radius: 15px;
+    width: 95%;
+    max-width: 400px;
+    color: #fff;
     text-align: center;
-    width: 300px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease-in-out;
+    margin: 20px; /* Отступы вокруг контейнера для чёткого показа */
 }
 
-.remember-container h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 10px;
+.recovery-container input,
+.remember-container input {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    color: #fff;
+    width: 100%;
+    margin-bottom: 20px; /* Большой отступ между полями ввода */
 }
 
-.remember-container p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-}
-
+.recovery-container button,
 .remember-container button {
     width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: 500;
+    padding: 14px;
+    margin-bottom: 15px; /* Отступ снизу для разделения кнопок */
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
+    font-weight: 500;
     cursor: pointer;
-    margin-bottom: 10px;
-    transition: 0.2s;
+    transition: 0.3s;
 }
 
 #continue-btn {
-    background: #28a745;
+    background-color: #28a745;
     color: white;
+    margin-top: 10px; /* Дополнительный отступ сверху */
 }
 
 #continue-btn:hover {
-    background: #218838;
+    background-color: #218838;
 }
 
 #cancel-btn {
-    background: #dc3545;
+    background-color: #dc3545;
     color: white;
+    margin-top: 10px; /* Дополнительный отступ сверху */
 }
 
 #cancel-btn:hover {
-    background: #c82333;
+    background-color: #c82333;
 }
 
-/* Анимация появления */
+/* Кнопка закрытия модального окна */
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Анимации */
 @keyframes fadeIn {
-    from {
-        transform: scale(0.9);
-        opacity: 0;
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Дополнительная форма входа */
+#login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+#login-form input {
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+/* Кнопка с анимацией "отпечатка" */
+.container {
+    display: flex;                          /* Используем Flexbox для выравнивания */
+    justify-content: center;                /* Центрируем по горизонтали */
+    align-items: center;                    /* Центрируем по вертикали */
+    background: #000;
+    border-radius: 40px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    width: 80%;                              /* Используем относительную ширину */
+    max-width: 200px;                        /* Ограничение по максимальной ширине */
+    height: 80px;
+    position: relative;
+    cursor: pointer;
+    overflow: visible;
+    margin: 0 auto;                         /* Центрируем контейнер по горизонтали */
+}
+
+
+.text {
+    color: white;
+    position: absolute;
+    transition: opacity 300ms;
+    user-select: none;
+}
+
+/* Остальные стили анимации остаются без изменений */
+.fingerprint {
+    left: -8px;
+    opacity: 0;
+    position: absolute;
+    stroke: #777;
+    top: -9px;
+    transition: opacity 1ms;
+}
+
+.fingerprint-active {
+    stroke: #fff;
+}
+
+.fingerprint-out {
+    opacity: 1;
+}
+
+.odd {
+    stroke-dasharray: 0px 50px;
+    stroke-dashoffset: 1px;
+    transition: stroke-dasharray 1ms;
+}
+
+.even {
+    stroke-dasharray: 50px 50px;
+    stroke-dashoffset: -41px;
+    transition: stroke-dashoffset 1ms;
+}
+
+.ok {
+    opacity: 0;
+}
+
+.active.container {
+    animation: Container 6s;
+}
+
+.active .text {
+    opacity: 0;
+    animation: Text 6s forwards;
+}
+
+.active .fingerprint {
+    opacity: 1;
+    transition: opacity 300ms 200ms;
+}
+
+.active .fingerprint-base .odd {
+    stroke-dasharray: 50px 50px;
+    transition: stroke-dasharray 800ms 100ms;
+}
+
+.active .fingerprint-base .even {
+    stroke-dashoffset: 0px;
+    transition: stroke-dashoffset 800ms;
+}
+
+.active .fingerprint-active .odd {
+    stroke-dasharray: 50px 50px;
+    transition: stroke-dasharray 2000ms 1500ms;
+}
+
+.active .fingerprint-active .even {
+    stroke-dashoffset: 0px;
+    transition: stroke-dashoffset 2000ms 1300ms;
+}
+
+.active .fingerprint-out {
+    opacity: 0;
+    transition: opacity 300ms 4100ms;
+}
+
+.active .ok {
+    opacity: 1;
+    animation: Ok 6s forwards;
+}
+
+@keyframes Container {
+    0% { width: 200px; }
+    6% { width: 80px; }
+    71% { transform: scale(1); }
+    75% { transform: scale(1.2); }
+    77% { transform: scale(1); }
+    94% { width: 80px; }
+    100% { width: 200px; }
+}
+
+@keyframes Text {
+    0% { opacity: 1; transform: scale(1); }
+    6% { opacity: 0; transform: scale(0.5); }
+    94% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes Ok {
+    0% { opacity: 0; }
+    70% { opacity: 0; transform: scale(0); }
+    75% { opacity: 1; transform: scale(1.1); }
+    77% { opacity: 1; transform: scale(1); }
+    92% { opacity: 1; transform: scale(1); }
+    96% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 0; }
+}
+
+/* Media Queries для адаптивности */
+@media (max-width: 600px) {
+    .login-wrapper {
+        padding: 30px 20px;
     }
-    to {
-        transform: scale(1);
-        opacity: 1;
+
+    .login-title {
+        font-size: 24px;
+    }
+
+    input,
+    .login-button {
+        font-size: 14px;
+        padding: 12px;
+    }
+    
+    .container {
+        max-width: 150px;
+        height: 70px;
+    }
+}
+
+@media (max-width: 400px) {
+    .login-wrapper {
+        padding: 20px 15px;
+    }
+}
+
+/* General Modal Styling (for Terms and Conditions Modal) */
+.terms-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.terms-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto; /* Scrollable if content overflows */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.terms-container h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+.terms-container p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 15px;
+}
+
+/* Buttons inside the Terms Modal */
+.terms-container-modal button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#accept-terms-btn {
+    background-color: #28a745;
+    color: #fff;
+    margin-right: 10px;
+}
+
+#accept-terms-btn:hover {
+    background-color: #218838;
+}
+
+#decline-terms-btn {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+#decline-terms-btn:hover {
+    background-color: #c82333;
+}
+
+.terms-container-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Terms and Conditions Checkbox Container */
+.terms-container {
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.terms-container input[type="checkbox"] {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.terms-container label {
+    font-size: 14px;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+}
+
+.terms-container a {
+    color: #6a11cb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-container a:hover {
+    text-decoration: underline;
+}
+
+/* Error Message Styling (for Terms-related errors) */
+.error-container {
+    display: none;
+    background-color: #dc3545;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.error-container .error-icon {
+    margin-right: 10px;
+}
+
+.error-container .error {
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .terms-container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .terms-container h2 {
+        font-size: 20px;
+    }
+
+    .terms-container p {
+        font-size: 13px;
+    }
+
+    .terms-container button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    .terms-container label {
+        font-size: 13px;
     }
 }

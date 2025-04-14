@@ -1,0 +1,520 @@
+{
+  "words": [
+    {
+      "en": "absolutely",
+      "ru": "абсолютно, совершенно",
+      "example": "You are absolutely right.",
+      "translation": "Вы совершенно правы."
+    },
+    {
+      "en": "accessible",
+      "ru": "доступный",
+      "example": "The information should be accessible to everyone.",
+      "translation": "Информация должна быть доступна каждому."
+    },
+    {
+      "en": "action film",
+      "ru": "боевик (фильм)",
+      "example": "We watched an exciting action film last night.",
+      "translation": "Вчера вечером мы смотрели захватывающий боевик."
+    },
+    {
+      "en": "action hero",
+      "ru": "герой боевика",
+      "example": "He dreams of becoming an action hero.",
+      "translation": "Он мечтает стать героем боевика."
+    },
+    {
+      "en": "addicted",
+      "ru": "зависимый, пристрастившийся",
+      "example": "She became addicted to social media.",
+      "translation": "Она стала зависимой от социальных сетей."
+    },
+    {
+      "en": "amusing",
+      "ru": "забавный, занимательный",
+      "example": "He told an amusing story about his trip.",
+      "translation": "Он рассказал забавную историю о своей поездке."
+    },
+    {
+      "en": "animated",
+      "ru": "анимационный, мультипликационный",
+      "example": "My kids love watching animated movies.",
+      "translation": "Мои дети любят смотреть анимационные фильмы."
+    },
+    {
+      "en": "app",
+      "ru": "приложение",
+      "example": "Have you downloaded the new banking app?",
+      "translation": "Ты скачал новое банковское приложение?"
+    },
+    {
+      "en": "appeal",
+      "ru": "привлекательность, обаяние; призыв",
+      "example": "The idea has a lot of appeal to young people.",
+      "translation": "Эта идея очень привлекательна для молодежи."
+    },
+    {
+      "en": "astonishing",
+      "ru": "удивительный, поразительный",
+      "example": "The magician performed an astonishing trick.",
+      "translation": "Фокусник показал поразительный трюк."
+    },
+    {
+      "en": "atmosphere",
+      "ru": "атмосфера",
+      "example": "The restaurant has a cozy atmosphere.",
+      "translation": "В ресторане уютная атмосфера."
+    },
+    {
+      "en": "authentic",
+      "ru": "подлинный, аутентичный",
+      "example": "This restaurant serves authentic Italian pizza.",
+      "translation": "В этом ресторане подают настоящую итальянскую пиццу."
+    },
+    {
+      "en": "banker",
+      "ru": "банкир",
+      "example": "He works as an investment banker.",
+      "translation": "Он работает инвестиционным банкиром."
+    },
+    {
+      "en": "base on",
+      "ru": "основывать(ся) на",
+      "example": "The film is based on a true story.",
+      "translation": "Фильм основан на реальных событиях."
+    },
+    {
+      "en": "brilliant",
+      "ru": "блестящий, великолепный",
+      "example": "She came up with a brilliant idea.",
+      "translation": "Она придумала блестящую идею."
+    },
+    {
+      "en": "cast",
+      "ru": "актерский состав",
+      "example": "The film has an amazing cast.",
+      "translation": "У фильма потрясающий актерский состав."
+    },
+    {
+      "en": "character",
+      "ru": "персонаж; характер",
+      "example": "Sherlock Holmes is a famous fictional character.",
+      "translation": "Шерлок Холмс — известный вымышленный персонаж."
+    },
+    {
+      "en": "chat",
+      "ru": "болтать, общаться в чате",
+      "example": "We chatted for hours online.",
+      "translation": "Мы болтали часами онлайн."
+    },
+    {
+      "en": "classic",
+      "ru": "классика; классический",
+      "example": "This novel is considered a classic.",
+      "translation": "Этот роман считается классикой."
+    },
+    {
+      "en": "clip",
+      "ru": "клип, ролик; зажим",
+      "example": "Did you see that funny video clip?",
+      "translation": "Ты видел этот смешной видеоклип?"
+    },
+    {
+      "en": "dash",
+      "ru": "мчаться, ринуться",
+      "example": "He dashed out of the room.",
+      "translation": "Он выскочил из комнаты."
+    },
+    {
+      "en": "dear",
+      "ru": "дорогой, милый",
+      "example": "She is a very dear friend.",
+      "translation": "Она очень близкая (дорогая) подруга."
+    },
+    {
+      "en": "despite",
+      "ru": "несмотря на",
+      "example": "He went for a walk despite the rain.",
+      "translation": "Он пошел гулять, несмотря на дождь."
+    },
+    {
+      "en": "difficult",
+      "ru": "трудный, сложный",
+      "example": "This is a very difficult task.",
+      "translation": "Это очень трудное задание."
+    },
+    {
+      "en": "disappointing",
+      "ru": "разочаровывающий",
+      "example": "The results of the experiment were disappointing.",
+      "translation": "Результаты эксперимента были разочаровывающими."
+    },
+    {
+      "en": "disturbing",
+      "ru": "тревожный, беспокоящий",
+      "example": "The news report contained disturbing images.",
+      "translation": "Новостной репортаж содержал тревожные кадры."
+    },
+    {
+      "en": "documentary",
+      "ru": "документальный фильм",
+      "example": "I watched a documentary about climate change.",
+      "translation": "Я смотрел документальный фильм об изменении климата."
+    },
+    {
+      "en": "dreadful",
+      "ru": "ужасный, страшный",
+      "example": "We had dreadful weather during our vacation.",
+      "translation": "У нас была ужасная погода во время отпуска."
+    },
+    {
+      "en": "entertaining",
+      "ru": "развлекательный, занимательный",
+      "example": "The comedian's performance was very entertaining.",
+      "translation": "Выступление комика было очень развлекательным."
+    },
+    {
+      "en": "essentially",
+      "ru": "по существу, в сущности",
+      "example": "Essentially, we need more time to finish the project.",
+      "translation": "По существу, нам нужно больше времени, чтобы закончить проект."
+    },
+    {
+      "en": "exhibition",
+      "ru": "выставка",
+      "example": "We visited an art exhibition at the museum.",
+      "translation": "Мы посетили художественную выставку в музее."
+    },
+    {
+      "en": "falsely",
+      "ru": "ложно, ошибочно",
+      "example": "He was falsely accused of the crime.",
+      "translation": "Его ложно обвинили в преступлении."
+    },
+    {
+      "en": "fan",
+      "ru": "фанат, поклонник",
+      "example": "She is a big fan of that singer.",
+      "translation": "Она большая поклонница этого певца."
+    },
+    {
+      "en": "fantasize",
+      "ru": "фантазировать, мечтать",
+      "example": "He often fantasized about winning the lottery.",
+      "translation": "Он часто фантазировал о выигрыше в лотерею."
+    },
+    {
+      "en": "genre",
+      "ru": "жанр",
+      "example": "What's your favorite movie genre?",
+      "translation": "Какой твой любимый жанр кино?"
+    },
+    {
+      "en": "grow apart",
+      "ru": "отдаляться (друг от друга)",
+      "example": "Over the years, the two friends slowly grew apart.",
+      "translation": "С годами двое друзей постепенно отдалились друг от друга."
+    },
+    {
+      "en": "hand-held",
+      "ru": "портативный, ручной",
+      "example": "He used a hand-held scanner.",
+      "translation": "Он использовал ручной сканер."
+    },
+    {
+      "en": "harmless",
+      "ru": "безвредный, безобидный",
+      "example": "It was just a harmless joke.",
+      "translation": "Это была просто безобидная шутка."
+    },
+    {
+      "en": "hope",
+      "ru": "надежда",
+      "example": "There is always hope for a better future.",
+      "translation": "Всегда есть надежда на лучшее будущее."
+    },
+    {
+      "en": "incredibly",
+      "ru": "невероятно, поразительно",
+      "example": "The view from the top was incredibly beautiful.",
+      "translation": "Вид с вершины был невероятно красивым."
+    },
+    {
+      "en": "infuriating",
+      "ru": "приводящий в ярость, раздражающий",
+      "example": "Waiting in long lines can be infuriating.",
+      "translation": "Ожидание в длинных очередях может приводить в ярость."
+    },
+    {
+      "en": "interact",
+      "ru": "взаимодействовать, общаться",
+      "example": "The students interact well with each other.",
+      "translation": "Студенты хорошо взаимодействуют друг с другом."
+    },
+    {
+      "en": "irritation",
+      "ru": "раздражение",
+      "example": "His constant complaining is a source of irritation.",
+      "translation": "Его постоянные жалобы являются источником раздражения."
+    },
+    {
+      "en": "log in",
+      "ru": "входить в систему, логиниться",
+      "example": "You need a password to log in.",
+      "translation": "Вам нужен пароль, чтобы войти в систему."
+    },
+    {
+      "en": "magically",
+      "ru": "волшебно, магически",
+      "example": "The stain magically disappeared after washing.",
+      "translation": "Пятно волшебным образом исчезло после стирки."
+    },
+    {
+      "en": "middle class",
+      "ru": "средний класс",
+      "example": "The government introduced policies to support the middle class.",
+      "translation": "Правительство ввело политику поддержки среднего класса."
+    },
+    {
+      "en": "military",
+      "ru": "военный, армейский",
+      "example": "He decided on a military career.",
+      "translation": "Он выбрал военную карьеру."
+    },
+    {
+      "en": "modern-day",
+      "ru": "современный",
+      "example": "This technology is essential for modern-day communication.",
+      "translation": "Эта технология необходима для современной связи."
+    },
+    {
+      "en": "moving",
+      "ru": "трогательный, волнующий",
+      "example": "It was a very moving story about friendship.",
+      "translation": "Это была очень трогательная история о дружбе."
+    },
+    {
+      "en": "mug",
+      "ru": "грабить (на улице)",
+      "example": "Someone tried to mug him in the park.",
+      "translation": "Кто-то пытался ограбить его в парке."
+    },
+    {
+      "en": "novel",
+      "ru": "роман (книга)",
+      "example": "She is reading a historical novel.",
+      "translation": "Она читает исторический роман."
+    },
+    {
+      "en": "on balance",
+      "ru": "в конечном счете, взвесив все",
+      "example": "On balance, I think the advantages outweigh the disadvantages.",
+      "translation": "В конечном счете, я думаю, преимуществ больше, чем недостатков."
+    },
+    {
+      "en": "original",
+      "ru": "оригинальный, подлинный",
+      "example": "We need to see the original document, not a copy.",
+      "translation": "Нам нужно увидеть оригинальный документ, а не копию."
+    },
+    {
+      "en": "performance",
+      "ru": "представление, выступление",
+      "example": "The actor gave an outstanding performance.",
+      "translation": "Актер показал выдающееся выступление."
+    },
+    {
+      "en": "plot",
+      "ru": "сюжет",
+      "example": "The plot of the movie was very complicated.",
+      "translation": "Сюжет фильма был очень сложным."
+    },
+    {
+      "en": "post",
+      "ru": "публиковать (онлайн)",
+      "example": "She posted photos from her trip online.",
+      "translation": "Она опубликовала фотографии из своей поездки онлайн."
+    },
+    {
+      "en": "pothole",
+      "ru": "выбоина (на дороге)",
+      "example": "Be careful, there's a large pothole in the road ahead.",
+      "translation": "Осторожно, впереди на дороге большая выбоина."
+    },
+    {
+      "en": "predictable",
+      "ru": "предсказуемый",
+      "example": "The ending of the film was rather predictable.",
+      "translation": "Концовка фильма была довольно предсказуемой."
+    },
+    {
+      "en": "prisoner",
+      "ru": "заключенный, узник",
+      "example": "The prisoner escaped from the jail.",
+      "translation": "Заключенный сбежал из тюрьмы."
+    },
+    {
+      "en": "recommend",
+      "ru": "рекомендовать, советовать",
+      "example": "Can you recommend a good restaurant nearby?",
+      "translation": "Можете порекомендовать хороший ресторан поблизости?"
+    },
+    {
+      "en": "release",
+      "ru": "выпускать, освобождать",
+      "example": "The band will release their new album next month.",
+      "translation": "Группа выпустит свой новый альбом в следующем месяце."
+    },
+    {
+      "en": "remake",
+      "ru": "ремейк, переделка",
+      "example": "This film is a remake of a French classic.",
+      "translation": "Этот фильм — ремейк французской классики."
+    },
+    {
+      "en": "result in",
+      "ru": "приводить к, иметь результатом",
+      "example": "The changes will result in better efficiency.",
+      "translation": "Изменения приведут к повышению эффективности."
+    },
+    {
+      "en": "rom com",
+      "ru": "романтическая комедия",
+      "example": "They watched a rom com together on Friday night.",
+      "translation": "Они смотрели романтическую комедию вместе в пятницу вечером."
+    },
+    {
+      "en": "salsa",
+      "ru": "сальса (танец или соус)",
+      "example": "She learned salsa at a dance class.",
+      "translation": "Она училась танцевать сальсу на занятиях по танцам."
+    },
+    {
+      "en": "scene",
+      "ru": "сцена, эпизод",
+      "example": "The final scene of the movie was breathtaking.",
+      "translation": "Последняя сцена фильма была захватывающей."
+    },
+    {
+      "en": "set out",
+      "ru": "отправляться, приступать",
+      "example": "They set out on their journey early in the morning.",
+      "translation": "Они отправились в путешествие рано утром."
+    },
+    {
+      "en": "showcase",
+      "ru": "демонстрировать, выставлять напоказ",
+      "example": "The event will showcase new technology.",
+      "translation": "Мероприятие продемонстрирует новые технологии."
+    },
+    {
+      "en": "silly",
+      "ru": "глупый, нелепый",
+      "example": "He made a silly mistake during the presentation.",
+      "translation": "Он допустил глупую ошибку во время презентации."
+    },
+    {
+      "en": "skyscraper",
+      "ru": "небоскреб",
+      "example": "The city is famous for its tall skyscrapers.",
+      "translation": "Город известен своими высокими небоскребами."
+    },
+    {
+      "en": "slavery",
+      "ru": "рабство",
+      "example": "The history book discusses the abolition of slavery.",
+      "translation": "Историческая книга обсуждает отмену рабства."
+    },
+    {
+      "en": "soundtrack",
+      "ru": "саундтрек, звуковая дорожка",
+      "example": "The movie's soundtrack became very popular.",
+      "translation": "Саундтрек к фильму стал очень популярным."
+    },
+    {
+      "en": "special effects",
+      "ru": "спецэффекты",
+      "example": "The film is known for its incredible special effects.",
+      "translation": "Фильм известен своими невероятными спецэффектами."
+    },
+    {
+      "en": "stunning",
+      "ru": "потрясающий, ошеломляющий",
+      "example": "The view from the mountain was absolutely stunning.",
+      "translation": "Вид с горы был абсолютно потрясающим."
+    },
+    {
+      "en": "sweep across",
+      "ru": "охватывать, распространяться",
+      "example": "The trend quickly swept across the country.",
+      "translation": "Тренд быстро распространился по всей стране."
+    },
+    {
+      "en": "tend",
+      "ru": "иметь тенденцию, склоняться",
+      "example": "She tends to overthink every decision.",
+      "translation": "Она склонна переосмысливать каждое решение."
+    },
+    {
+      "en": "terrific",
+      "ru": "потрясающий, замечательный",
+      "example": "The concert was a terrific experience.",
+      "translation": "Концерт был замечательным опытом."
+    },
+    {
+      "en": "thrilling",
+      "ru": "захватывающий, волнующий",
+      "example": "It was a thrilling adventure in the jungle.",
+      "translation": "Это было захватывающее приключение в джунглях."
+    },
+    {
+      "en": "thriller",
+      "ru": "триллер",
+      "example": "I enjoy watching a good thriller on weekends.",
+      "translation": "Мне нравится смотреть хороший триллер по выходным."
+    },
+    {
+      "en": "topic",
+      "ru": "тема",
+      "example": "The topic of the lecture was climate change.",
+      "translation": "Темой лекции было изменение климата."
+    },
+    {
+      "en": "unexpectedly",
+      "ru": "неожиданно",
+      "example": "She arrived unexpectedly at the party.",
+      "translation": "Она неожиданно приехала на вечеринку."
+    },
+    {
+      "en": "unexciting",
+      "ru": "неинтересный, скучный",
+      "example": "The book turned out to be quite unexciting.",
+      "translation": "Книга оказалась довольно скучной."
+    },
+    {
+      "en": "violent",
+      "ru": "жестокий, насильственный",
+      "example": "The movie was too violent for young children.",
+      "translation": "Фильм был слишком жестоким для маленьких детей."
+    },
+    {
+      "en": "vote",
+      "ru": "голосовать",
+      "example": "They will vote in the election next week.",
+      "translation": "Они будут голосовать на выборах на следующей неделе."
+    },
+    {
+      "en": "vote",
+      "ru": "голос",
+      "example": "Her vote made a difference in the decision.",
+      "translation": "Её голос повлиял на решение."
+    },
+    {
+      "en": "world-wide",
+      "ru": "всемирный, глобальный",
+      "example": "The company has a world-wide presence.",
+      "translation": "Компания имеет всемирное присутствие."
+    }
+  ]
+}

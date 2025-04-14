@@ -6,7 +6,7 @@
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="format-detection" content="telephone=no">
-    <title>Students APP</title>
+    <title>Forest App by Horizon</title>
     <link rel="stylesheet" href="/static/styles/style.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -128,9 +128,47 @@
         <li id="leaderboard-option"><i class="fas fa-trophy leaderboard-icon"></i> Leaderboard</li>
         <li id="examTaskOption"><i class="fas fa-pencil-alt exam-icon"></i>Exam</li>
         <li id="myExamResultsOption"><i class="fas fa-clipboard-list"></i> My Exam Results</li>
+		<li id="vocabulary-option"><i class="fas fa-book-open"></i> Vocabulary</li>
         <li id="logout-option"><i class="fas fa-sign-out-alt logout-icon"></i> Logout</li>
     </ul>
 </div>
+
+<fl-modal id="vocabulary-modal" style="display: none;">
+  <fl-modal-content>
+    <!-- Иконка закрытия -->
+    <span class="modal-close" id="vocabulary-modal-close" title="Close">
+      <i class="fas fa-times"></i>
+    </span>
+
+    <!-- Раздел для списка юнитов -->
+    <div id="vocabulary-units">
+      <h2>Vocabulary Units</h2>
+
+      <!-- Скелетон загрузки -->
+      <div id="sceleton-loader-vocabulary" class="sceleton-loader" style="display: none;">
+        <p>Загрузка...</p>
+      </div>
+
+      <!-- Список юнитов -->
+      <div id="vocabulary-list" class="vocabulary-list"></div>
+    </div>
+
+    <!-- Раздел для показа слов выбранного юнита -->
+    <div id="vocabulary-words" style="display: none;">
+      <!-- Кнопка "Назад" с иконкой -->
+      <button id="back-to-units" class="back-button" title="Back to Units">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+
+      <h2 id="word-header"></h2>
+
+      <!-- Контейнер для списка слов -->
+      <div id="words-container" class="words-container"></div>
+    </div>
+
+  </fl-modal-content>
+</fl-modal>
+
 
 <!-- Exam Results Modal (container) -->
 <div id="myExamResultsModal" class="my-exam-results-modal" style="display: none;">

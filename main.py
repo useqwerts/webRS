@@ -1688,38 +1688,85 @@ def get_tracks():
 @app.route('/')
 def login():
     return render_template('login.html')
+    
+ACCEPTED_USERS_FILE = "accepted_users.json"
+
+# Initialize Accepted_users by loading from the JSON file (if it exists)
+def load_accepted_users():
+    if os.path.exists(ACCEPTED_USERS_FILE):
+        with open(ACCEPTED_USERS_FILE, 'r') as f:
+            data = json.load(f)
+            return set(data)  # Convert the loaded list back to a set
+    else:
+        # If the file doesn't exist, start with the default set
+        return {"Admin"}
+
+# Save Accepted_users to the JSON file
+def save_accepted_users(users):
+    with open(ACCEPTED_USERS_FILE, 'w') as f:
+        json.dump(list(users), f)  # Convert set to list for JSON serialization
+
+# Load Accepted_users at startup
+Accepted_users = load_accepted_users()
 
 @app.route('/login', methods=['GET', 'POST'])
 def handle_login():
-    username = request.form.get('username')
-    password = request.form.get('password')
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-    # Проверка на заблокированных пользователей
-    if username in banned_users:
-        return render_template('login.html', error="Your account is banned.")  # Ошибка, если пользователь заблокирован
+        # Check if the user is banned
+        if username in banned_users:
+            return render_template('login.html', error="Your account is banned.")
 
-    # Проверка на правильность введенного имени и пароля
-    if username in loggedUsers and loggedUsers[username] == password:
-        # Собираем более подробную информацию о устройстве
-        device_info = {
-            'User-Agent': request.headers.get('User-Agent'),
-            'IP-Address': request.headers.get('X-Forwarded-For', request.remote_addr),
-            'Language': request.headers.get('Accept-Language'),
-            'Platform': platform.system(),  # Используем платформу из Python
-            'OS': platform.version(),  # Версия операционной системы
-            'Device-Type': 'Mobile' if 'Mobi' in request.headers.get('User-Agent') else 'Desktop'
-        }
+        # Check if the user has accepted the Terms and Conditions
+        if username not in Accepted_users:
+            return render_template('login.html', error="You must accept the Terms and Conditions to proceed.")
 
-        # Если пользователь уже в системе, но с другого устройства
-        if username in active_sessions:
-            active_sessions[username].append(device_info)  # Добавляем информацию об устройстве
+        # Validate username and password
+        if username in loggedUsers and loggedUsers[username] == password:
+            # Collect device information
+            device_info = {
+                'User-Agent': request.headers.get('User-Agent'),
+                'IP-Address': request.headers.get('X-Forwarded-For', request.remote_addr),
+                'Language': request.headers.get('Accept-Language'),
+                'Platform': platform.system(),
+                'OS': platform.version(),
+                'Device-Type': 'Mobile' if 'Mobi' in request.headers.get('User-Agent') else 'Desktop'
+            }
+
+            # Manage active sessions
+            if username in active_sessions:
+                active_sessions[username].append(device_info)
+            else:
+                active_sessions[username] = [device_info]
+
+            session['username'] = username
+            return redirect(url_for('chat'))
         else:
-            active_sessions[username] = [device_info]  # Добавляем пользователя и информацию об устройстве
+            return render_template('login.html', error="Invalid username or password")
 
-        session['username'] = username
-        return redirect(url_for('chat'))
-    else:
-        return render_template('login.html', error="Invalid username or password")
+    return render_template('login.html')
+    
+@app.route('/accept_terms', methods=['POST'])
+def accept_terms():
+    data = request.get_json()
+    username = data.get('username')
+
+    if not username:
+        return jsonify({'success': False, 'message': 'Username is required'}), 400
+
+    # Add the user to Accepted_users
+    Accepted_users.add(username)
+    # Save the updated set to the JSON file
+    save_accepted_users(Accepted_users)
+    return jsonify({'success': True, 'message': f'{username} has accepted the Terms and Conditions'})
+
+@app.route('/check_terms/<username>', methods=['GET'])
+def check_terms(username):
+    # Check if the user has accepted the Terms and Conditions
+    accepted = username in Accepted_users
+    return jsonify({'accepted': accepted})
 
 @app.route('/sessions')
 def get_sessions():
@@ -1982,6 +2029,19 @@ def get_student_progress_history():
             "totalScore": total_score_formatted
         }
     }), 200
+    
+@app.route('/vocabulary/<int:unit_number>', methods=['GET'])
+def get_vocabulary(unit_number):
+    base_path = os.path.join('static', 'Vocabulary', f'Unit {unit_number}')
+    words_file = os.path.join(base_path, 'words.json')
+
+    if not os.path.exists(words_file):
+        return jsonify({"error": "Файл не найден"}), 404
+
+    with open(words_file, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    return jsonify(data)
 
 
 if __name__ == '__main__':

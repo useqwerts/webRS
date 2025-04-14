@@ -3777,7 +3777,7 @@ function fetchStudentProgress() {
       // Обновляем блок с датой экзамена
       let examMessage, examIcon;
       if (weekNumber <= 6) {
-        examMessage = `Middle Exam: ${nextExamDate}`;
+        examMessage = `Mid Term Exam: ${nextExamDate}`;
         examIcon = '<i class="fas fa-calendar-day"></i>';
       } else {
         examMessage = `Final Exam: ${nextExamDate}`;
@@ -3792,7 +3792,7 @@ function fetchStudentProgress() {
       // Добавляем кнопку "Weekly Exam", если условия соблюдены
       if (weekNumber >= 2 && dayInWeek === 1 && !document.querySelector('.weekly-exam-button')) {
         const weeklyExamButton = document.createElement("button");
-        weeklyExamButton.textContent = "Weekly Exam START";
+        weeklyExamButton.textContent = "Soon";
         weeklyExamButton.classList.add("weekly-exam-button");
         weeklyExamButton.addEventListener('click', () => showModal());
         progressContainerEl.appendChild(weeklyExamButton);
@@ -4584,3 +4584,128 @@ messageInput.addEventListener('input', function () {
         messageInput.classList.remove('expanded');
     }
 });
+
+// Предполагается, что глобальная переменная Unit уже определена, например:
+// var Unit = "2.1";
+
+const totalUnits = 12; // Общее количество юнитов
+
+// Обработчик для открытия модального окна и загрузки списка юнитов
+document.getElementById('vocabulary-option').addEventListener('click', function () {
+  document.getElementById('vocabulary-modal').style.display = 'flex';
+  document.getElementById('vocabulary-units').style.display = 'block';
+  document.getElementById('vocabulary-words').style.display = 'none';
+
+  const vocabularyList = document.getElementById('vocabulary-list');
+  const loader = document.getElementById('sceleton-loader-vocabulary');
+
+  loader.style.display = 'flex';
+  vocabularyList.innerHTML = '';
+
+  const userGlobalUnit = parseInt(parseFloat(Unit), 10);
+
+  // Убираем setTimeout, сразу загружаем данные
+  loader.style.display = 'none';
+
+  for (let i = 1; i <= totalUnits; i++) {
+    let status = '';
+    if (i < userGlobalUnit) status = 'Unlocked';
+    else if (i === userGlobalUnit) status = 'In progress';
+    else status = 'Locked';
+
+    const unitDiv = document.createElement('div');
+    unitDiv.classList.add('unit-item');
+    if (status === 'Locked') unitDiv.classList.add('locked');
+    else if (status === 'Unlocked') unitDiv.classList.add('unlocked');
+    else if (status === 'In progress') unitDiv.classList.add('inprogress');
+
+    const unitText = document.createElement('span');
+    unitText.textContent = `Unit ${i} - ${status}`;
+    unitDiv.appendChild(unitText);
+
+    if (status !== 'Locked') {
+      const btn = document.createElement('button');
+      btn.classList.add('icon-button');
+      btn.title = 'Open Unit';
+      btn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+
+      btn.addEventListener('click', () => {
+        fetch(`/vocabulary/${i}`)
+          .then(resp => resp.json())
+          .then(wordsData => {
+            document.getElementById('vocabulary-units').style.display = 'none';
+            document.getElementById('vocabulary-words').style.display = 'block';
+            document.getElementById('word-header').textContent = `Unit ${i} Words`;
+            renderWords(wordsData.words);
+          })
+          .catch(err => console.error(err));
+      });
+
+      unitDiv.appendChild(btn);
+    }
+
+    vocabularyList.appendChild(unitDiv);
+  }
+});
+
+// Функция для отображения слов
+function renderWords(words) {
+  const wordsContainer = document.getElementById('words-container');
+  wordsContainer.innerHTML = '';
+  
+if (!words || words.length === 0) {
+  wordsContainer.innerHTML = '<p class="no-exams">You have no words for this unit. It can be added by the Horizon Inc.</p>';
+  return;
+}
+
+
+  words.forEach(wordObj => {
+    const wordDiv = document.createElement('div');
+    wordDiv.classList.add('word-item');
+
+    const enWord = document.createElement('div');
+    enWord.classList.add('word-en');
+    enWord.textContent = wordObj.en;
+    wordDiv.appendChild(enWord);
+
+    const ruWord = document.createElement('div');
+    ruWord.classList.add('word-ru');
+    ruWord.textContent = wordObj.ru;
+    wordDiv.appendChild(ruWord);
+
+    if (wordObj.example) {
+      const example = document.createElement('div');
+      example.classList.add('word-example');
+      example.textContent = `Example: ${wordObj.example}`;
+      wordDiv.appendChild(example);
+    }
+
+    if (wordObj.translation) {
+      const translation = document.createElement('div');
+      translation.classList.add('word-example');
+      translation.textContent = `Translate: ${wordObj.translation}`;
+      wordDiv.appendChild(translation);
+    }
+
+    wordsContainer.appendChild(wordDiv);
+  });
+}
+
+// Назад к юнитам
+document.getElementById('back-to-units').addEventListener('click', function () {
+  document.getElementById('vocabulary-units').style.display = 'block';
+  document.getElementById('vocabulary-words').style.display = 'none';
+});
+
+// Закрытие модального окна
+document.getElementById('vocabulary-modal-close').addEventListener('click', function () {
+  document.getElementById('vocabulary-modal').style.display = 'none';
+});
+
+window.addEventListener('click', function (event) {
+  const modal = document.getElementById('vocabulary-modal');
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+

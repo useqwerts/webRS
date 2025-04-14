@@ -7,7 +7,7 @@
         "correct_percentage": 4.10958904109589,
         "rewarded": false,
         "coins": 0,
-        "time_finished": "2025-04-11 01:04:37",
+        "time_finished": "2025-04-11 13:05:12",
         "results": [
             {
                 "question_type": "multiple_choice",
@@ -747,6 +747,602 @@
                 "question": "We like __ to our favourite music.",
                 "user_answer": "music",
                 "correct_answer": "to music",
+                "is_correct": false
+            }
+        ]
+    },
+    "Aziz": {
+        "correct": 0,
+        "incorrect": 1,
+        "skipped": 72,
+        "total_questions": 73,
+        "correct_percentage": 0.0,
+        "rewarded": false,
+        "coins": 0,
+        "time_finished": "2025-04-11 13:18:33",
+        "results": [
+            {
+                "question_type": "multiple_choice",
+                "question_id": 1,
+                "question": "What does 'absolutely' mean?",
+                "user_answer": null,
+                "correct_answer": "used to emphasize that something is completely true",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 2,
+                "question": "What does 'accessible' mean?",
+                "user_answer": null,
+                "correct_answer": "a place that can be entered, used, or seen",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 3,
+                "question": "What is an 'action film'?",
+                "user_answer": null,
+                "correct_answer": "a film that has a lot of exciting action and adventure",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 4,
+                "question": "What is an 'action hero'?",
+                "user_answer": null,
+                "correct_answer": "the main character of the film",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 5,
+                "question": "What does 'addicted' mean?",
+                "user_answer": null,
+                "correct_answer": "unable to stop using or doing something as a habit, especially something harmful",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 6,
+                "question": "What does 'amusing' mean?",
+                "user_answer": null,
+                "correct_answer": "something funny and giving pleasure",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 7,
+                "question": "What is an 'app'?",
+                "user_answer": null,
+                "correct_answer": "a piece of software that you can download to a device",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 8,
+                "question": "What does 'appeal' mean?",
+                "user_answer": null,
+                "correct_answer": "a quality that makes somebody/something attractive or interesting",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 9,
+                "question": "What does 'astonishing' mean?",
+                "user_answer": null,
+                "correct_answer": "very surprising; difficult to believe",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 10,
+                "question": "What does 'atmosphere' mean?",
+                "user_answer": null,
+                "correct_answer": "the feeling or mood that you have in a particular place or situation",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 11,
+                "question": "What does 'authentic' mean?",
+                "user_answer": null,
+                "correct_answer": "known to be real and what somebody claims it is",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 12,
+                "question": "What is a 'banker'?",
+                "user_answer": null,
+                "correct_answer": "the one who works in a bank",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 13,
+                "question": "What does 'base on' mean?",
+                "user_answer": null,
+                "correct_answer": "to use an idea, a fact, a situation, etc. as the point from which something can be developed",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 14,
+                "question": "What does 'brilliant' mean?",
+                "user_answer": "something very ordinary",
+                "correct_answer": "extremely clever or impressive",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 15,
+                "question": "What does 'cast' mean?",
+                "user_answer": null,
+                "correct_answer": "the process of choosing actors to play different parts in a film, play, etc.",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 16,
+                "question": "What does 'character' mean?",
+                "user_answer": null,
+                "correct_answer": "a person or an animal in a book, play or film",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 17,
+                "question": "What does 'chat' mean?",
+                "user_answer": null,
+                "correct_answer": "to talk in a friendly, informal way to somebody",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 18,
+                "question": "What does 'classic' mean?",
+                "user_answer": null,
+                "correct_answer": "accepted or deserving to be accepted as one of the best or most important of its kind",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 19,
+                "question": "What does 'clip' mean?",
+                "user_answer": null,
+                "correct_answer": "a short part of a film that is shown separately",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 20,
+                "question": "What does 'dash' mean?",
+                "user_answer": null,
+                "correct_answer": "an act of going somewhere suddenly and/or quickly",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 21,
+                "question": "What does 'fantasise' mean?",
+                "user_answer": null,
+                "correct_answer": "to imagine that you are doing something that you would like to do, or that something that you would like to happen is happening, even though this is very unlikely",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 22,
+                "question": "What does 'genre' mean?",
+                "user_answer": null,
+                "correct_answer": "a particular type or style of literature, art, film or music that you can recognize because of its special features",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 23,
+                "question": "What does 'grow apart' mean?",
+                "user_answer": null,
+                "correct_answer": "to stop having a close relationship with somebody over a period of time",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 24,
+                "question": "What does 'hand-held' mean?",
+                "user_answer": null,
+                "correct_answer": "a device, especially a computer, that is small enough to be held in the hand while being used",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 25,
+                "question": "What does 'harmless' mean?",
+                "user_answer": null,
+                "correct_answer": "unable or unlikely to cause damage or harm",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 26,
+                "question": "What does 'modern-day' mean?",
+                "user_answer": null,
+                "correct_answer": "of the present time",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 27,
+                "question": "What does 'moving' mean?",
+                "user_answer": null,
+                "correct_answer": "causing strong, often sad, feelings about somebody/something",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 28,
+                "question": "What does 'mug' mean?",
+                "user_answer": null,
+                "correct_answer": "to violently steal from somebody, especially in a public place",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 29,
+                "question": "What does 'novel' mean?",
+                "user_answer": null,
+                "correct_answer": "a story long enough to fill a complete book, in which the characters and events are usually imaginary",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 30,
+                "question": "What does 'on balance' mean?",
+                "user_answer": null,
+                "correct_answer": "after considering all the information",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 31,
+                "question": "What does 'original' mean?",
+                "user_answer": null,
+                "correct_answer": "existing at the beginning or a particular period, process or activity",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 32,
+                "question": "What does 'performance' mean?",
+                "user_answer": null,
+                "correct_answer": "the act of performing a play, concert or some other form of entertainment",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 33,
+                "question": "What does 'plot' mean?",
+                "user_answer": null,
+                "correct_answer": "the series of events that form the story of a novel, play, film, etc.",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 34,
+                "question": "What does 'post' mean?",
+                "user_answer": null,
+                "correct_answer": "to put information or pictures on a website",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 35,
+                "question": "What does 'pothole' mean?",
+                "user_answer": null,
+                "correct_answer": "a large rough hole in the surface of a road that is formed by traffic and bad weather",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 36,
+                "question": "What does 'predictable' mean?",
+                "user_answer": null,
+                "correct_answer": "if something is predictable, you know in advance that it will happen or what it will be like",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 37,
+                "question": "What is a 'prisoner'?",
+                "user_answer": null,
+                "correct_answer": "a person who is kept in prison as a punishment or while waiting for trial",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 38,
+                "question": "What does 'recommend' mean?",
+                "user_answer": null,
+                "correct_answer": "to tell somebody that something is good or useful or that somebody would be suitable for a particular job",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 39,
+                "question": "What does 'release' mean?",
+                "user_answer": null,
+                "correct_answer": "to let somebody come out of a place where they have been kept or stuck and unable to leave or move",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 40,
+                "question": "What does 'remake' mean?",
+                "user_answer": null,
+                "correct_answer": "a new or different version of an old film or song",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 41,
+                "question": "What does 'result in' mean?",
+                "user_answer": null,
+                "correct_answer": "lead to",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 42,
+                "question": "What is a 'rom com'?",
+                "user_answer": null,
+                "correct_answer": "a humorous film or TV show that is about love; a romantic comedy",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 43,
+                "question": "What does 'salsa' mean?",
+                "user_answer": null,
+                "correct_answer": "a type of Latin American dance music",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 44,
+                "question": "What does 'scene' mean?",
+                "user_answer": null,
+                "correct_answer": "a part of a film, play or book in which the action happens in one place or is of one particular type",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 45,
+                "question": "What does 'set out' mean?",
+                "user_answer": null,
+                "correct_answer": "to leave a place and begin a journey",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 46,
+                "question": "What does 'showcase' mean?",
+                "user_answer": null,
+                "correct_answer": "to present somebody's abilities or the good qualities of something in an attractive way",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 47,
+                "question": "What does 'silly' mean?",
+                "user_answer": null,
+                "correct_answer": "showing a lack of thought, understanding, or judgement",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 48,
+                "question": "What does 'skyscraper' mean?",
+                "user_answer": null,
+                "correct_answer": "a very tall building in a city",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 49,
+                "question": "What does 'soundtrack' mean?",
+                "user_answer": null,
+                "correct_answer": "all the music, speech and sounds that are recorded for a film",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 50,
+                "question": "What does 'slavery' mean?",
+                "user_answer": null,
+                "correct_answer": "the state of being forced to work as a slave",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 51,
+                "question": "What does 'stunning' mean?",
+                "user_answer": null,
+                "correct_answer": "extremely attractive or impressive",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 52,
+                "question": "What does 'sweep' mean?",
+                "user_answer": null,
+                "correct_answer": "to move quickly and/or smoothly, especially in a way that impresses or is intended to impress other people",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 53,
+                "question": "What does 'tend' mean?",
+                "user_answer": null,
+                "correct_answer": "to be likely to do something or to happen in a particular way because this is what often or usually happens",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 54,
+                "question": "What does 'terrific' mean?",
+                "user_answer": null,
+                "correct_answer": "excellent, wonderful",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 55,
+                "question": "What does 'terrifying' mean?",
+                "user_answer": null,
+                "correct_answer": "making somebody feel extremely frightened",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 56,
+                "question": "What is a 'thriller'?",
+                "user_answer": null,
+                "correct_answer": "a book, play or film with an exciting story, especially one about crime or spying",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 57,
+                "question": "What does 'unexciting' mean?",
+                "user_answer": null,
+                "correct_answer": "not interesting; boring",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 58,
+                "question": "What does 'violent' mean?",
+                "user_answer": null,
+                "correct_answer": "involving or caused by physical force that is intended to hurt or kill somebody",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 59,
+                "question": "What does 'voice' mean?",
+                "user_answer": null,
+                "correct_answer": "to produce a sound with a movement of your vocal cords as well as your breath",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 60,
+                "question": "What does 'vote' mean?",
+                "user_answer": null,
+                "correct_answer": "to show formally by making a paper, raising your hand or using a voting machine, etc. which person or political party you want in an election, or which idea you support",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 61,
+                "question": "What does 'world-wide' mean?",
+                "user_answer": null,
+                "correct_answer": "widespread around the world",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 62,
+                "question": "What does 'adaptation' mean?",
+                "user_answer": null,
+                "correct_answer": "a film, book, play, etc. that has been made from another film, book, play, etc.",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 63,
+                "question": "What does 'beverage' mean?",
+                "user_answer": null,
+                "correct_answer": "a drink of any type",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 64,
+                "question": "What does 'crossover' mean?",
+                "user_answer": null,
+                "correct_answer": "the process or result of changing from one activity or style to another",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 65,
+                "question": "What does 'engagement' mean?",
+                "user_answer": null,
+                "correct_answer": "an arrangement to meet someone or do something at a particular time",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 66,
+                "question": "What does 'epic' mean?",
+                "user_answer": null,
+                "correct_answer": "in the style of an epic; a film, poem or book which is long and contains a lot of action, usually dealing with a historical subject",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 67,
+                "question": "What does 'gambling' mean?",
+                "user_answer": null,
+                "correct_answer": "the activity of betting money, for example in a game or on a horse race",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 68,
+                "question": "What does 'merchandising' mean?",
+                "user_answer": null,
+                "correct_answer": "products connected with a popular film, singer, event, etc., or the selling of these products",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 69,
+                "question": "What does 'parody' mean?",
+                "user_answer": null,
+                "correct_answer": "writing, music, art, an act, etc. which humorously imitates the style of someone famous or copies a particular situation, making the features or qualities of the original more noticeable in a way that is humorous",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 70,
+                "question": "What does 'prequel' mean?",
+                "user_answer": null,
+                "correct_answer": "a film, book or play which develops the story of an earlier film, etc. by telling you what happened before the events in the first film",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 71,
+                "question": "What does 'recreation' mean?",
+                "user_answer": null,
+                "correct_answer": "(a way of) enjoying yourself when you are not working",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 72,
+                "question": "What does 'sequel' mean?",
+                "user_answer": null,
+                "correct_answer": "a book, film or play which continues the story of a previous book",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": 73,
+                "question": "What does 'wholesome' mean?",
+                "user_answer": null,
+                "correct_answer": "good for you, and likely to improve your life either physically, morally or emotionally",
                 "is_correct": false
             }
         ]
