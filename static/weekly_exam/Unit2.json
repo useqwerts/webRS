@@ -1,0 +1,88 @@
+[
+        {
+  "id": 1,
+  "text": "Section 1. Are the sentences true or false?",
+  "type": "listening",
+  "audio": "/static/exam/LE_listening_A1_Ordering_in_a_cafe.mp3",
+  "subquestions": [
+    {
+      "id": "1.1",
+      "type": "true_false",
+      "text": "Customer 1 orders a large bottle of orange juice",
+      "correct": "False"
+    },
+    {
+      "id": "1.2",
+      "type": "true_false",
+      "text": "The apple juice costs £3.15",
+      "correct": "False"
+    },
+    {
+      "id": "1.3",
+      "type": "true_false",
+      "text": "Customer 2 is not going to have their tea and cake inside the café",
+      "correct": "True"
+    },
+    {
+      "id": "1.4",
+      "type": "true_false",
+      "text": "Customer 2 pays with a twenty pound note",
+      "correct": "False"
+    },
+    {
+      "id": "1.5",
+      "type": "true_false",
+      "text": "Customer 3 orders something to drink",
+      "correct": "False"
+    },
+    {
+      "id": "1.6",
+      "type": "true_false",
+      "text": "The cookie costs 85p",
+      "correct": "False"
+    }
+  ]
+},
+    {
+ "id": 2,
+  "type": "reading",
+  "text": "<h1>FINAL EXAM INSTRUCTIONS</h1>\n\n<h2>Poster 1</h2>\n<ul>\n  <li>Doors close 5 minutes before the exam begins.</li>\n  <li>Show your student ID card to examiner when you enter the room.</li>\n  <li>No phones, no books.</li>\n</ul>\n\n<h2>Poster 2</h2>\n<p><strong>BEFORE THE EXAM</strong></p>\n<ul>\n  <li>Have your ID card ready.</li>\n  <li>Listen to the instructions.</li>\n  <li>Arrive 10 minutes before exam.</li>\n</ul>\n<p><strong>IN THE EXAM</strong></p>\n<ul>\n  <li>Mobile phones switched off and put away.</li>\n  <li>ID card visible on the desk.</li>\n  <li>No talking.</li>\n  <li>No food or drinks in exam room.</li>\n</ul>\n\n<h2>Poster 3</h2>\n<ul>\n  <li>Follow the examiner's instructions.</li>\n  <li>If you have a question, raise your hand.</li>\n  <li>No mobile phones, books or bags in the exam.</li>\n  <li>Please use a blue or black pen.</li>\n</ul>",
+    "subquestions": [
+        {
+            "id": "2.1",
+            "type": "multiple_choice",
+            "text": "No talking.",
+            "options": ["You can talk.", "You can't talk."],
+            "correct": "You can't talk."
+        },
+        {
+            "id": "2.2",
+            "type": "multiple_choice",
+            "text": "ID card visible on desk.",
+            "options": ["You can see the ID card.", "You can't see the ID card."],
+            "correct": "You can see the ID card."
+        },
+        {
+            "id": "2.3",
+            "type": "multiple_choice",
+            "text": "Mobile phones switched off and put away.",
+            "options": ["Don't have your mobile phone on the table.", "It's OK to have your mobile phone on the table."],
+            "correct": "Don't have your mobile phone on the table."
+        },
+        {
+            "id": "2.4",
+            "type": "multiple_choice",
+            "text": "Doors close five minutes before the exam.",
+            "options": ["You must arrive early.", "You can be five minutes late."],
+            "correct": "You must arrive early."
+        },
+        {
+            "id": "2.5",
+            "type": "multiple_choice",
+            "text": "If you have a question, raise your hand.",
+            "options": ["You can ask questions.", "You can't ask questions."],
+            "correct": "You can ask questions."
+        }
+    ]
+}
+]

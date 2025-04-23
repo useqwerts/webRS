@@ -1403,3 +1403,126 @@ select:hover {
   min-width: 40px;
 }
 
+/* 1. Контейнер в правом верхнем углу */
+  #toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* 2. Общий стиль уведомления */
+  .toast {
+    pointer-events: auto; /* чтобы работал клик по крестику */
+    display: flex;
+    align-items: flex-start;
+    width: 320px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateX(50px);
+    animation:
+      slideIn 0.4s ease-out forwards,
+      fadeOut 0.4s ease-in var(--hide-delay) forwards;
+  }
+
+  @keyframes slideIn {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+  }
+
+  /* 3. Фоны под каждый тип */
+  .toast.error {
+    background: linear-gradient(135deg, #ffe5e5, #fff5f5);
+  }
+  .toast.warning {
+    background: linear-gradient(135deg, #fff8e1, #fffcf3);
+  }
+  .toast.success {
+    background: linear-gradient(135deg, #e6ffed, #f2fff4);
+  }
+  .toast.info {
+    background: linear-gradient(135deg, #e6f4ff, #f5fbff);
+  }
+
+  /* 4. Иконка слева */
+  .toast-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 18px;
+    color: #fff;
+  }
+  .toast.error .toast-icon   { background: #e74c3c; }
+  .toast.warning .toast-icon { background: #f39c12; }
+  .toast.success .toast-icon { background: #27ae60; }
+  .toast.info .toast-icon    { background: #2980b9; }
+
+  /* 5. Текст */
+  .toast-message {
+    flex: 1;
+    font-family: sans-serif;
+    color: #333;
+    line-height: 1.4;
+  }
+  .toast-message b {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+  .toast-message span {
+    font-size: 13px;
+  }
+
+  /* 6. Крестик закрытия */
+  .toast-close {
+    margin-left: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #555;
+    opacity: 0.6;
+    transition: opacity .2s;
+  }
+  .toast-close:hover {
+    opacity: 1;
+  }
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

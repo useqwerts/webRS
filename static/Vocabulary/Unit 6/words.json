@@ -1,0 +1,400 @@
+{
+  "words": [
+    {
+      "en": "accessible",
+      "ru": "доступный",
+      "example": "The information should be accessible to everyone.",
+      "definition": "Easy to approach or enter."
+    },
+    {
+      "en": "accident",
+      "ru": "авария, несчастный случай",
+      "example": "There was a serious accident on the highway.",
+      "definition": "An unforeseen and unplanned event or circumstance."
+    },
+    {
+      "en": "artificially",
+      "ru": "искусственно",
+      "example": "The flowers were artificially colored.",
+      "definition": "In a manner that is not natural or genuine; in a made-up or manufactured way."
+    },
+    {
+      "en": "at speed",
+      "ru": "на скорости",
+      "example": "The car was traveling at high speed.",
+      "definition": "Moving quickly."
+    },
+    {
+      "en": "automatically",
+      "ru": "автоматически",
+      "example": "The door opens automatically.",
+      "definition": "By itself or by a mechanism without direct human control."
+    },
+    {
+      "en": "basically",
+      "ru": "в основном, по сути",
+      "example": "Basically, we need more time.",
+      "definition": "In the main or essential part; fundamentally."
+    },
+    {
+      "en": "brake",
+      "ru": "тормоз",
+      "example": "He had to slam on the brakes.",
+      "definition": "A device for slowing or stopping a moving vehicle, wheel, or axle."
+    },
+    {
+      "en": "cheerful",
+      "ru": "жизнерадостный, веселый",
+      "example": "She was in a cheerful mood.",
+      "definition": "Noticeably happy and optimistic."
+    },
+    {
+      "en": "climate change",
+      "ru": "изменение климата",
+      "example": "Climate change is a global issue.",
+      "definition": "A long-term change in the average weather patterns that have come to define Earth’s local, regional and global climates."
+    },
+    {
+      "en": "cloud seeding",
+      "ru": "засев облаков",
+      "example": "They are experimenting with cloud seeding to increase rainfall.",
+      "definition": "The process of spreading either dry ice or, more commonly, silver iodide aerosols into the upper part of clouds to try to stimulate the precipitation process and form rain or snow."
+    },
+    {
+      "en": "commute",
+      "ru": "добираться до работы/учебы и обратно",
+      "example": "I have a long commute to work.",
+      "definition": "Travel some distance between one's home and place of work on a regular basis."
+    },
+    {
+      "en": "confirm",
+      "ru": "подтверждать",
+      "example": "Please confirm your attendance.",
+      "definition": "State with assurance that a particular fact or piece of news is true."
+    },
+    {
+      "en": "contract",
+      "ru": "контракт, договор",
+      "example": "They signed a new contract.",
+      "definition": "A written or spoken agreement, especially one concerning employment, sales, or tenancy, that is intended to be enforceable by law."
+    },
+    {
+      "en": "correspondent",
+      "ru": "корреспондент",
+      "example": "She is a foreign correspondent for a major newspaper.",
+      "definition": "A journalist reporting on news from a particular place."
+    },
+    {
+      "en": "crew",
+      "ru": "экипаж, команда",
+      "example": "The ship has a large crew.",
+      "definition": "A group of people who work on and operate a ship, aircraft, etc."
+    },
+    {
+      "en": "crop",
+      "ru": "урожай",
+      "example": "The main crop in this region is wheat.",
+      "definition": "A cultivated plant that is grown as food, especially a grain, fruit, or vegetable."
+    },
+    {
+      "en": "decrease",
+      "ru": "уменьшение, снижать",
+      "example": "There has been a decrease in sales.",
+      "definition": "Become or make smaller or fewer in size, amount, intensity, or degree."
+    },
+    {
+      "en": "disability",
+      "ru": "инвалидность, нетрудоспособность",
+      "example": "The building has facilities for people with disabilities.",
+      "definition": "A physical or mental condition that limits a person's movements, senses, or activities."
+    },
+    {
+      "en": "driverless",
+      "ru": "беспилотный",
+      "example": "Driverless cars are being tested.",
+      "definition": "Not having or needing a driver; operated by computer."
+    },
+    {
+      "en": "driving test",
+      "ru": "экзамен по вождению",
+      "example": "I have my driving test next week.",
+      "definition": "An examination of a person's ability to drive a motor vehicle safely."
+    },
+    {
+      "en": "drone",
+      "ru": "дрон, беспилотник",
+      "example": "The photographer used a drone to take aerial shots.",
+      "definition": "An unmanned aircraft or ship guided by remote control or onboard computers."
+    },
+    {
+      "en": "drought",
+      "ru": "засуха",
+      "example": "The drought has affected the crops.",
+      "definition": "A prolonged period of abnormally low rainfall, leading to a shortage of water."
+    },
+    {
+      "en": "dusty",
+      "ru": "пыльный",
+      "example": "The old books were dusty.",
+      "definition": "Covered with dust."
+    },
+    {
+      "en": "explore",
+      "ru": "исследовать, изучать",
+      "example": "They decided to explore the forest.",
+      "definition": "Inquire into or discuss a subject or issue in detail."
+    },
+    {
+      "en": "extreme",
+      "ru": "экстремальный, крайний",
+      "example": "The weather conditions were extreme.",
+      "definition": "Very great in degree or intensity."
+    },
+    {
+      "en": "fire",
+      "ru": "огонь, пожар",
+      "example": "There was a fire in the building.",
+      "definition": "The rapid oxidation of a material in the exothermic chemical process of combustion, releasing heat, light, and various reaction products."
+    },
+    {
+      "en": "heatwave",
+      "ru": "волна тепла, зной",
+      "example": "The country is experiencing a severe heatwave.",
+      "definition": "A prolonged period of excessively hot weather."
+    },
+    {
+      "en": "helpless",
+      "ru": "беспомощный",
+      "example": "He felt helpless in the situation.",
+      "definition": "Unable to help oneself; dependent on others."
+    },
+    {
+      "en": "imaginative",
+      "ru": "обладающий воображением, творческий",
+      "example": "She has a very imaginative mind.",
+      "definition": "Having or showing creativity or inventiveness."
+    },
+    {
+      "en": "in charge",
+      "ru": "ответственный, главный",
+      "example": "Who is in charge here?",
+      "definition": "Having control or authority."
+    },
+    {
+      "en": "in control",
+      "ru": "контролирующий, под контролем",
+      "example": "The pilot was in control of the aircraft.",
+      "definition": "Having the power to direct or manage something."
+    },
+    {
+      "en": "increase",
+      "ru": "увеличение, увеличивать",
+      "example": "There was an increase in the number of students.",
+      "definition": "Become or make greater in size, amount, or degree."
+    },
+    {
+      "en": "injure",
+      "ru": "ранить, травмировать",
+      "example": "He injured his leg playing football.",
+      "definition": "Do physical harm or damage to (someone)."
+    },
+    {
+      "en": "instant messaging",
+      "ru": "обмен мгновенными сообщениями",
+      "example": "Instant messaging is a popular way to communicate online.",
+      "definition": "A type of online chat which offers real-time text transmission over the Internet."
+    },
+    {
+      "en": "interrupt",
+      "ru": "прерывать",
+      "example": "Please don't interrupt me when I'm speaking.",
+      "definition": "Stop the continuous progress of (an activity or process)."
+    },
+    {
+      "en": "junction",
+      "ru": "перекресток, соединение",
+      "example": "There was an accident at the junction.",
+      "definition": "A point where two or more things are joined."
+    },
+    {
+      "en": "landslide",
+      "ru": "оползень",
+      "example": "Heavy rain caused a landslide.",
+      "definition": "The sliding down of a mass of earth or rock from a mountain or cliff."
+    },
+    {
+      "en": "lane",
+      "ru": "полоса (дороги)",
+      "example": "Stay in your lane while driving.",
+      "definition": "A division of a road marked off with painted lines and intended for a single line of vehicles."
+    },
+    {
+      "en": "meteorological",
+      "ru": "метеорологический",
+      "example": "The meteorological office issued a weather warning.",
+      "definition": "Relating to meteorology, the branch of science concerned with the processes and phenomena of the atmosphere, especially as a means of forecasting the weather."
+    },
+    {
+      "en": "motorway",
+      "ru": "автомагистраль",
+      "example": "We took the motorway to get there faster.",
+      "definition": "A broad road, built for fast traffic over long distances, with few places for vehicles to get onto it."
+    },
+    {
+      "en": "musical",
+      "ru": "музыкальный",
+      "example": "She has a musical talent.",
+      "definition": "Relating to music or musicians."
+    },
+    {
+      "en": "nowadays",
+      "ru": "в наши дни, сейчас",
+      "example": "Nowadays, many people work from home.",
+      "definition": "At the present time, in contrast with the past."
+    },
+    {
+      "en": "overtake",
+      "ru": "обгонять",
+      "example": "You should only overtake when it's safe to do so.",
+      "definition": "Catch up with and pass while travelling in the same direction."
+    },
+    {
+      "en": "park",
+      "ru": "парковать, парк",
+      "example": "You can park your car over there.",
+      "definition": "Bring a vehicle to a halt and leave it temporarily in a particular place."
+    },
+    {
+      "en": "possession",
+      "ru": "владение, имущество",
+      "example": "The book is in my possession.",
+      "definition": "The state of having, owning, or controlling something."
+    },
+    {
+      "en": "practical",
+      "ru": "практичный",
+      "example": "This is a very practical solution.",
+      "definition": "Concerned with the actual doing or use of something rather than with theory and ideas."
+    },
+    {
+      "en": "prevent",
+      "ru": "предотвращать",
+      "example": "We need to prevent accidents from happening.",
+      "definition": "Keep (something) from happening or arising."
+    },
+    {
+      "en": "protect",
+      "ru": "защищать",
+      "example": "Wear a helmet to protect your head.",
+      "definition": "Keep safe from harm or injury."
+    },
+    {
+      "en": "pulse",
+      "ru": "пульс",
+      "example": "The doctor checked his pulse.",
+      "definition": "A rhythmical throbbing of the arteries as blood is propelled through them, typically as felt in the wrists or neck."
+    },
+    {
+      "en": "rainfall",
+      "ru": "количество осадков, дождь",
+      "example": "The area has high annual rainfall.",
+      "definition": "The amount of rain, snow, etc. that falls in a particular place within a given period."
+    },
+    {
+      "en": "replaceable",
+      "ru": "заменимый",
+      "example": "The batteries are replaceable.",
+      "definition": "Able to be replaced."
+    },
+    {
+      "en": "seasonal",
+      "ru": "сезонный",
+      "example": "Seasonal fruits are often the tastiest.",
+      "definition": "Relating to or characteristic of a particular season of the year."
+    },
+    {
+      "en": "shortage",
+      "ru": "нехватка, дефицит",
+      "example": "There is a shortage of water due to the drought.",
+      "definition": "A scarcity or lack of something."
+    },
+    {
+      "en": "skill",
+      "ru": "навык, умение",
+      "example": "He has excellent communication skills.",
+      "definition": "The ability to do something well; expertise."
+    },
+    {
+      "en": "slip out",
+      "ru": "выскользнуть, незаметно уйти",
+      "example": "I'll slip out while nobody is watching.",
+      "definition": "Leave a place quietly or quickly so as not to be noticed."
+    },
+    {
+      "en": "sociable",
+      "ru": "общительный, коммуникабельный",
+      "example": "She is a very sociable person.",
+      "definition": "Willing to talk and engage in activities with other people; friendly and outgoing."
+    },
+    {
+      "en": "social",
+      "ru": "социальный, общественный",
+      "example": "We need to address social issues.",
+      "definition": "Relating to society or its organization."
+    },
+    {
+      "en": "speed limit",
+      "ru": "ограничение скорости",
+      "example": "The speed limit on this road is 50 km/h.",
+      "definition": "The maximum speed at which a vehicle may legally travel on a particular stretch of road."
+    },
+    {
+      "en": "steering wheel",
+      "ru": "руль",
+      "example": "He gripped the steering wheel tightly.",
+      "definition": "A wheel-shaped device used to steer a vehicle."
+    },
+    {
+      "en": "traditional",
+      "ru": "традиционный",
+      "example": "They celebrated the traditional festival.",
+      "definition": "Relating to or characteristic of long-established customs, practices, or ideas."
+    },
+    {
+      "en": "traffic jam",
+      "ru": "пробка (на дороге)",
+      "example": "I was stuck in a traffic jam for an hour.",
+      "definition": "A long line of vehicles that are moving very slowly or not moving at all."
+    },
+    {
+      "en": "tropical",
+      "ru": "тропический",
+      "example": "We went on a vacation to a tropical island.",
+      "definition": "Relating to or situated in the tropics."
+    },
+    {
+      "en": "unemployable",
+      "ru": "нетрудоспособный (в контексте поиска работы), непригодный для работы",
+      "example": "Due to his lack of skills, he was deemed unemployable.",
+      "definition": "Not able to be employed."
+    },
+    {
+      "en": "wages",
+      "ru": "заработная плата",
+      "example": "He earns good wages at his new job.",
+      "definition": "A fixed regular payment, typically paid on a daily or weekly basis, made by an employer to an employee, especially to a manual or unskilled worker."
+    },
+    {
+      "en": "washable",
+      "ru": "моющийся, стирающийся",
+      "example": "This jacket is washable.",
+      "definition": "Able to be washed without shrinking or losing color."
+    },
+    {
+      "en": "weather pattern",
+      "ru": "погодная модель, характер погоды",
+      "example": "The weather pattern has been unusual this year.",
+      "definition": "The weather conditions prevailing in an area over a long period."
+    }
+  ]
+}

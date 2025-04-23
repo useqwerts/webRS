@@ -889,109 +889,218 @@ body {
     }
 }
 
-#toast-container {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    pointer-events: none; /* Prevent interaction with the page */
+:root {
+  /* timing & easing vars for easy tweaking */
+  --toast-enter-duration: 0.5s;
+  --toast-exit-duration: 0.4s;
+  --toast-easing-in: cubic-bezier(0.22, 1, 0.36, 1);
+  --toast-easing-out: ease-in;
 }
 
+/* 1. Container stays the same... */
 #toast-container {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    pointer-events: none; /* Prevent interaction with the page */
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 1000;
 }
 
+/* 2. Single enter/exit animation on each toast */
 .toast {
-    position: relative;
-    border-radius: 0 0 25px 25px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px);
-    padding: 18px 30px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    margin-bottom: 15px;
-    opacity: 0;
-    transform: translateY(-50px);
-    animation: slideIn 0.5s ease-out forwards, fadeOut 3s 2.5s forwards;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  width: 320px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid transparent;
+  opacity: 0;
+  transform: translateY(-20px) scale(0.9);
+  animation:
+    toastEnter var(--toast-enter-duration) var(--toast-easing-in) forwards,
+    toastExit var(--toast-exit-duration) var(--toast-easing-out) var(--hide-delay) forwards;
 }
 
-.toast.active {
-    opacity: 1;
-    transform: translateY(0);
+.toast-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  margin-right: 12px;
 }
 
-.toast-content {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    flex: 1;
-}
-
-.toast-check {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 36px;
-    width: 36px;
-    border-radius: 50%;
-    color: #fff;
-    font-size: 18px;
-    margin-right: 15px;
-}
-
-.toast.error .toast-check {
-    background-color: #e74c3c;
-}
-
-.toast.success .toast-check {
-    background-color: #2ecc71;
-}
-
-.messageToast {
-	margin-right: 15px;
-    display: flex;
-    flex-direction: column;
-}
-
-.messageToast-text {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
+.toast-message {
+  flex: 1;
+  color: #333;
+  font-family: sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .toast-close {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    padding: 6px;
-    cursor: pointer;
-    opacity: 0.7;
-    font-size: 20px;
-    color: #333;
-    transition: opacity 0.3s ease;
+  margin-left: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #555;
+  opacity: 0.6;
+  transition: opacity 0.2s;
 }
-
 .toast-close:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
-/* Убираем прогресс-бар */
-.progress {
-    display: none;
+/* Цвета под каждый тип */
+.toast.success {
+  background-color: #e6ffed;
+  border-color: #b8eac9;
 }
+.toast.success .toast-icon {
+  background-color: #2ecc71;
+}
+
+.toast.info {
+  background-color: #e6f4ff;
+  border-color: #b2d9f3;
+}
+.toast.info .toast-icon {
+  background-color: #3498db;
+}
+
+.toast.warning {
+  background-color: #fff8e1;
+  border-color: #f7e0a0;
+}
+.toast.warning .toast-icon {
+  background-color: #f39c12;
+}
+
+.toast.error {
+  background-color: #ffe5e5;
+  border-color: #f5bdbd;
+}
+.toast.error .toast-icon {
+  background-color: #e74c3c;
+}
+
+
+/* 3. “Springy” enter: pop in, overshoot a bit, settle */
+@keyframes toastEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 4. Smooth exit: shrink & fade out while sliding up */
+@keyframes toastExit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+  }
+}
+
+  /* 3. Фоны под каждый тип */
+  .toast.error {
+    background: linear-gradient(135deg, #ffe5e5, #fff5f5);
+  }
+  .toast.warning {
+    background: linear-gradient(135deg, #fff8e1, #fffcf3);
+  }
+  .toast.success {
+    background: linear-gradient(135deg, #e6ffed, #f2fff4);
+  }
+  .toast.info {
+    background: linear-gradient(135deg, #e6f4ff, #f5fbff);
+  }
+
+  /* 4. Иконка слева */
+  .toast-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 18px;
+    color: #fff;
+  }
+  .toast.error .toast-icon   { background: #e74c3c; }
+  .toast.warning .toast-icon { background: #f39c12; }
+  .toast.success .toast-icon { background: #27ae60; }
+  .toast.info .toast-icon    { background: #2980b9; }
+  
+  @keyframes shake {
+  0%,100% { transform: translateX(0) }
+  25%,75% { transform: translateX(-4px) }
+  50%      { transform: translateX(4px) }
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1) }
+  50%      { transform: scale(1.1) }
+}
+
+.toast.error   .toast-icon { animation: shake 0.8s ease-in-out; }
+.toast.success .toast-icon { animation: pulse 2s ease-in-out infinite; }
+.toast.warning .toast-icon { animation: shake 0.8s ease-in-out; }
+.toast.info    .toast-icon { animation: shake 0.8s ease-in-out }
+
+
+  /* 5. Текст */
+  .toast-message {
+    flex: 1;
+    font-family: sans-serif;
+    color: #333;
+    line-height: 1.4;
+  }
+  .toast-message b {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+  .toast-message span {
+    font-size: 13px;
+  }
+  
+  
+
+  /* 6. Крестик закрытия */
+  .toast-close {
+    margin-left: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #555;
+    opacity: 0.6;
+    transition: opacity .2s;
+  }
+  .toast-close:hover {
+    opacity: 1;
+  }
 
 @keyframes slideIn {
     0% {
@@ -1012,6 +1121,8 @@ body {
         opacity: 0;
     }
 }
+
+
 
 .music-list {
     display: flex;
@@ -3403,14 +3514,40 @@ button .icon {
   scrollbar-color: rgba(255, 255, 255, 0.1) rgba(0, 0, 0, 0.1);
 }
 
-
-#examTitle {
-    font-size: 24px; /* Slightly smaller font size */
-    text-align: center;
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 10px;
+.hidden {
+  display: none !important; /* Ensure the display is hidden */
 }
+
+/* Base container styling */
+.examTitle {
+  text-align: center;
+  padding: 8px 15px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05); /* Subtle glass effect */
+  backdrop-filter: blur(8px); /* Frosted glass effect */
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  max-width: 320px;
+  margin: 0 auto; /* Center the container */
+}
+
+/* Main title styling */
+.exam-main-title {
+  font-size: 1rem; /* Smaller size */
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+/* Subtitle styling */
+.exam-subtitle {
+  font-size: 0.9rem; /* Smaller subtitle size */
+  font-weight: 300;
+  color: #bdc3c7;
+  letter-spacing: 0.5px;
+}
+
 
 /* Новый стиль таймера (уменьшённый и адаптивный) */
 #exam-timer {
@@ -3675,9 +3812,10 @@ label {
     align-items: center;
     margin-bottom: 15px;
     padding: 8px 16px; /* Уменьшаем отступы */
-    border: 2px solid #ddd;
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Легкий прозрачный контур */
     border-radius: 25px; /* Немного округлим углы */
-    background-color: #f0f0f0;
+    background-color: rgba(255, 255, 255, 0.1); /* Прозрачный фон */
+    backdrop-filter: blur(10px); /* Размытие фона */
     cursor: pointer;
     font-size: 14px; /* Уменьшаем размер шрифта */
     font-weight: 500;
@@ -3695,17 +3833,17 @@ input[type="radio"] + label {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #ffffff;
-    border: 2px solid #d1d1d1;
-    color: #333;
+    background: rgba(255, 255, 255, 0.1); /* Прозрачный фон */
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Легкий прозрачный контур */
+    color: #fff; /* Белый цвет для текста */
     transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
-    padding: 8px 16px; /* Уменьшаем отступы */
+    padding: 8px 16px;
 }
 
 /* Плавное изменение фона и масштаба на наведении */
 input[type="radio"]:not(:checked) + label:hover {
-    background: #e7f7e7;
-    border-color: #6cbf6c;
+    background: rgba(76, 175, 80, 0.2); /* Легкий зелёный оттенок */
+    border-color: rgba(76, 175, 80, 0.5);
     transform: scale(1.05);
 }
 
@@ -3735,12 +3873,13 @@ input[type="text"],
 input[type="password"] {
     padding: 12px 15px;
     font-size: 16px;
-    border: 1.5px solid #ddd;
+    border: 1.5px solid rgba(255, 255, 255, 0.3); /* Прозрачная рамка */
     border-radius: 12px;
     width: 100%;
     box-sizing: border-box;
     margin-top: 10px;
-    background-color: #f8f8f8;
+    background-color: rgba(255, 255, 255, 0.1); /* Прозрачный фон */
+    backdrop-filter: blur(10px); /* Размытие фона */
     transition: all 0.3s ease;
 }
 
@@ -3749,10 +3888,9 @@ input[type="text"]:focus,
 input[type="password"]:focus {
     border-color: #4CAF50;
     box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.2); /* Прозрачный светлый фон */
     outline: none;
 }
-
 
 /* Скрываем нативные радио-кнопки */
 .option-group input[type="radio"] {
@@ -3769,23 +3907,18 @@ input[type="password"]:focus {
   user-select: none;
   display: flex;
   align-items: center;
-  margin-bottom: 0;           /* Сбрасываем лишний отступ, т.к. у .option-group есть */
-  padding: 8px 16px;          /* Отступы внутри карточки */
-  border: 2px solid #ddd;     /* Серая рамка */
-  border-radius: 25px;        /* Скруглённые углы */
-  background-color: #f0f0f0;  /* Светло-серый фон по умолчанию */
+  margin-bottom: 0;
+  padding: 8px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  background-color: rgba(255, 255, 255, 0.1); /* Прозрачный фон */
+  backdrop-filter: blur(10px);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.3s ease;  
+  transition: all 0.3s ease;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-
-/* Внутри label расположены: 
-   1) .option-letter (слева) 
-   2) .option-text (по центру) 
-   3) галочка будет в псевдоэлементе label::after (справа)
-*/
 
 /* Стили для буквы (A, B, C, D) слева */
 .option-letter {
@@ -3796,16 +3929,16 @@ input[type="password"]:focus {
   height: 28px;
   margin-right: 12px;
   border-radius: 50%;
-  background-color: #fff;
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
   font-weight: 700;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 /* Стили для текста варианта */
 .option-text {
-  flex: 1;       /* Занимает всё доступное пространство между буквой и галочкой */
-  color: #333;
+  flex: 1;
+  color: #fff;
 }
 
 /* Начальный вид «псевдо-галочки» (пустой кружок) справа */
@@ -3813,32 +3946,26 @@ input[type="password"]:focus {
   content: '';
   width: 20px;
   height: 20px;
-  margin-left: auto;       /* Сдвигаем «иконку» к правому краю */
+  margin-left: auto;
   border-radius: 50%;
-  border: 2px solid #d1d1d1;
-  background: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
 /* При наведении (когда НЕ выбрано) — 
-   фон чуть зеленоватый, 
+   фон чуть зелённый, 
    рамка и «иконка» становятся зелёными, 
    карточка чуть «всплывает». */
 .option-group input[type="radio"]:not(:checked) + label:hover {
-  background: #e7f7e7;
-  border-color: #6cbf6c;
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.5);
   transform: scale(1.05);
 }
 .option-group input[type="radio"]:not(:checked) + label:hover::after {
   border-color: #6cbf6c;
 }
 
-/* Стиль выбранной радио-кнопки:
-   - градиентный зелёный фон
-   - белый текст
-   - яркая рамка
-   - немного увеличиваем 
-   - добавляем тень */
 .option-group input[type="radio"]:checked + label {
   background: linear-gradient(135deg, #4CAF50, #388E3C);
   border-color: #388E3C;
@@ -3850,8 +3977,7 @@ input[type="password"]:focus {
 
 /* Если вариант выбран, то буква тоже меняет цвет/фон */
 .option-group input[type="radio"]:checked + label .option-letter {
-    /* background-color: #ffffff00; */
-    color: #000000;
+    color: #fff;
     box-shadow: none;
 }
 
@@ -3862,9 +3988,9 @@ input[type="password"]:focus {
   font-weight: 900;
   color: white;
   font-size: 16px;
-  border: none;       /* Убираем границу */
-  background: none;   /* Фон становится прозрачным (чтобы видна была галочка) */
-  margin-left: 12px;  /* Небольшой отступ от текста */
+  border: none;
+  background: none;
+  margin-left: 12px;
   transition: transform 0.3s ease;
 }
 
@@ -3874,28 +4000,6 @@ input[type="password"]:focus {
   transform: scale(1.0);
 }
 
-/* Вы можете оставить стили для текстовых полей, если нужно */
-input[type="text"],
-input[type="password"] {
-    padding: 12px 15px;
-    font-size: 16px;
-    border: 1.5px solid #ddd;
-    border-radius: 12px;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 10px;
-    background-color: #f8f8f8;
-    transition: all 0.3s ease;
-}
-
-/* Эффект фокуса для текстовых полей */
-input[type="text"]:focus,
-input[type="password"]:focus {
-    border-color: #4CAF50;
-    box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
-    background-color: #ffffff;
-    outline: none;
-}
 
 
 .no-exams {
@@ -4248,7 +4352,7 @@ input[type="password"]:focus {
     font-style: italic;
 }
 
-#examTitle, #finishExam {
+ #finishExam {
   display: none; /* Скрываем заголовок и кнопку */
 }
 
@@ -5827,7 +5931,7 @@ box-shadow: 0 4px 8px rgba(0, 122, 255, 0.4);
 .submit-button, .cancel-button {
     padding: 10px 20px;
     border: none;
-    border-radius: 10px;
+    border-radius: 25px;
     cursor: pointer;
     margin: 10px;
     font-size: 16px;
@@ -6555,7 +6659,7 @@ box-shadow: 0 4px 8px rgba(0, 122, 255, 0.4);
   align-items: center;
   justify-content: center;
   background-color: #0084ff;
-  border-radius: 15px; /* уменьшенный border-radius */
+  border-radius: 30px; /* уменьшенный border-radius */
   padding: 0px 5px;    /* уменьшенные отступы */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* усиленная тень */
   z-index: 9999;
@@ -6847,44 +6951,128 @@ fl-modal-content {
 }
 
 .unit-item {
-    padding: 10px;
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 12px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: background 0.3s, border-color 0.3s;
-    backdrop-filter: blur(10px); /* Эффект размытия для каждого юнита */
+  padding: 14px 20px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Hover эффект для интерактивности */
+.unit-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
 }
 
 /* Стили для статусов */
-.unit-item.unlocked {
-    background: rgba(76, 175, 80, 0.2);
-    border-color: rgba(76, 175, 80, 0.5);
-}
-.unit-item.inprogress {
-    background: rgba(255, 193, 7, 0.2);
-    border-color: rgba(255, 193, 7, 0.5);
-}
-.unit-item.locked {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(0, 0, 0, 0.5);
-    color: rgba(255,255,255,0.6);
+.unit-item.unlocked,.unit-item.done {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.4);
+  color: #d0ffd0;
 }
 
-/* Кнопки внутри списка юнитов */
-.unit-item button {
-    margin-left: 15px;
-    padding: 8px 16px;
-    font-size: 14px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-    backdrop-filter: blur(10px); /* Размытие фона кнопки */
-    color: white;
+.unit-item.inprogress {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.4);
+  color: #fff3c0;
 }
+
+.unit-item.locked {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(200, 200, 200, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+.unit-item.in-progress {
+  background: rgba(0, 0, 255, 0.15);  /* Light blue background with transparency */
+  border-color: rgba(0, 0, 255, 0.4);  /* Dark blue border */
+  color: #aab7ff;  /* Light blue text color */
+  transition: all 0.3s ease; /* Smooth transition for changes */
+}
+
+.unit-item i {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+/* Стили для кнопки icon-button (.unit-item button) */
+.unit-item button {
+  margin-left: 15px;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  backdrop-filter: blur(10px);
+  color: white;
+  /* Задаём flex для центрирования содержимого */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Стили спиннера с изменённым названием на .open-unit-loader */
+.open-unit-loader,
+.open-unit-loader div {
+  box-sizing: border-box;
+}
+
+/* Контейнер спиннера настроен как inline-flex для центровки своих дочерних элементов */
+.open-unit-loader {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 24px;   /* можно скорректировать под нужный размер */
+  height: 24px;
+}
+
+/* Элементы анимации внутри спиннера */
+.open-unit-loader div {
+  display: block;
+  position: absolute;
+  width: 18px;   /* внутренний размер спиннера */
+  height: 18px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  animation: open-unit-loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: currentColor transparent transparent transparent;
+}
+
+/* Задаём небольшие задержки для каждого из трёх элементов анимации */
+.open-unit-loader div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.open-unit-loader div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.open-unit-loader div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+/* Анимация вращения */
+@keyframes open-unit-loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 
 .unit-item button:hover {
     transform: scale(1.05);
@@ -6908,41 +7096,72 @@ fl-modal-content {
 }
 
 .words-container {
-    max-height: 700px;
-    overflow-y: auto;
-    text-align: left;
+  max-height: 700px;
+  overflow-y: auto;
+  text-align: left;
+  padding-right: 8px; /* чтобы не прижималось к скроллу */
 }
 
+/* Элемент слова с анимацией и стеклянным эффектом */
 .word-item {
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    transition: background 0.3s;
-    backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: background 0.3s ease, transform 0.3s ease;
+  color: #fff;
+
+  /* Анимация появления */
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.5s ease-out forwards;
 }
 
+/* Hover эффект — лёгкое поднятие и подсветка */
 .word-item:hover {
-    background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
+/* Текст: английское слово */
 .word-en {
-    font-weight: 600;
-    font-size: 16px;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  font-weight: 700;
+  font-size: 18px;
+  color: #fff;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
 }
 
+/* Текст: перевод */
 .word-ru {
-    font-size: 14px;
-    margin-top: 4px;
+  font-size: 15px;
+  color: #e0e0e0;
+  margin-top: 6px;
 }
 
-.word-example {
-    font-size: 13px;
-    color: rgba(255,255,255,0.8);
-    margin-top: 6px;
+/* Текст: определение */
+.word-definition {
+  font-size: 13.5px;
+  color: rgba(240, 240, 240, 0.85);
+  margin-top: 8px;
+  line-height: 1.4;
 }
+
+/* Анимация появления */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* Анимация появления */
 @keyframes fadeIn {
@@ -6979,3 +7198,131 @@ fl-modal-content {
   background: rgba(255, 255, 255, 0.2);
 }
 
+.question-type-label {
+  display: inline-block;
+  padding: 2px 6px;
+  background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* лёгкий градиент */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  color: #555;
+  font-size: 10px;        /* уменьшенный размер текста */
+  font-weight: 600;
+  margin-left: 8px;
+  text-transform: capitalize;  /* Первые буквы заглавными */
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin: auto;
+  color: #fff;
+  max-width: 500px;
+  text-align: center;
+}
+
+.glass-input {
+  width: 100%;
+  padding: .5rem;
+  margin: .75rem 0;
+  border: none;
+  border-radius: .5rem;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 1rem;
+}
+
+.feedback {
+  margin-top: .5rem;
+  font-weight: bold;
+}
+
+.quiz-feedback {
+  font-size: 1rem;
+  margin-top: 10px;
+}
+.quiz-feedback {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: white; /* Белый текст */
+}
+
+.quiz-feedback.correct {
+  color: black; /* Зеленый для правильного ответа */
+}
+
+.quiz-feedback.incorrect {
+  color: black; /* Красный для неправильного ответа */
+}
+
+.quiz-score {
+  font-size: 1.5rem;
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.tab-title {
+  background-color: #1e90ff;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  border-radius: 6px 6px 0 0;
+  font-size: 16px;
+}
+
+.unit-content {
+  background-color: #1a1a2e;
+  color: white;
+  padding: 15px;
+  border-radius: 0 0 6px 6px;
+  font-size: 14px;
+  max-height: 400px; /* или любое нужное значение */
+  overflow-y: auto;
+}
+
+.unit-content strong {
+  color: #ffffff;
+}
+
+.unit-content em {
+  color: #ccc;
+}
+
+#take-test-button {
+  background-color: #2196F3; /* ярко-синий */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#take-test-button:hover {
+  background-color: #1976D2; /* немного темнее при наведении */
+}
+
+#take-test-button:disabled {
+  background-color: #90CAF9;
+  cursor: not-allowed;
+}
+
+.unit-content ol {
+  list-style-position: inside;
+  margin-left: 0;
+  padding-left: 16px;
+}
+
+.unit-content ol li {
+  margin-bottom: 10px;
+  padding-left: 4px;
+  text-indent: -1px;
+}

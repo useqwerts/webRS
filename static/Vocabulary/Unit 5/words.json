@@ -2,15 +2,13 @@
   "words": [
     {
       "en": "absolutely",
-      "ru": "абсолютно, совершенно",
-      "example": "You are absolutely right.",
-      "translation": "Вы совершенно правы."
+      "ru": "абсолютно, совершенно"
     },
     {
       "en": "accessible",
       "ru": "доступный",
       "example": "The information should be accessible to everyone.",
-      "translation": "Информация должна быть доступна каждому."
+      "definition": "Информация должна быть доступна каждому."
     },
     {
       "en": "action film",

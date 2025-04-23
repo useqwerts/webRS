@@ -215,11 +215,11 @@ banButton.addEventListener('click', () => {
             })
             .then(response => response.json())
             .then(data => {
-              console.log('Exam started:', data);
+			  showToastNotification('<b>Successfully exam started</b> <span>Time to shine! ✨</span>', "success", 4000);
               fetchAndRenderExamQuestions();
             })
             .catch(error => {
-              console.error('Error:', error);
+              showToastNotification('<b>Oops! Something went wrong</b> <span>' + (error.message || 'Please try again later.') + '</span>', 'error', 5000);
               // При ошибке тоже сброс
               resetSlider();
             });
@@ -1024,3 +1024,45 @@ function fetchAndRenderExamQuestions() {
       console.error('Error:', error);
     });
 }
+
+function showToastNotification(message, type = 'success', duration = 5000) {
+    const icons = {
+      success: 'fa-check',
+      error:   'fa-exclamation-triangle',
+      warning: 'fa-exclamation-circle',
+      info:    'fa-info-circle'
+    };
+
+    const container = document.getElementById('toast-container');
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.style.setProperty('--hide-delay', `${(duration/1000).toFixed(2)}s`);
+	
+	if (type === 'error') {
+    const audio = new Audio('static/music/error.wav');
+    audio.play().catch(err => {
+    console.warn('Failed to play error sound:', err);
+    });
+    }
+
+    const icon = document.createElement('div');
+    icon.className = 'toast-icon';
+    icon.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i>`;
+
+    const msg = document.createElement('div');
+    msg.className = 'toast-message';
+    msg.innerHTML = message;
+
+    const closeBtn = document.createElement('div');
+    closeBtn.className = 'toast-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.onclick = () => toast.remove();
+
+    toast.append(icon, msg, closeBtn);
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add('active'));
+
+    setTimeout(() => toast.remove(), duration + 400);
+  }

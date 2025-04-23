@@ -1,0 +1,306 @@
+[
+  {
+    "id": 1,
+    "text": "Section 1. Listen and choose correct answer.",
+    "type": "listening",
+    "audio_Exam": "/static/exam/Section1.mp3",
+    "subquestions": [
+      {
+        "id": "1.1",
+        "type": "true_false",
+        "text": "John works at Old Time Toys.",
+        "correct": "False"
+      },
+      {
+        "id": "1.2",
+        "type": "multiple_choice",
+        "text": "Marina wants ...",
+        "options": [
+          "product information, a brochure and prices.",
+          "is warm in summer",
+          "to call John again later."
+        ],
+        "correct": "product information, a brochure and prices."
+      },
+      {
+        "id": "1.3",
+        "type": "multiple_choice",
+        "text": "Marina's number is ...",
+        "options": [
+          "0208 6557621",
+          "0208 6656721",
+          "0208 5718571",
+          "200120969",
+          "992320111"
+        ],
+        "correct": "0208 6557621"
+      },
+      {
+        "id": "1.4",
+        "type": "multiple_choice",
+        "text": "Marina's email address is ...",
+        "options": [
+          "marina.silva@oldtime_toys.com",
+          "marina.silva@oldtime-toys.com"
+        ],
+        "correct": "marina.silva@oldtime-toys.com"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "text": "Section 2. Listen and fill in the gaps.",
+    "type": "listening",
+    "audio_Exam": "/static/exam/LE_listening_A1_Ordering_in_a_cafe.mp3",
+    "subquestions": [
+      {
+        "id": "2.1",
+        "type": "fill_gaps",
+        "text": "1. I'm ____ we only have bottled juices.",
+        "correct": "afraid"
+      },
+      {
+        "id": "2.2",
+        "type": "fill_gaps",
+        "text": "2. I'll have an apple juice ____. ",
+        "correct": "instead"
+      },
+      {
+        "id": "2.3",
+        "type": "fill_gaps",
+        "text": "3. Sorry, I wanted freshly ____ orange juice.",
+        "correct": "squeezed"
+      },
+      {
+        "id": "2.4",
+        "type": "fill_gaps",
+        "text": "4. To eat in or ____ away?",
+        "correct": "take"
+      },
+      {
+        "id": "2.5",
+        "type": "fill_gaps",
+        "text": "5. Sorry, I think I was in ____ of you.",
+        "correct": "front"
+      },
+      {
+        "id": "2.6",
+        "type": "fill_gaps",
+        "text": "6. No, thanks. ____ the cookie.",
+        "correct": "Just"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "text": "Section 3. Listen and decide if the statements are true or false.",
+    "type": "listening",
+    "audio_Exam": "/static/exam/LE_listening_A1_Meeting_people_at_a_dinner.mp3",
+    "subquestions": [
+      {
+        "id": "3.1",
+        "type": "true_false",
+        "text": "Julian remembers Alyssa.",
+        "correct": "False"
+      },
+      {
+        "id": "3.2",
+        "type": "true_false",
+        "text": "Ben is Alyssa's brother.",
+        "correct": "False"
+      },
+      {
+        "id": "3.3",
+        "type": "true_false",
+        "text": "They were at Ben’s wedding.",
+        "correct": "True"
+      },
+      {
+        "id": "3.4",
+        "type": "true_false",
+        "text": "The wedding was in February.",
+        "correct": "True"
+      },
+      {
+        "id": "3.5",
+        "type": "true_false",
+        "text": "Julian says the wrong name.",
+        "correct": "True"
+      },
+      {
+        "id": "3.6",
+        "type": "true_false",
+        "text": "Alyssa doesn't want a drink.",
+        "correct": "False"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "text": "Section 4. Listen and decide if the statements are true or false.",
+    "type": "listening",
+    "audio_Exam": "/static/exam/LE_listening_A1_Meeting_a_new_team_member.mp3",
+    "subquestions": [
+      {
+        "id": "4.1",
+        "type": "true_false",
+        "text": "Peter is new in the company.",
+        "correct": "True"
+      },
+      {
+        "id": "4.2",
+        "type": "true_false",
+        "text": "Peter is a designer.",
+        "correct": "False"
+      },
+      {
+        "id": "4.3",
+        "type": "true_false",
+        "text": "Carla works in marketing.",
+        "correct": "True"
+      },
+      {
+        "id": "4.4",
+        "type": "true_false",
+        "text": "Peter plans events for new products.",
+        "correct": "True"
+      },
+      {
+        "id": "4.5",
+        "type": "true_false",
+        "text": "Carla is Brazilian.",
+        "correct": "False"
+      },
+      {
+        "id": "4.6",
+        "type": "true_false",
+        "text": "Peter started his job five years ago.",
+        "correct": "False"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "type": "reading",
+    "text": "<h1>Section 1 Reading</h1><p>On a moonlit night, an ancient mansion stood abandoned at the edge of a dense forest. Once a grand estate, its walls had crumbled with time, leaving shattered windows and a sagging roof that whispered secrets of long-forgotten tragedies. The overgrown garden, filled with tangled vines and wild brambles, framed the ruin like a natural moat. Locals spoke in hushed tones of a mysterious illness and a dreadful fate that befell the mansion’s inhabitants. As the wind howled, the broken corridors echoed with ghostly footsteps and eerie whispers. In a hidden chamber, a long-forgotten ritual was said to have bound restless souls to the property, ensuring that every creak and groan of the structure told a tale of sorrow. Outside, ancient statues with eroded faces seemed to watch over the place, their silent vigil adding to the unsettling atmosphere. Strange lights occasionally flickered behind dusty drapes, and inexplicable sounds emerged from the darkness as if the mansion itself were alive. Many who dared approach claimed to feel an icy grip of despair, as though the air was thick with memories of pain and loss. The mansion had become a gateway to a realm where the past and present intertwined, offering only mystery and melancholy. Every detail, from the scent of decay to the persistent sound of distant weeping, deepened the legend of this cursed dwelling.</p>",
+    "subquestions": [
+      {
+        "id": "5.1",
+        "type": "question",
+        "text": "Where was the mansion located?",
+        "correct": "at the edge of a dense forest"
+      },
+      {
+        "id": "5.2",
+        "type": "question",
+        "text": "What did the ancient statues seem to do?",
+        "correct": "watch over the mansion"
+      },
+      {
+        "id": "5.3",
+        "type": "question",
+        "text": "What bound the restless souls to the property?",
+        "correct": "a long-forgotten ritual"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "type": "reading",
+    "text": "<h1>Section 2 Reading</h1><p>Deep in the heart of a forgotten town, a derelict church loomed over desolate streets. Its tall steeple, now cracked and leaning, cast an ominous shadow across broken cobblestones. The church had been abandoned after a series of inexplicable events, and local residents remembered stormy nights filled with flickering candles in empty windows and eerie sounds echoing in the silence. Inside, the pews lay scattered and the altar bore deep scratches, as if marking a ritual of agony. Mysterious symbols were etched into the cold stone walls, hinting at ancient rites meant to thin the barrier between this world and something far darker. Outside, wild roses grew amid cracked stone, their petals stained by the passage of time and unspoken ceremonies. A constant, mournful wind swept through shattered stained-glass windows, carrying with it the sound of distant, sorrowful chants. Visitors who dared approach felt an inexplicable presence following them, as if tormented souls lingered to share their secrets. Every detail—the oppressive silence, the scent of decay, and the palpable aura of despair—contributed to the legend of this haunted relic. Over the years, countless accounts of ghostly encounters had transformed the church into a symbol of lost hope and relentless fear, challenging anyone to unravel its tragic mysteries.</p>",
+    "subquestions": [
+      {
+        "id": "6.1",
+        "type": "question",
+        "text": "Where did the church stand?",
+        "correct": "in a forgotten town"
+      },
+      {
+        "id": "6.2",
+        "type": "question",
+        "text": "What marked the altar?",
+        "correct": "deep scratches"
+      },
+      {
+        "id": "6.3",
+        "type": "question",
+        "text": "What did the wild roses symbolize?",
+        "correct": "unspoken ceremonies"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "type": "reading",
+    "text": "<h1>Section 3 Reading</h1><p>On the outskirts of a once-thriving industrial town lay an abandoned factory, a vast relic of a bygone era now surrendered to decay. The massive iron doors, rusted and ajar, revealed endless corridors cluttered with forgotten machinery and scattered debris. Every surface bore the scars of neglect, and the air reeked of oil and rust. Locals whispered that at night the factory came alive with the sounds of phantom workers; echoing footsteps, clanging metal, and the occasional flicker of dying lights. Legends spoke of a catastrophic accident that had claimed many lives, trapping their restless spirits within these crumbling walls. Faded photographs and graffiti on peeling walls told stories of a time when hope and industry flourished. As twilight deepened, the factory’s looming silhouette merged with the dark horizon, creating an atmosphere of profound sorrow and unease. Every creak of a beam and drip of water resonated like a ghostly lament, reminding visitors that this place was haunted by memories of tragedy and loss. The relentless decay of the building, combined with the eerie quiet, made it a monument to the impermanence of human endeavor and the inevitable march of time.</p>",
+    "subquestions": [
+      {
+        "id": "7.1",
+        "type": "question",
+        "text": "What type of building is described?",
+        "correct": "an abandoned factory"
+      },
+      {
+        "id": "7.2",
+        "type": "question",
+        "text": "What sounds were reported inside the factory?",
+        "correct": "echoing footsteps and clanging metal"
+      },
+      {
+        "id": "7.3",
+        "type": "question",
+        "text": "What tragic event is hinted at in the legend?",
+        "correct": "a catastrophic accident"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "type": "picture",
+    "text": "Section 4 Reading look at the statements and decide if they are true or false.",
+    "images": [
+      "/static/exam/FINALphoto1.jpg",
+      "/static/exam/FINALphoto2.jpg",
+      "/static/exam/FINALphoto3.jpg",
+      "/static/exam/FINALphoto4.jpg"
+    ],
+    "subquestions": [
+      {
+        "id": "8.1",
+        "type": "true_false",
+        "text": "You must call Mario tomorrow morning.",
+        "correct": "True"
+      },
+      {
+        "id": "8.2",
+        "type": "true_false",
+        "text": "Mario will call you later today.",
+        "correct": "False"
+      },
+      {
+        "id": "8.3",
+        "type": "true_false",
+        "text": "The sales meeting is at night.",
+        "correct": "True"
+      },
+      {
+        "id": "8.4",
+        "type": "true_false",
+        "text": "Your secretary, Jackie, is leaving the office this afternoon.",
+        "correct": "True"
+      },
+      {
+        "id": "8.5",
+        "type": "true_false",
+        "text": "You can collect the pens this evening.",
+        "correct": "False"
+      },
+      {
+        "id": "8.6",
+        "type": "true_false",
+        "text": "The keys for the pens are in your drawer.",
+        "correct": "True"
+      }
+    ]
+  }
+]

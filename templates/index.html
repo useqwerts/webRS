@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+ <div id="toast-container"></div>
 <div class="lines">
   <div class="line"></div>
   <div class="line"></div>
@@ -26,7 +27,6 @@
   <div class="line"></div>
   <div class="line"></div>
 </div>
-
   
   <!-- Само модальное окно -->
   <div id="updateModal" class="update-modal">
@@ -59,8 +59,6 @@
         </div>
     </div>
 </div>
-
-  <div id="toast-container"></div>
  
     <div class="chat-container">
         <!-- Header with logout button -->
@@ -129,9 +127,45 @@
         <li id="examTaskOption"><i class="fas fa-pencil-alt exam-icon"></i>Exam</li>
         <li id="myExamResultsOption"><i class="fas fa-clipboard-list"></i> My Exam Results</li>
 		<li id="vocabulary-option"><i class="fas fa-book-open"></i> Vocabulary</li>
+		<!-- 1) пункт в меню -->
+<li id="homework-option">
+  <i class="fas fa-book homework-icon"></i> Homework
+</li>
         <li id="logout-option"><i class="fas fa-sign-out-alt logout-icon"></i> Logout</li>
     </ul>
 </div>
+
+
+
+<!-- 2) модальное окно Homework -->
+<fl-modal id="homework-modal" style="display: none;">
+  <fl-modal-content>
+    <span class="modal-close" id="homework-modal-close" title="Close">
+      <i class="fas fa-times"></i>
+    </span>
+
+    <!-- Секция списка юнитов -->
+    <div id="homework-units">
+      <h2>Homework Units</h2>
+      <div id="loader-homework" class="sceleton-loader" style="display: none;">
+        <p>Загрузка...</p>
+      </div>
+      <div id="homework-list" class="units-list"></div>
+    </div>
+
+    <!-- Секция превью выбранного юнита -->
+    <div id="homework-preview" style="display: none;">
+      <button id="back-to-homework-units" class="back-button" title="Back to Units">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h2 id="homework-title">Unit X</h2>
+      <div id="homework-content" class="preview-content">
+        <!-- сюда подгружается то, что вернёт сервер -->
+      </div>
+      <button id="take-test-button" class="btn-test">Take a test</button>
+    </div>
+  </fl-modal-content>
+</fl-modal>
 
 <fl-modal id="vocabulary-modal" style="display: none;">
   <fl-modal-content>
@@ -166,8 +200,34 @@
       <div id="words-container" class="words-container"></div>
     </div>
 
+    <!-- 🧠 Quiz Section -->
+    <div id="vocabulary-quiz" style="display: none;">
+      <div class="quiz-card glass">
+        <h3 id="quiz-prompt">Translate this word:</h3>
+        <p id="quiz-word" class="word-en"></p>
+
+        <input type="text" id="quiz-answer" placeholder="Type translation…" class="glass-input" />
+
+        <button id="quiz-submit" class="icon-button" title="Submit Answer">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+
+        <p id="quiz-feedback" class="feedback"></p>
+
+        <button id="quiz-next" class="icon-button" title="Next Word" style="display: none;">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <p id="quiz-score" class="feedback" style="display: none;"></p>
+
+        <button id="quiz-restart" class="icon-button" style="display: none;" title="Back to Words">
+          <i class="fas fa-arrow-left"></i> Back to Words
+        </button>
+      </div>
+    </div>
   </fl-modal-content>
 </fl-modal>
+
 
 
 <!-- Exam Results Modal (container) -->
@@ -213,7 +273,11 @@
 
 
 <div id="examModal">
-  <h2 id="examTitle">Exam</h2>
+
+ <div id="examTitles" class="examTitle">
+  <div class="exam-main-title">Exam</div>
+  <div class="exam-subtitle">Final Exam</div>
+</div>
 
   <!-- Контейнер таймера -->
   <div id="exam-timer">

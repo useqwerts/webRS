@@ -1,0 +1,16 @@
+{
+  "words": [
+    {
+      "en": "accessible",
+      "ru": "доступный",
+      "example": "The information should be accessible to everyone.",
+      "definition": "Easy to approach or enter."
+    },
+    {
+      "en": "weather pattern",
+      "ru": "погодная модель, характер погоды",
+      "example": "The weather pattern has been unusual this year.",
+      "definition": "The weather conditions prevailing in an area over a long period."
+    }
+  ]
+}
