@@ -1,309 +1,101 @@
 {
     "Muhammadiso": {
-        "correct": 0,
+        "correct": 2,
         "incorrect": 1,
-        "skipped": 36,
-        "total_questions": 37,
-        "correct_percentage": 0.0,
+        "skipped": 8,
+        "total_questions": 11,
+        "correct_percentage": 18.181818181818183,
         "rewarded": false,
         "coins": 0,
-        "time_finished": "2025-04-23 03:45:22",
+        "time_finished": "2025-04-23 11:09:31",
         "results": [
             {
                 "question_type": "true_false",
                 "question_id": "1.1",
-                "question": "John works at Old Time Toys.",
-                "user_answer": "True",
+                "question": "Customer 1 orders a large bottle of orange juice",
+                "user_answer": null,
                 "correct_answer": "False",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "true_false",
                 "question_id": "1.2",
-                "question": "Marina wants ...",
+                "question": "The apple juice costs \u00a33.15",
                 "user_answer": null,
-                "correct_answer": "product information, a brochure and prices.",
+                "correct_answer": "False",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "true_false",
                 "question_id": "1.3",
-                "question": "Marina's number is ...",
+                "question": "Customer 2 is not going to have their tea and cake inside the caf\u00e9",
                 "user_answer": null,
-                "correct_answer": "0208 6557621",
+                "correct_answer": "True",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "1.4",
+                "question": "Customer 2 pays with a twenty pound note",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "1.5",
+                "question": "Customer 3 orders something to drink",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "1.6",
+                "question": "The cookie costs 85p",
+                "user_answer": null,
+                "correct_answer": "False",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "1.4",
-                "question": "Marina's email address is ...",
-                "user_answer": null,
-                "correct_answer": "marina.silva@oldtime-toys.com",
-                "is_correct": false
-            },
-            {
-                "question_type": "fill_gaps",
                 "question_id": "2.1",
-                "question": "1. I'm ____ we only have bottled juices.",
+                "question": "No talking.",
                 "user_answer": null,
-                "correct_answer": "afraid",
+                "correct_answer": "You can't talk.",
                 "is_correct": false
             },
             {
-                "question_type": "fill_gaps",
+                "question_type": "multiple_choice",
                 "question_id": "2.2",
-                "question": "2. I'll have an apple juice ____. ",
-                "user_answer": null,
-                "correct_answer": "instead",
-                "is_correct": false
+                "question": "ID card visible on desk.",
+                "user_answer": "You can see the ID card.",
+                "correct_answer": "You can see the ID card.",
+                "is_correct": true
             },
             {
-                "question_type": "fill_gaps",
+                "question_type": "multiple_choice",
                 "question_id": "2.3",
-                "question": "3. Sorry, I wanted freshly ____ orange juice.",
+                "question": "Mobile phones switched off and put away.",
                 "user_answer": null,
-                "correct_answer": "squeezed",
+                "correct_answer": "Don't have your mobile phone on the table.",
                 "is_correct": false
             },
             {
-                "question_type": "fill_gaps",
+                "question_type": "multiple_choice",
                 "question_id": "2.4",
-                "question": "4. To eat in or ____ away?",
-                "user_answer": null,
-                "correct_answer": "take",
+                "question": "Doors close five minutes before the exam.",
+                "user_answer": "You can be five minutes late.",
+                "correct_answer": "You must arrive early.",
                 "is_correct": false
             },
             {
-                "question_type": "fill_gaps",
+                "question_type": "multiple_choice",
                 "question_id": "2.5",
-                "question": "5. Sorry, I think I was in ____ of you.",
-                "user_answer": null,
-                "correct_answer": "front",
-                "is_correct": false
-            },
-            {
-                "question_type": "fill_gaps",
-                "question_id": "2.6",
-                "question": "6. No, thanks. ____ the cookie.",
-                "user_answer": null,
-                "correct_answer": "Just",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "3.1",
-                "question": "Julian remembers Alyssa.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "3.2",
-                "question": "Ben is Alyssa's brother.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "3.3",
-                "question": "They were at Ben\u2019s wedding.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "3.4",
-                "question": "The wedding was in February.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "3.5",
-                "question": "Julian says the wrong name.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "3.6",
-                "question": "Alyssa doesn't want a drink.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "4.1",
-                "question": "Peter is new in the company.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "4.2",
-                "question": "Peter is a designer.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "4.3",
-                "question": "Carla works in marketing.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "4.4",
-                "question": "Peter plans events for new products.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "4.5",
-                "question": "Carla is Brazilian.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "4.6",
-                "question": "Peter started his job five years ago.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "5.1",
-                "question": "Where was the mansion located?",
-                "user_answer": null,
-                "correct_answer": "at the edge of a dense forest",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "5.2",
-                "question": "What did the ancient statues seem to do?",
-                "user_answer": null,
-                "correct_answer": "watch over the mansion",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "5.3",
-                "question": "What bound the restless souls to the property?",
-                "user_answer": null,
-                "correct_answer": "a long-forgotten ritual",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "6.1",
-                "question": "Where did the church stand?",
-                "user_answer": null,
-                "correct_answer": "in a forgotten town",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "6.2",
-                "question": "What marked the altar?",
-                "user_answer": null,
-                "correct_answer": "deep scratches",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "6.3",
-                "question": "What did the wild roses symbolize?",
-                "user_answer": null,
-                "correct_answer": "unspoken ceremonies",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "7.1",
-                "question": "What type of building is described?",
-                "user_answer": null,
-                "correct_answer": "an abandoned factory",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "7.2",
-                "question": "What sounds were reported inside the factory?",
-                "user_answer": null,
-                "correct_answer": "echoing footsteps and clanging metal",
-                "is_correct": false
-            },
-            {
-                "question_type": "question",
-                "question_id": "7.3",
-                "question": "What tragic event is hinted at in the legend?",
-                "user_answer": null,
-                "correct_answer": "a catastrophic accident",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "8.1",
-                "question": "You must call Mario tomorrow morning.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "8.2",
-                "question": "Mario will call you later today.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "8.3",
-                "question": "The sales meeting is at night.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "8.4",
-                "question": "Your secretary, Jackie, is leaving the office this afternoon.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "8.5",
-                "question": "You can collect the pens this evening.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "8.6",
-                "question": "The keys for the pens are in your drawer.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
+                "question": "If you have a question, raise your hand.",
+                "user_answer": "You can ask questions.",
+                "correct_answer": "You can ask questions.",
+                "is_correct": true
             }
         ]
     }

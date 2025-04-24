@@ -1,16 +1,26 @@
 {
     "Muhammadiso": [
         {
+            "date": "2025-04-10",
+            "weeklyExams": 0.0
+        },
+        {
+            "date": "2025-04-12",
+            "weeklyExams": 5.11
+        }
+    ],
+    "Aziz": [
+        {
+            "date": "2025-04-10",
+            "weeklyExams": 0.0
+        },
+        {
+            "date": "2025-04-12",
+            "weeklyExams": 3.91
+        },
+        {
             "date": "2025-04-16",
-            "weeklyExams": 0.72
-        },
-        {
-            "date": "2025-04-21",
-            "finalExam": 8.040000000000001
-        },
-        {
-            "date": "2025-04-23",
-            "weeklyExams": 1.9100000000000001
+            "weeklyExams": 0.0
         }
     ]
 }

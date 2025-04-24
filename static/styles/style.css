@@ -15,6 +15,51 @@
     --menu-bg-hover: rgba(0, 123, 255, 0.2);
     --icon-primary: #007bff;
     --icon-hover: #0056b3;
+	 --modal-bg: rgba(255, 255, 255, 0.07);
+  --modal-blur: 25px;
+  --modal-radius: 24px;
+
+  --item-bg: rgba(255, 255, 255, 0.06);
+  --item-hover-scale: 1.03;
+  --item-radius: 20px;
+
+  --text-light: #f1f1f1;
+  --shadow-dark: rgba(0, 0, 0, 0.4);
+  --border-light: rgba(255, 255, 255, 0.2);
+    --clr-bg: #0e1117;
+  --clr-surface: rgba(255, 255, 255, 0.06);
+  --clr-surface-blur: 20px;
+  --clr-surface-border: rgba(255, 255, 255, 0.12);
+  --clr-primary: #7dd3fc;      /* light blue */
+  --clr-accent: #a78bfa;       /* soft purple */
+  --clr-green: #4ade80;        /* mint green */
+  --clr-yellow: #fde68a;       /* soft yellow */
+  --clr-danger: #f87171;       /* coral red */
+  --clr-white: #f3f4f6;
+  --clr-muted: rgba(255, 255, 255, 0.6);
+
+  --radius-lg: 24px;
+  --radius-sm: 12px;
+
+  --shadow-elevation: 0 10px 40px rgba(0, 0, 0, 0.6);
+    --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-highlight: rgba(255, 255, 255, 0.08);
+  --text-color: #f0f0f0;
+  --text-muted: #bbbbbb;
+  --heading-gradient: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+  --code-bg: rgba(255, 255, 255, 0.08);
+  --list-counter-bg: #2196f3;
+  --box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+  --font-main: 'Segoe UI', sans-serif;
+    --bg-glass: rgba(255, 255, 255, 0.08);
+  --bg-header: rgba(255, 255, 255, 0.1);
+  --bg-hover: rgba(255, 255, 255, 0.15);
+  --border-color: rgba(255, 255, 255, 0.2);
+  --text-main: #f5f5f5;
+  --text-secondary: #cfcfcf;
+  --radius: 12px;
+  --transition: 0.3s ease;
 }
 
 html, body {
@@ -6868,161 +6913,175 @@ box-shadow: 0 4px 8px rgba(0, 122, 255, 0.4);
     vertical-align: middle;
 }
 
-/* Оформление модального окна (специальные теги fl-modal и fl-modal-content) */
+
 fl-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(10px); /* Эффект размытия фона */
-    background: rgba(0, 0, 0, 0.5); /* Прозрачный черный фон */
-    z-index: 1000;
-    transition: opacity 0.3s ease; /* Плавное появление */
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.6), rgba(0,0,0,0.9));
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  animation: overlayFadeIn 0.6s ease-out forwards;
 }
 
-/* Стеклянный эффект для модального окна */
 fl-modal-content {
-    width: 100%; /* Занимает всю ширину */
-    height: 100%; /* Занимает всю высоту */
-    background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
-    padding: 40px 30px;
-    border-radius: 20px;
-    backdrop-filter: blur(15px); /* Эффект размытия */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    color: #fff;
-    text-align: center;
-    position: relative;
-    animation: fadeIn 0.6s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Легкая граница */
-    overflow-y: auto; /* Добавляем прокрутку, если контент выходит за пределы */
+  width: 100%;
+  height: 100%;
+  padding: 5vh 5vw;
+  background: var(--clr-surface);
+  backdrop-filter: blur(var(--clr-surface-blur));
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--clr-surface-border);
+  box-shadow: var(--shadow-elevation);
+  display: flex;
+  flex-direction: column;
+  animation: contentSlideFade 0.8s ease forwards;
+  color: var(--clr-white);
 }
 
-/* Кнопка закрытия */
-.close-modal {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    font-size: 22px;
-    color: #fff;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.close-modal:hover {
-    transform: scale(1.2);
-}
-
-/* Заголовок модального окна */
-.modal-title {
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 25px;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Легкая тень */
-}
-
-/* Стили для скелетона загрузки */
-.sceleton-loader {
-    background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.4), rgba(255,255,255,0.1));
-    height: 50px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    animation: skeleton-loading 4s linear infinite;
+.vocabulary-list, .units-list {
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-@keyframes skeleton-loading {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-}
-
-/* Стили для списка юнитов */
-.vocabulary-list {
+    flex-direction: column;
+    gap: 1.2rem;
+    max-height: 90vh;
     overflow-y: auto;
-    text-align: left;
-    padding-right: 10px;
+    padding-right: 0.5rem;
+    animation: fadeInUp 0.6s ease both;
+}
+
+.vocabulary-list::-webkit-scrollbar {
+  width: 6px;
+}
+.vocabulary-list::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 3px;
 }
 
 .unit-item {
-  padding: 14px 20px;
-  border-radius: 16px;
-  margin-bottom: 12px;
+  margin: 3%;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s;
-  color: white;
-  font-size: 16px;
-  font-weight: 500;
+  align-items: center;
+  background: var(--item-bg);
+  padding: 1.2rem 1.8rem;
+  border-radius: var(--item-radius);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+  backdrop-filter: blur(12px);
+  transform: scale(0.97);
+  opacity: 0;
+  animation: itemReveal 0.6s ease-out forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Hover эффект для интерактивности */
 .unit-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
+  transform: scale(var(--item-hover-scale)) rotateZ(-0.5deg);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.4);
 }
 
-/* Стили для статусов */
-.unit-item.unlocked,.unit-item.done {
-  background: rgba(76, 175, 80, 0.15);
-  border-color: rgba(76, 175, 80, 0.4);
-  color: #d0ffd0;
-}
-
-.unit-item.inprogress {
-  background: rgba(255, 193, 7, 0.15);
-  border-color: rgba(255, 193, 7, 0.4);
-  color: #fff3c0;
-}
-
-.unit-item.locked {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(200, 200, 200, 0.1);
-  color: rgba(255, 255, 255, 0.4);
-  pointer-events: none;
-}
-
-.unit-item.in-progress {
-  background: rgba(0, 0, 255, 0.15);  /* Light blue background with transparency */
-  border-color: rgba(0, 0, 255, 0.4);  /* Dark blue border */
-  color: #aab7ff;  /* Light blue text color */
-  transition: all 0.3s ease; /* Smooth transition for changes */
-}
+/* Статусы */
+.unit-item.unlocked { background: linear-gradient(135deg, rgba(76,175,80,0.15), transparent); }
+.unit-item.in-progress { background: linear-gradient(135deg, rgba(255,193,7,0.15), transparent); }
+.unit-item.done { background: linear-gradient(135deg, rgba(33,150,243,0.15), transparent); }
+.unit-item.locked { opacity: 0.4; pointer-events: none; }
 
 .unit-item i {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 16px;
-  vertical-align: middle;
+  font-size: 20px;
+  animation: rotateBobble 5s infinite ease-in-out;
 }
 
-/* Стили для кнопки icon-button (.unit-item button) */
-.unit-item button {
-  margin-left: 15px;
-  padding: 8px 16px;
-  font-size: 14px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.3s;
-  backdrop-filter: blur(10px);
-  color: white;
-  /* Задаём flex для центрирования содержимого */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* Вариант без hover-зависимости — постоянное движение */
+@keyframes rotateBobble {
+  0%   { transform: rotate(0deg) translateY(0); }
+  25%  { transform: rotate(3deg) translateY(-3px); }
+  50%  { transform: rotate(-3deg) translateY(2px); }
+  75%  { transform: rotate(2deg) translateY(-2px); }
+  100% { transform: rotate(0deg) translateY(0); }
 }
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes contentDropIn {
+  0% { opacity: 0; transform: scale(0.9) translateY(-20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes itemReveal {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Buttons */
+.unit-item button {
+  padding: 10px 22px;
+  font-size: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.unit-item button:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.2);
+}
+.unit-item button:active {
+  transform: scale(0.95);
+}
+
+/* Back Button */
+.back-button {
+  font-size: 18px;
+  color: #ffffff;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background 0.3s;
+}
+.back-button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Keyframes — fancy motions */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes modalEnter {
+  0% { opacity: 0; transform: scale(0.85) rotateX(-20deg); }
+  70% { transform: scale(1.05) rotateX(5deg); }
+  100% { opacity: 1; transform: scale(1) rotateX(0); }
+}
+@keyframes cardEnter {
+  0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes float {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-6px); }
+}
+
 
 /* Стили спиннера с изменённым названием на .open-unit-loader */
 .open-unit-loader,
@@ -7073,7 +7132,6 @@ fl-modal-content {
   }
 }
 
-
 .unit-item button:hover {
     transform: scale(1.05);
 }
@@ -7084,70 +7142,485 @@ fl-modal-content {
     cursor: not-allowed;
 }
 
-/* Стили для зоны отображения слов */
-.back-button {
-    background: transparent;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    color: #fff;
-    margin-bottom: 15px;
-    backdrop-filter: blur(10px);
-}
-
 .words-container {
   max-height: 700px;
   overflow-y: auto;
   text-align: left;
-  padding-right: 8px; /* чтобы не прижималось к скроллу */
+  padding-right: 8px;
 }
 
-/* Элемент слова с анимацией и стеклянным эффектом */
+/* Основной блок слова */
 .word-item {
-  border-radius: 16px;
-  padding: 16px 20px;
-  margin-bottom: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: background 0.3s ease, transform 0.3s ease;
+  border-radius: 24px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: transform 0.4s ease, background 0.3s ease;
   color: #fff;
-
-  /* Анимация появления */
+  animation: wordFloatIn 0.7s ease forwards;
   opacity: 0;
-  transform: translateY(10px);
-  animation: fadeInUp 0.5s ease-out forwards;
+  transform: translateY(20px);
+  overflow: hidden;
+  position: relative;
 }
 
-/* Hover эффект — лёгкое поднятие и подсветка */
+.word-item::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.03), transparent 70%);
+  transform: rotate(30deg);
+  pointer-events: none;
+}
+
+/* Hover эффект */
 .word-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-6px) scale(1.02);
 }
 
-/* Текст: английское слово */
+/* Всплытие при появлении */
+@keyframes wordFloatIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Английское слово */
 .word-en {
   font-weight: 700;
-  font-size: 18px;
-  color: #fff;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+  font-size: 21px;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 }
 
-/* Текст: перевод */
+/* Перевод */
 .word-ru {
-  font-size: 15px;
-  color: #e0e0e0;
+  font-size: 16px;
+  color: #eaeaea;
   margin-top: 6px;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
 }
 
-/* Текст: определение */
+/* Определение со статусным фоном */
 .word-definition {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 14px;
   font-size: 13.5px;
-  color: rgba(240, 240, 240, 0.85);
-  margin-top: 8px;
-  line-height: 1.4;
+  font-style: italic;
+  border-radius: 50px;
+  background: linear-gradient(90deg, rgba(76, 175, 80, 0.15), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  color: #c2f0c2;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  transition: background 0.4s ease, transform 0.3s ease;
+}
+
+.word-definition:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, rgba(76, 175, 80, 0.25), rgba(255, 255, 255, 0.1));
+}
+
+.icon-button {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 10px;
+  padding: 6px 10px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.icon-button:hover {
+  background: rgba(0, 172, 237, 0.2);
+  color: #00aced;
+  transform: scale(1.1);
+}
+
+.modal-close i,
+.back-button i {
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.modal-close i:hover,
+.back-button i:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.question-type-label {
+  display: inline-block;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #ffffff33, #cccccc33);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: #eee;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 10px;
+  text-transform: capitalize;
+  letter-spacing: 0.6px;
+  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+.quiz-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 2rem;
+  margin: auto;
+  color: #fff;
+  max-width: 550px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+
+.glass-input {
+  width: 100%;
+  padding: .75rem;
+  margin: 1rem 0;
+  border: none;
+  border-radius: .75rem;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 5px rgba(255,255,255,0.2);
+}
+
+.feedback {
+  margin-top: .5rem;
+  font-weight: bold;
+}
+
+.quiz-feedback {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: white;
+}
+
+.quiz-feedback.correct {
+  color: #8ef58e; /* Мягкий зелёный */
+}
+
+.quiz-feedback.incorrect {
+  color: #ff9999; /* Мягкий красный */
+}
+
+.quiz-score {
+  font-size: 1.6rem;
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.tab-title {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: #fff;
+  padding: 12px 16px;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tab-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.tab-title:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.tab-title:hover::after {
+  width: 60%;
+  left: 20%;
+}
+
+/* Контент юнита */
+.unit-content {
+    background: rgba(26, 26, 46, 0.75);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    color: #eee;
+    padding: 20px;
+    border-radius: 0 0 8px 8px;
+    font-size: 14px;
+    max-height: 515px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+    transition: box-shadow 0.3s ease;
+}
+
+.unit-content:hover {
+  box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.unit-content strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.unit-content em {
+  color: #bbb;
+  font-style: italic;
+}
+
+/* Кастомный скроллбар */
+.unit-content::-webkit-scrollbar {
+  width: 8px;
+}
+.unit-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+.unit-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+.unit-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Нумерованный список */
+.unit-content ol {
+  list-style: none;
+  counter-reset: step;
+  margin: 0;
+  padding-left: 0;
+}
+.unit-content ol li {
+  position: relative;
+  margin-bottom: 12px;
+  padding-left: 28px;
+  text-indent: -4px;
+}
+.unit-content ol li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.grammar-section {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 28px 36px;
+  color: var(--text-color);
+  font-family: var(--font-main);
+  line-height: 1.7;
+  font-size: 15.5px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: var(--box-shadow);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Заголовки */
+.grammar-section h2 {
+  font-size: 21px;
+  margin-bottom: 14px;
+  color: #ffffff;
+  background: var(--heading-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 6px;
+  margin-top: 32px;
+}
+
+/* Параграфы */
+.grammar-section p {
+  margin: 12px 0;
+  color: var(--text-color);
+}
+
+/* Выделения */
+.grammar-section strong {
+  color: #fff;
+  font-weight: 600;
+}
+.grammar-section em {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Inline code */
+.grammar-section code {
+  background: var(--code-bg);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: "Courier New", monospace;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+/* Списки */
+.grammar-section ul,
+.grammar-section ol {
+  padding-left: 20px;
+  margin: 12px 0 18px 0;
+}
+.grammar-section li {
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 10px;
+}
+
+/* Нумерация */
+.grammar-section ol {
+  counter-reset: custom-counter;
+  list-style: none;
+}
+.grammar-section ol li::before {
+  counter-increment: custom-counter;
+  content: counter(custom-counter);
+  background-color: var(--list-counter-bg);
+  color: white;
+  border-radius: 50%;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  font-size: 13px;
+  margin-right: 10px;
+  vertical-align: middle;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Примеры */
+.grammar-section li em {
+  display: block;
+  color: #cfd8dc;
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.grammar-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 30px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  color: var(--text-main);
+  background: var(--bg-glass);
+  border-radius: var(--radius);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  transform-origin: center;
+  transition: transform var(--transition);
+}
+
+/* Заголовок */
+.grammar-table thead th {
+  padding: 18px 12px;
+  text-align: center;
+  background: var(--bg-header);
+  color: var(--text-main);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Скругляем углы заголовка */
+.grammar-table thead th:first-child {
+  border-top-left-radius: var(--radius);
+}
+.grammar-table thead th:last-child {
+  border-top-right-radius: var(--radius);
+}
+
+/* Строки и ячейки */
+.grammar-table tbody tr {
+  transition: background var(--transition);
+}
+.grammar-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.04);
+}
+.grammar-table tbody td {
+  padding: 14px 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  position: relative;
+  transition: background var(--transition), transform var(--transition);
+}
+
+/* Первая и последняя колонки */
+.grammar-table tbody td:first-child {
+  font-weight: 600;
+  color: var(--text-main);
+}
+.grammar-table tbody td:last-child {
+  font-style: italic;
+}
+
+/* Скругляем углы у последней строки */
+.grammar-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: var(--radius);
+}
+.grammar-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--radius);
+}
+
+/* Hover эффекты */
+.grammar-table tbody tr:hover {
+  background: var(--bg-hover);
+}
+.grammar-table tbody td:hover {
+  background: var(--bg-hover);
+  transform: translateY(-2px) scale(1.02);
 }
 
 /* Анимация появления */
@@ -7161,168 +7634,95 @@ fl-modal-content {
     transform: translateY(0);
   }
 }
-
-
-/* Анимация появления */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.grammar-table tbody tr {
+  animation: fadeInUp 0.6s ease-out;
 }
 
-.icon-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: white;
-  margin-left: 10px;
-  transition: color 0.2s;
+/* Адаптивность */
+@media (max-width: 768px) {
+  .grammar-table {
+    font-size: 14px;
+  }
+  .grammar-table thead th,
+  .grammar-table tbody td {
+    padding: 10px 8px;
+  }
 }
 
-.icon-button:hover {
-  color: #00aced;
+
+/* Адаптация */
+@media (max-width: 600px) {
+  .grammar-section {
+    padding: 18px 22px;
+    font-size: 14.2px;
+  }
+
+  .grammar-section h2 {
+    font-size: 18.5px;
+  }
 }
 
-.modal-close i,
-.back-button i {
-  font-size: 20px;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 50%;
-  transition: background 0.2s ease;
-  color: white;
-}
 
-.modal-close i:hover,
-.back-button i:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
 
-.question-type-label {
-  display: inline-block;
-  padding: 2px 6px;
-  background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* лёгкий градиент */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  color: #555;
-  font-size: 10px;        /* уменьшенный размер текста */
-  font-weight: 600;
-  margin-left: 8px;
-  text-transform: capitalize;  /* Первые буквы заглавными */
-  letter-spacing: 0.5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.quiz-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  margin: auto;
-  color: #fff;
-  max-width: 500px;
-  text-align: center;
-}
-
-.glass-input {
-  width: 100%;
-  padding: .5rem;
-  margin: .75rem 0;
-  border: none;
-  border-radius: .5rem;
-  background: rgba(255,255,255,0.25);
-  color: #fff;
-  font-size: 1rem;
-}
-
-.feedback {
-  margin-top: .5rem;
-  font-weight: bold;
-}
-
-.quiz-feedback {
-  font-size: 1rem;
-  margin-top: 10px;
-}
-.quiz-feedback {
-  font-size: 1.2rem;
-  margin-top: 10px;
-  color: white; /* Белый текст */
-}
-
-.quiz-feedback.correct {
-  color: black; /* Зеленый для правильного ответа */
-}
-
-.quiz-feedback.incorrect {
-  color: black; /* Красный для неправильного ответа */
-}
-
-.quiz-score {
-  font-size: 1.5rem;
-  color: white;
-  text-align: center;
-  margin-top: 20px;
-}
-
-.tab-title {
-  background-color: #1e90ff;
-  color: white;
-  padding: 10px;
-  font-weight: bold;
-  border-radius: 6px 6px 0 0;
-  font-size: 16px;
-}
-
-.unit-content {
-  background-color: #1a1a2e;
-  color: white;
-  padding: 15px;
-  border-radius: 0 0 6px 6px;
-  font-size: 14px;
-  max-height: 400px; /* или любое нужное значение */
-  overflow-y: auto;
-}
-
-.unit-content strong {
-  color: #ffffff;
-}
-
-.unit-content em {
-  color: #ccc;
-}
-
+/* --- Кнопка "Пройти тест" --- */
 #take-test-button {
-  background-color: #2196F3; /* ярко-синий */
-  color: white;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: #fff;
   border: none;
   border-radius: 12px;
-  padding: 14px 20px;
+  padding: 16px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
   width: 100%;
   margin-top: 20px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
 
-#take-test-button:hover {
-  background-color: #1976D2; /* немного темнее при наведении */
+#take-test-button:hover:not(:disabled) {
+  transform: scale(1.02);
+  background: linear-gradient(135deg, #0096ff, #0040ff);
 }
 
 #take-test-button:disabled {
-  background-color: #90CAF9;
+  background: linear-gradient(135deg, #555, #333);
+  color: rgba(255, 255, 255, 0.5);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
+/* --- Список с нумерацией --- */
 .unit-content ol {
-  list-style-position: inside;
-  margin-left: 0;
-  padding-left: 16px;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  counter-reset: step;
 }
 
 .unit-content ol li {
-  margin-bottom: 10px;
-  padding-left: 4px;
-  text-indent: -1px;
+  position: relative;
+  margin-bottom: 14px;
+  padding-left: 36px;
+  line-height: 1.6;
+}
+
+.unit-content ol li::before {
+  content: counter(step);
+  counter-increment: step;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }

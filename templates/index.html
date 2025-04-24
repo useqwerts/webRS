@@ -140,15 +140,16 @@
 <!-- 2) модальное окно Homework -->
 <fl-modal id="homework-modal" style="display: none;">
   <fl-modal-content>
-    <span class="modal-close" id="homework-modal-close" title="Close">
+    <span class="close-btn" id="homework-modal-close" title="Close">
       <i class="fas fa-times"></i>
     </span>
 
+
     <!-- Секция списка юнитов -->
     <div id="homework-units">
-      <h2>Homework Units</h2>
+      <h2>Homework</h2>
       <div id="loader-homework" class="sceleton-loader" style="display: none;">
-        <p>Загрузка...</p>
+        <p>Loading...</p>
       </div>
       <div id="homework-list" class="units-list"></div>
     </div>
@@ -170,7 +171,7 @@
 <fl-modal id="vocabulary-modal" style="display: none;">
   <fl-modal-content>
     <!-- Иконка закрытия -->
-    <span class="modal-close" id="vocabulary-modal-close" title="Close">
+    <span class="close-btn" id="vocabulary-modal-close" title="Close">
       <i class="fas fa-times"></i>
     </span>
 
@@ -488,53 +489,6 @@
       Close
     </button>
   </div>
-</div>
-
-
-<!-- Модальное окно для списка музыки -->
-<div id="music-modal" class="music-modal hidden">
-    <div class="music-modal-content">
-	<span id="close-music-modal" class="close-btn">&times;</span>
-        <h2>Music Pack</h2>
-        <div id="music-list" class="music-list">
-            <!-- Анимация загрузки -->
-            <div class="skeleton-loader-Music">
-			<div class="track-item-music skeleton"></div>
-			<div class="track-item-music skeleton"></div>
-			<div class="track-item-music skeleton"></div>
-		</div>
-        </div>
-    </div>
-</div>
-
-<!-- Модальное окно аудиоплеера -->
-<div id="player-modal" class="modal-player hidden">
-    <div class="modal-content-player">
-	<span id="close-player-modal" class="close-btn">&times;</span>
-        <h2 id="player-title">name</h2>
-        <div id="custom-player">
-            <audio id="audio-element"></audio>
-            <div id="player-controls">
-                <button id="prev-track-button"><i class="fas fa-step-backward"></i></button>
-                <button id="play-pause"><i class="fas fa-pause"></i></button>
-                <button id="next-track-button"><i class="fas fa-step-forward"></i></button>
-            </div>
-			<label class="toggle">
-    <input type="checkbox" id="autoplay-toggle">
-    <span class="icon-container">
-        <i id="autoplay-icon" class="fas fa-play"></i>
-    </span>
-</label>
-            <div id="time-display">
-                <span id="current-time">0:00</span>
-                <span id="total-time">0:00</span>
-            </div>
-            <!-- Перемещаем прогресс-бар сюда, между временем и кнопкой закрытия -->
-            <div id="progress-bar-container">
-                <div id="progress-bar"></div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- Всплывающая панель управления аудио -->

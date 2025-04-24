@@ -180,36 +180,11 @@ function playTrack(index) {
 }
 
 
-document.getElementById('next-track-button').addEventListener('click', () => {
-    if (currentTrackIndex < tracks.length - 1) {
-        playTrack(currentTrackIndex + 1); // Переход к следующему треку
-    } else {
-        showToastNotification("This is the last track.", 'success');
-    }
-});
-
-// Логика для кнопки Prev Track
-document.getElementById('prev-track-button').addEventListener('click', () => {
-    if (currentTrackIndex > 0) {
-        playTrack(currentTrackIndex - 1); // Переход к предыдущему треку
-    } else {
-        showToastNotification("This is the first track.", 'success');
-    }
-});
-
 // Обновление UI плеера
 function updatePlayerUI(title) {
     document.getElementById('player-title').textContent = `${title}`;
     playPauseButton.textContent = '<i class="fas fa-play"></i>'; // Восстанавливаем иконку воспроизведения
 }
-
-// Обновление прогресс-бара и времени
-audioElement.addEventListener('timeupdate', () => {
-    const progress = (audioElement.currentTime / audioElement.duration) * 100;
-    progressBar.style.width = `${progress}%`;
-    currentTimeDisplay.textContent = formatTime(audioElement.currentTime);
-    totalTimeDisplay.textContent = formatTime(audioElement.duration || 0);
-});
 
 // Форматирование времени
 function formatTime(seconds) {
@@ -217,101 +192,6 @@ function formatTime(seconds) {
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
 }
-
-// Кнопка воспроизведения/паузы
-playPauseButton.addEventListener('click', () => {
-    if (audioElement.paused) {
-        // Показываем спиннер внутри кнопки с 1-секундной задержкой
-        playPauseButton.innerHTML = '<div class="lds-ring"><div></div><div></div><div></div></div>';
-
-        // Задержка перед воспроизведением
-        setTimeout(() => {
-            audioElement.play().then(() => {
-                // После начала воспроизведения убираем спиннер и показываем паузу
-                playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-            }).catch((error) => {
-                console.error('Ошибка при воспроизведении:', error);
-            });
-        }, 1000); // Задержка в 1 секунду
-    } else {
-        audioElement.pause();
-        playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // Восстанавливаем иконку воспроизведения
-    }
-});
-
-// Событие завершения трека
-audioElement.addEventListener('ended', () => {
-    if (isAutoplayEnabled) {
-        playNextTrack(); // Переход к следующему треку
-    }
-    playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // Восстанавливаем иконку после завершения
-    progressBar.style.width = '0%'; // Сбрасываем прогресс-бар
-});
-
-// Событие буферизации
-audioElement.addEventListener('waiting', () => {
-    playPauseButton.innerHTML = '<div class="lds-ring"><div></div><div></div><div></div></div>'; // Показываем спиннер
-});
-
-// Событие "готово к воспроизведению"
-audioElement.addEventListener('playing', () => {
-    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>'; // Возвращаем иконку паузы
-});
-
-let isAutoplayEnabled = false; // Изначально автоплей выключен
-
-const autoplayToggle = document.getElementById('autoplay-toggle');
-const autoplayIcon = document.getElementById('autoplay-icon');
-
-// Обработчик изменения состояния тумблера
-autoplayToggle.addEventListener('change', (event) => {
-    const isAutoplayEnabled = event.target.checked; // Сохраняем состояние (включен/выключен)
-
-    // Обновляем иконку в зависимости от состояния тумблера
-    if (isAutoplayEnabled) {
-        autoplayIcon.classList.remove('fa-play');
-        autoplayIcon.classList.add('fa-pause');
-    } else {
-        autoplayIcon.classList.remove('fa-pause');
-        autoplayIcon.classList.add('fa-play');
-    }
-
-    showToastNotification(`Autoplay is now ${isAutoplayEnabled ? 'enabled' : 'disabled'}`);
-});
-
-
-function playNextTrack() {
-    if (currentTrackIndex < tracks.length - 1) {
-        playTrack(currentTrackIndex + 1); // Воспроизводим следующий трек
-    } else {
-        showToastNotification("This is the last track.", 'success');
-        console.log('Конец плейлиста');
-    }
-}
-
-// Закрытие плеера
-closePlayerModal.addEventListener('click', () => {
-    playerModal.classList.remove('active');
-    audioElement.pause();
-});
-
-// Управление воспроизведением через прогресс-бар
-let isMouseDown = false; // Для отслеживания, когда пользователь перетаскивает
-
-progressBarContainer.addEventListener('mousedown', (e) => {
-    isMouseDown = true;
-    updateProgressBar(e);
-});
-
-document.addEventListener('mousemove', (e) => {
-    if (isMouseDown) {
-        updateProgressBar(e);
-    }
-});
-
-document.addEventListener('mouseup', () => {
-    isMouseDown = false;
-});
 
 function updateProgressBar(e) {
     const rect = progressBarContainer.getBoundingClientRect();
@@ -4875,11 +4755,25 @@ function openHomeworkUnit(unit) {
       <div></div><div></div><div></div>
     </div>`;
 
-  // Проверка статуса выполнения задания для выбранного unit
+  // Показываем спиннер внутри unit-content
+  contentD.innerHTML = `
+    <div class="tab-title">Loading Unit ${unit}...</div>
+    <div class="unit-content">
+      <div class="loading-spinner">
+        <div class="lds-spinner">
+          <div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Проверка статуса выполнения задания
   fetch(`/check_homework_status?username=${currentUser}&unit=${unit}`)
     .then(res => res.json())
     .then(data => {
-      const isCompleted = data.isCompleted; // предполагаем, что API вернёт объект с ключом isCompleted
+      const isCompleted = data.isCompleted;
 
       if (isCompleted) {
         testBtn.disabled = true;
@@ -4904,14 +4798,18 @@ function openHomeworkUnit(unit) {
             <div class="unit-content">${contentHTML}</div>
           `;
 
-          // Если задание не выполнено, позволяем пройти тест
           if (!isCompleted) {
             testBtn.onclick = () => openHomeworkExam(unit);
           }
         })
         .catch(err => {
           console.error(err);
-          contentD.innerHTML = '<p class="error">Failed to load preview.</p>';
+          contentD.innerHTML = `
+            <div class="tab-title">Unit ${unit}</div>
+            <div class="unit-content">
+              <p class="error">Failed to load preview.</p>
+            </div>
+          `;
           testBtn.disabled = false;
           testBtn.textContent = 'Take a test';
           testBtn.onclick = () => openHomeworkExam(unit);
@@ -4925,16 +4823,56 @@ function openHomeworkUnit(unit) {
     });
 }
 
-
-
-// — load the unit’s JSON questions as before —
-function loadHomeworkQuestions(unit) {
-  return fetch(`/static/weekly_exam/Unit${unit}.json`)
-    .then(r => {
-      if (!r.ok) throw new Error("Failed to load questions");
-      return r.json();
+async function loadHomeworkQuestions(unit) {
+  // Generate a new API key each time, without storing it
+  async function generateApiKey() {
+    const keyResponse = await fetch('/generate-key', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: currentUser })  // Use current user for generating key
     });
+
+    if (!keyResponse.ok) {
+      throw new Error('Failed to generate API key');
+    }
+
+    const keyData = await keyResponse.json();
+    return keyData.api_key;  // Return the newly generated key
+  }
+
+  // Function to fetch the homework questions
+  async function fetchHomework(apiKey) {
+    const response = await fetch(`/api/homework/${unit}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`
+      }
+    });
+    return response;
+  }
+
+  let apiKey = await generateApiKey();  // Get a fresh API key
+
+  // Make the initial fetch request
+  let response = await fetchHomework(apiKey);
+
+  // Handle expired token
+  if (response.status === 401) {
+    const data = await response.json();
+    if (data.error === 'Token expired') {
+      response = await fetchHomework(await generateApiKey());  // Get a new key and retry the request
+    }
+  }
+
+  // Check for any other errors
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`Failed to load questions: ${errorData.error || response.statusText}`);
+  }
+
+  return response.json();
 }
+
 
 // — POST them to create_homework_exam instead —
 function sendHomeworkExamToServer(questions) {
@@ -4961,7 +4899,10 @@ function openHomeworkExam(unit) {
     .then(() => showHomeworkExamModal(unit))
     .catch(err => {
       console.error(err);
-      showToastNotification("Failed to start test.",'error');
+        showToastNotification(
+    `<b>Failed to start test</b> <span style="color:red;">${err || 'Unknown error'}</span>`,
+    'error'
+  );
     });
 }
 

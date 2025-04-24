@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for, session 
+from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for, session , send_file, abort
 from flask_socketio import SocketIO, emit
 import os
 import json
@@ -8,6 +8,7 @@ import requests
 from datetime import datetime , timedelta
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 # Initialize app and socket
 app = Flask(__name__)
@@ -15,6 +16,7 @@ app.secret_key = os.urandom(32)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'txt', 'pdf','mp3','wav'}
 socketio = SocketIO(app)
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 CORS(app)
 
 # Ensure upload folder exists
@@ -24,26 +26,13 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Initialize messages as an empty list, not a dictionary
 messages = []  # Store messages locally
 
+API_KEY_EXPIRATION = 10
+
 exam_duration = 30 * 60  # 30 minutes in seconds
 exam_start_time = None  # Global variable to store exam start time
 exam_started = False  # Флаг начала экзамена
 exam_end_time = None
 
-tracks = [
-    {'title': 'Karina va Jambul Buxoro Yigitlari', 'url': '/static/music/BuxoroYigitlari.mp3'},
-    {'title': 'Ziyoda - Tor Kocha', 'url': '/static/music/Ziyoda_Tor_kocha.mp3'},
-    {'title': 'Ziyoda - Meni deb', 'url': '/static/music/Ziyoda_Menideb.mp3'},
-    {'title': 'Yulduz Usmonova Biyo Biyo', 'url': '/static/music/YulduzBiyo.mp3'},
-    {'title': 'Billie Eilish - WILDFLOWER ', 'url': '/static/music/Billie_Eilish_WILDFLOWER.mp3'},
-    {'title': 'Billie Eilish - BIRDS OF A FEATHER ', 'url': '/static/music/Billie_Eilish_BIRDS_OF_A_FEATHER.mp3'}, 
-    {'title': 'Lenka - Everything At Once', 'url': '/static/music/Lenka - Everything At Once.mp3'},
-    {'title': 'Jambul Madam', 'url': '/static/music/Jambul Madam.mp3'},
-    {'title': 'Ozoda - Dilbarim', 'url': '/static/music/Ozoda - Dilbarim.mp3'},
-    {'title': 'Shawn Mendes - Señorita', 'url': '/static/music/Shawn Mendes Senorita.mp3'},
-    {'title': 'Andreea Bostanica feat.  HAVANA & Yaar - Supergirl', 'url': '/static/music/Andreea Bostanica feat.  HAVANA & Yaar - Supergirl.mp3'},
-    {'title': 'YAAR feat KAiiA & ADEN - Shıkıdım', 'url': '/static/music/YAAR feat KAiiA & ADEN - Shıkıdım.mp3'},
-    {'title': 'Bruninho Mars - Bonde do Brunao', 'url': '/static/music/Bruninho Mars - Bonde do Brunao.mp3'},
-]
 
 USER_DATA_FILE = "users.json"
 MESSAGE_DATA_FILE = "messages.json"
@@ -55,6 +44,56 @@ USER_AVATAR_FILE = "users_avatar.json"
 
 app.config["AVATAR_FOLDER"] = AVATAR_FOLDER
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"png", "jpg", "jpeg", "gif"}
+
+active_keys = {}
+BASE_DIR = os.path.abspath("homework_files")
+
+@app.route('/generate-key', methods=['POST'])
+def generate_api_key():
+    # Генерация ключа без передачи user_id в payload
+    api_key = serializer.dumps({})
+    return jsonify({'api_key': api_key, 'expires_in': API_KEY_EXPIRATION})
+
+def verify_api_key(token):
+    """Валидация ключа. Возвращает True, если ключ валиден, или False в случае ошибки."""
+    try:
+        # Проверка валидности токена (не извлекаем user_id)
+        payload = serializer.loads(token, max_age=API_KEY_EXPIRATION)
+        print(f"Token Payload: {payload}")  # Логируем данные токена
+        return True  # Токен валиден
+    except SignatureExpired:
+        print("Token expired!")
+        return 'expired'
+    except BadSignature:
+        print("Invalid token!")
+        return False
+
+@app.route('/api/homework/<unit>', methods=['GET'])
+def get_homework(unit):
+    # Получаем ключ из заголовка
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({'error': 'Missing token'}), 403
+
+    token = auth_header.split(' ')[1]
+    print(f"Received Token: {token}")  # Логируем токен
+
+    # Проверка валидности токена
+    if verify_api_key(token) == 'expired':
+        return jsonify({'error': 'Token expired'}), 401
+    if not verify_api_key(token):
+        return jsonify({'error': 'Invalid token'}), 403
+
+    # Загружаем файл
+    filename = f"Unit{unit}.json"
+    filepath = os.path.join(BASE_DIR, filename)
+
+    if not os.path.isfile(filepath):
+        return jsonify({'error': 'File not found'}), 404
+
+    return send_file(filepath, mimetype='application/json')
+
+
 
 @app.route('/api/get_exam_times', methods=['GET'])
 def get_exam_times():
