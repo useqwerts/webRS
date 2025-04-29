@@ -466,94 +466,287 @@ active_sessions = {}  # Track active sessions by username
 current_version = "2025-01-10-v1"
 
 exam_questions = [
-        {
-  "id": 1,
-  "text": "Section 1. Are the sentences true or false?",
-  "type": "listening",
-  "audio": "/static/exam/LE_listening_A1_Ordering_in_a_cafe.mp3",
-  "subquestions": [
-    {
-      "id": "1.1",
-      "type": "true_false",
-      "text": "Customer 1 orders a large bottle of orange juice",
-      "correct": "False"
-    },
-    {
-      "id": "1.2",
-      "type": "true_false",
-      "text": "The apple juice costs £3.15",
-      "correct": "False"
-    },
-    {
-      "id": "1.3",
-      "type": "true_false",
-      "text": "Customer 2 is not going to have their tea and cake inside the café",
-      "correct": "True"
-    },
-    {
-      "id": "1.4",
-      "type": "true_false",
-      "text": "Customer 2 pays with a twenty pound note",
-      "correct": "False"
-    },
-    {
-      "id": "1.5",
-      "type": "true_false",
-      "text": "Customer 3 orders something to drink",
-      "correct": "False"
-    },
-    {
-      "id": "1.6",
-      "type": "true_false",
-      "text": "The cookie costs 85p",
-      "correct": "False"
-    }
-  ]
-},
-    {
- "id": 2,
-  "type": "reading",
-  "text": "<h1>FINAL EXAM INSTRUCTIONS</h1>\n\n<h2>Poster 1</h2>\n<ul>\n  <li>Doors close 5 minutes before the exam begins.</li>\n  <li>Show your student ID card to examiner when you enter the room.</li>\n  <li>No phones, no books.</li>\n</ul>\n\n<h2>Poster 2</h2>\n<p><strong>BEFORE THE EXAM</strong></p>\n<ul>\n  <li>Have your ID card ready.</li>\n  <li>Listen to the instructions.</li>\n  <li>Arrive 10 minutes before exam.</li>\n</ul>\n<p><strong>IN THE EXAM</strong></p>\n<ul>\n  <li>Mobile phones switched off and put away.</li>\n  <li>ID card visible on the desk.</li>\n  <li>No talking.</li>\n  <li>No food or drinks in exam room.</li>\n</ul>\n\n<h2>Poster 3</h2>\n<ul>\n  <li>Follow the examiner's instructions.</li>\n  <li>If you have a question, raise your hand.</li>\n  <li>No mobile phones, books or bags in the exam.</li>\n  <li>Please use a blue or black pen.</li>\n</ul>",
+{
+    "id": 1,
+    "text": "Are the sentences True (T) or False (F)?",
+    "type": "listening",
+    "audio_Exam": "/static/exam/ProgressTest1.mp3",
     "subquestions": [
-        {
-            "id": "2.1",
-            "type": "multiple_choice",
-            "text": "No talking.",
-            "options": ["You can talk.", "You can't talk."],
-            "correct": "You can't talk."
-        },
-        {
-            "id": "2.2",
-            "type": "multiple_choice",
-            "text": "ID card visible on desk.",
-            "options": ["You can see the ID card.", "You can't see the ID card."],
-            "correct": "You can see the ID card."
-        },
-        {
-            "id": "2.3",
-            "type": "multiple_choice",
-            "text": "Mobile phones switched off and put away.",
-            "options": ["Don't have your mobile phone on the table.", "It's OK to have your mobile phone on the table."],
-            "correct": "Don't have your mobile phone on the table."
-        },
-        {
-            "id": "2.4",
-            "type": "multiple_choice",
-            "text": "Doors close five minutes before the exam.",
-            "options": ["You must arrive early.", "You can be five minutes late."],
-            "correct": "You must arrive early."
-        },
-        {
-            "id": "2.5",
-            "type": "multiple_choice",
-            "text": "If you have a question, raise your hand.",
-            "options": ["You can ask questions.", "You can't ask questions."],
-            "correct": "You can ask questions."
-        }
+      {
+        "id": "1.1",
+        "type": "multiple_choice",
+        "text": "The woman is from Halifax.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "False"
+      },
+      {
+        "id": "1.2",
+        "type": "multiple_choice",
+        "text": "It's snowy in Bedford in December.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "True"
+      },
+      {
+        "id": "1.3",
+        "type": "multiple_choice",
+        "text": "There are old buildings in Halifax.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "True"
+      },
+      {
+        "id": "1.4",
+        "type": "multiple_choice",
+        "text": "The man's father is in Canada.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "False"
+      },
+      {
+        "id": "1.5",
+        "type": "multiple_choice",
+        "text": "The man wants to go to Toronto.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "True"
+      }
     ]
-}
+  },
+{
+    "id": 2,
+    "text": "Choose correct option.",
+    "type": "listening",
+    "audio_Exam": "/static/exam/ProgressTest1.mp3",
+    "subquestions": [
+      {
+        "id": "2.1",
+        "type": "multiple_choice",
+        "text": "The small wallets are £16",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "False"
+      },
+      {
+        "id": "2.2",
+        "type": "multiple_choice",
+        "text": "The man wants a small wallet.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "False"
+      },
+      {
+        "id": "2.3",
+        "type": "multiple_choice",
+        "text": "The man wants an umbrella.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "True"
+      },
+      {
+        "id": "2.4",
+        "type": "multiple_choice",
+        "text": "The shop hasn't got any umbrellas.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "True"
+      },
+      {
+        "id": "2.5",
+        "type": "multiple_choice",
+        "text": "The man buys a wallet for £19.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "True"
+      }
+    ]
+  },
+{
+    "id": 3,
+    "text": "Complete the sentences with the words in the box.",
+    "type": "box-choose",
+    "options": [
+      "apple",
+      "Australia",
+      "bus",
+      "father",
+      "friendly",
+      "holiday",
+      "next",
+      "nurse",
+      "Sunday",
+      "watch"
+    ],
+    "subquestions": [
+      {
+        "id": "3.1",
+        "type": "box-choose",
+        "text": "Susan lives in Sydney in ____.",
+        "correct": "Australia"
+      },
+      {
+        "id": "3.2",
+        "type": "box-choose",
+        "text": "My husband and I are here on ____.",
+        "correct": "holiday"
+      },
+      {
+        "id": "3.3",
+        "type": "box-choose",
+        "text": "His ____ is a teacher at my school.",
+        "correct": "father"
+      },
+      {
+        "id": "3.4",
+        "type": "box-choose",
+        "text": "Jan goes to work by ____.",
+        "correct": "bus"
+      },
+      {
+        "id": "3.5",
+        "type": "box-choose",
+        "text": "I'm a ____ in a hospital.",
+        "correct": "nurse"
+      },
+      {
+        "id": "3.6",
+        "type": "box-choose",
+        "text": "The hotel is ____ to the cinema.",
+        "correct": "next"
+      },
+      {
+        "id": "3.7",
+        "type": "box-choose",
+        "text": "I have lunch at two o'clock every ____.",
+        "correct": "Sunday"
+      },
+      {
+        "id": "3.8",
+        "type": "box-choose",
+        "text": "Our neighbours have got a ____ dog.",
+        "correct": "friendly"
+      },
+      {
+        "id": "3.9",
+        "type": "box-choose",
+        "text": "After dinner I ____ TV.",
+        "correct": "watch"
+      },
+      {
+        "id": "3.10",
+        "type": "box-choose",
+        "text": "I've got an ____ in my bag.",
+        "correct": "apple"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "text": "Choose the correct word to complete the sentences.",
+    "type": "multiple_choice",
+    "subquestions": [
+      {
+        "id": "4.1",
+        "type": "multiple_choice",
+        "text": "____ is your phone number?",
+        "options": [
+          "How",
+          "What",
+          "Where"
+        ],
+        "correct": "What"
+      },
+      {
+        "id": "4.2",
+        "type": "multiple_choice",
+        "text": "Is ____ your sister?",
+        "options": [
+          "that",
+          "these",
+          "he"
+        ],
+        "correct": "that"
+      },
+      {
+        "id": "4.3",
+        "type": "multiple_choice",
+        "text": "You ____ got any brothers.",
+        "options": [
+          "doesn't",
+          "haven't",
+          "hasn't"
+        ],
+        "correct": "haven't"
+      },
+      {
+        "id": "4.4",
+        "type": "multiple_choice",
+        "text": "Elijah and his friends like ____ school.",
+        "options": [
+          "they",
+          "there",
+          "their"
+        ],
+        "correct": "their"
+      },
+      {
+        "id": "4.5",
+        "type": "multiple_choice",
+        "text": "Mathias and Max ____ engineers.",
+        "options": [
+          "are",
+          "is",
+          "be"
+        ],
+        "correct": "are"
+      }
+    ]
+  },
+      {
+        "id": 5,
+        "text": "Put in right order the gaps.",
+        "type": "unscramble",
+        "subquestions": [
+            {
+                "id": "5.1",
+                "type": "unscramble",
+                "text": "What is your phone number",
+                "correct": "Whatisyourphonenumber"
+            }
+        ]
+    }
 ]
-
 
 # Путь к файлу с балансами
 BALANCE_FILE = 'balance.json'
@@ -696,7 +889,7 @@ def create_exam():
 
         # Store questions
         exam_questions.clear()
-        exam_passed.clear()
+        #exam_passed.clear()
         
         for question in questions:
             question_data = {
@@ -1037,7 +1230,6 @@ def get_exam_questions_result():
 
 @app.route('/get_exam_questions', methods=['GET'])
 def get_exam_questions():
-    time.sleep(1)  # Имитация задержки загрузки
 
     username = request.args.get("username")  # Получаем имя пользователя из запроса
 
@@ -1061,6 +1253,7 @@ def get_exam_questions():
 @app.route('/api/get_exam_results', methods=['GET'])
 def get_exam_results():
     try:
+        time.sleep(5)
         # Проверяем, существует ли файл с результатами
         if not os.path.exists('exam_results.json'):
             return jsonify({"error": "No exam results found"}), 404
@@ -1084,12 +1277,11 @@ def submit_exam():
         if current_time > exam_end_time:
             return jsonify({"error": "Exam time has expired."}), 403  # Ошибка, если время истекло
 
-        time.sleep(1)
         data = request.get_json(silent=True)
         answers = data.get("answers")
         username = data.get("username")
 
-        if not answers or not username:
+        if not username:
             return jsonify({"error": "Missing data"}), 400
 
         if username in exam_passed:
@@ -1217,7 +1409,9 @@ def submit_exam():
         app.logger.error(f"Error in submit_exam: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
-
+@socketio.on('submitted_exam')
+def handle_submitted_exam():
+    emit('update-results', broadcast=True)  # broadcast=True => всем
 
 @app.route("/chatCRM")
 def crm():

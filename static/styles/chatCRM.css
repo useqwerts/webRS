@@ -866,7 +866,7 @@ input[type="text"]:focus {
     font-size: 14px;
 }
 
-/* Таблица результатов экзамена */
+/* Основная таблица */
 .exam-results-table {
     width: 100%;
     border-collapse: collapse;
@@ -877,7 +877,8 @@ input[type="text"]:focus {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.exam-results-table th, .exam-results-table td {
+.exam-results-table th,
+.exam-results-table td {
     padding: 10px;
     text-align: center;
     font-size: 14px;
@@ -897,7 +898,7 @@ input[type="text"]:focus {
     background: #f1f1f1;
 }
 
-/* Стиль для Passed / Failed */
+/* Статус Passed/Failed */
 .status {
     padding: 4px 8px;
     border-radius: 6px;
@@ -916,16 +917,65 @@ input[type="text"]:focus {
     color: #721c24;
 }
 
-/* Ссылка на детали */
-.details-link {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
+/* --- Скелетоны --- */
+.exam-results-skeleton {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.details-link:hover {
-    text-decoration: underline;
+.exam-results-skeleton th,
+.exam-results-skeleton td {
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
 }
+
+/* Скелетон-плейсхолдер */
+.skeleton {
+    display: inline-block;
+    height: 16px;
+    border-radius: 4px;
+    background: #e0e0e0;
+    animation: pulse 1.5s infinite;
+}
+
+/* Размеры скелетонов */
+.skeleton.name {
+    width: 120px;
+}
+
+.skeleton.status {
+    width: 60px;
+    height: 20px;
+    border-radius: 10px;
+}
+
+.skeleton.score {
+    width: 80px;
+}
+
+.skeleton.grade {
+    width: 70px;
+}
+
+/* Анимация */
+@keyframes pulse {
+    0% {
+        background-color: #e0e0e0;
+    }
+    50% {
+        background-color: #f0f0f0;
+    }
+    100% {
+        background-color: #e0e0e0;
+    }
+}
+
 	
 .timer-container {
     display: flex;
@@ -1116,7 +1166,7 @@ th, td {
 }
 
 th {
-    background-color: #007bff; /* Blue header background */
+    background-color: #b9b4b4; /* Blue header background */
     color: white;
     font-weight: 500; /* Slightly bolder font */
     text-transform: uppercase; /* Uppercase header text */
@@ -1526,3 +1576,4 @@ select:hover {
         opacity: 0;
     }
 }
+

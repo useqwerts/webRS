@@ -12,6 +12,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
 </head>
 <body>
  <div id="toast-container"></div>
@@ -29,24 +30,29 @@
 </div>
   
   <!-- Само модальное окно -->
-  <div id="updateModal" class="update-modal">
+ <div id="updateModal" class="update-modal">
     <div class="update-modal-content">
-      <!-- <span class="update-close" onclick="closeUpdateModal()">&times;</span> -->
+      <!-- Круг с кастомной SVG-иконкой в стиле Galaxy AI -->
+<div class="update-icon">
+  <video 
+    src="/static/icons/AI_icon.mp4" 
+    autoplay 
+    loop 
+    muted 
+    playsinline 
+    width="100%" 
+    loading="lazy"
+  ></video>
+</div>
 
-      <!-- Кружок с иконкой “i” -->
-      <div class="update-icon">
-        <span class="info-icon">i</span>
-      </div>
 
-      <h2>System Update</h2>
+      <h2>Welcome to Our New Version</h2>
       <p>
-        We would like to inform you that we have recently identified and resolved an error within our system.
-        Our dedicated team has worked diligently to address the issue and ensure smooth operation.
+        Dive into a world of innovation! Our latest update brings cutting-edge features, lightning-fast performance, and a stunning design crafted to enhance your experience.
       </p>
-      <button class="update-button" onclick="reloadSite()">Update</button>
+      <button class="update-button" onclick="reloadSite()">Discover Now</button>
     </div>
   </div>
-
   
  <div id="block-screen" class="block-screen hidden">
     <div class="block-modal">
@@ -55,7 +61,7 @@
         <p>Please wait</p>
         <div class="timer-container">
             <div class="timer-progress" id="timer-progress"></div>
-            <span class="timer-text" id="timer">00:15</span>
+            <span class="timer-text" id="timer">--:--</span>
         </div>
     </div>
 </div>
@@ -110,30 +116,35 @@
 </div>
 
 
-<div id="account-menu" class="account-menu" style="display: none;">
-    <ul>
-        <li id="personal-account-section">
-            <i class="fas fa-user-circle personal-account-icon"></i> Personal Account
-            <ul class="personal-account-options">
-                <li id="change-avatar-option"><i class="fas fa-image change-avatar-icon"></i> Change Avatar</li>
-                <li id="change-password-option"><i class="fas fa-key change-password-icon"></i> Change Password</li>
-                <li id="my-progress-option"><i class="fas fa-chart-line my-progress-icon"></i> My Progress</li>
-            </ul>
-        </li>
-        <li id="sessionsButton"><i class="fas fa-calendar-alt sessions-icon"></i> Sessions</li>
-        <!-- <li id="music-pack-option"><i class="fas fa-music music-icon"></i> Music Pack</li> -->
-        <li id="my-ban-status-option"><i class="fas fa-ban ban-status-icon"></i> My Ban Status</li>
-        <li id="leaderboard-option"><i class="fas fa-trophy leaderboard-icon"></i> Leaderboard</li>
-        <li id="examTaskOption"><i class="fas fa-pencil-alt exam-icon"></i>Exam</li>
-        <li id="myExamResultsOption"><i class="fas fa-clipboard-list"></i> My Exam Results</li>
-		<li id="vocabulary-option"><i class="fas fa-book-open"></i> Vocabulary</li>
-		<!-- 1) пункт в меню -->
-<li id="homework-option">
-  <i class="fas fa-book homework-icon"></i> Homework
-</li>
-        <li id="logout-option"><i class="fas fa-sign-out-alt logout-icon"></i> Logout</li>
-    </ul>
+<div id="account-menu" class="glass-menu">
+  <ul class="menu-list">
+    <li id="personal-account-section" class="menu-group">
+      <div class="menu-item expandable">
+        <i class="fas fa-user-circle"></i>
+        <span>Personal Account</span>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <ul class="submenu">
+        <li id="change-avatar-option" class="submenu-item"><i class="fas fa-image"></i> Change Avatar</li>
+        <li id="change-password-option" class="submenu-item"><i class="fas fa-key"></i> Change Password</li>
+        <li id="my-progress-option" class="submenu-item"><i class="fas fa-chart-line"></i> My Progress</li>
+      </ul>
+    </li>
+    <li id="sessionsButton" class="menu-item"><i class="fas fa-calendar-alt"></i> Sessions</li>
+    <li id="my-ban-status-option" class="menu-item"><i class="fas fa-ban"></i> My Ban Status</li>
+    <li id="leaderboard-option" class="menu-item"><i class="fas fa-trophy"></i> Leaderboard</li>
+    <li id="examTaskOption" class="menu-item"><i class="fas fa-pencil-alt"></i> Exam</li>
+    <li id="myExamResultsOption" class="menu-item disabled"><i class="fas fa-clipboard-list"></i> My Exam Results</li>
+    <li id="vocabulary-option" class="menu-item"><i class="fas fa-book-open"></i> Vocabulary</li>
+    <li id="homework-option" class="menu-item"><i class="fas fa-book"></i> Homework</li>
+	<div class="menu-item disabled" id="menu-settings">
+	<i class="fas fa-cog"></i> Settings
+	</div>
+    <li id="logout-option" class="menu-item logout"><i class="fas fa-sign-out-alt"></i> Logout</li>
+  </ul>
 </div>
+
+
 
 
 
@@ -196,6 +207,7 @@
       </button>
 
       <h2 id="word-header"></h2>
+	  <input type="text" id="word-search" placeholder="Search words..." class="word-search" />
 
       <!-- Контейнер для списка слов -->
       <div id="words-container" class="words-container"></div>
@@ -418,7 +430,6 @@
     </button>
   </div>
 </div>
-
   
 <!-- Модальное окно результатов -->
 <div id="ExamResultsModal" class="exam-results-modal">

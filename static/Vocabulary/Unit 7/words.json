@@ -1,0 +1,529 @@
+{
+  "words": [
+    {
+      "en": "accommodation",
+      "ru": "жилье",
+      "definition": "a place to live or stay in for a while."
+    },
+    {
+      "en": "advertisement",
+      "ru": "реклама, объявление",
+      "definition": "a notice, picture or film telling people about a product, job or service"
+    },
+    {
+      "en": "ambition",
+      "ru": "амбиция, стремление",
+      "definition": "something that you want to do or achieve very much"
+    },
+    {
+      "en": "ambitious",
+      "ru": "амбициозный, целеустремленный",
+      "definition": "determined to be successful, rich, powerful, etc."
+    },
+    {
+      "en": "anthropologist",
+      "ru": "антрополог",
+      "definition": "a person who studies the human race, especially its origins, development, customs and beliefs"
+    },
+    {
+      "en": "applicant",
+      "ru": "заявитель, кандидат",
+      "definition": "a person who makes a formal request for something (= applies for it), especially for a job, a place at a college or university, etc."
+    },
+    {
+      "en": "apply",
+      "ru": "подавать заявление, применять",
+      "definition": "to make a formal request, usually in writing, for something such as a job, a loan, permission for something, a place at a university, etc."
+    },
+    {
+      "en": "aspect",
+      "ru": "аспект, сторона",
+      "definition": "a particular part or feature of a situation, an idea, problem, etc.; a way in which it may be considered"
+    },
+    {
+      "en": "assistant manager",
+      "ru": "помощник менеджера",
+      "definition": "manager who assists another manager"
+    },
+    {
+      "en": "attend",
+      "ru": "посещать, присутствовать",
+      "definition": "to be present at an event"
+    },
+    {
+      "en": "attitude",
+      "ru": "отношение, позиция",
+      "definition": "the way that you think and feel about somebody/something; the way that you behave towards somebody/something that shows how you think and feel"
+    },
+    {
+      "en": "award",
+      "ru": "награда, премия",
+      "definition": "a prize such as money, etc. for something that somebody has done"
+    },
+    {
+      "en": "behaviour",
+      "ru": "поведение",
+      "definition": "the way that somebody behaves, especially towards other people"
+    },
+    {
+      "en": "blame",
+      "ru": "обвинять",
+      "definition": "to think or say that somebody/something is responsible for something bad"
+    },
+    {
+      "en": "blogger",
+      "ru": "блогер",
+      "definition": "a person who writes a blog"
+    },
+    {
+      "en": "branch",
+      "ru": "филиал, отделение",
+      "definition": "a part of something larger"
+    },
+    {
+      "en": "bright",
+      "ru": "яркий",
+      "definition": "full of light; shining strongly"
+    },
+    {
+      "en": "bubbly",
+      "ru": "жизнерадостный, игристый",
+      "definition": "always cheerful, friendly and enthusiastic"
+    },
+    {
+      "en": "champion",
+      "ru": "чемпион",
+      "definition": "a person, team, etc. that has won a competition, especially in a sport"
+    },
+    {
+      "en": "climb",
+      "ru": "подниматься, взбираться",
+      "definition": "to go up something towards the top"
+    },
+    {
+      "en": "concentrate",
+      "ru": "концентрироваться, сосредотачиваться",
+      "definition": "to give all your attention to something and not think about anything else"
+    },
+    {
+      "en": "creative",
+      "ru": "творческий",
+      "definition": "involving the use of skill and the imagination to produce something new or a work of art"
+    },
+    {
+      "en": "criticise",
+      "ru": "критиковать",
+      "definition": "to say that you think somebody/something is bad; to say what you do not like or think is wrong about somebody/something"
+    },
+    {
+      "en": "customer care",
+      "ru": "обслуживание клиентов, забота о клиентах",
+      "definition": "the work of looking after customers and ensuring their satisfaction with one's business and its goods or services"
+    },
+    {
+      "en": "decision-maker",
+      "ru": "лицо, принимающее решения",
+      "definition": "a person who makes decisions"
+    },
+    {
+      "en": "determined",
+      "ru": "решительный, целеустремленный",
+      "definition": "if you are determined to do something, you have made a firm decision to do it and will not let anything stop you."
+    },
+    {
+      "en": "director",
+      "ru": "директор, режиссер",
+      "definition": "in some organisations and public authorities, the person in charge is referred to as the director."
+    },
+    {
+      "en": "disagreement",
+      "ru": "разногласие, спор",
+      "definition": "disagreement means objecting to something such as a proposal."
+    },
+    {
+      "en": "dragonfly",
+      "ru": "стрекоза",
+      "definition": "dragonflies are brightly-coloured insects with long, thin bodies and two sets of wings. Dragonflies are often found near slow-moving water."
+    },
+    {
+      "en": "early",
+      "ru": "ранний, рано",
+      "definition": "before the usual time that a particular event or activity happens."
+    },
+    {
+      "en": "entertainment",
+      "ru": "развлечение",
+      "definition": "Entertainment consists of performances of plays and films, and activities such as reading and watching television, that give people pleasure."
+    },
+    {
+      "en": "entrance",
+      "ru": "вход",
+      "definition": "The entrance to a place is the way into it, for example a door or gate."
+    },
+    {
+      "en": "environmental",
+      "ru": "экологический, природоохранный",
+      "definition": "concerned with the protection of the natural world of land, sea, air, plants, and animals."
+    },
+    {
+      "en": "executive",
+      "ru": "руководитель, исполнительный",
+      "definition": "An executive is someone who is employed by a business at a senior level. Executives decide what the business should do, and ensure that it is done."
+    },
+    {
+      "en": "expanding",
+      "ru": "расширяющийся",
+      "definition": "becoming, or capable of becoming, greater in extent, volume, size, or scope"
+    },
+    {
+      "en": "failure",
+      "ru": "неудача, провал",
+      "definition": "Failure is a lack of success in doing or achieving something, especially in relation to a particular activity."
+    },
+    {
+      "en": "fame",
+      "ru": "слава, известность",
+      "definition": "If you achieve fame, you become very well-known."
+    },
+    {
+      "en": "flock",
+      "ru": "стая, стадо",
+      "definition": "A flock of birds, sheep, or goats is a group of them."
+    },
+    {
+      "en": "get to the top",
+      "ru": "достичь вершины",
+      "definition": "to achieve the highest point"
+    },
+    {
+      "en": "high achiever",
+      "ru": "человек, достигающий высоких результатов",
+      "definition": "a person always achieving high results"
+    },
+    {
+      "en": "humanitarian",
+      "ru": "гуманитарный",
+      "definition": "If a person or society has humanitarian ideas or behaviour, they try to avoid making people suffer or they help people who are suffering."
+    },
+    {
+      "en": "innovative",
+      "ru": "инновационный",
+      "definition": "new and original."
+    },
+    {
+      "en": "job satisfaction",
+      "ru": "удовлетворенность работой",
+      "definition": "Job satisfaction is the pleasure that you get from doing your job."
+    },
+    {
+      "en": "lifestyle",
+      "ru": "образ жизни",
+      "definition": "The living conditions, behaviour, and habits that are typical of them or are chosen by them."
+    },
+    {
+      "en": "lifetime",
+      "ru": "продолжительность жизни",
+      "definition": "A lifetime is the length of time that someone is alive."
+    },
+     {
+      "en": "make progress",
+      "ru": "добиваться прогресса",
+      "definition": "have increasing good results"
+    },
+    {
+      "en": "make (someone) redundant",
+      "ru": "увольнять (кого-то)",
+      "definition": "to fire thinking someone is extra employee and not needed"
+    },
+    {
+      "en": "management",
+      "ru": "управление, руководство",
+      "definition": "the activity of running and controlling a business or similar organisation"
+    },
+    {
+      "en": "motivate",
+      "ru": "мотивировать",
+      "definition": "to be the reason why somebody does something or behaves in a particular way"
+    },
+    {
+      "en": "networking",
+      "ru": "нетворкинг, налаживание связей",
+      "definition": "a system of trying to meet and talk to other people who may be useful to you in your work"
+    },
+    {
+      "en": "obey",
+      "ru": "подчиняться, слушаться",
+      "definition": "to do what you are told or expected to do"
+    },
+    {
+      "en": "occupation",
+      "ru": "занятие, профессия",
+      "definition": "a job or profession"
+    },
+    {
+      "en": "online community",
+      "ru": "онлайн-сообщество",
+      "definition": "community formed online"
+    },
+    {
+      "en": "overnight",
+      "ru": "за ночь, внезапно",
+      "definition": "during or for the night"
+    },
+    {
+      "en": "pattern",
+      "ru": "шаблон, образец",
+      "definition": "the regular way in which something happens or is done"
+    },
+    {
+      "en": "point of view",
+      "ru": "точка зрения",
+      "definition": "the particular attitude or opinion that somebody has about something"
+    },
+    {
+      "en": "position",
+      "ru": "должность, позиция",
+      "definition": "the place where somebody/something is located"
+    },
+    {
+      "en": "procedure",
+      "ru": "процедура",
+      "definition": "a way of doing something, especially the usual or correct way"
+    },
+    {
+      "en": "producer",
+      "ru": "продюсер, производитель",
+      "definition": "a person, a company or a country that grows or makes food, goods or materials"
+    },
+    {
+      "en": "prospects",
+      "ru": "перспективы",
+      "definition": "the possibility that something will happen"
+    },
+    {
+      "en": "quality",
+      "ru": "качество",
+      "definition": "the standard of something when it is compared to other things like it; how good or bad something is"
+    },
+    {
+      "en": "quit",
+      "ru": "уволиться, бросить",
+      "definition": "to leave your job, school, etc."
+    },
+    {
+      "en": "relocation office",
+      "ru": "офис по переезду/релокации",
+      "definition": "changing office"
+    },
+    {
+      "en": "rent-free",
+      "ru": "бесплатный (об аренде)",
+      "definition": "not for a rent"
+    },
+    {
+      "en": "reputation",
+      "ru": "репутация",
+      "definition": "the opinion that people have about what somebody/something is like, based on what has happened in the past"
+    },
+    {
+      "en": "researcher",
+      "ru": "исследователь",
+      "definition": "a person who studies something carefully and tries to discover new facts about it"
+    },
+    {
+      "en": "retrain",
+      "ru": "переучиваться, переквалифицироваться",
+      "definition": "to learn, or to teach somebody, a new type of work, a new skill, etc."
+    },
+    {
+      "en": "rule",
+      "ru": "правило",
+      "definition": "a statement of what may, must or must not be done in a particular situation or when playing a game"
+    },
+    {
+      "en": "school leaver's certificate",
+      "ru": "аттестат об окончании школы",
+      "definition": "a certificate you get when leaving school"
+    },
+    {
+      "en": "sick/holiday pay",
+      "ru": "оплата больничного/отпуска",
+      "definition": "payment you get from work when you are sick or taking a holiday"
+    },
+    {
+      "en": "skilled",
+      "ru": "квалифицированный, опытный",
+      "definition": "having enough ability, experience and knowledge to be able to do something well"
+    },
+    {
+      "en": "specialist",
+      "ru": "специалист",
+      "definition": "a person who is an expert in a particular area of work or study"
+    },
+    {
+      "en": "standard of living",
+      "ru": "уровень жизни",
+      "definition": "the amount of money and level of comfort that a particular person or group has"
+    },
+    {
+      "en": "stay",
+      "ru": "оставаться, пребывание",
+      "definition": "to continue to be in a particular place for a period of time without moving away"
+    },
+    {
+      "en": "suited",
+      "ru": "подходящий",
+      "definition": "right or appropriate for somebody/something"
+    },
+    {
+      "en": "supervise",
+      "ru": "контролировать, наблюдать",
+      "definition": "to be in charge of somebody/something and to make sure that everything is done correctly, safely, etc."
+    },
+    {
+      "en": "take risks",
+      "ru": "рисковать",
+      "definition": "to do something even though you know that something bad could happen as a result"
+    },
+    {
+      "en": "talented",
+      "ru": "талантливый",
+      "definition": "having a natural ability to do something well"
+    },
+    {
+      "en": "team leader",
+      "ru": "руководитель команды",
+      "definition": "a person leading a team, having leadership skills"
+    },
+    {
+      "en": "temporary",
+      "ru": "временный",
+      "definition": "lasting or intended to last or be used only for a short time; not permanent"
+    },
+     {
+      "en": "thoughtful",
+      "ru": "задумчивый, внимательный",
+      "definition": "quiet, because you are thinking"
+    },
+    {
+      "en": "travel back in time",
+      "ru": "путешествовать во времени назад",
+      "definition": "to travel to past"
+    },
+    {
+      "en": "treasured",
+      "ru": "заветный, дорогой",
+      "definition": "to have or keep something that you love and that is extremely valuable to you"
+    },
+    {
+      "en": "unbelievable",
+      "ru": "невероятный",
+      "definition": "used to emphasise how good, bad or extreme something is"
+    },
+    {
+      "en": "unite",
+      "ru": "объединять(ся)",
+      "definition": "to join together with other people in order to do something as a group"
+    },
+    {
+      "en": "unskilled",
+      "ru": "неквалифицированный",
+      "definition": "not having or needing special skills or training"
+    },
+    {
+      "en": "up to date",
+      "ru": "современный, актуальный",
+      "definition": "till the present time"
+    },
+    {
+      "en": "value",
+      "ru": "ценность, ценить",
+      "definition": "how much something is worth"
+    },
+    {
+      "en": "visa",
+      "ru": "виза",
+      "definition": "a stamp or mark put in your passport by officials of a foreign country that gives you permission to enter, pass through, or leave their country."
+    },
+    {
+      "en": "well-known",
+      "ru": "известный",
+      "definition": "known about by a lot of people"
+    },
+    {
+      "en": "wonder",
+      "ru": "интересоваться, удивляться",
+      "definition": "to think about something and try to decide what is true, what will happen, what you should do, etc."
+    },
+    {
+      "en": "working conditions",
+      "ru": "условия труда",
+      "definition": "the quality of conditions provided for working"
+    },
+    {
+      "en": "working hours",
+      "ru": "рабочие часы",
+      "definition": "the working time in a week"
+    },
+    {
+      "en": "agenda",
+      "ru": "повестка дня, планы",
+      "definition": "a list of aims or possible future achievements"
+    },
+    {
+      "en": "aspiration",
+      "ru": "стремление, сильное желание",
+      "definition": "something that you hope to achieve"
+    },
+    {
+      "en": "charisma",
+      "ru": "харизма",
+      "definition": "a special power which makes people have naturally which makes them able to influence other people and attract their attention and admiration"
+    },
+    {
+      "en": "commitment",
+      "ru": "приверженность, обязательство",
+      "definition": "when you are willing to give your time and energy to something that you believe in, or a promise or firm decision to do something"
+    },
+    {
+      "en": "conquest",
+      "ru": "завоевание",
+      "definition": "when someone conquers a country, area or situation"
+    },
+    {
+      "en": "daydream",
+      "ru": "мечтать, грезить наяву",
+      "definition": "a set of pleasant thoughts about something you would prefer to be doing or something you would like to achieve in the future"
+    },
+    {
+      "en": "delusion",
+      "ru": "заблуждение",
+      "definition": "when someone believes something that is not true"
+    },
+    {
+      "en": "determination",
+      "ru": "решимость",
+      "definition": "the ability to continue trying to do something, although it is very difficult"
+    },
+    {
+      "en": "eagerness",
+      "ru": "рвение, страстное желание",
+      "definition": "wanting very much to do or have something, especially something interesting or enjoyable"
+    },
+    {
+      "en": "inclination",
+      "ru": "склонность",
+      "definition": "a preference or tendency or a feeling that makes a person want to do something"
+    },
+    {
+      "en": "obsession",
+      "ru": "одержимость",
+      "definition": "something or someone that you think about all the time"
+    },
+    {
+      "en": "willpower",
+      "ru": "сила воли",
+      "definition": "the ability to control your own thoughts and the way in which you behave; determination"
+    }
+  ]
+}

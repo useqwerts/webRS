@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Screen Share</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        video {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+        #status {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Screen Share for Session {{ session_id }}</h1>
+    <!-- playsinline + webkit-playsinline для iOS/Safari, muted для обхода политики autoplay -->
+    <video id="screenVideo" playsinline webkit-playsinline muted></video>
+    <div id="status">Waiting for stream...</div>
+
+    <script>
+        const session_id = "{{ session_id }}";
+        const statusDiv  = document.getElementById('status');
+        const videoEl    = document.getElementById('screenVideo');
+        let peerConnection;
+
+        async function initWebRTC() {
+            peerConnection = new RTCPeerConnection({
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'turn:openrelay.metered.ca:80',  username: 'openrelayproject', credential: 'openrelayproject' },
+                    { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+                ]
+            });
+
+            // как только приходит трек — сразу запускаем video.play()
+            peerConnection.ontrack = ({ streams }) => {
+                videoEl.srcObject = streams[0];
+                videoEl.autoplay = true;
+                videoEl.muted    = true;  // для autoplay на мобилках
+                videoEl.onloadedmetadata = () => {
+                    videoEl.play().catch(console.error);
+                    statusDiv.textContent = 'Stream is playing!';
+                };
+            };
+
+            peerConnection.onicecandidate = e => {
+                if (e.candidate) {
+                    fetch('/exam/security/ice_candidate', {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({ session_id, candidate: e.candidate })
+                    });
+                }
+            };
+
+            // запрашиваем offer у сервера
+            const { sdp: offer } = await fetch(`/exam/security/offer?session_id=${session_id}`)
+                                          .then(r => r.json());
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+
+            // отправляем answer
+            await fetch('/exam/security/answer', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ session_id, sdp: answer })
+            });
+
+            // подтягиваем уже набранные ICE
+            const sess = await fetch(`/exam/security/session?session_id=${session_id}`)
+                                   .then(r => r.json());
+            for (const c of sess.candidates || []) {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(c)).catch(console.warn);
+            }
+        }
+
+        initWebRTC().catch(err => {
+            console.error(err);
+            statusDiv.textContent = 'Error: ' + err.message;
+        });
+    </script>
+</body>
+</html>

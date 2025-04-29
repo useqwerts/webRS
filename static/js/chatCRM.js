@@ -279,18 +279,47 @@ function initializeExamTime() {
     clearInterval(timerInterval);
   }
   timerInterval = setInterval(decrementTime, 1000);
+  
+socket.on('update-results', function() {
+fetchExamResults();
+});
 
 async function fetchExamResults() {
   try {
+    // Показать скелетон до загрузки
+examResultsDisplay.innerHTML = `
+  <table class="exam-results-skeleton">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Score</th>
+        <th>Grade</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${Array(5).fill(`
+        <tr>
+          <td><div class="skeleton name"></div></td>
+          <td><div class="skeleton status"></div></td>
+          <td><div class="skeleton score"></div></td>
+          <td><div class="skeleton grade"></div></td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+`;
+
+
     const response = await fetch('/api/get_exam_results');
     const data = await response.json();
 
     if (data.error) {
       console.error(`Error: ${data.error}`);
+      examResultsDisplay.innerHTML = '<p>Error loading exam results.</p>';
       return;
     }
 
-    // If there are no exam results, display a message.
     if (Object.entries(data).length === 0) {
       examResultsDisplay.innerHTML = '<p>No one has passed the exam yet.</p>';
       return;
@@ -336,9 +365,11 @@ async function fetchExamResults() {
       </table>
     `;
 
+    // Заменить скелетон на реальные данные
     examResultsDisplay.innerHTML = tableHeader + tableRows + tableFooter;
   } catch (error) {
     console.error('Error fetching exam results:', error);
+    examResultsDisplay.innerHTML = '<p>Error loading exam results.</p>';
   }
 }
 
@@ -1066,3 +1097,4 @@ function showToastNotification(message, type = 'success', duration = 5000) {
 
     setTimeout(() => toast.remove(), duration + 400);
   }
+

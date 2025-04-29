@@ -527,18 +527,11 @@ socket.on('load_messages', (loadedMessages) => {
 
 
 
-const personalAccountSection = document.getElementById("personal-account-section");
 const changeAvatarOption = document.getElementById("change-avatar-option");
 const avatarModal = document.getElementById("avatar-modal");
 const avatarUploadInput = document.getElementById("avatar-upload-input");
 const uploadAvatarButton = document.getElementById("upload-avatar-button");
 const closeAvatarModal = document.getElementById("close-avatar-modal");
-
-// Display the Personal Account options when clicked
-personalAccountSection.addEventListener("click", () => {
-    const personalAccountOptions = personalAccountSection.querySelector(".personal-account-options");
-    personalAccountOptions.style.display = (personalAccountOptions.style.display === "none" || personalAccountOptions.style.display === "") ? "block" : "none";
-});
 
 // Handling the avatar change option
 changeAvatarOption.addEventListener("click", () => {
@@ -1450,26 +1443,45 @@ function updatePing() {
     const pingIcon = document.getElementById('ping-icon');
     const pingValue = document.getElementById('ping-value');
 
-    const start = Date.now();
-    fetch('/ping')
-        .then(() => {
-            const latency = Date.now() - start;
-            pingValue.textContent = `${latency} ms`;
+    const start = performance.now();
 
-            // Меняем цвет иконки в зависимости от пинга
+    fetch('/ping', { cache: 'no-store' })
+        .then(() => {
+            const latency = Math.round(performance.now() - start);
+
+            pingValue.textContent = latency;
+
             if (latency < 100) {
-                pingIcon.style.color = '#4caf50'; // Зеленый
+                pingIcon.className = 'fas fa-signal';
+                pingIcon.style.color = '#00ff88';
+                pingIcon.style.filter = 'drop-shadow(0 0 8px rgba(0, 255, 136, 0.5))';
             } else if (latency < 200) {
-                pingIcon.style.color = '#ffc107'; // Желтый
+                pingIcon.className = 'fas fa-tachometer-alt';
+                pingIcon.style.color = '#ffd700';
+                pingIcon.style.filter = 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.5))';
             } else {
-                pingIcon.style.color = '#f44336'; // Красный
+                pingIcon.className = 'fas fa-exclamation-triangle';
+                pingIcon.style.color = '#ff4d4d';
+                pingIcon.style.filter = 'drop-shadow(0 0 8px rgba(255, 77, 77, 0.5))';
             }
+
+            animatePingValue(pingValue);
         })
         .catch(() => {
-            pingValue.textContent = 'Error';
-            pingIcon.style.color = '#f44336'; // Красный при ошибке
+            pingValue.textContent = 'Err';
+            pingIcon.className = 'fas fa-times-circle';
+            pingIcon.style.color = '#ff4d4d';
+            pingIcon.style.filter = 'drop-shadow(0 0 8px rgba(255, 77, 77, 0.6))';
         });
 }
+
+function animatePingValue(element) {
+    element.style.transform = 'scale(1.2)';
+    setTimeout(() => {
+        element.style.transform = 'scale(1)';
+    }, 300);
+}
+
 
 // Обновляем пинг каждые 5 секунд
 setInterval(updatePing, 30000);
@@ -1849,7 +1861,6 @@ document.getElementById('nextRuleBtn').addEventListener('click', async () => {
   }
 });
 
-
 function showModalStatus(text) {
   // Проверяем, существует ли уже модальное окно, иначе создаём его
   let modal = document.getElementById('statusModal');
@@ -1912,7 +1923,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
     const examTimer = document.getElementById('exam-timer');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const loadingFinishExam = document.getElementById('loadingFinishExam');
-	const wrapper = document.getElementById('progressExamLengthWrapper');
+    const wrapper = document.getElementById('progressExamLengthWrapper');
 
     // Модальное окно для списания монет
     const checkAnswerModal = document.getElementById('checkAnswerModal');
@@ -1966,34 +1977,54 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
 
     // (3) Функция для проверки ответа одного вопроса
     function checkSingleAnswer(questionElement, correctAnswer) {
-      let userAnswer = null;
-      // Ищем радио или инпут внутри questionElement
-      const radios = questionElement.querySelectorAll('input[type="radio"]');
-      if (radios.length > 0) {
-        // multiple_choice / true_false
-        const checkedRadio = [...radios].find(r => r.checked);
-        userAnswer = checkedRadio ? checkedRadio.value : null;
-      } else {
-        // fill_gaps, unscramble, question и т.д.
-        const input = questionElement.querySelector('input[type="text"]');
-        if (input) {
-          userAnswer = input.value.trim();
+        let userAnswer = null;
+
+        // Check for radio inputs (multiple_choice / true_false)
+        const radios = questionElement.querySelectorAll('input[type="radio"]');
+        if (radios.length > 0) {
+            const checkedRadio = [...radios].find(r => r.checked);
+            userAnswer = checkedRadio ? checkedRadio.value : null;
+        } else {
+            // Check for unscramble type
+            const unscrambleInputs = questionElement.querySelectorAll('.unscramble-input');
+            if (unscrambleInputs.length > 0) {
+                // Sort inputs by data-index to ensure correct order
+                const sortedInputs = Array.from(unscrambleInputs).sort((a, b) => 
+                    parseInt(a.dataset.index) - parseInt(b.dataset.index)
+                );
+                // Join all non-empty textContent from unscramble inputs
+                userAnswer = sortedInputs
+                    .map(input => input.textContent.trim())
+                    .filter(char => char !== '') // Exclude empty inputs
+                    .join('');
+            } else {
+                // Check for box-choose type
+                const blank = questionElement.querySelector(`.box-choose-blank[data-question-id="${questionElement.dataset.questionId}"]`);
+                if (blank && blank.textContent.trim() && blank.textContent !== '____') {
+                    userAnswer = blank.textContent.trim();
+                } else {
+                    // Check for text input (fill_gaps, question, etc.)
+                    const input = questionElement.querySelector('input[type="text"]');
+                    if (input) {
+                        userAnswer = input.value.trim();
+                    }
+                }
+            }
         }
-      }
 
-      if (!userAnswer) {
-        showToastNotification('<b>You did not select/enter an answer!</b> <span>Please try again before continuing.</span>', 'warning', 5000);
-        return;
-      }
+        if (!userAnswer || userAnswer.length === 0) {
+            showToastNotification('<b>You did not select/enter an answer!</b> <span>Please try again before continuing.</span>', 'warning', 5000);
+            return;
+        }
 
-      // Сравниваем с правильным (упрощённо, без учета регистра и пр.)
-      if (userAnswer === correctAnswer) {
-		showModalStatus("Correct answer Good Job!");
-        questionElement.style.backgroundColor = '#1b5e20'; // зеленый фон
-      } else {
-        showModalStatus(`Incorrect! Correct answer: ${correctAnswer}`);
-        questionElement.style.backgroundColor = '#b71c1c'; // красный фон
-      }
+        // Compare with the correct answer (case-insensitive)
+        if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+            showModalStatus("Correct answer Good Job!");
+            questionElement.style.backgroundColor = '#1b5e20'; // Green background
+        } else {
+            showModalStatus(`Incorrect! Correct answer: ${correctAnswer}`);
+            questionElement.style.backgroundColor = '#b71c1c'; // Red background
+        }
     }
 
     // Элементы таймера
@@ -2006,7 +2037,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
     finishExamButton.style.display = 'none';
     examTimer.style.display = 'none';
     loadingSpinner.style.display = 'block';
-	wrapper.style.display = 'none';
+    wrapper.style.display = 'none';
     hideExamTitle();
 
     examModal.style.display = 'flex';
@@ -2033,8 +2064,8 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         examHeader.style.display = 'none';
         finishExamButton.style.display = 'block';
         examTimer.style.display = 'flex';
-		wrapper.style.display = 'flex';
-		initExamSecurity(true);
+        wrapper.style.display = 'flex';
+        //initExamSecurity(true);
 
         // Получаем шаблон вопроса
         const questionTemplate = document.getElementById('questionTemplate');
@@ -2050,7 +2081,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 case "fill_gaps":
                     return `<p><i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
                 case "unscramble":
-                    return `<p><i class="fas fa-random"></i> Unscramble the letters.</p>`;
+                    return `<p><i class="fas fa-random"></i> Unscramble the letters or gaps.</p>`;
                 case "reading":
                     return `<p><i class="fas fa-book"></i> Read the text and answer the question.</p>`;
                 case "listening":
@@ -2059,309 +2090,643 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     return `<p><i class="fas fa-question-circle"></i> Answer the question below.</p>`;
                 case "picture":
                     return `<p><i class="fas fa-image"></i> Look at the image and answer the following questions.</p>`;
+                case "box-choose":
+                    return `<p><i class="fas fa-box"></i> Complete the questions with words/phrases from the box.</p>`;
                 default:
                     return "";
             }
         }
 
-// Функция для перемешивания элементов массива
-function shuffleArray(array) {
-    return array.slice().sort(() => Math.random() - 0.5);
-}
-
-// Генерация вопросов
-data.questions.forEach((question) => {
-    // Вопрос с аудио (listening)
-    if (question.type === 'listening') {
-        const parentContainer = document.createElement('div');
-        parentContainer.className = 'exam-parent-question';
-        if (question.text) {
-            parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+        // Функция для перемешивания элементов массива
+        function shuffleArray(array) {
+            return array.slice().sort(() => Math.random() - 0.5);
         }
-        parentContainer.innerHTML += `
-          <div class="custom-audio-player">
-            <button class="custom-play-btn"><i class="fas fa-play"></i></button>
-            <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
-            <span class="custom-time-display">0:00 / 0:00</span>
-          </div>
-        `;
-        examContainer.appendChild(parentContainer);
 
-        if (question.subquestions && Array.isArray(question.subquestions)) {
-            question.subquestions.forEach((subq) => {
-                questionCounter++;
-                const instruction = getInstructionForType(subq.type);
-                const questionNode = document.importNode(questionTemplate.content, true);
+        // Переменная для хранения текущего выбранного option
+        let selectedOption = null;
 
-                // (4) Сохраняем ссылку на div с классом .exam-question
-                const examQuestionDiv = questionNode.querySelector('.exam-question');
-
-                questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
-                questionNode.querySelector('.question-instruction').innerHTML = instruction;
-
-                let optionsContainer = questionNode.querySelector('.question-options');
-                if (subq.type === 'true_false') {
-                    optionsContainer.innerHTML = `
-                        <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
-                        <label for="true${subq.id}">True</label>
-                        <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
-                        <label for="false${subq.id}">False</label>
-                    `;
+        // Генерация вопросов
+        data.questions.forEach((question) => {
+            // Вопрос с аудио (listening)
+            if (question.type === 'listening') {
+                const parentContainer = document.createElement('div');
+                parentContainer.className = 'exam-parent-question';
+                if (question.text) {
+                    parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
                 }
-                else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-                    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-                    let html = '';
-                    // Перемешиваем варианты ответа
-                    const shuffledOptions = shuffleArray(subq.options);
-                    shuffledOptions.forEach((option, index) => {
-                        const letter = letters[index] || '?';
-                        const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
-                        html += `
-                          <div class="option-group">
-                            <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
-                            <label for="${optionId}">
-                              <span class="option-letter">${letter}</span>
-                              <span class="option-text">${option}</span>
-                            </label>
-                          </div>
-                        `;
+                if (question.type === 'box-choose' && Array.isArray(question.options)) {
+                    let optionsHtml = '<div class="box-choose-options">';
+                    question.options.forEach((option, index) => {
+                        optionsHtml += `<span class="box-choose-option" data-value="${option}" data-index="${index}">${option}</span>`;
                     });
-                    optionsContainer.innerHTML = html;
+                    optionsHtml += '</div>';
+                    parentContainer.insertAdjacentHTML('beforeend', optionsHtml);
                 }
-                else {
-                    optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
-                }
-
-                if (subq.correct) {
-                    const checkBtn = document.createElement('button');
-                    checkBtn.className = 'check-answer-btn';
-                    checkBtn.textContent = 'Check my answer';
-                    checkBtn.addEventListener('click', () => {
-                        showCheckAnswerModal(examQuestionDiv, subq.correct);
-                    });
-                    optionsContainer.appendChild(checkBtn);
-                }
-
-                examQuestionDiv.dataset.questionId = subq.id;
-                parentContainer.appendChild(questionNode);
-            });
-        }
-    }
-    // Вопрос типа "picture" с одним или несколькими изображениями
-    else if (question.type === 'picture') {
-        const parentContainer = document.createElement('div');
-        parentContainer.className = 'exam-parent-question';
-
-        // Если есть текст — отображаем
-        if (question.text) {
-            parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
-        }
-
-        // Проверяем, есть ли массив изображений
-        if (Array.isArray(question.images) && question.images.length > 0) {
-            // Создаем контейнер под все картинки
-            const imagesContainer = document.createElement('div');
-            imagesContainer.className = 'exam-images-grid';
-
-            question.images.forEach(imgSrc => {
-                const imgElem = document.createElement('img');
-                imgElem.src = imgSrc;
-                imgElem.alt = 'Exam image';
-                imgElem.className = 'exam-question-image'; // класс для стилизации
-                imagesContainer.appendChild(imgElem);
-            });
-
-            parentContainer.appendChild(imagesContainer);
-        }
-        // Если вдруг используется старое поле question.image (одна картинка), оставим поддержку
-        else if (question.image) {
-            parentContainer.innerHTML += `<img src="${question.image}" alt="Exam image" class="exam-question-image" style="max-width:100%; height:auto; margin-bottom: 10px;">`;
-        }
-
-        examContainer.appendChild(parentContainer);
-
-        // Далее — генерация subquestions (как раньше)
-        if (question.subquestions && Array.isArray(question.subquestions)) {
-            question.subquestions.forEach((subq) => {
-                questionCounter++;
-                const instruction = getInstructionForType(subq.type);
-                const questionNode = document.importNode(questionTemplate.content, true);
-                const examQuestionDiv = questionNode.querySelector('.exam-question');
-
-                questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
-                questionNode.querySelector('.question-instruction').innerHTML = instruction;
-
-                let optionsContainer = questionNode.querySelector('.question-options');
-                if (subq.type === 'true_false') {
-                    optionsContainer.innerHTML = `
-                        <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
-                        <label for="true${subq.id}">True</label>
-                        <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
-                        <label for="false${subq.id}">False</label>
-                    `;
-                }
-                else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-                    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-                    let html = '';
-                    // Перемешиваем варианты ответа
-                    const shuffledOptions = shuffleArray(subq.options);
-                    shuffledOptions.forEach((option, index) => {
-                        const letter = letters[index] || '?';
-                        const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
-                        html += `
-                          <div class="option-group">
-                            <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
-                            <label for="${optionId}">
-                              <span class="option-letter">${letter}</span>
-                              <span class="option-text">${option}</span>
-                            </label>
-                          </div>
-                        `;
-                    });
-                    optionsContainer.innerHTML = html;
-                }
-                else {
-                    optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
-                }
-
-                if (subq.correct) {
-                    const checkBtn = document.createElement('button');
-                    checkBtn.className = 'check-answer-btn';
-                    checkBtn.textContent = 'Check my answer';
-                    checkBtn.addEventListener('click', () => {
-                        showCheckAnswerModal(examQuestionDiv, subq.correct);
-                    });
-                    optionsContainer.appendChild(checkBtn);
-                }
-
-                examQuestionDiv.dataset.questionId = subq.id;
-                parentContainer.appendChild(questionNode);
-            });
-        }
-    }
-    // Вопрос с под-вопросами (например, Reading) или обычный вопрос без под-вопросов
-    else if (question.subquestions && Array.isArray(question.subquestions)) {
-        if (question.text) {
-            const parentContainer = document.createElement('div');
-            parentContainer.className = 'exam-parent-question';
-            parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
-            examContainer.appendChild(parentContainer);
-        }
-        question.subquestions.forEach((subq) => {
-            questionCounter++;
-            const instruction = getInstructionForType(subq.type);
-            const questionNode = document.importNode(questionTemplate.content, true);
-            const examQuestionDiv = questionNode.querySelector('.exam-question');
-
-            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
-            questionNode.querySelector('.question-instruction').innerHTML = instruction;
-
-            let optionsContainer = questionNode.querySelector('.question-options');
-            if (subq.type === 'true_false') {
-                optionsContainer.innerHTML = `
-                    <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
-                    <label for="true${subq.id}">True</label>
-                    <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
-                    <label for="false${subq.id}">False</label>
+                parentContainer.innerHTML += `
+                  <div class="custom-audio-player">
+                    <button class="custom-play-btn"><i class="fas fa-play"></i></button>
+                    <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
+                    <span class="custom-time-display">0:00 / 0:00</span>
+                  </div>
                 `;
+                examContainer.appendChild(parentContainer);
+
+                if (question.subquestions && Array.isArray(question.subquestions)) {
+                    question.subquestions.forEach((subq) => {
+                        questionCounter++;
+                        const instruction = getInstructionForType(subq.type);
+                        const questionNode = document.importNode(questionTemplate.content, true);
+
+                        // (4) Сохраняем ссылку на div с классом .exam-question
+                        const examQuestionDiv = questionNode.querySelector('.exam-question');
+
+                        questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+                        let optionsContainer = questionNode.querySelector('.question-options');
+                        if (subq.type === 'true_false') {
+                            optionsContainer.innerHTML = `
+                                <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+                                <label for="true${subq.id}">True</label>
+                                <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+                                <label for="false${subq.id}">False</label>
+                            `;
+                        }
+                        else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                            let html = '';
+                            // Перемешиваем варианты ответа
+                            const shuffledOptions = shuffleArray(subq.options);
+                            shuffledOptions.forEach((option, index) => {
+                                const letter = letters[index] || '?';
+                                const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
+                                html += `
+                                  <div class="option-group">
+                                    <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                                    <label for="${optionId}">
+                                      <span class="option-letter">${letter}</span>
+                                      <span class="option-text">${option}</span>
+                                    </label>
+                                  </div>
+                                `;
+                            });
+                            optionsContainer.innerHTML = html;
+                        }
+                        else {
+                            optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+                        }
+
+                        if (subq.correct) {
+                            const checkBtn = document.createElement('button');
+                            checkBtn.className = 'check-answer-btn';
+                            checkBtn.textContent = 'Check my answer';
+                            checkBtn.addEventListener('click', () => {
+                                showCheckAnswerModal(examQuestionDiv, subq.correct);
+                            });
+                            optionsContainer.appendChild(checkBtn);
+                        }
+
+                        examQuestionDiv.dataset.questionId = subq.id;
+                        parentContainer.appendChild(questionNode);
+                    });
+                }
             }
-            else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-                const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-                let html = '';
-                // Перемешиваем варианты ответа
-                const shuffledOptions = shuffleArray(subq.options);
-                shuffledOptions.forEach((option, index) => {
-                    const letter = letters[index] || '?';
-                    const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
-                    html += `
-                      <div class="option-group">
-                        <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
-                        <label for="${optionId}">
-                          <span class="option-letter">${letter}</span>
-                          <span class="option-text">${option}</span>
-                        </label>
-                      </div>
-                    `;
-                });
-                optionsContainer.innerHTML = html;
+            // Вопрос типа "picture" с одним или несколькими изображениями
+            else if (question.type === 'picture') {
+                const parentContainer = document.createElement('div');
+                parentContainer.className = 'exam-parent-question';
+
+                // Если есть текст — отображаем
+                if (question.text) {
+                    parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+                }
+
+                // Проверяем, есть ли массив изображений
+                if (Array.isArray(question.images) && question.images.length > 0) {
+                    // Создаем контейнер под все картинки
+                    const imagesContainer = document.createElement('div');
+                    imagesContainer.className = 'exam-images-grid';
+
+                    question.images.forEach(imgSrc => {
+                        const imgElem = document.createElement('img');
+                        imgElem.src = imgSrc;
+                        imgElem.alt = 'Exam image';
+                        imgElem.className = 'exam-question-image'; // класс для стилизации
+                        imagesContainer.appendChild(imgElem);
+                    });
+
+                    parentContainer.appendChild(imagesContainer);
+                }
+                // Если вдруг используется старое поле question.image (одна картинка), оставим поддержку
+                else if (question.image) {
+                    parentContainer.innerHTML += `<img src="${question.image}" alt="Exam image" class="exam-question-image" style="max-width:100%; height:auto; margin-bottom: 10px;">`;
+                }
+
+                examContainer.appendChild(parentContainer);
+
+                // Далее — генерация subquestions (как раньше)
+                if (question.subquestions && Array.isArray(question.subquestions)) {
+                    question.subquestions.forEach((subq) => {
+                        questionCounter++;
+                        const instruction = getInstructionForType(subq.type);
+                        const questionNode = document.importNode(questionTemplate.content, true);
+                        const examQuestionDiv = questionNode.querySelector('.exam-question');
+
+                        questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+                        let optionsContainer = questionNode.querySelector('.question-options');
+                        if (subq.type === 'true_false') {
+                            optionsContainer.innerHTML = `
+                                <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+                                <label for="true${subq.id}">True</label>
+                                <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+                                <label for="false${subq.id}">False</label>
+                            `;
+                        }
+                        else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                            let html = '';
+                            // Перемешиваем варианты ответа
+                            const shuffledOptions = shuffleArray(subq.options);
+                            shuffledOptions.forEach((option, index) => {
+                                const letter = letters[index] || '?';
+                                const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
+                                html += `
+                                  <div class="option-group">
+                                    <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                                    <label for="${optionId}">
+                                      <span class="option-letter">${letter}</span>
+                                      <span class="option-text">${option}</span>
+                                    </label>
+                                  </div>
+                                `;
+                            });
+                            optionsContainer.innerHTML = html;
+                        }
+                        else {
+                            optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+                        }
+
+                        if (subq.correct) {
+                            const checkBtn = document.createElement('button');
+                            checkBtn.className = 'check-answer-btn';
+                            checkBtn.textContent = 'Check my answer';
+                            checkBtn.addEventListener('click', () => {
+                                showCheckAnswerModal(examQuestionDiv, subq.correct);
+                            });
+                            optionsContainer.appendChild(checkBtn);
+                        }
+
+                        examQuestionDiv.dataset.questionId = subq.id;
+                        parentContainer.appendChild(questionNode);
+                    });
+                }
             }
+            // Вопрос с под-вопросами (например, Reading) или обычный вопрос без под-вопросов
+            else if (question.subquestions && Array.isArray(question.subquestions)) {
+                const parentContainer = document.createElement('div');
+                parentContainer.className = 'exam-parent-question';
+
+                if (question.text) {
+                    parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+                }
+
+                if (question.type === 'box-choose' && Array.isArray(question.options)) {
+                    let optionsHtml = '<div class="box-choose-options">';
+                    question.options.forEach((option, index) => {
+                        optionsHtml += `<span class="box-choose-option" data-value="${option}" data-index="${index}">${option}</span>`;
+                    });
+                    optionsHtml += '</div>';
+                    parentContainer.insertAdjacentHTML('beforeend', optionsHtml);
+                }
+
+                // Keep track of subquestions to attach interactivity later
+                const subquestionNodes = [];
+
+                if (question.type === 'box-choose') {
+                    // Combine all box-choose subquestions into a single .exam-question
+                    const instruction = getInstructionForType(question.type);
+                    const questionNode = document.importNode(questionTemplate.content, true);
+                    const examQuestionDiv = questionNode.querySelector('.exam-question');
+
+                    questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+                    // Combine all subquestions into a single .question-text with numbering
+                    let combinedText = '<div class="box-choose-questions">';
+                    question.subquestions.forEach((subq, index) => {
+                        questionCounter++;
+                        const questionNumber = index + 1;
+                        const textWithBlank = subq.text.replace('____', `<span class="box-choose-blank" data-question-id="${subq.id}">____</span>`);
+                        combinedText += `
+                            <div class="box-choose-subquestion">
+                                <span class="subquestion-number">${questionNumber}.</span>
+                                <span class="subquestion-text">${textWithBlank}</span>
+                            </div>
+                        `;
+                        // Track the subquestion for interactivity
+                        subquestionNodes.push({ examQuestionDiv, subqId: subq.id });
+                    });
+                    combinedText += '</div>';
+
+                    questionNode.querySelector('.question-text').innerHTML = combinedText;
+
+                    let optionsContainer = questionNode.querySelector('.question-options');
+                    optionsContainer.innerHTML = ''; // Clear the options container
+
+                    // Add "Check my answer" buttons for each subquestion
+                    question.subquestions.forEach((subq) => {
+                        if (subq.correct) {
+                            const checkBtn = document.createElement('button');
+                            checkBtn.className = 'check-answer-btn';
+                            checkBtn.textContent = `Check answer ${subq.id}`;
+                            checkBtn.addEventListener('click', () => {
+                                // Pass the entire .exam-question div but specify the subquestion ID for checking
+                                const tempDiv = examQuestionDiv.cloneNode(true);
+                                tempDiv.dataset.questionId = subq.id; // Temporarily override the questionId for checking
+                                showCheckAnswerModal(tempDiv, subq.correct);
+                            });
+                            optionsContainer.appendChild(checkBtn);
+                        }
+                    });
+
+                    // Set a general question ID for the container (e.g., the first subquestion's ID)
+                    examQuestionDiv.dataset.questionId = question.subquestions[0].id;
+
+                    parentContainer.appendChild(questionNode);
+                } else {
+                    // Handle other types of subquestions as before
+                    question.subquestions.forEach((subq) => {
+                        questionCounter++;
+                        const instruction = getInstructionForType(subq.type);
+                        const questionNode = document.importNode(questionTemplate.content, true);
+                        const examQuestionDiv = questionNode.querySelector('.exam-question');
+
+                        // Only set question text if the type is not 'unscramble'
+                        if (subq.type !== 'unscramble') {
+                            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                        } else {
+                            questionNode.querySelector('.question-text').innerHTML = `${subq.id}:`;
+                        }
+                        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+                        let optionsContainer = questionNode.querySelector('.question-options');
+                        if (subq.type === 'true_false') {
+                            optionsContainer.innerHTML = `
+                                <input type="radio" name="q${subq.id}" value="True" id="true${subq.id}">
+                                <label for="true${subq.id}">True</label>
+                                <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
+                                <label for="false${subq.id}">False</label>
+                            `;
+                        }
+                        else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                            let html = '';
+                            // Перемешиваем варианты ответа
+                            const shuffledOptions = shuffleArray(subq.options);
+                            shuffledOptions.forEach((option, index) => {
+                                const letter = letters[index] || '?';
+                                const optionId = `${letter.replace(/\s+/g, '')}${subq.id}`;
+                                html += `
+                                  <div class="option-group">
+                                    <input type="radio" name="q${subq.id}" value="${option}" id="${optionId}">
+                                    <label for="${optionId}">
+                                      <span class="option-letter">${letter}</span>
+                                      <span class="option-text">${option}</span>
+                                    </label>
+                                  </div>
+                                `;
+                            });
+                            optionsContainer.innerHTML = html;
+                        }
+                        else if (subq.type === 'unscramble') {
+                            // Split the scrambled word into individual letters
+                            const letters = subq.text.split(' ').filter(letter => letter !== '');
+                            // Shuffle the letters array
+                            const shuffledLetters = shuffleArray([...letters]);
+                            let lettersHtml = '<div class="unscramble-letters">';
+                            shuffledLetters.forEach((letter, index) => {
+                                // Use the index from the shuffled array for display, but store the original letter
+                                lettersHtml += `<span class="unscramble-letter" data-letter="${letter}" data-index="${index}">${letter}</span>`;
+                            });
+                            lettersHtml += '</div>';
+
+                            // Create input boxes for each letter (based on original length)
+                            let inputsHtml = '<div class="unscramble-inputs">';
+                            letters.forEach((_, index) => {
+                                inputsHtml += `<span class="unscramble-input" data-index="${index}"></span>`;
+                            });
+                            inputsHtml += '</div>';
+
+                            optionsContainer.innerHTML = lettersHtml + inputsHtml;
+
+                            // Add interactivity for unscramble letters
+                            const letterElements = optionsContainer.querySelectorAll('.unscramble-letter');
+                            const inputElements = optionsContainer.querySelectorAll('.unscramble-input');
+
+                            letterElements.forEach(letterEl => {
+                                letterEl.addEventListener('click', () => {
+                                    if (letterEl.classList.contains('used')) return; // Skip if already used
+
+                                    // Find the first empty input
+                                    const emptyInput = Array.from(inputElements).find(input => !input.textContent);
+                                    if (emptyInput) {
+                                        emptyInput.textContent = letterEl.dataset.letter;
+                                        emptyInput.classList.add('filled');
+                                        letterEl.classList.add('used');
+
+                                        // Store reference to the letter element for later removal
+                                        emptyInput.dataset.letterIndex = letterEl.dataset.index;
+                                    }
+                                });
+                            });
+
+                            // Add ability to remove letters by clicking on filled inputs
+                            inputElements.forEach(inputEl => {
+                                // Remove any existing listeners to prevent duplicates
+                                inputEl.removeEventListener('click', handleInputClick);
+                                inputEl.addEventListener('click', handleInputClick);
+                            });
+
+                            function handleInputClick() {
+                                const inputEl = this;
+                                if (!inputEl.classList.contains('filled')) return;
+
+                                // Find the corresponding letter element and re-enable it
+                                const letterIndex = inputEl.dataset.letterIndex;
+                                const letterEl = optionsContainer.querySelector(`.unscramble-letter[data-index="${letterIndex}"]`);
+                                if (letterEl) {
+                                    letterEl.classList.remove('used');
+                                }
+
+                                // Clear the input
+                                inputEl.textContent = '';
+                                inputEl.classList.remove('filled');
+                                delete inputEl.dataset.letterIndex;
+                            }
+                        }
+                        else {
+                            optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+                        }
+
+                        if (subq.correct) {
+                            const checkBtn = document.createElement('button');
+                            checkBtn.className = 'check-answer-btn';
+                            checkBtn.textContent = 'Check my answer';
+                            checkBtn.addEventListener('click', () => {
+                                showCheckAnswerModal(examQuestionDiv, subq.correct);
+                            });
+                            optionsContainer.appendChild(checkBtn);
+                        }
+
+                        examQuestionDiv.dataset.questionId = subq.id;
+                        parentContainer.appendChild(questionNode);
+                        subquestionNodes.push({ examQuestionDiv, subqId: subq.id });
+                    });
+                }
+
+                // Add box-choose interactivity after all subquestions are rendered
+                if (question.type === 'box-choose') {
+                    const optionElements = parentContainer.querySelectorAll('.box-choose-option');
+                    const blankElements = parentContainer.querySelectorAll('.box-choose-blank');
+
+                    // Add click event to each option to select it
+                    optionElements.forEach(optionEl => {
+                        optionEl.addEventListener('click', () => {
+                            if (optionEl.classList.contains('used')) return; // Skip if already used
+
+                            // Deselect any previously selected option
+                            optionElements.forEach(el => el.classList.remove('selected'));
+                            optionEl.classList.add('selected');
+                            selectedOption = optionEl;
+                        });
+                    });
+
+                    // Add click event to each blank to insert or remove the selected option
+                    blankElements.forEach(blankEl => {
+                        blankEl.addEventListener('click', () => {
+                            // If the blank already has an option, remove it and return the option to the list
+                            if (blankEl.textContent !== '____' && blankEl.dataset.optionIndex) {
+                                const optionIndex = blankEl.dataset.optionIndex;
+                                const optionEl = parentContainer.querySelector(`.box-choose-option[data-index="${optionIndex}"]`);
+                                if (optionEl) {
+                                    optionEl.classList.remove('used');
+                                    optionEl.classList.remove('selected');
+                                }
+                                blankEl.textContent = '____';
+                                delete blankEl.dataset.optionIndex;
+                                selectedOption = null;
+                                return;
+                            }
+
+                            // If no option is selected, show a notification
+                            if (!selectedOption) {
+                                showToastNotification('<b>Please select an option first!</b>', 'warning', 5000);
+                                return;
+                            }
+
+                            // Insert the selected option into the blank
+                            blankEl.textContent = selectedOption.dataset.value;
+                            blankEl.dataset.optionIndex = selectedOption.dataset.index;
+                            selectedOption.classList.add('used');
+                            selectedOption.classList.remove('selected');
+                            selectedOption = null; // Clear the selected option
+                        });
+                    });
+                }
+
+                examContainer.appendChild(parentContainer);
+            }
+            // Обычный вопрос (без под-вопросов)
             else {
-                optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
-            }
+                questionCounter++;
+                const instruction = getInstructionForType(question.type);
+                const questionNode = document.importNode(questionTemplate.content, true);
+                const examQuestionDiv = questionNode.querySelector('.exam-question');
+                const qId = question.id ? question.id : questionCounter;
 
-            if (subq.correct) {
-                const checkBtn = document.createElement('button');
-                checkBtn.className = 'check-answer-btn';
-                checkBtn.textContent = 'Check my answer';
-                checkBtn.addEventListener('click', () => {
-                    showCheckAnswerModal(examQuestionDiv, subq.correct);
-                });
-                optionsContainer.appendChild(checkBtn);
-            }
+                if (question.type !== 'unscramble') {
+                    if (question.type === 'box-choose') {
+                        const textWithBlank = question.text.replace('____', `<span class="box-choose-blank" data-question-id="${qId}">____</span>`);
+                        questionNode.querySelector('.question-text').innerHTML = `${qId}. ${textWithBlank}`;
+                    } else {
+                        questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
+                    }
+                } else {
+                    questionNode.querySelector('.question-text').innerHTML = `${qId}.`;
+                }
+                questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
-            examQuestionDiv.dataset.questionId = subq.id;
-            examContainer.appendChild(questionNode);
+                let optionsContainer = questionNode.querySelector('.question-options');
+                if (question.type === 'true_false') {
+                    optionsContainer.innerHTML = `
+                        <input type="radio" name="q${qId}" value="True" id="true${qId}">
+                        <label for="true${qId}">True</label>
+                        <input type="radio" name="q${qId}" value="False" id="false${qId}">
+                        <label for="false${qId}">False</label>
+                    `;
+                }
+                else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
+                    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                    let html = '';
+                    // Перемешиваем варианты ответа
+                    const shuffledOptions = shuffleArray(question.options);
+                    shuffledOptions.forEach((option, index) => {
+                        const letter = letters[index] || '?';
+                        const optionId = `${letter.replace(/\s+/g, '')}${qId}`;
+                        html += `
+                            <div class="option-group">
+                              <input type="radio" name="q${qId}" value="${option}" id="${optionId}">
+                              <label for="${optionId}">
+                                <span class="option-letter">${letter}</span>
+                                <span class="option-text">${option}</span>
+                              </label>
+                            </div>
+                        `;
+                    });
+                    optionsContainer.innerHTML = html;
+                }
+                else if (question.type === 'unscramble') {
+                    // Split the scrambled word into individual letters
+                    const letters = question.text.split(' ').filter(letter => letter !== '');
+                    // Shuffle the letters array
+                    const shuffledLetters = shuffleArray([...letters]);
+                    let lettersHtml = '<div class="unscramble-letters">';
+                    shuffledLetters.forEach((letter, index) => {
+                        // Use the index from the shuffled array for display, but store the original letter
+                        lettersHtml += `<span class="unscramble-letter" data-letter="${letter}" data-index="${index}">${letter}</span>`;
+                    });
+                    lettersHtml += '</div>';
+
+                    // Create input boxes for each letter (based on original length)
+                    let inputsHtml = '<div class="unscramble-inputs">';
+                    letters.forEach((_, index) => {
+                        inputsHtml += `<span class="unscramble-input" data-index="${index}"></span>`;
+                    });
+                    inputsHtml += '</div>';
+
+                    optionsContainer.innerHTML = lettersHtml + inputsHtml;
+
+                    // Add interactivity for unscramble letters
+                    const letterElements = optionsContainer.querySelectorAll('.unscramble-letter');
+                    const inputElements = questionNode.querySelectorAll('.unscramble-input');
+
+                    letterElements.forEach(letterEl => {
+                        letterEl.addEventListener('click', () => {
+                            if (letterEl.classList.contains('used')) return; // Skip if already used
+
+                            // Find the first empty input
+                            const emptyInput = Array.from(inputElements).find(input => !input.textContent);
+                            if (emptyInput) {
+                                emptyInput.textContent = letterEl.dataset.letter;
+                                emptyInput.classList.add('filled');
+                                letterEl.classList.add('used');
+
+                                // Store reference to the letter element for later removal
+                                emptyInput.dataset.letterIndex = letterEl.dataset.index;
+                            }
+                        });
+                    });
+
+                    // Add ability to remove letters by clicking on filled inputs
+                    inputElements.forEach(inputEl => {
+                        // Remove any existing listeners to prevent duplicates
+                        inputEl.removeEventListener('click', handleInputClick);
+                        inputEl.addEventListener('click', handleInputClick);
+                    });
+
+                    function handleInputClick() {
+                        const inputEl = this;
+                        if (!inputEl.classList.contains('filled')) return;
+
+                        // Find the corresponding letter element and re-enable it
+                        const letterIndex = inputEl.dataset.letterIndex;
+                        const letterEl = optionsContainer.querySelector(`.unscramble-letter[data-index="${letterIndex}"]`);
+                        if (letterEl) {
+                            letterEl.classList.remove('used');
+                        }
+
+                        // Clear the input
+                        inputEl.textContent = '';
+                        inputEl.classList.remove('filled');
+                        delete inputEl.dataset.letterIndex;
+                    }
+                }
+                else if (question.type === 'box-choose' && Array.isArray(question.options)) {
+                    let optionsHtml = '<div class="box-choose-options">';
+                    question.options.forEach((option, index) => {
+                        optionsHtml += `<span class="box-choose-option" data-value="${option}" data-index="${index}">${option}</span>`;
+                    });
+                    optionsHtml += '</div>';
+
+                    // For box-choose type, do not add the blank to optionsContainer
+                    optionsContainer.innerHTML = ''; // Clear the options container
+
+                    const blank = questionNode.querySelector('.box-choose-blank');
+                    const optionElements = parentContainer.querySelectorAll('.box-choose-option');
+
+                    // Add click event to each option to select it
+                    optionElements.forEach(optionEl => {
+                        optionEl.addEventListener('click', () => {
+                            if (optionEl.classList.contains('used')) return; // Skip if already used
+
+                            // Deselect any previously selected option
+                            optionElements.forEach(el => el.classList.remove('selected'));
+                            optionEl.classList.add('selected');
+                            selectedOption = optionEl;
+
+                            showToastNotification('<b>Option selected! Now click the blank to insert it.</b>', 'info', 5000);
+                        });
+                    });
+
+                    // Add click event to the blank to insert or remove the selected option
+                    blank.addEventListener('click', () => {
+                        // If the blank already has an option, remove it and return the option to the list
+                        if (blank.textContent !== '____' && blank.dataset.optionIndex) {
+                            const optionIndex = blank.dataset.optionIndex;
+                            const optionEl = optionsContainer.querySelector(`.box-choose-option[data-index="${optionIndex}"]`);
+                            if (optionEl) {
+                                optionEl.classList.remove('used');
+                                optionEl.classList.remove('selected');
+                            }
+                            blank.textContent = '____';
+                            delete blank.dataset.optionIndex;
+                            selectedOption = null;
+                            return;
+                        }
+
+                        // If no option is selected, show a notification
+                        if (!selectedOption) {
+                            showToastNotification('<b>Please select an option first!</b>', 'warning', 5000);
+                            return;
+                        }
+
+                        // Insert the selected option into the blank
+                        blank.textContent = selectedOption.dataset.value;
+                        blank.dataset.optionIndex = selectedOption.dataset.index;
+                        selectedOption.classList.add('used');
+                        selectedOption.classList.remove('selected');
+                        selectedOption = null; // Clear the selected option
+                    });
+                } 
+                else {
+                    optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
+                }
+
+                if (question.correct) {
+                    const checkBtn = document.createElement('button');
+                    checkBtn.className = 'check-answer-btn';
+                    checkBtn.textContent = 'Check my answer';
+                    checkBtn.addEventListener('click', () => {
+                        showCheckAnswerModal(examQuestionDiv, question.correct);
+                    });
+                    optionsContainer.appendChild(checkBtn);
+                }
+
+                examQuestionDiv.dataset.questionId = qId;
+                examContainer.appendChild(questionNode);
+            }
         });
-    }
-    // Обычный вопрос (без под-вопросов)
-    else {
-        questionCounter++;
-        const instruction = getInstructionForType(question.type);
-        const questionNode = document.importNode(questionTemplate.content, true);
-        const examQuestionDiv = questionNode.querySelector('.exam-question');
-        const qId = question.id ? question.id : questionCounter;
-
-        questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
-        questionNode.querySelector('.question-instruction').innerHTML = instruction;
-
-        let optionsContainer = questionNode.querySelector('.question-options');
-        if (question.type === 'true_false') {
-            optionsContainer.innerHTML = `
-                <input type="radio" name="q${qId}" value="True" id="true${qId}">
-                <label for="true${qId}">True</label>
-                <input type="radio" name="q${qId}" value="False" id="false${qId}">
-                <label for="false${qId}">False</label>
-            `;
-        }
-        else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
-            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-            let html = '';
-            // Перемешиваем варианты ответа
-            const shuffledOptions = shuffleArray(question.options);
-            shuffledOptions.forEach((option, index) => {
-                const letter = letters[index] || '?';
-                const optionId = `${letter.replace(/\s+/g, '')}${qId}`;
-                html += `
-                    <div class="option-group">
-                      <input type="radio" name="q${qId}" value="${option}" id="${optionId}">
-                      <label for="${optionId}">
-                        <span class="option-letter">${letter}</span>
-                        <span class="option-text">${option}</span>
-                      </label>
-                    </div>
-                `;
-            });
-            optionsContainer.innerHTML = html;
-        }
-        else {
-            optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
-        }
-
-        if (question.correct) {
-            const checkBtn = document.createElement('button');
-            checkBtn.className = 'check-answer-btn';
-            checkBtn.textContent = 'Check my answer';
-            checkBtn.addEventListener('click', () => {
-                showCheckAnswerModal(examQuestionDiv, question.correct);
-            });
-            optionsContainer.appendChild(checkBtn);
-        }
-
-        examQuestionDiv.dataset.questionId = qId;
-        examContainer.appendChild(questionNode);
-    }
-});
-
 
         // Обработка оставшегося времени экзамена
         const timeResponse = await fetch('/get_remaining_time');
@@ -2372,27 +2737,71 @@ data.questions.forEach((question) => {
         if (timeData.remaining_time) {
             let remainingTime = timeData.remaining_time * 1000; // перевод в миллисекунды
 
-            function updateTimer() {
-                if (remainingTime <= 0) {
-                    finishExam();
-                    return;
-                }
-                const totalSeconds = Math.floor(remainingTime / 1000);
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
+function updateTimer() {
+    if (remainingTime <= 0) {
+        finishExam();
+        return;
+    }
 
-                hoursEl.textContent = hours < 10 ? '0' + hours : hours;
-                minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes;
-                secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
+    const totalSeconds = Math.floor(remainingTime / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
-                if (remainingTime <= 180000) {
-                    examTimer.style.backgroundColor = '#3d0000';
-                } else {
-                    examTimer.style.backgroundColor = '#2c2c2c';
-                }
-                remainingTime -= 1000;
-            }
+    // Анимируем числа
+    animateNumber(hoursEl, hours);
+    animateNumber(minutesEl, minutes);
+    animateNumber(secondsEl, seconds);
+
+    // Изменяем фон и цвет чисел в зависимости от оставшегося времени
+    if (remainingTime <= 60000) { // От 0 до 1 минуты
+        examTimer.classList.add('warning-red');
+        examTimer.classList.remove('warning-yellow');
+        changeTextColor('#FF0000'); // Красный цвет
+    } else if (remainingTime <= 300000) { // От 5 до 1 минуты
+        examTimer.classList.add('warning-yellow');
+        examTimer.classList.remove('warning-red');
+        changeTextColor('black'); // Желтый цвет
+    } else {
+        examTimer.classList.remove('warning-yellow', 'warning-red');
+        changeTextColor('#007AFF'); // Синий цвет для нормального времени
+    }
+
+    remainingTime -= 1000;
+}
+
+function animateNumber(element, newValue) {
+    const currentValue = parseInt(element.textContent, 10);
+    if (currentValue !== newValue) {
+        const oldValue = element.textContent;
+        element.textContent = newValue;
+        element.classList.remove('animate');
+        void element.offsetWidth;  // Сброс анимации
+        element.classList.add('animate');
+        
+        // Добавление анимации перемещения старого числа
+        createOldValueAnimation(element, oldValue);
+    }
+}
+
+function createOldValueAnimation(element, oldValue) {
+    const oldValueElement = document.createElement('span');
+    oldValueElement.textContent = oldValue;
+    oldValueElement.classList.add('old-value');
+    element.appendChild(oldValueElement);
+
+    setTimeout(() => {
+        oldValueElement.remove(); // Удаляем старое значение после анимации
+    }, 500); // Время, соответствующее длительности анимации
+}
+
+function changeTextColor(color) {
+    const timerNumbers = document.querySelectorAll('.timer-number');
+    timerNumbers.forEach((num) => {
+        num.style.color = color; // Изменяем цвет чисел
+    });
+}
+
             const timerInterval = setInterval(updateTimer, 1000);
 
             function finishExam() {
@@ -2444,33 +2853,33 @@ data.questions.forEach((question) => {
             }
         }
 
-		// Находим элементы для прогресс-бара
-const progressBar = document.getElementById('progressExamLength');
-const progressLabel = document.getElementById('progressExamLengthLabel');
+        // Находим элементы для прогресс-бара
+        const progressBar = document.getElementById('progressExamLength');
+        const progressLabel = document.getElementById('progressExamLengthLabel');
 
-// Предположим, что examContainer — это контейнер со списком вопросов
-examContainer.addEventListener('scroll', () => {
-  // Вычисляем максимальную величину прокрутки
-  const totalScrollHeight = examContainer.scrollHeight - examContainer.clientHeight;
-  const currentScrollTop = examContainer.scrollTop;
-  
-  let percentage = 0;
-  if (totalScrollHeight > 0) {
-    percentage = (currentScrollTop / totalScrollHeight) * 100;
-  }
-  
-  // Обновляем ширину заливки
-  progressBar.style.width = percentage + '%';
-  
-  // Обновляем внешний текст с процентом (округляем до целых)
-  progressLabel.textContent = Math.round(percentage) + '%';
-});
-
+        // Предположим, что examContainer — это контейнер со списком вопросов
+        examContainer.addEventListener('scroll', () => {
+            // Вычисляем максимальную величину прокрутки
+            const totalScrollHeight = examContainer.scrollHeight - examContainer.clientHeight;
+            const currentScrollTop = examContainer.scrollTop;
+            
+            let percentage = 0;
+            if (totalScrollHeight > 0) {
+                percentage = (currentScrollTop / totalScrollHeight) * 100;
+            }
+            
+            // Обновляем ширину заливки
+            progressBar.style.width = percentage + '%';
+            
+            // Обновляем внешний текст с процентом (округляем до целых)
+            progressLabel.textContent = Math.round(percentage) + '%';
+        });
 
         // Инициализируем кастомные аудиоплееры
         initAllWavePlayers();
 
     } catch (error) {
+		initExamSecurity(0);
         console.error('Error:', error.message);
         handleError(error.message);
         loadingSpinner.style.display = 'none';
@@ -2751,7 +3160,6 @@ function initAllWavePlayers() {
     const audioSrc = container.getAttribute("data-audio-src");
     if (!audioSrc) return;
 
-    // Очищаем контейнер
     container.innerHTML = '';
 
     const audioEl = document.createElement("audio");
@@ -2766,14 +3174,12 @@ function initAllWavePlayers() {
     const playBtn = container.parentElement.querySelector(".custom-play-btn");
     const timeDisplay = container.parentElement.querySelector(".custom-time-display");
 
-    // Удаляем старые обработчики если вдруг повторная инициализация
     playBtn.replaceWith(playBtn.cloneNode(true));
     const newPlayBtn = container.parentElement.querySelector(".custom-play-btn");
 
     newPlayBtn.onclick = () => {
       if (!audioEl) return;
 
-      // Если сейчас играет другое аудио — выключаем
       if (currentAudio && currentAudio !== audioEl) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
@@ -2798,12 +3204,14 @@ function initAllWavePlayers() {
       if (audioEl.duration) {
         const percent = (audioEl.currentTime / audioEl.duration) * 100;
         progress.style.width = `${percent}%`;
-        timeDisplay.textContent = formatTime(audioEl.currentTime) + " / " + formatTime(audioEl.duration);
+        // Показываем только текущее время
+        timeDisplay.textContent = formatTime(audioEl.currentTime);
       }
     });
 
     audioEl.addEventListener("loadedmetadata", () => {
-      timeDisplay.textContent = "0:00 / " + formatTime(audioEl.duration);
+      // При старте тоже только текущее время (начинается с 0:00)
+      timeDisplay.textContent = "0:00";
     });
 
     container.onclick = (e) => {
@@ -2831,17 +3239,20 @@ function initAllWavePlayers() {
   makeElementDraggable(popupBar);
 }
 
+// Форматирование времени
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+}
 
-
-
+// Улучшенное перетаскивание с ограничением по окну
 function makeElementDraggable(el) {
   let startX, startY, initialLeft, initialTop;
 
   function onStart(e) {
-    // Если событие начинается на кнопке (или внутри неё), не инициируем перетаскивание.
-    if (e.target.closest('.popup-btn')) {
-      return;
-    }
+    if (e.target.closest('.popup-btn')) return;
+
     e.preventDefault();
     if (e.type === "touchstart") {
       startX = e.touches[0].clientX;
@@ -2856,7 +3267,7 @@ function makeElementDraggable(el) {
     }
     const computedStyle = window.getComputedStyle(el);
     initialLeft = parseInt(computedStyle.left, 10) || 0;
-    initialTop  = parseInt(computedStyle.top, 10) || 0;
+    initialTop = parseInt(computedStyle.top, 10) || 0;
     el.style.cursor = "grabbing";
   }
 
@@ -2872,8 +3283,19 @@ function makeElementDraggable(el) {
     }
     const dx = clientX - startX;
     const dy = clientY - startY;
-    el.style.left = (initialLeft + dx) + "px";
-    el.style.top  = (initialTop + dy) + "px";
+    let newLeft = initialLeft + dx;
+    let newTop = initialTop + dy;
+
+    // Ограничиваем внутри окна
+    const rect = el.getBoundingClientRect();
+    const winWidth = window.innerWidth;
+    const winHeight = window.innerHeight;
+
+    newLeft = Math.max(0, Math.min(newLeft, winWidth - rect.width));
+    newTop = Math.max(0, Math.min(newTop, winHeight - rect.height));
+
+    el.style.left = `${newLeft}px`;
+    el.style.top = `${newTop}px`;
   }
 
   function onEnd(e) {
@@ -2890,6 +3312,7 @@ function makeElementDraggable(el) {
   el.addEventListener("mousedown", onStart);
   el.addEventListener("touchstart", onStart, { passive: false });
 }
+
 
 
 
@@ -2966,7 +3389,6 @@ function stopAllAudio() {
 })();
 
 
-// При отправке экзамена сохраняем ответы глобально
 function submitExamResults() {
     stopAllAudio();
     const answers = {};
@@ -2974,31 +3396,64 @@ function submitExamResults() {
     const finishExamButton = document.getElementById('finishExam');
     const loadingFinishExam = document.getElementById('loadingFinishExam');
 
-    // Собираем ответы из всех элементов с классом "exam-question" и "exam-subquestion"
     document.querySelectorAll('.exam-question, .exam-subquestion').forEach((questionElem) => {
         let qKey = questionElem.dataset.questionId;
-        // Если для subquestion dataset.questionId не установлен, получаем его из name инпута (начинается с "q")
-        if (!qKey) {
-            const inputElem = questionElem.querySelector('input');
-            if (inputElem && inputElem.name && inputElem.name.startsWith('q')) {
-                qKey = inputElem.name.substring(1); // удаляем начальное 'q'
+
+        // Handle box-choose type with multiple subquestions
+        const isBoxChoose = questionElem.querySelector('.box-choose-blank') !== null;
+        if (isBoxChoose) {
+            const blanks = questionElem.querySelectorAll('.box-choose-blank');
+            blanks.forEach(blank => {
+                const subqId = blank.dataset.questionId;
+                let userAnswer = '';
+                if (blank && blank.textContent.trim() && blank.textContent !== '____') {
+                    userAnswer = blank.textContent.trim();
+                }
+                if (subqId && userAnswer) {
+                    answers[`q${subqId}`] = userAnswer;
+                }
+            });
+        } else {
+            // Handle other question types
+            let userAnswer = '';
+            // Check if the question is of type "unscramble"
+            const isUnscramble = questionElem.querySelector('.unscramble-input') !== null;
+
+            if (isUnscramble) {
+                // For unscramble type, collect letters from .unscramble-input elements
+                const unscrambleInputs = questionElem.querySelectorAll('.unscramble-input');
+                if (unscrambleInputs.length > 0) {
+                    // Sort inputs by data-index to ensure correct order
+                    const sortedInputs = Array.from(unscrambleInputs).sort((a, b) => 
+                        parseInt(a.dataset.index) - parseInt(b.dataset.index)
+                    );
+                    userAnswer = sortedInputs
+                        .map(input => input.textContent.trim())
+                        .filter(char => char !== '') // Exclude empty inputs
+                        .join('');
+                }
+            } else {
+                // For other question types, use the existing logic
+                const selectedOption =
+                    questionElem.querySelector('input:checked') ||
+                    questionElem.querySelector('input[type="text"]');
+                if (selectedOption && selectedOption.value) {
+                    userAnswer = selectedOption.value;
+                }
             }
-        }
-        const selectedOption =
-            questionElem.querySelector('input:checked') ||
-            questionElem.querySelector('input[type="text"]');
-        if (qKey && selectedOption && selectedOption.value) {
-            answers[`q${qKey}`] = selectedOption.value;
+
+            if (qKey && userAnswer) {
+                answers[`q${qKey}`] = userAnswer;
+            }
         }
     });
 
-    // Сохраняем ответы глобально для повторного использования
     window.examAnswers = answers;
 
     fetchExamQuestions().then((examQuestions) => {
         if (!examQuestions) return;
 
-        window.examQuestionsData = examQuestions; // для подробного просмотра в модальном окне
+        window.examQuestionsData = examQuestions;
 
         fetch('/submit_exam', {
             method: 'POST',
@@ -3012,16 +3467,15 @@ function submitExamResults() {
                 document.removeEventListener('visibilitychange', handleVisibilityChange);
 
                 if (result.error) {
-                    showToastNotification(`<b>Error</b> <span>${result.error}</span>`,'error', 5000);
+                    showToastNotification(`<b>Error</b> <span>${result.error}</span>`, 'error', 5000);
                     return;
                 } else {
-                    showModalStatus("Exam submitted! Please hold on while we evaluate your exam. Your results will be displayed shortly.");
+                    //showModalStatus("Exam submitted! Please hold on while we evaluate your exam. Your results will be displayed shortly.");
                 }
 
                 const totalQuestions = result.correct + result.incorrect + result.skipped;
                 const percentage = totalQuestions > 0 ? (result.correct / totalQuestions) * 100 : 0;
 
-                // Расчёт прогресса экзамена
                 let progressIncrease;
                 let maxAllowedProgress;
                 if (Unit === '6.3' || Unit === '12.3') {
@@ -3047,20 +3501,12 @@ function submitExamResults() {
                     .then((data) => {
                         let currentProgress = parseFloat(data.progress) || 0;
                         let newProgress = Math.min(maxAllowedProgress, currentProgress + progressIncrease);
-                        console.log(
-                            `Current progress: ${currentProgress.toFixed(2)}%, Increase: ${progressIncrease.toFixed(2)}%, New progress: ${newProgress.toFixed(2)}%`
-                        );
+
                         return fetch('/api/update-student-progress-exam', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ username: currentUser, progress: newProgress }),
                         });
-                    })
-                    .then((res) => res.json())
-                    .then((updateResponse) => {
-                        if (updateResponse.success) {
-                            // Можно добавить уведомление об обновлении прогресса
-                        }
                     })
                     .catch((error) => {
                         console.error('Error updating progress:', error);
@@ -3071,19 +3517,27 @@ function submitExamResults() {
                 const progressBar = document.getElementById('progressBar');
                 const progressText = document.getElementById('progressText');
 
-                progressBar.style.width = '0%';
-                progressBar.offsetHeight; // Принудительный пересчёт для перезапуска анимации
-                progressBar.style.transition = 'none';
+                const prevWidth = parseFloat(getComputedStyle(progressBar).width);
+                const containerWidth = progressBar.parentElement.offsetWidth;
+                const currentPercentage = (prevWidth / containerWidth) * 100;
 
-                setTimeout(() => {
-                    progressBar.style.transition = 'width 1s ease-in-out';
-                    progressBar.style.width = `${percentage}%`;
-                }, 50);
+                progressBar.style.transition = 'none';
+                progressBar.style.width = `${currentPercentage}%`;
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        progressBar.style.transition = 'width 1s ease-in-out';
+                        progressBar.style.width = `${percentage}%`;
+                    });
+                });
 
                 let currentText = parseInt(progressText.textContent.replace('%', '')) || 0;
+                const targetText = Math.round(percentage);
+                const increment = percentage > currentText ? 1 : -1;
+
                 const interval = setInterval(() => {
-                    if (currentText < Math.round(percentage)) {
-                        currentText++;
+                    if (currentText !== targetText) {
+                        currentText += increment;
                         progressText.textContent = `${currentText}%`;
                     } else {
                         clearInterval(interval);
@@ -3114,12 +3568,20 @@ function submitExamResults() {
                 document.getElementById('examSubtitle').textContent = motivationText;
                 document.getElementById('examPoints').textContent = pointsText;
 
+                const resultsContainer = document.querySelector('.results-container');
+                if (resultsContainer) {
+                    resultsContainer.classList.remove('results-yellow', 'results-red');
+                    if (percentage < 50) {
+                        resultsContainer.classList.add('results-red');
+                    } else if (percentage < 80) {
+                        resultsContainer.classList.add('results-yellow');
+                    }
+                }
+
                 // Построение HTML для результатов экзамена
                 examQuestions.forEach((question, index) => {
-                    // Получаем тип вопроса, если отсутствует – даём значение по умолчанию
                     const questionType = question.type ? question.type : 'multiple_choice';
 
-                    // Для вопросов с subquestions
                     if (question.subquestions && Array.isArray(question.subquestions)) {
                         let subCorrectCount = 0;
                         question.subquestions.forEach((subq) => {
@@ -3129,17 +3591,16 @@ function submitExamResults() {
                         });
                         const aggregatedScore = `${subCorrectCount}/${question.subquestions.length}`;
                         const questionBlock = `
-              <div class="collapsible-question" data-type="${questionType}">
-                <div class="question-header">
-                  <span>Question ${question.id}</span>
-                  <span class="question-type-label">${questionType.replace('_', ' ')}</span>
-                </div>
-                <div class="question-right-section">
-                  <i class="fas fa-eye" onclick="openQuestionModal('${question.id}', event)"></i>
-                  <span class="score-badge">${aggregatedScore}</span>
-                </div>
-              </div>
-            `;
+                            <div class="collapsible-question" data-type="${questionType}">
+                                <div class="question-header">
+                                    <span>Question ${question.id}</span>
+                                    <span class="question-type-label">${questionType.replace('_', ' ')}</span>
+                                </div>
+                                <div class="question-right-section">
+                                    <i class="fas fa-eye" onclick="openQuestionModal('${question.id}', event)"></i>
+                                    <span class="score-badge">${aggregatedScore}</span>
+                                </div>
+                            </div>`;
                         examResultsHtml.push(questionBlock);
                     } else {
                         const qId = question.id ? question.id : (index + 1);
@@ -3148,17 +3609,16 @@ function submitExamResults() {
                         const questionScore = isCorrect ? '1/1' : '0/1';
 
                         const questionBlock = `
-              <div class="collapsible-question" data-type="${questionType}">
-                <div class="question-header">
-                  <span>Question ${qId}</span>
-                  <span class="question-type-label">${questionType.replace('_', ' ')}</span>
-                </div>
-                <div class="question-right-section">
-                  <i class="fas fa-eye" onclick="openQuestionModal('${qId}', event)"></i>
-                  <span class="score-badge">${questionScore}</span>
-                </div>
-              </div>
-            `;
+                            <div class="collapsible-question" data-type="${questionType}">
+                                <div class="question-header">
+                                    <span>Question ${qId}</span>
+                                    <span class="question-type-label">${questionType.replace('_', ' ')}</span>
+                                </div>
+                                <div class="question-right-section">
+                                    <i class="fas fa-eye" onclick="openQuestionModal('${qId}', event)"></i>
+                                    <span class="score-badge">${questionScore}</span>
+                                </div>
+                            </div>`;
                         examResultsHtml.push(questionBlock);
                     }
                 });
@@ -3178,14 +3638,22 @@ function submitExamResults() {
                 finishExamButton.disabled = false;
             });
     });
+	
+	socket.emit('submitted_exam');
+	
 }
 
 
 // Modal for detailed question view
 function openQuestionModal(qKey, event) {
-    event.stopPropagation();
+    event?.stopPropagation();
 
-    // Для вопросов с группировкой (с под-вопросами)
+    // Remove any existing modal
+    document.querySelector('.detailed-questions-review')?.remove();
+
+    const modal = document.createElement('div');
+    modal.className = 'detailed-questions-review';
+
     let parentQuestion = null;
     window.examQuestionsData.forEach((question) => {
         if (question.subquestions && String(question.id) === String(qKey)) {
@@ -3193,73 +3661,64 @@ function openQuestionModal(qKey, event) {
         }
     });
 
-    if (parentQuestion) {
-        let modalHtml = '';
-        if (parentQuestion.text) {
-            modalHtml += `
-        <div class="parent-question-modal">
-          <p>${parentQuestion.text}</p>
+    let headerHtml = `
+        <div class="detailed-questions-reviewHeader">
+            <span class="back-btn" onclick="detailedQuestionReviewClose(this.closest('.detailed-questions-review'))">
+                <i class="fas fa-arrow-left"></i> Back
+            </span>
+            <h2><i class="fas fa-question-circle"></i> Question ${qKey}</h2>
         </div>
-      `;
-        }
-        modalHtml += `<div class="subquestions-modal-list">`;
-        parentQuestion.subquestions.forEach((subq) => {
-            // Используем глобально сохранённый объект с ответами
-            const userAnswer = window.examAnswers ? window.examAnswers[`q${subq.id}`] || '' : '';
-            const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
-            let subHtml = `
-        <div class="subquestion-modal-item">
-          <p><strong>${subq.id}.</strong> ${subq.text}</p>
-      `;
-            if (subq.type === 'true_false') {
-                subHtml += `
-          <input type="radio" name="q${subq.id}" value="True" ${userAnswer === 'True' ? 'checked' : ''} disabled>
-          <label>True</label>
-          <input type="radio" name="q${subq.id}" value="False" ${userAnswer === 'False' ? 'checked' : ''} disabled>
-          <label>False</label>
-        `;
-            } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
-                subHtml += `<div class="options">`;
-                subq.options.forEach((option) => {
-                    subHtml += `
-            <input type="radio" name="q${subq.id}" value="${option}" ${userAnswer === option ? 'checked' : ''} disabled>
-            <label>${option}</label>
-          `;
-                });
-                subHtml += `</div>`;
-            } else if (['fill_gaps', 'unscramble', 'reading', 'listening', 'question'].includes(subq.type)) {
-                let displayValue = userAnswer;
-                if (subq.type === 'fill_gaps' && isCorrect) {
-                    displayValue = '';
-                }
-                subHtml += `<input type="text" name="q${subq.id}" value="${displayValue}" disabled>`;
-            }
-            subHtml += `
-        <p class="${isCorrect ? 'correct' : 'incorrect'}">
-          ${isCorrect ? '<i class="fas fa-check"></i> Correct' : '<i class="fas fa-times"></i> Incorrect'}
-        </p>
-        </div>
-      `;
-            modalHtml += subHtml;
-        });
-        modalHtml += `</div>`;
-
-        const modalContent = `
-      <div class="leaderboard-content examQuestions-container" style="position: relative;">
-        <h2><i class="fas fa-question-circle"></i> Question ${parentQuestion.id}</h2>
-        ${modalHtml}
-        <span class="close-btn" id="close-results_modal" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
-      </div>
     `;
-        const modal = document.createElement('div');
-        modal.className = 'leaderboard-modal';
-        modal.innerHTML = modalContent;
-        document.body.appendChild(modal);
 
-        modal.querySelector('#close-results_modal').addEventListener('click', () => modal.remove());
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    if (parentQuestion) {
+        const typeHtml = parentQuestion.type ? `<div class="type-label">Type: ${parentQuestion.type}</div>` : '';
+        const passageHtml = parentQuestion.type === 'reading' && parentQuestion.text ? `<div class="passage-text">${parentQuestion.text}</div>` : '';
+        const instructionHtml = parentQuestion.text && parentQuestion.type !== 'reading' ? `<div class="instruction">${parentQuestion.text}</div>` : '';
+
+        let questionsHtml = '<div class="questions-container">';
+        if (parentQuestion.type === 'box-choose') {
+            // Combine all box-choose subquestions into a single .question-text with numbering
+            let combinedText = '<div class="box-choose-questions">';
+            parentQuestion.subquestions.forEach((subq, index) => {
+                const userAnswer = window.examAnswers?.[`q${subq.id}`] ?? '';
+                const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
+                const questionNumber = index + 1;
+                const displayText = subq.text.replace('____', `<span class="box-choose-blank ${isCorrect ? 'correct' : 'incorrect'}">${userAnswer || '____'}</span>`);
+                combinedText += `
+                    <div class="box-choose-subquestion">
+                        <span class="main-question-number">${questionNumber}</span>
+                        <span class="subquestion-text">${displayText}</span>
+                    </div>
+                `;
+            });
+            combinedText += '</div>';
+
+            questionsHtml += `
+                <div class="question-item">
+                    <div class="question-text">${combinedText}</div>
+                </div>
+            `;
+        } else {
+            parentQuestion.subquestions.forEach((subq, index) => {
+                const userAnswer = window.examAnswers?.[`q${subq.id}`] ?? '';
+                const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
+                const questionNumber = index + 1;
+
+                questionsHtml += `
+                    <div class="question-item">
+                        <div class="question-header">
+                            <span class="main-question-number">${questionNumber}</span>
+                            <div class="question-text">${subq.text}</div>
+                        </div>
+                        ${renderAnswerInput(subq, userAnswer, isCorrect)}
+                    </div>
+                `;
+            });
+        }
+        questionsHtml += '</div>';
+
+        modal.innerHTML = headerHtml + typeHtml + passageHtml + instructionHtml + questionsHtml;
     } else {
-        // Для индивидуального вопроса
         let foundQuestion = null;
         window.examQuestionsData.forEach((question) => {
             if (question.subquestions) {
@@ -3274,53 +3733,84 @@ function openQuestionModal(qKey, event) {
         });
         if (!foundQuestion) return;
 
-        let questionHtml = `<p>${foundQuestion.text}</p>`;
-        const userAnswer = window.examAnswers ? window.examAnswers[`q${qKey}`] || '' : '';
+        const typeHtml = foundQuestion.type ? `<div class="type-label">Type: ${foundQuestion.type}</div>` : '';
+        const passageHtml = foundQuestion.type === 'reading' && foundQuestion.text ? `<div class="passage-text">${foundQuestion.text}</div>` : '';
+        const instructionHtml = foundQuestion.text && foundQuestion.type !== 'reading' ? `<div class="instruction">${foundQuestion.text}</div>` : '';
+        const userAnswer = window.examAnswers?.[`q${qKey}`] ?? '';
         const isCorrect = userAnswer.trim().toLowerCase() === foundQuestion.correct.trim().toLowerCase();
 
-        if (foundQuestion.type === 'true_false') {
-            questionHtml += `
-        <input type="radio" name="q${qKey}" value="True" ${userAnswer === 'True' ? 'checked' : ''} disabled style="pointer-events: none;">
-        <label>True</label>
-        <input type="radio" name="q${qKey}" value="False" ${userAnswer === 'False' ? 'checked' : ''} disabled style="pointer-events: none;">
-        <label>False</label>
-      `;
-        } else if (foundQuestion.type === 'multiple_choice' && Array.isArray(foundQuestion.options)) {
-            foundQuestion.options.forEach((option) => {
-                questionHtml += `
-          <input type="radio" name="q${qKey}" value="${option}" ${userAnswer === option ? 'checked' : ''} disabled style="pointer-events: none;">
-          <label>${option}</label>
+        const questionsHtml = `
+            <div class="questions-container">
+                <div class="question-item">
+                    <div class="question-text">${foundQuestion.text}</div>
+                    ${renderAnswerInput(foundQuestion, userAnswer, isCorrect)}
+                </div>
+            </div>
         `;
-            });
-        } else if (['fill_gaps', 'unscramble', 'reading', 'listening', 'question'].includes(foundQuestion.type)) {
-            let displayValue = userAnswer;
-            if (foundQuestion.type === 'fill_gaps' && isCorrect) {
-                displayValue = '';
-            }
-            questionHtml += `<input type="text" name="q${qKey}" value="${displayValue}" disabled style="pointer-events: none;">`;
-        }
-        const answerIndicator = `
-      <p class="${isCorrect ? 'correct' : 'incorrect'}">
-        ${isCorrect ? '<i class="fas fa-check"></i> Correct' : '<i class="fas fa-times"></i> Incorrect'}
-      </p>
-    `;
-        const modalContent = `
-      <div class="leaderboard-content examQuestions-container" style="position: relative;">
-        <h2><i class="fas fa-question-circle"></i> Question ${qKey}</h2>
-        ${questionHtml}
-        ${answerIndicator}
-        <span class="close-btn" id="close-results_modal" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
-      </div>
-    `;
-        const modal = document.createElement('div');
-        modal.className = 'leaderboard-modal';
-        modal.innerHTML = modalContent;
-        document.body.appendChild(modal);
 
-        modal.querySelector('#close-results_modal').addEventListener('click', () => modal.remove());
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+        modal.innerHTML = headerHtml + typeHtml + passageHtml + instructionHtml + questionsHtml;
     }
+
+    document.body.appendChild(modal);
 }
+
+// Function to handle modal closing with animation (renamed)
+function detailedQuestionReviewClose(modal) {
+    modal.classList.add('closing');
+    modal.addEventListener('animationend', () => {
+        modal.remove();
+    }, { once: true });
+}
+
+function renderAnswerInput(question, userAnswer, isCorrect) {
+    const correctnessTag = isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect';
+
+    if (question.type === 'true_false') {
+        return `
+            <div class="options">
+                <input type="radio" id="true-option" ${userAnswer === 'True' ? 'checked' : ''} disabled class="${correctnessTag}">
+                <label for="true-option" ${isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect'}>True</label>
+
+                <input type="radio" id="false-option" ${userAnswer === 'False' ? 'checked' : ''} disabled class="${correctnessTag}">
+                <label for="false-option" ${isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect'}>False</label>
+            </div>
+        `;
+    } else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
+        return `
+            <div class="options">
+                ${question.options.map((option, index) => `
+                    <input type="radio" id="option-${index}" ${userAnswer === option ? 'checked' : ''} disabled class="${correctnessTag}">
+                    <label for="option-${index}" ${isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect'}>${option}</label>
+                `).join('')}
+            </div>
+        `;
+    } else if (question.type === 'unscramble') {
+        const userLetters = userAnswer ? userAnswer.split('') : [];
+        let lettersHtml = '<div class="unscramble-letters-review">';
+        userLetters.forEach(letter => {
+            lettersHtml += `<span class="unscramble-letter ${correctnessTag}">${letter}</span>`;
+        });
+        lettersHtml += '</div>';
+
+        return `
+            <div class="answer-container">
+                ${lettersHtml}
+            </div>
+        `;
+    } else if (question.type === 'box-choose') {
+        return '';
+    } else if (['fill_gaps', 'reading', 'listening', 'question'].includes(question.type)) {
+        return `
+            <div style="display: flex; align-items: center;">
+                <input class="filled-answer ${correctnessTag}" type="text" disabled value="${userAnswer}">
+            </div>
+        `;
+    }
+    return '';
+}
+
+
+
 
 
 // Handlers for closing the exam results and exam modals
@@ -4483,69 +4973,119 @@ document.getElementById('vocabulary-option').addEventListener('click', function 
   }
 });
 
-// Функция для отображения слов
+let selectedVoice = null;
+
+window.speechSynthesis.onvoiceschanged = () => {
+  const voices = speechSynthesis.getVoices();
+
+  // Пробуем найти Microsoft David
+  selectedVoice = voices.find(v =>
+    v.name === 'Microsoft David - English (United States)'
+  );
+
+  // Если David не найден — fallback на любой английский
+  if (!selectedVoice) {
+    selectedVoice = voices.find(v => v.lang.startsWith('en')) || null;
+  }
+};
+
+function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.voice = selectedVoice;
+  utterance.lang = 'en-US';
+  utterance.rate = 0.95; // немного медленнее, можно изменить
+  speechSynthesis.speak(utterance);
+}
+
+
 function renderWords(words) {
   const wordsContainer = document.getElementById('words-container');
-  wordsContainer.innerHTML = '';
+  const searchInput = document.getElementById('word-search');
 
-  if (!words || words.length === 0) {
-    wordsContainer.innerHTML = '<p class="no-exams">You have no words for this unit. It can be added by the Horizon Inc.</p>';
-    return;
-  }
+  if (!searchInput) return; // safety
 
-  words.forEach(wordObj => {
-    const wordDiv = document.createElement('div');
-    wordDiv.classList.add('word-item');
+  // 👇 Функция рендера по отфильтрованному массиву
+  function displayWords(filteredWords) {
+    wordsContainer.innerHTML = '';
 
-    // Английское слово
-    const enWord = document.createElement('div');
-    enWord.classList.add('word-en');
-    enWord.textContent = wordObj.en;
-    wordDiv.appendChild(enWord);
-
-    // Перевод
-    const ruWord = document.createElement('div');
-    ruWord.classList.add('word-ru');
-    ruWord.textContent = wordObj.ru;
-    wordDiv.appendChild(ruWord);
-
-    // Определение (если есть)
-    if (wordObj.definition) {
-      const definition = document.createElement('div');
-      definition.classList.add('word-definition');
-      definition.textContent = `Definition: ${wordObj.definition}`;
-      wordDiv.appendChild(definition);
+    if (!filteredWords || filteredWords.length === 0) {
+      wordsContainer.innerHTML = '<p class="no-exams">No matching words found.</p>';
+      return;
     }
 
-    wordsContainer.appendChild(wordDiv);
+    filteredWords.forEach(wordObj => {
+      const wordDiv = document.createElement('div');
+      wordDiv.classList.add('word-item');
+
+      const speakBtn = document.createElement('button');
+      speakBtn.classList.add('speak-button');
+      speakBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+      speakBtn.title = `Play pronunciation for "${wordObj.en}"`;
+      speakBtn.addEventListener('click', () => speak(wordObj.en));
+      wordDiv.appendChild(speakBtn);
+
+      const enWord = document.createElement('div');
+      enWord.classList.add('word-en');
+      enWord.textContent = wordObj.en;
+      wordDiv.appendChild(enWord);
+
+      const ruWord = document.createElement('div');
+      ruWord.classList.add('word-ru');
+      ruWord.textContent = wordObj.ru;
+      wordDiv.appendChild(ruWord);
+
+      if (wordObj.definition) {
+        const definition = document.createElement('div');
+        definition.classList.add('word-definition');
+        definition.textContent = `Definition: ${wordObj.definition}`;
+        wordDiv.appendChild(definition);
+      }
+
+      wordsContainer.appendChild(wordDiv);
+    });
+
+    // ======= Блок теста (внизу) =======
+    const quizPrompt = document.createElement('div');
+    quizPrompt.classList.add('unit-item', 'unlocked');
+
+    const promptText = document.createElement('span');
+    promptText.innerHTML = `
+      <i class="fas fa-brain" style="margin-right: 8px;"></i>
+      Do you want to test yourself?
+    `;
+    quizPrompt.appendChild(promptText);
+
+    const quizBtn = document.createElement('button');
+    quizBtn.classList.add('icon-button');
+    quizBtn.title = 'Start Quiz';
+    quizBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+
+    quizBtn.addEventListener('click', () => {
+      document.getElementById('vocabulary-words').style.display = 'none';
+      document.getElementById('vocabulary-quiz').style.display = 'flex';
+      startQuiz(words);
+    });
+
+    quizPrompt.appendChild(quizBtn);
+    wordsContainer.appendChild(quizPrompt);
+  }
+
+  // ⌨️ Слушаем изменения в поиске
+  searchInput.addEventListener('input', e => {
+    const query = e.target.value.toLowerCase();
+    const filtered = words.filter(
+      w =>
+        w.en.toLowerCase().includes(query) ||
+        w.ru.toLowerCase().includes(query)
+    );
+    displayWords(filtered);
   });
 
-  // ======= Добавляем блок теста =======
-
-  const quizPrompt = document.createElement('div');
-  quizPrompt.classList.add('unit-item', 'unlocked'); // используем стиль как для юнитов
-
-  const promptText = document.createElement('span');
-  promptText.innerHTML = `
-    <i class="fas fa-brain" style="margin-right: 8px;"></i>
-    Do you want to test yourself?
-  `;
-  quizPrompt.appendChild(promptText);
-
-  const quizBtn = document.createElement('button');
-  quizBtn.classList.add('icon-button');
-  quizBtn.title = 'Start Quiz';
-  quizBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-
-  quizBtn.addEventListener('click', () => {
-    document.getElementById('vocabulary-words').style.display = 'none';
-    document.getElementById('vocabulary-quiz').style.display = 'flex';
-    startQuiz(words); // Передаем текущий список слов
-  });
-
-  quizPrompt.appendChild(quizBtn);
-  wordsContainer.appendChild(quizPrompt);
+  // 🔃 Первоначальный рендер
+  displayWords(words);
 }
+
+
 
 let quizState = {};
 
@@ -4918,30 +5458,32 @@ function renderQuestion(question, container) {
 
   // Заголовок (с секцией)
   const title = document.createElement('p');
-  title.innerHTML = `<strong>${question.id}.</strong> ${question.text}`;
+  const isMainQuestion = Number.isInteger(Number(question.id));
+  const titleHTML = isMainQuestion
+    ? `<strong class="main-question-number">${question.id}</strong> ${question.text}`
+    : `<strong>${question.id}.</strong> ${question.text}`;
+  title.innerHTML = titleHTML;
   wrapper.appendChild(title);
 
-  // Если есть аудио
-// Вопрос с аудио (listening)
-if (question.type === 'listening') {
-  const parentContainer = document.createElement('div');
-  parentContainer.className = 'exam-parent-question';
+  // Вопрос с аудио (listening)
+  if (question.type === 'listening') {
+    const parentContainer = document.createElement('div');
+    parentContainer.className = 'exam-parent-question';
 
-  if (question.text) {
-    parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+    if (question.text) {
+      parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
+    }
+
+    parentContainer.innerHTML += `
+      <div class="custom-audio-player">
+        <button class="custom-play-btn"><i class="fas fa-play"></i></button>
+        <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
+        <span class="custom-time-display">0:00 / 0:00</span>
+      </div>
+    `;
+
+    wrapper.appendChild(parentContainer);
   }
-
-  parentContainer.innerHTML += `
-    <div class="custom-audio-player">
-      <button class="custom-play-btn"><i class="fas fa-play"></i></button>
-      <div class="custom-audio-waves" data-audio-src="${question.audio}"></div>
-      <span class="custom-time-display">0:00 / 0:00</span>
-    </div>
-  `;
-
-  wrapper.appendChild(parentContainer);
-}
-
 
   // Если это секция с под-вопросами
   if (question.subquestions && Array.isArray(question.subquestions)) {
@@ -5019,9 +5561,11 @@ if (question.type === 'listening') {
 
     wrapper.appendChild(opts);
   }
-	initAllWavePlayers();
+
+  initAllWavePlayers();
   container.appendChild(wrapper);
 }
+
 
 // Function to hide #examTitle
 function hideExamTitle() {
@@ -5096,6 +5640,7 @@ function showHomeworkExamModal(unit) {
 }
 function submitHomeworkAnswers() {
   stopAllAudio();
+  backBtn.click();
 
   const answers = {};
   const finishBtn = document.getElementById('finishExam');
@@ -5286,3 +5831,4 @@ function submitHomeworkAnswers() {
       finishBtn.disabled = false;
     });
 }
+
