@@ -7,6 +7,18 @@
         {
             "date": "2025-04-12",
             "weeklyExams": 5.11
+        },
+        {
+            "date": "2025-04-30",
+            "weeklyExams": 4.62
+        },
+        {
+            "date": "2025-05-01",
+            "weeklyExams": 0.0
+        },
+        {
+            "date": "2025-05-12",
+            "weeklyExams": 2.88
         }
     ],
     "Aziz": [
@@ -21,6 +33,10 @@
         {
             "date": "2025-04-16",
             "weeklyExams": 0.0
+        },
+        {
+            "date": "2025-04-30",
+            "weeklyExams": 1.7799999999999998
         }
     ]
 }

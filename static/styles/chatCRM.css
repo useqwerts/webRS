@@ -3,13 +3,12 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
-    display: flex;
     height: 100vh;
-    background: #151824; /* Darker, more subtle background */
-    color: #F0F4EF; /* Slightly warmer text color for better readability */
+    background: #151824;
+    color: #F0F4EF;
     overflow: hidden;
     box-sizing: border-box;
-    -webkit-font-smoothing: antialiased; /* Enhance font rendering for smoother text */
+    -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
@@ -17,23 +16,21 @@ body {
     display: flex;
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 /* Sidebar */
 .side-nav {
-    width: 260px; /* Slightly wider sidebar */
-    background: rgba(20, 20, 30, 0.95); /* Slightly more opaque sidebar background */
-    color: #FFFFFF; /* White sidebar text */
+    width: 260px;
+    background: rgba(20, 20, 30, 0.95);
+    color: #FFFFFF;
     height: 100vh;
-    padding: 30px 25px; /* Increased padding for a more spacious feel */
-    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.6); /* Enhanced shadow for depth */
+    padding: 30px 25px;
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Increased gap for better spacing */
+    gap: 20px;
     transition: transform 0.3s ease-in-out;
     overflow-y: auto;
-    z-index: 100; /* Ensure sidebar is above other content if needed */
 }
 
 .side-nav ul {
@@ -42,25 +39,46 @@ body {
     margin: 0;
 }
 
-.side-nav .nav-item {
-    padding: 14px 18px; /* Increased padding in nav items */
-    cursor: pointer;
-    font-size: 15px; /* Slightly larger font size */
-    border-radius: 10px; /* More rounded corners */
-    transition: background-color 0.3s, transform 0.2s ease-in-out, color 0.3s; /* Added color transition */
+.company-logo {
+    padding: 20px 18px;
+    text-align: center;
+}
+
+.company-logo h2 {
+    font-size: 24px;
+    color: #FFFFFF;
+    margin: 0;
+    font-weight:Luke 600;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    letter-spacing: 0.5px; /* Reduced letter spacing for better readability */
-    margin: 6px 0; /* Adjusted margin */
-    font-weight: 500; /* Slightly bolder font weight */
-    color: #D0D4D3; /* Softer white color for default nav items */
+}
+
+.side-nav .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.2s, color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 6px 0;
+    font-weight: 500;
+    color: #D0D4D3;
+}
+
+.nav-icon {
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 .side-nav .nav-item.active,
 .side-nav .nav-item:hover {
-    background: linear-gradient(90deg, #38E57F, #2BB673); /* Brighter, more vibrant gradient */
-    color: #FFFFFF; /* White text for active/hover states */
-    transform: scale(1.03); /* Slightly more pronounced scale effect */
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.5); /* Enhanced shadow for active/hover states */
+    background: linear-gradient(90deg, #38E57F, #2BB673);
+    color: #FFFFFF;
+    transform: scale(1.03);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.5);
 }
 
 /* Main Content */
@@ -71,49 +89,40 @@ body {
     border-radius: 15px;
     margin: 10px;
     box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    max-height: 100%;
     overflow-y: auto;
-    box-sizing: border-box;
 }
 
-/* Адаптивность для устройств с максимальной шириной экрана 768px (планшеты и мобильные) */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-  .content {
-    padding: 20px;
-    margin: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-  }
+    .content {
+        padding: 20px;
+        margin: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    }
 }
 
-/* Адаптивность для мобильных устройств с максимальной шириной экрана 480px */
 @media (max-width: 480px) {
-  .content {
-    padding: 15px;
-    margin: 10px;
-    border-radius: 8px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  }
+    .content {
+        padding: 15px;
+        margin: 10px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
 }
-
 
 /* Content Sections */
 .content-section {
-	display:none;
+    display: none;
     opacity: 0;
-    transform: translateX(25px); /* Slightly increased translation */
+    transform: translateX(25px);
     position: absolute;
     width: 100%;
-    max-width: 900px; /* Increased max-width for content sections */
+    max-width: 900px;
     max-height: 90%;
     overflow-y: auto;
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Smoother transition */
-    text-align: left;
-    box-sizing: border-box;
-    padding-right: 15px; /* Add some right padding for text content */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    padding-right: 15px;
 }
 
 .content-section.active {
@@ -122,405 +131,202 @@ body {
     transform: translateX(0);
 }
 
-/* Custom scrollbar for content and content-section */
+/* Custom Scrollbar */
+.content,
+.content-section {
+    scrollbar-width: thin;
+    scrollbar-color: #57C4E5 rgba(30, 35, 50, 0.3);
+    scroll-behavior: smooth;
+}
+
 .content::-webkit-scrollbar,
 .content-section::-webkit-scrollbar {
-    width: 10px; /* Adjust scrollbar width */
+    width: 10px;
 }
 
 .content::-webkit-scrollbar-track,
 .content-section::-webkit-scrollbar-track {
-    background: rgba(30, 35, 50, 0.3); /* Matching background */
-    border-radius: 10px; /* Smooth rounded track */
+    background: rgba(30, 35, 50, 0.3);
+    border-radius: 10px;
 }
 
 .content::-webkit-scrollbar-thumb,
 .content-section::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #57C4E5, #4ECDC4); /* Gradient scrollbar */
-    border-radius: 10px; /* Rounded thumb */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Soft shadow */
+    background: linear-gradient(135deg, #57C4E5, #4ECDC4);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .content::-webkit-scrollbar-thumb:hover,
 .content-section::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #4ECDC4, #57C4E5); /* Reverse gradient on hover */
+    background: linear-gradient(135deg, #4ECDC4, #57C4E5);
 }
-
-/* Enable scrolling only when needed */
-.content,
-.content-section {
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #57C4E5 rgba(30, 35, 50, 0.3);
-    scroll-behavior: smooth; /* Smooth scrolling effect */
-}
-
 
 /* Buttons */
 button {
-	    user-select: none;
-    background: linear-gradient(90deg, #38E57F, #2BB673); /* Vibrant green gradient for buttons */
+    background: linear-gradient(90deg, #38E57F, #2BB673);
     color: #FFFFFF;
-    padding: 15px 15px; /* Increased button padding */
+    padding: 15px;
     border: none;
-    border-radius: 25px; /* More rounded buttons */
+    border-radius: 25px;
     cursor: pointer;
-    font-size: 15px; /* Slightly larger button font size */
-    font-weight: 600; /* Bolder button font weight */
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4); /* Enhanced button shadow */
-    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* Added box-shadow transition */
-    box-sizing: border-box;
-    letter-spacing: 0.6px; /* Subtle letter spacing for buttons */
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.6px;
 }
 
 /* Dashboard */
 #dashboard {
-    background: rgba(30, 35, 50, 0.3); /* Slightly more opaque dashboard background */
+    background: rgba(30, 35, 50, 0.3);
     color: #F0F4EF;
-    padding: 30px; /* Increased dashboard padding */
-    border-radius: 18px; /* More rounded dashboard corners */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Enhanced dashboard shadow */
-    width: 95%; /* Slightly wider dashboard */
-    max-width: 700px; /* Increased max-width for dashboard */
-    margin: 30px auto; /* Increased margin around dashboard */
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    width: 95%;
+    max-width: 700px;
+    margin: 30px auto;
     text-align: center;
     animation: fadeIn 0.6s ease-out;
-    box-sizing: border-box;
 }
 
 #dashboard h1 {
-    font-size: 28px; /* Larger dashboard heading */
+    font-size: 28px;
     color: #FFFFFF;
-    margin-bottom: 20px; /* Increased margin below heading */
+    margin-bottom: 20px;
     font-weight: bold;
-    text-shadow: 0 3px 8px rgba(255, 255, 255, 0.2); /* Enhanced heading text shadow */
+    text-shadow: 0 3px 8px rgba(255, 255, 255, 0.2);
 }
 
 #dashboard input {
-    width: calc(100% - 30px); /* Adjust input width to account for padding and border */
-    padding: 14px 15px; /* Increased input padding */
-    border: 2px solid rgba(70, 70, 70, 0.8); /* Slightly lighter input border */
-    background: rgba(40, 40, 40, 0.7); /* Slightly lighter input background */
+    width: calc(100% - 30px);
+    padding: 14px 15px;
+    border: 2px solid rgba(70, 70, 70, 0.8);
+    background: rgba(40, 40, 40, 0.7);
     color: #EAEAEA;
-    font-size: 17px; /* Larger input font size */
-    border-radius: 10px; /* Rounded input corners */
+    font-size: 17px;
+    border-radius: 10px;
     transition: border-color 0.3s, box-shadow 0.3s;
-    margin: 12px 0; /* Adjusted input margin */
-    box-sizing: border-box;
+    margin: 12px 0;
 }
 
 #dashboard input:focus {
-    border-color: #6A7ACB; /* Brighter focus border color */
+    border-color: #6A7ACB;
     outline: none;
-    box-shadow: 0 0 12px rgba(106, 124, 203, 0.7); /* Enhanced focus shadow */
+    box-shadow: 0 0 12px rgba(106, 124, 203, 0.7);
 }
 
 /* Add Coins Button */
 #addCoinsButton {
-    background: linear-gradient(135deg, #6A7ACB, #57C4E5); /* Updated button gradient */
-    padding: 14px 25px; /* Increased button padding */
-    border-radius: 25px; /* More rounded button corners */
-    font-size: 17px; /* Larger button font size */
+    background: linear-gradient(135deg, #6A7ACB, #57C4E5);
+    padding: 14px 25px;
+    border-radius: 25px;
+    font-size: 17px;
     font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    margin-top: 25px; /* Increased button margin-top */
+    margin-top: 25px;
     display: inline-block;
-    box-sizing: border-box;
 }
 
 #addCoinsButton:hover {
-    background: linear-gradient(135deg, #7B68EE, #87CEFA); /* Lighter gradient on hover */
-    box-shadow: 0 7px 22px rgba(0, 0, 0, 0.5); /* Enhanced hover shadow */
-    transform: translateY(-3px); /* More pronounced hover effect */
+    background: linear-gradient(135deg, #7B68EE, #87CEFA);
+    box-shadow: 0 7px 22px rgba(0, 0, 0, 0.5);
+    transform: translateY(-3px);
 }
 
 /* Status Messages */
 .message {
-    font-size: 17px; /* Larger message font size */
+    font-size: 17px;
     font-weight: bold;
-    margin-top: 25px; /* Increased message margin-top */
+    margin-top: 25px;
     opacity: 0;
     animation: fadeInMessage 0.6s forwards;
 }
 
 @keyframes fadeInMessage {
-    from {
-        opacity: 0;
-        transform: translateY(15px); /* Increased translation for fade-in */
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* Animations */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* Exam Form */
-#exam-form {
-    max-width: 900px; /* Increased exam form max-width */
-    width: 100%;
-    margin: 0 auto;
-    padding: 30px; /* Increased exam form padding */
-    background: rgba(30, 35, 50, 0.2); /* Slightly darker exam form background */
-    border-radius: 15px; /* More rounded exam form corners */
-    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3); /* Enhanced exam form shadow */
-    box-sizing: border-box;
-}
-
-.question-block {
-    background: rgba(30, 35, 50, 0.3); /* Slightly darker question block background */
-    border: 1px solid rgba(255, 255, 255, 0.15); /* Softer border for question block */
-    padding: 20px; /* Increased padding for question block */
-    margin-bottom: 20px; /* Increased margin below question block */
-    border-radius: 10px; /* Rounded question block corners */
-    position: relative;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* Enhanced question block shadow */
-    box-sizing: border-box;
-}
-
-.question-block input,
-.question-block select {
-    display: block;
-    width: calc(100% - 30px); /* Adjust input width for padding and border */
-    margin: 12px 0; /* Adjusted input margin */
-    padding: 12px 15px; /* Increased input padding */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Softer input border */
-    background: rgba(40, 40, 40, 0.5); /* Slightly lighter input background */
-    color: #EAEAEA;
-    border-radius: 8px; /* Rounded input corners */
-    font-size: 15px; /* Larger input font size */
-    box-sizing: border-box;
-}
-
-.remove-question {
-    background: #E55A5A; /* Updated remove button color */
-    color: white;
-    border: none;
-    padding: 6px 12px; /* Adjusted remove button padding */
-    cursor: pointer;
-    border-radius: 6px; /* Rounded remove button corners */
-    position: absolute;
-    top: 15px; /* Adjusted remove button position */
-    right: 15px; /* Adjusted remove button position */
-    font-size: 13px; /* Slightly smaller remove button font size */
-    transition: background-color 0.3s;
-}
-
-.remove-question:hover {
-    background: #F44336; /* Darker red on hover */
-}
-
-#save-exam {
-    background: #38E57F; /* Vibrant save button color */
-    color: white;
-    padding: 14px 28px; /* Increased save button padding */
-    border: none;
-    cursor: pointer;
-    margin-top: 25px; /* Increased save button margin-top */
-    display: block;
-    width: 100%;
-    max-width: 220px; /* Slightly wider save button */
-    border-radius: 25px; /* More rounded save button corners */
-    font-size: 15px; /* Larger save button font size */
-    font-weight: bold;
-    transition: 0.3s;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#save-exam:hover {
-    background: #32CD32; /* Slightly darker green on hover */
-    transform: translateY(-3px); /* More pronounced hover effect */
-}
-
-/* Style for radio buttons and labels (quiz-like design) */
-label {
-    user-select: none;
-    flex-direction: column;
-    display: flex;
-    margin-bottom: 18px; /* Increased margin below labels */
-    padding: 15px; /* Increased padding for labels */
-    border: 2px solid rgba(200, 200, 200, 0.3); /* Softer label border */
-    border-radius: 12px; /* Rounded label corners */
-    background-color: rgba(50, 50, 50, 0.3); /* Slightly darker label background */
-    cursor: pointer;
-    font-size: 17px; /* Larger label font size */
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    color: #E0E0E0; /* Lighter color for default labels */
-}
-
-/* Скрытие стандартного радио-кнопки */
-input[type="radio"] {
-    display: none;
-}
-
-/* Базовый стиль для кастомных радио-кнопок */
-input[type="radio"] + label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600; /* Bolder radio button font weight */
-    background: rgba(255, 255, 255, 0.1); /* Softer radio button background */
-    backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(150, 150, 150, 0.5); /* Softer radio button border */
-    color: #D0D4D3; /* Softer white color for default radio buttons */
-    padding: 14px 22px; /* Increased radio button padding */
-    border-radius: 28px; /* More rounded radio buttons */
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    user-select: none;
-}
-
-/* Анимация при наведении */
-input[type="radio"]:not(:checked) + label:hover {
-    background: rgba(255, 255, 255, 0.2); /* Lighter hover background */
-    border-color: rgba(180, 180, 180, 0.6); /* Lighter hover border */
-    transform: scale(1.05);
-}
-
-/* Состояние активного выбора */
-input[type="radio"]:checked + label {
-    margin: 12px; /* Adjusted checked radio margin */
-    font-weight: bolder;
-    background: linear-gradient(135deg, #38E57F, #2BB673); /* Vibrant checked radio gradient */
-    border-color: #38E57F;
-    color: white;
-    transform: scale(1.1);
-    box-shadow: 0 5px 18px rgba(56, 229, 127, 0.5); /* Enhanced checked radio shadow */
-}
-
-/* Современный стиль для текстового поля */
-input[type="text"] {
-    padding: 14px 18px; /* Increased text input padding */
-    font-size: 17px; /* Larger text input font size */
-    border: 1.5px solid rgba(150, 150, 150, 0.5); /* Softer text input border */
-    border-radius: 12px; /* Rounded text input corners */
-    width: calc(100% - 36px); /* Adjust text input width for padding and border */
-    box-sizing: border-box;
-    margin-top: 12px; /* Adjusted text input margin-top */
-    transition: all 0.3s ease-in-out;
-    background: rgba(255, 255, 255, 0.15); /* Softer text input background */
-    backdrop-filter: blur(10px);
-    color: #D0D4D3; /* Softer white color for text input */
-    outline: none;
-}
-
-/* Эффект фокуса */
-input[type="text"]:focus {
-    border-color: #57C4E5; /* Brighter focus border color */
-    box-shadow: 0 0 6px rgba(87, 196, 229, 0.6); /* Enhanced focus shadow */
-}
-
+/* Exam Result Summary */
 .exam-result-summary {
-    background-color: rgba(40, 40, 40, 0.4); /* Darker exam summary background */
+    background-color: rgba(40, 40, 40, 0.4);
     border-radius: 12px;
-    padding: 25px; /* Increased exam summary padding */
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3); /* Enhanced exam summary shadow */
-    margin-bottom: 25px; /* Increased exam summary margin-bottom */
+    padding: 25px;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: transform 0.2s ease-in-out;
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border for exam summary */
 }
 
 .exam-result-summary:hover {
-    transform: translateY(-7px); /* More pronounced hover effect */
+    transform: translateY(-7px);
 }
 
 .exam-result-summary p {
-    font-size: 1.2rem; /* Larger exam summary paragraph font size */
-    color: #F0F4EF; /* Lighter text color for exam summary paragraphs */
-    margin: 10px 0; /* Adjusted exam summary paragraph margin */
+    font-size: 1.2rem;
+    color: #F0F4EF;
+    margin: 10px 0;
 }
 
 .exam-result-summary p strong {
-    color: #A0AEC0; /* Softer color for labels in exam summary */
+    color: #A0AEC0;
 }
 
 .exam-result-summary .toggle-details {
-    background-color: #57C4E5; /* Updated toggle details button color */
+    background-color: #57C4E5;
     color: white;
     border: none;
-    padding: 12px 24px; /* Increased toggle details button padding */
-    border-radius: 6px; /* Rounded toggle details button corners */
+    padding: 12px 24px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 1.1rem; /* Larger toggle details button font size */
+    font-size: 1.1rem;
     transition: background-color 0.3s;
     display: inline-flex;
     align-items: center;
-    margin-top: 12px; /* Adjusted toggle details button margin-top */
+    margin-top: 12px;
 }
 
 .exam-result-summary .toggle-details:hover {
-    background-color: #4ECDC4; /* Slightly darker toggle details button color on hover */
+    background-color: #4ECDC4;
 }
 
 .exam-result-summary .details {
-    margin-top: 18px; /* Increased details margin-top */
-    padding-top: 12px; /* Increased details padding-top */
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Softer details border */
-    font-size: 1rem; /* Larger details font size */
-    color: #D0D4D3; /* Softer white color for details text */
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1rem;
+    color: #D0D4D3;
 }
 
 .exam-result-summary .details h3 {
-    font-size: 1.3rem; /* Larger details heading font size */
-    color: #A0AEC0; /* Softer color for details heading */
+    font-size: 1.3rem;
+    color: #A0AEC0;
 }
 
-/* Custom scrollbar for exam result summary */
-.exam-result-summary::-webkit-scrollbar {
-    width: 10px; /* Adjust scrollbar width */
-}
-
-.exam-result-summary::-webkit-scrollbar-track {
-    background: rgba(40, 40, 40, 0.4); /* Matching background */
-    border-radius: 10px; /* Smooth rounded track */
-}
-
-.exam-result-summary::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #57C4E5, #4ECDC4); /* Gradient scrollbar */
-    border-radius: 10px; /* Rounded thumb */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Soft shadow */
-}
-
-.exam-result-summary::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #4ECDC4, #57C4E5); /* Reverse gradient on hover */
-}
-
-/* Enable scrolling only when needed */
-.exam-result-summary {
-    max-height: 400px; /* Adjust as needed */
-    overflow-y: auto; /* Add scroll only when necessary */
-}
-
-
-/* Style for exam results container */
+/* Exam Result */
 .exam-result {
-    background: rgba(30, 35, 50, 0.3); /* Slightly darker exam result container background */
-    padding: 20px; /* Increased exam result container padding */
-    margin-bottom: 25px; /* Increased exam result container margin-bottom */
-    border-radius: 12px; /* Rounded exam result container corners */
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* Enhanced exam result container shadow */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border for exam result container */
+    background: rgba(30, 35, 50, 0.3);
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .exam-result p {
-    margin: 8px 0; /* Adjusted exam result paragraph margin */
-    color: #F0F4EF; /* Lighter text color for exam result paragraphs */
-    font-size: 1.1rem; /* Larger exam result paragraph font size */
+    margin: 8px 0;
+    color: #F0F4EF;
+    font-size: 1.1rem;
 }
 
-/* Apply these styles to clickable elements (e.g., <div>, <a>, etc.) */
 .exam-result .toggle-details {
-    background-color: #38E57F;
+    background: linear-gradient(135deg, #38E57F, #20B2AA);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -531,304 +337,162 @@ input[type="text"]:focus {
     align-items: center;
     margin-top: 15px;
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-
-    font-weight: 600;
-    letter-spacing: 0.7px;
-    text-transform: uppercase;
-
-    background: linear-gradient(135deg, #38E57F, #20B2AA);
-    background-size: 200% 200%;
-    background-position: top left;
-
-    border: 1px solid rgba(255, 255, 255, 0.15);
-
-    /* Pseudo-element for hover effect */
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.15);
-        opacity: 0;
-        transition: opacity 0.3s ease-out;
-        border-radius: inherit;
-    }
-
-    /* Focus state */
-    &:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(56, 229, 127, 0.5), 0 6px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Hover state */
-    &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        background-position: bottom right;
-
-        &::before {
-            opacity: 1;
-        }
-    }
-
-    /* Active state */
-    &:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        background-position: center;
-        transition-duration: 0.15s;
-
-        &::before {
-            opacity: 0.8;
-            background: rgba(0, 0, 0, 0.1);
-        }
-    }
-
-    /* Disabled state */
-    &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        background: #777;
-        color: #ddd;
-        border-color: transparent;
-        box-shadow: none;
-        transform: none;
-
-        &:hover, &:active, &:focus {
-            transform: none;
-            box-shadow: none;
-            background-position: top left;
-            &::before {
-                opacity: 0;
-            }
-        }
-    }
 }
 
-
-:root {
-  --slider-background: #f2f2f2;       /* Цвет фона (неактивный) */
-  --slider-active-background: #2ecc71; /* Цвет фона (активный) */
-  --handle-background: #ffffff;        /* Цвет ручки (неактивный) */
-  --handle-active-background: #ffffff; /* Цвет ручки (активный) */
-  --handle-icon-color: #888;           /* Цвет иконки по умолчанию */
-  --handle-icon-active-color: #2ecc71;  /* Цвет иконки при активации */
-  --text-color: #555;                  /* Цвет текста (неактивный) */
-  --text-color-active: #fff;           /* Цвет текста (активный) */
-  --border-radius: 30px;
-  --slider-width: 320px;               /* Ширина всего слайдера */
-  --slider-height: 60px;               /* Высота слайдера */
-}
-
-/* Контейнер слайдера */
-#startExamSliderContainer {
-  position: relative;
-  width: var(--slider-width);
-  height: var(--slider-height);
-  background-color: var(--slider-background);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-/* Активное состояние контейнера */
-#startExamSliderContainer.active {
-  background-color: var(--slider-active-background);
-}
-
-/* Текст внутри слайдера */
-.slider-text {
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 18px;
-  color: var(--text-color);
-  transition: color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  pointer-events: none;
-  opacity: 1;
-}
-/* Меняем цвет текста при активном состоянии */
-#startExamSliderContainer.active .slider-text {
-  color: var(--text-color-active);
-}
-
-/* Ручка слайдера */
-#startExamSliderHandle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--slider-height);
-  height: var(--slider-height);
-  background-color: var(--handle-background);
-  border-radius: var(--border-radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-/* Ховер-эффект на ручку */
-#startExamSliderHandle:hover {
-  background-color: #f0f0f0;
-}
-/* При активном состоянии ручка увеличивается */
-#startExamSliderHandle.active {
-  transform: scale(1.05);
-}
-/* Иконка внутри ручки */
-#startExamSliderHandle i {
-  font-size: 24px;
-  color: var(--handle-icon-color);
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-/* Меняем иконку при активном состоянии */
-#startExamSliderContainer.active #startExamSliderHandle i {
-  color: var(--handle-icon-active-color);
-}
-
-/* ========== Анимации появления/исчезновения текста ========== */
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  100% {
+.exam-result .toggle-details::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.15);
     opacity: 0;
-    transform: translate(-50%, -50%) translateY(-10px);
-  }
+    transition: opacity 0.3s ease-out;
+    border-radius: inherit;
+}
+
+.exam-result .toggle-details:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.exam-result .toggle-details:hover::before {
+    opacity: 1;
+}
+
+.exam-result .toggle-details:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.exam-result .toggle-details:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #777;
+    color: #ddd;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+/* Slider */
+:root {
+    --slider-background: #f2f2f2;
+    --slider-active-background: #2ecc71;
+    --handle-background: #ffffff;
+    --handle-icon-color: #888;
+    --handle-icon-active-color: #2ecc71;
+    --text-color: #555;
+    --text-color-active: #fff;
+    --border-radius: 30px;
+    --slider-width: 320px;
+    --slider-height: 60px;
+}
+
+#startExamSliderContainer {
+    position: relative;
+    width: var(--slider-width);
+    height: var(--slider-height);
+    background-color: var(--slider-background);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    cursor: pointer;
+    transition: background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#startExamSliderContainer.active {
+    background-color: var(--slider-active-background);
+}
+
+.slider-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    color: var(--text-color);
+    transition: color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    pointer-events: none;
+}
+
+#startExamSliderContainer.active .slider-text {
+    color: var(--text-color-active);
+}
+
+#startExamSliderHandle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--slider-height);
+    height: var(--slider-height);
+    background-color: var(--handle-background);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#startExamSliderHandle:hover {
+    background-color: #f0f0f0;
+}
+
+#startExamSliderHandle.active {
+    transform: scale(1.05);
+}
+
+#startExamSliderHandle i {
+    font-size: 24px;
+    color: var(--handle-icon-color);
+    transition: color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#startExamSliderContainer.active #startExamSliderHandle i {
+    color: var(--handle-icon-active-color);
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+    100% { opacity: 0; transform: translate(-50%, -50%) translateY(-10px); }
 }
 
 @keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) translateY(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) translateY(0);
-  }
+    0% { opacity: 0; transform: translate(-50%, -50%) translateY(10px); }
+    100% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
 }
 
 .fade-out {
-  animation: fadeOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: fadeOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
+
 .fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-
-
-
-/* Стиль для индикатора прогресса */
-.loader {
-    position: absolute;
-    bottom: 5px;
-    left: 10px;
-    width: 80%;
-    height: 5px;
-    background-color: #ddd;
-    border-radius: 5px;
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-/* Анимация для индикатора прогресса */
-.loader span {
-    display: block;
-    width: 0;
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #8e44ad);
-    animation: loading 2s infinite;
-}
-
-/* Ключевая анимация загрузки */
-@keyframes loading {
-    0% {
-        width: 0;
-    }
-    50% {
-        width: 50%;
-    }
-    100% {
-        width: 100%;
-    }
-}
-
-/* При активации слайдера показываем индикатор */
 #startExamSliderContainer.active .loader {
     opacity: 1;
 }
 
-/* Улучшение доступности: Фокус на ручке */
-#startExamSliderHandle:focus {
-    outline: var(--focus-outline);
-}
-
-/* Дополнительные улучшения для текста при активации */
-#startExamSliderContainer.active .slider-text {
-    color: var(--text-active-color);
-    transform: translateY(-50%) scale(1.05);
-}
-
-/* Определяем анимацию пульсации */
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
-/* Применяем анимацию к ручке, когда слайдер активен */
 #startExamSliderContainer.active #startExamSliderHandle {
-  animation: pulse 1.5s infinite;
+    animation: pulse 1.5s infinite;
 }
 
-.exam-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .exam-container {
-      background-color: #fff;
-      width: 400px;
-      border-radius: 8px;
-      padding: 20px;
-      position: relative;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-    h2 {
-      margin-top: 0;
-      font-family: sans-serif;
-    }
+/* Orange Timer Box */
 
-/* Общий стиль для orange-timer-box */
 .orange-timer-box {
     background: #ffa500;
     padding: 20px;
@@ -841,146 +505,10 @@ input[type="text"]:focus {
     text-align: center;
 }
 
-/* Стиль для таймера */
+/* Timer Container */
 .timer-container {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.timer-box {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 10px 15px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.timer-box .time {
-    font-size: 20px;
-    font-weight: bold;
-    display: block;
-}
-
-.timer-box .label {
-    font-size: 14px;
-}
-
-/* Основная таблица */
-.exam-results-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    color: #333;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.exam-results-table th,
-.exam-results-table td {
-    padding: 10px;
-    text-align: center;
-    font-size: 14px;
-    border-bottom: 1px solid #ddd;
-}
-
-.exam-results-table th {
-    background: #b9b4b4;
-    font-weight: bold;
-}
-
-.exam-results-table tbody tr:nth-child(even) {
-    background: #f9f9f9;
-}
-
-.exam-results-table tbody tr:hover {
-    background: #f1f1f1;
-}
-
-/* Статус Passed/Failed */
-.status {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: bold;
-    display: inline-block;
-}
-
-.status.passed {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status.failed {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* --- Скелетоны --- */
-.exam-results-skeleton {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.exam-results-skeleton th,
-.exam-results-skeleton td {
-    padding: 10px;
-    text-align: center;
-    font-size: 14px;
-    border-bottom: 1px solid #ddd;
-}
-
-/* Скелетон-плейсхолдер */
-.skeleton {
-    display: inline-block;
-    height: 16px;
-    border-radius: 4px;
-    background: #e0e0e0;
-    animation: pulse 1.5s infinite;
-}
-
-/* Размеры скелетонов */
-.skeleton.name {
-    width: 120px;
-}
-
-.skeleton.status {
-    width: 60px;
-    height: 20px;
-    border-radius: 10px;
-}
-
-.skeleton.score {
-    width: 80px;
-}
-
-.skeleton.grade {
-    width: 70px;
-}
-
-/* Анимация */
-@keyframes pulse {
-    0% {
-        background-color: #e0e0e0;
-    }
-    50% {
-        background-color: #f0f0f0;
-    }
-    100% {
-        background-color: #e0e0e0;
-    }
-}
-
-	
-.timer-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     gap: 15px;
     padding: 20px;
     background: #FFEFEF;
@@ -1012,123 +540,77 @@ input[type="text"]:focus {
     color: #888;
 }
 
-
-.exam-result .details {
-    margin-top: 18px; /* Increased details margin-top for exam result */
-    display: none;
-    padding-left: 25px; /* Increased details padding-left for exam result */
-    border-left: 4px solid #38E57F; /* Vibrant border for details section in exam result */
+/* Exam Results Table */
+.exam-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    color: #333;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.exam-result .question-result {
-    margin-bottom: 15px; /* Increased question result margin-bottom */
+.exam-results-table th,
+.exam-results-table td {
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
 }
 
-.exam-result .question-result p {
-    margin: 6px 0; /* Adjusted question result paragraph margin */
-    font-size: 1rem; /* Larger question result paragraph font size */
-}
-
-.exam-result .icon {
-    margin-right: 10px; /* Increased icon margin-right */
-}
-
-/* Highlight correct answers */
-.exam-result .correct-answer {
-    background-color: rgba(224, 247, 250, 0.15); /* Softer correct answer background */
-    color: #38E57F; /* Vibrant green for correct answer text */
-    padding: 14px; /* Increased correct answer padding */
-    border-radius: 6px; /* Rounded correct answer corners */
+.exam-results-table th {
+    background: #b9b4b4;
     font-weight: bold;
-    border-left: 5px solid #38E57F; /* Vibrant border for correct answer */
-    margin-top: 12px; /* Adjusted correct answer margin-top */
-    box-shadow: 0 2px 5px rgba(56, 229, 127, 0.3); /* Subtle shadow for correct answer */
 }
 
-.exam-result .incorrect-answer {
-    background-color: rgba(255, 235, 238, 0.15); /* Softer incorrect answer background */
-    color: #E55A5A; /* Updated incorrect answer color */
-    padding: 14px; /* Increased incorrect answer padding */
-    border-radius: 6px; /* Rounded incorrect answer corners */
+.exam-results-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.exam-results-table tbody tr:hover {
+    background: #f1f1f1;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
     font-weight: bold;
-    border-left: 5px solid #E55A5A; /* Updated incorrect answer border */
-    margin-top: 12px; /* Adjusted incorrect answer margin-top */
-    box-shadow: 0 2px 5px rgba(229, 90, 90, 0.3); /* Subtle shadow for incorrect answer */
-}
-
-.exam-result .details .correct-answer {
-    background-color: rgba(200, 230, 201, 0.15); /* Softer details correct answer background */
-    border-left: 5px solid #38E57F; /* Vibrant border for details correct answer */
-    padding: 12px; /* Increased details correct answer padding */
-}
-
-.exam-result .details .incorrect-answer {
-    background-color: rgba(255, 205, 210, 0.15); /* Softer details incorrect answer background */
-    border-left: 5px solid #E55A5A; /* Updated border for details incorrect answer */
-    padding: 12px; /* Increased details incorrect answer padding */
-}
-
-.lds-facebook,
-.lds-facebook div {
-    box-sizing: border-box;
-}
-
-.lds-facebook {
-    display: none;
-    position: relative;
-    width: 60px; /* Slightly smaller loading spinner */
-    height: 60px; /* Slightly smaller loading spinner */
-}
-
-.lds-facebook div {
     display: inline-block;
-    position: absolute;
-    left: 6px; /* Adjusted position for smaller spinner */
-    width: 12px; /* Adjusted width for smaller spinner */
-    background: currentColor;
-    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
 
-.lds-facebook div:nth-child(1) {
-    left: 6px; /* Adjusted position for smaller spinner */
-    animation-delay: -0.24s;
+.status.passed {
+    background: #d4edda;
+    color: #155724;
 }
 
-.lds-facebook div:nth-child(2) {
-    left: 24px; /* Adjusted position for smaller spinner */
-    animation-delay: -0.12s;
+.status.failed {
+    background: #f8d7da;
+    color: #721c24;
 }
 
-.lds-facebook div:nth-child(3) {
-    left: 42px; /* Adjusted position for smaller spinner */
-    animation-delay: 0s;
+/* --- Скелетоны --- */ .exam-results-skeleton { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); } .exam-results-skeleton th, .exam-results-skeleton td { color: black; padding: 10px; text-align: center; font-size: 14px; border-bottom: 1px solid #ddd; } /* Скелетон-плейсхолдер */ .skeleton { display: inline-block; height: 16px; border-radius: 4px; background: #e0e0e0; animation: pulse 1.5s infinite; } /* Размеры скелетонов */ .skeleton.name { width: 120px; } .skeleton.status { width: 60px; height: 20px; border-radius: 10px; } .skeleton.score { width: 80px; } .skeleton.grade { width: 70px; }
+
+@keyframes pulse {
+    0% { background-color: #e0e0e0; }
+    50% { background-color: #f0f0f0; }
+    100% { background-color: #e0e0e0; }
 }
 
-@keyframes lds-facebook {
-    0% {
-        top: 6px; /* Adjusted top position for smaller spinner */
-        height: 48px; /* Adjusted height for smaller spinner */
-    }
-    50%,
-    100% {
-        top: 18px; /* Adjusted top position for smaller spinner */
-        height: 24px; /* Adjusted height for smaller spinner */
-    }
-}
-
+/* Roadmap */
 #roadmap {
     padding: 20px;
-    max-width: 1200px; /* Increased max-width */
+    max-width: 1200px;
     margin: auto;
     border-radius: 8px;
-    font-family: revert; /* Added font-family */
 }
 
 h1 {
     text-align: center;
-    font-size: 28px; /* Increased font-size */
-    color: #343a40; /* Darker gray color */
-    margin-bottom: 20px; /* Added margin */
+    font-size: 28px;
+    color: #343a40;
+    margin-bottom: 20px;
 }
 
 label {
@@ -1139,58 +621,19 @@ label {
 }
 
 select {
-	    user-select: none;
-
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ced4da; /* Light gray border */
+    border: 1px solid #ced4da;
     border-radius: 5px;
-    appearance: none; /* For consistent styling across browsers */
-    -webkit-appearance: none; /* For Safari */
-    -moz-appearance: none; /* For Firefox */
-    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l8 8 8-8'/%3e%3c/svg%3e") no-repeat right 10px center; /* Add dropdown arrow */
-    padding-right: 30px; /* Adjust padding for arrow */
+    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l8 8 8-8'/%3e%3c/svg%3e") no-repeat right 10px center;
+    padding-right: 30px;
+    appearance: none;
 }
 
-table {
-    width: 100%;
-    margin-top: 20px; /* Added margin */
-    border-radius: 8px; /* Rounded corners for the table */
-    overflow: hidden; /* Hide overflowing content for rounded corners */
-}
-
-th, td {
-    padding: 15px; /* Increased padding */
-    text-align: left;
-}
-
-th {
-    background-color: #b9b4b4; /* Blue header background */
-    color: white;
-    font-weight: 500; /* Slightly bolder font */
-    text-transform: uppercase; /* Uppercase header text */
-}
-
-td i {
-    margin-right: 8px;
-    color: #007bff; /* Blue icon color */
-}
-
-.exam-row {
-    background-color: #fff3cd; /* Light yellow for exam rows */
-    font-weight: bold;
-    text-align: center; /* Center the exam row text */
-}
-
-.completed {
-    color: green;
-}
-
-/* Style the select dropdown on hover */
 select:hover {
-    border-color: #80bdff; /* Highlighted border color on hover */
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Subtle blue outline on hover */
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 #roadmap-table {
@@ -1201,10 +644,11 @@ select:hover {
     overflow: hidden;
 }
 
-#roadmap-table th, #roadmap-table td {
-	border-radius:25px;
+#roadmap-table th,
+#roadmap-table td {
+    border-radius: 25px;
     padding: 12px;
-    background: rgb(0 167 255 / 20%);
+    background: rgba(0, 167, 255, 0.2);
     border: 1px solid #45b8ff;
     text-align: center;
 }
@@ -1227,234 +671,41 @@ select:hover {
     margin-right: 5px;
 }
 
-
-.lds-ripple,
-.lds-ripple div {
-  box-sizing: border-box;
-}
+/* Loading Indicator */
 .lds-ripple {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-ripple div {
-  position: absolute;
-  border: 4px solid currentColor;
-  opacity: 1;
-  border-radius: 50%;
-  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-}
-.lds-ripple div:nth-child(2) {
-  animation-delay: -0.5s;
-}
-@keyframes lds-ripple {
-  0% {
-    top: 36px;
-    left: 36px;
-    width: 8px;
-    height: 8px;
-    opacity: 0;
-  }
-  4.9% {
-    top: 36px;
-    left: 36px;
-    width: 8px;
-    height: 8px;
-    opacity: 0;
-  }
-  5% {
-    top: 36px;
-    left: 36px;
-    width: 8px;
-    height: 8px;
-    opacity: 1;
-  }
-  100% {
-    top: 0;
-    left: 0;
+    display: inline-block;
+    position: relative;
     width: 80px;
     height: 80px;
-    opacity: 0;
-  }
+}
+
+.lds-ripple div {
+    position: absolute;
+    border: 4px solid currentColor;
+    opacity: 1;
+    border-radius: 50%;
+    animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.lds-ripple div:nth-child(2) {
+    animation-delay: -0.5s;
+}
+
+@keyframes lds-ripple {
+    0% { top: 36px; left: 36px; width: 8px; height: 8px; opacity: 0; }
+    4.9% { top: 36px; left: 36px; width: 8px; height: 8px; opacity: 0; }
+    5% { top: 36px; left: 36px; width: 8px; height: 8px; opacity: 1; }
+    100% { top: 0; left: 0; width: 80px; height: 80px; opacity: 0; }
 }
 
 #loader {
-  display: none; /* Скрыто по умолчанию */
-  margin: 20px auto;
-  color: #007bff; /* Цвет анимации */
+    display: none;
+    margin: 20px auto;
+    color: #007bff;
 }
 
-/* Контейнер календаря */
-.calendar-container {
-  width: 320px; /* Можно подстроить под нужный размер */
-  margin: 20px auto;
-  font-family: sans-serif;
-}
-
-/* Шапка календаря (название месяца и кнопки переключения) */
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.calendar-header .month-year {
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-.calendar-header .prev-month,
-.calendar-header .next-month {
-  background: none;
-  border: none;
-  font-size: 1.2em;
-  cursor: pointer;
-}
-
-/* Сетка календаря (7 колонок) */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-}
-
-/* Общий стиль для ячеек (дней) */
-.day {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 40px;
-  background-color: #e0e0e0;
-  border-radius: 6px;
-  color: #424242;
-  font-weight: 500;
-}
-
-/* Метки дней недели (SUN, MON, ...) */
-.day-label {
-  background-color: transparent;
-  font-weight: bold;
-  color: #616161;
-}
-
-/* "Неактивные" дни (из предыдущего/следующего месяца) */
-.day.disabled {
-  color: #bdbdbd;
-  background-color: #f5f5f5;
-}
-
-/* Weekly Exams (жёлтый) */
-.exam-weekly {
-  background-color: #ffeb3b; /* ярко-жёлтый */
-  color: #212121;
-}
-
-/* Mid/Final Exams (красный) */
-.exam-mid-final {
-  background-color: #ff5252; /* красный */
-  color: #ffffff;
-}
-
-/* Стили для блока ID вопроса */
-.exam-question-id {
-    border-radius: 50px;
-    margin: 10px;
-    text-align: center;
-    width: 10%;
-    background: white;
-    font-size: 24px;
-    font-weight: bold;
-    color: #007AFF;
-    margin-bottom: 10px;
-}
-
-/* Общий контейнер плеера */
-.custom-audio-player {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    box-sizing: border-box;
-    width: 40%;
-    max-width: 100%;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    background: #2B2E3B;
-    border-radius: 12px;
-    border: 1px solid rgba(173, 193, 205, 0.2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    color: #fff;
-    font-size: 16px;
-}
-
-#custom-play-btn {
-  background: #007AFF;
-  border: none;
-  color: #fff;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-  transition: background 0.3s ease, transform 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 122, 255, 0.4);
-}
-
-.custom-play-btn:hover {
-    background: #0060D0; /* Более тёмный оттенок при наведении */
-    transform: scale(1.05);
-}
-
-.custom-play-btn:active {
-    transform: scale(0.95);
-}
-/* Полоса для волны/прогресса */
-.custom-audio-waves {
-  flex: 1;
-  position: relative;
-  height: 8px;
-  margin-right: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  background: #3A3F51;
-  overflow: hidden;
-  transition: background 0.3s ease;
-}
-.custom-audio-waves:hover {
-  background: #444A5B;
-}
-
-/* Сам прогресс (заполняющаяся часть) */
-.custom-audio-waves .progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0%;
-  border-radius: 4px;
-  background: #007AFF;
-  transition: width 0.2s linear;
-  z-index: 2;
-  display: block;
-}
-
-/* Отображение времени (текущее время трека) */
-.custom-time-display {
-  flex-shrink: 0;
-  font-weight: 600;
-  font-size: 14px;
-  color: #007AFF;
-  text-align: right;
-  min-width: 40px;
-}
-
-/* 1. Контейнер в правом верхнем углу */
-  #toast-container {
+/* Toast Notifications */
+#toast-container {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -1464,54 +715,28 @@ select:hover {
     gap: 10px;
     pointer-events: none;
     z-index: 1000;
-  }
+}
 
-  /* 2. Общий стиль уведомления */
-  .toast {
-    pointer-events: auto; /* чтобы работал клик по крестику */
+.toast {
+    pointer-events: auto;
     display: flex;
     align-items: flex-start;
     width: 320px;
     padding: 16px 20px;
     border-radius: 12px;
     backdrop-filter: blur(12px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
     opacity: 0;
     transform: translateX(50px);
-    animation:
-      slideIn 0.4s ease-out forwards,
-      fadeOut 0.4s ease-in var(--hide-delay) forwards;
-  }
+    animation: slideIn 0.4s ease-out forwards, fadeOut 0.4s ease-in var(--hide-delay) forwards;
+}
 
-  @keyframes slideIn {
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  @keyframes fadeOut {
-    to {
-      opacity: 0;
-      transform: translateX(50px);
-    }
-  }
+.toast.error { background: linear-gradient(135deg, #ffe5e5, #fff5f5); }
+.toast.warning { background: linear-gradient(135deg, #fff8e1, #fffcf3); }
+.toast.success { background: linear-gradient(135deg, #e6ffed, #f2fff4); }
+.toast.info { background: linear-gradient(135deg, #e6f4ff, #f5fbff); }
 
-  /* 3. Фоны под каждый тип */
-  .toast.error {
-    background: linear-gradient(135deg, #ffe5e5, #fff5f5);
-  }
-  .toast.warning {
-    background: linear-gradient(135deg, #fff8e1, #fffcf3);
-  }
-  .toast.success {
-    background: linear-gradient(135deg, #e6ffed, #f2fff4);
-  }
-  .toast.info {
-    background: linear-gradient(135deg, #e6f4ff, #f5fbff);
-  }
-
-  /* 4. Иконка слева */
-  .toast-icon {
+.toast-icon {
     flex-shrink: 0;
     width: 36px;
     height: 36px;
@@ -1522,58 +747,47 @@ select:hover {
     margin-right: 12px;
     font-size: 18px;
     color: #fff;
-  }
-  .toast.error .toast-icon   { background: #e74c3c; }
-  .toast.warning .toast-icon { background: #f39c12; }
-  .toast.success .toast-icon { background: #27ae60; }
-  .toast.info .toast-icon    { background: #2980b9; }
+}
 
-  /* 5. Текст */
-  .toast-message {
+.toast.error .toast-icon { background: #e74c3c; }
+.toast.warning .toast-icon { background: #f39c12; }
+.toast.success .toast-icon { background: #27ae60; }
+.toast.info .toast-icon { background: #2980b9; }
+
+.toast-message {
     flex: 1;
     font-family: sans-serif;
     color: #333;
     line-height: 1.4;
-  }
-  .toast-message b {
+}
+
+.toast-message b {
     display: block;
     margin-bottom: 4px;
     font-size: 15px;
-  }
-  .toast-message span {
-    font-size: 13px;
-  }
+}
 
-  /* 6. Крестик закрытия */
-  .toast-close {
+.toast-message span {
+    font-size: 13px;
+}
+
+.toast-close {
     margin-left: 12px;
     font-size: 16px;
     cursor: pointer;
     color: #555;
     opacity: 0.6;
-    transition: opacity .2s;
-  }
-  .toast-close:hover {
+    transition: opacity 0.2s;
+}
+
+.toast-close:hover {
     opacity: 1;
-  }
+}
 
 @keyframes slideIn {
-    0% {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeOut {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
+    to { opacity: 0; transform: translateX(50px); }
 }
-

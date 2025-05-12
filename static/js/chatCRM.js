@@ -893,7 +893,6 @@ function handleTempBanClick(event) {
   tempBanMessage.style.display = "none";
 
   // Отправляем через socket событие временного бана
-  // Клиент отправляет запрос
 socket.emit("tempBanUser", { username, duration });
   
   // Для тестирования можно вызвать функцию blockUser напрямую:

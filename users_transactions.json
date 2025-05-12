@@ -729,6 +729,16 @@
             "amount": -100,
             "description": "Check single answer",
             "time": "2025-04-27T03:25:31.395996"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-05-12T14:30:24.843319"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-05-12T14:30:41.113865"
         }
     ],
     "Zakariyo": [
@@ -791,6 +801,21 @@
             "amount": -100,
             "description": "Check single answer",
             "time": "2025-03-27T17:59:07.623120"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-05-02T17:08:44.995471"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-05-02T17:14:10.371430"
+        },
+        {
+            "amount": -100,
+            "description": "Check single answer",
+            "time": "2025-05-03T07:40:52.923110"
         }
     ],
     "Abdulmalik": [
@@ -1084,6 +1109,18 @@
             "amount": -100,
             "description": "Check single answer",
             "time": "2025-04-27T00:11:17.071073"
+        }
+    ],
+    "exampleUser": [
+        {
+            "amount": 5000,
+            "description": "Top up",
+            "time": "2025-04-30T19:32:13.272547"
+        },
+        {
+            "amount": -5000,
+            "description": "Send money",
+            "time": "2025-04-30T19:32:21.139551"
         }
     ]
 }

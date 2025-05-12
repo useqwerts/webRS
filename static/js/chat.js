@@ -638,8 +638,8 @@ function sendMessage() {
     textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
-const backgroundMusic = new Audio('/static/music/DeepSleep.mp3');
-backgroundMusic.loop = true; // Зацикливаем музыку
+const backgroundMusic = new Audio('/static/music/Masha.mp3');
+backgroundMusic.loop = false; // Зацикливаем музыку
 
 // Функция для воспроизведения музыки
 function playSpecialMusic() {
@@ -660,75 +660,130 @@ socket.on('tempBanUser', (data) => {
   blockUser(data.username, data.duration);
 });
 
-socket.on("unblockUser", (data) => {
-  unblockUser();
+// Клиент слушает событие unblockUser
+socket.on('unblockUser', (data) => {
+  console.log("Received unblockUser event:", data);
+  unblockUsername(data.username);
 });
 
-let isBlockedyet = false; // Флаг, показывающий, что блокировка активна
+const blockStates = new Map(); // { username: { isBlocked, timerInterval, blockEndTime } }
 
-let timerInterval = null; // Глобальная переменная для хранения идентификатора интервала
-
+// Функция для блокировки пользователя по username
 function blockUser(username, duration) {
-  // Если имя пользователя передано, проверяем, соответствует ли оно текущему пользователю
-  const currentUser = getCurrentUser(); // Предполагается, что эта функция возвращает имя текущего пользователя
-  if (username && username !== currentUser) {
+  // Получаем текущего пользователя (предполагается, что эта функция существует)
+  const currentUser = getCurrentUser();
+  if (username !== currentUser) {
     console.log(`Block not applied. Banned username (${username}) does not match current user (${currentUser}).`);
     return;
   }
-  
-  if (isBlockedyet) return; // Если пользователь уже заблокирован, не запускаем блокировку повторно
+
+  // Проверяем, заблокирован ли уже пользователь
+  const userState = blockStates.get(username) || { isBlocked: false, timerInterval: null, blockEndTime: null };
+  if (userState.isBlocked) {
+    console.log(`User ${username} is already blocked.`);
+    return;
+  }
+
+  // Запускаем специальную музыку
+  //playSpecialMusic();
 
   // Блокируем взаимодействие с элементами страницы
   document.body.style.pointerEvents = 'none';
-  // playSpecialMusic(); // Запускаем музыку (если нужно)
-  disableMessageInput(); // Блокируем ввод сообщений
-  isBlockedyet = true;
-  
+  disableMessageInput();
+
+  // Обновляем состояние блокировки
+  userState.isBlocked = true;
   const blockEndTime = Date.now() + duration * 1000;
-  // Сохраняем время окончания блокировки в localStorage
-  localStorage.setItem("blockEndTime", blockEndTime);
+  userState.blockEndTime = blockEndTime;
+  blockStates.set(username, userState);
+
+  // Сохраняем время окончания блокировки в localStorage для конкретного пользователя
+  localStorage.setItem(`blockEndTime_${username}`, blockEndTime);
 
   let timeLeft = duration;
-  // Показать экран блокировки
+  // Показываем экран блокировки
+  blockScreen.classList.remove("hidden");
   blockScreen.classList.add("visible");
-  timerElement.textContent = formatTime(timeLeft); // Отображаем начальное время
+  timerElement.textContent = formatTime(timeLeft);
 
   // Таймер обратного отсчёта
-  timerInterval = setInterval(() => {
+  userState.timerInterval = setInterval(() => {
     timeLeft--;
-    // Обновляем отображение времени
     timerElement.textContent = formatTime(timeLeft);
 
     // Если время истекло, разблокируем пользователя
     if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      timerInterval = null; // Сброс идентификатора интервала
-      unblockUser(); // Разблокировка
-      isBlockedyet = false; // Сбрасываем флаг блокировки после окончания
-      localStorage.removeItem("blockEndTime"); // Очистка localStorage
+      clearInterval(userState.timerInterval);
+      userState.timerInterval = null;
+      unblockUsername(username);
+      blockStates.delete(username); // Удаляем состояние после разблокировки
+      localStorage.removeItem(`blockEndTime_${username}`);
     }
   }, 1000);
+
+  // Обновляем состояние в Map
+  blockStates.set(username, userState);
 }
 
-// Функция для разблокировки пользователя
 function unblockUser() {
-  // Если таймер активен, очищаем его
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-  isBlockedyet = false;
+  // Очищаем все таймеры для всех пользователей
+  blockStates.forEach((state, username) => {
+    if (state.timerInterval) {
+      clearInterval(state.timerInterval);
+      state.timerInterval = null;
+      state.isBlocked = false;
+      blockStates.set(username, state);
+      localStorage.removeItem(`blockEndTime_${username}`);
+    }
+  });
+
+  // Сбрасываем глобальные флаги и состояние
   document.body.style.pointerEvents = 'auto';
   stopSpecialMusic();
   enableMessageInput();
-  isBlocked = false;
-  localStorage.removeItem("blockEndTime"); // Удалить блокировку из localStorage
-  blockScreen.classList.remove("visible"); // Скрыть экран блокировки
-  messageTimestamps = []; // Сбросить историю сообщений
-  timerElement.textContent = ''; // Сброс отображения таймера (при необходимости)
+  localStorage.removeItem("blockEndTime"); // Удаляем глобальную блокировку из localStorage
+  blockScreen.classList.remove("visible"); // Скрываем экран блокировки
+  messageTimestamps = []; // Сбрасываем историю сообщений
+  timerElement.textContent = ''; // Сбрасываем отображение таймера
+
+  // Очищаем Map, так как разблокировка глобальная
+  blockStates.clear();
 }
 
+// Функция для разблокировки пользователя по username
+function unblockUsername(username) {
+  const userState = blockStates.get(username);
+  if (!userState || !userState.isBlocked) {
+    console.log(`User ${username} is not blocked.`);
+    return;
+  }
 
+  // Очищаем таймер, если он активен
+  if (userState.timerInterval) {
+    clearInterval(userState.timerInterval);
+    userState.timerInterval = null;
+  }
+
+  // Сбрасываем состояние блокировки
+  userState.isBlocked = false;
+  blockStates.set(username, userState);
+
+  // Восстанавливаем взаимодействие с элементами
+  document.body.style.pointerEvents = 'auto';
+  stopSpecialMusic();
+  enableMessageInput();
+
+  // Удаляем данные из localStorage
+  localStorage.removeItem(`blockEndTime_${username}`);
+
+  // Скрываем экран блокировки
+  blockScreen.classList.remove("visible");
+  messageTimestamps = []; // Сбрасываем историю сообщений
+  timerElement.textContent = ''; // Сбрасываем отображение таймера
+
+  // Удаляем состояние пользователя из Map
+  blockStates.delete(username);
+}
 
 // Форматирование времени в MM:SS
 function formatTime(seconds) {
@@ -739,15 +794,23 @@ function formatTime(seconds) {
 
 // Проверка при загрузке страницы (если пользователь был заблокирован)
 document.addEventListener("DOMContentLoaded", () => {
-    const blockEndTime = localStorage.getItem("blockEndTime");
+    const currentUser = getCurrentUser(); // Предполагается, что эта функция возвращает имя текущего пользователя
+    if (!currentUser) {
+        console.log("No current user found on page load.");
+        return;
+    }
+
+    const blockEndTimeKey = `blockEndTime_${currentUser}`;
+    const blockEndTime = localStorage.getItem(blockEndTimeKey);
 
     if (blockEndTime) {
         const remainingTime = Math.max(0, Math.floor((blockEndTime - Date.now()) / 1000));
 
         if (remainingTime > 0) {
-            blockUser(currentUser,remainingTime); // Продолжить блокировку
+            blockUser(currentUser, remainingTime); // Продолжить блокировку для конкретного пользователя
         } else {
-            localStorage.removeItem("blockEndTime"); // Если время истекло, очистить запись
+            localStorage.removeItem(blockEndTimeKey); // Если время истекло, очистить запись
+            blockStates.delete(currentUser); // Удаляем состояние из Map
         }
     }
 });
@@ -1182,10 +1245,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // Продолжаем загрузку чата (можно добавить другие действия, если нужно)
     }
 
-    // Убедитесь, что экран блокировки скрыт при загрузке
+    /* Убедитесь, что экран блокировки скрыт при загрузке
     if (!isBlocked) {
         blockScreen.classList.add("hidden");
-    }
+    }*/
     if (!document.getElementById('toast-container')) {
         const toastContainer = document.createElement('div');
         toastContainer.id = 'toast-container';
@@ -1601,7 +1664,7 @@ async function addCoins(username, coins) {
 }
 
 let violationCount = 0;
-const maxViolations = 3;
+const maxViolations = 0;
 
 function incrementViolation() {
     violationCount++;
@@ -1662,7 +1725,6 @@ function initExamSecurity(enable = true) {
         document.addEventListener('visibilitychange', handleVisibilityChange);
         document.addEventListener('copy', onCopy);
         document.addEventListener('paste', onPaste);
-        //showToastNotification("Anti-cheating system v2.0 is active.", "success");
     } else {
         // Remove restrictions
         document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -1924,49 +1986,47 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
     const loadingSpinner = document.getElementById('loadingSpinner');
     const loadingFinishExam = document.getElementById('loadingFinishExam');
     const wrapper = document.getElementById('progressExamLengthWrapper');
+    const progressBar = document.getElementById('progressExamLength');
+    const progressLabel = document.getElementById('progressExamLengthLabel');
 
     // Модальное окно для списания монет
     const checkAnswerModal = document.getElementById('checkAnswerModal');
     const approveCheckAnswerBtn = document.getElementById('approveCheckAnswer');
     const cancelCheckAnswerBtn = document.getElementById('cancelCheckAnswer');
 
-    // ID вопроса, который мы хотим проверить (при нажатии «Check my answer»)
+    // ID вопроса, который мы хотим проверить
     let questionToCheck = null;
 
-    // (1) Функция показа модального окна для списания 100 coins
+    // Функция показа модального окна для списания 100 coins
     function showCheckAnswerModal(questionElement, correctAnswer) {
       questionToCheck = { element: questionElement, correct: correctAnswer };
       checkAnswerModal.style.display = 'flex';
     }
 
-    // (2) Обработчики кнопок модального окна
+    // Обработчики кнопок модального окна
     approveCheckAnswerBtn.addEventListener('click', async function() {
       if (!questionToCheck) return;
-      // Пытаемся списать 100 coins
       try {
         const transactionRes = await fetch('/api/add_transaction', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: currentUser,
-            amount: -100, // списываем 100
+            amount: -100,
             description: 'Check single answer'
           })
         });
         const transactionData = await transactionRes.json();
 
         if (!transactionRes.ok || transactionData.error) {
-          // Если пришла ошибка (например, недостаточно монет)
           showToastNotification(transactionData.error || 'Not enough coins!');
         } else {
-          // Транзакция успешна — проверяем ответ
           checkSingleAnswer(questionToCheck.element, questionToCheck.correct);
         }
       } catch (err) {
         console.error(err);
         showToastNotification('Error while processing transaction.');
       } finally {
-        // Закрываем модальное окно в любом случае
         checkAnswerModal.style.display = 'none';
       }
     });
@@ -1975,35 +2035,28 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
       checkAnswerModal.style.display = 'none';
     });
 
-    // (3) Функция для проверки ответа одного вопроса
+    // Функция для проверки ответа одного вопроса
     function checkSingleAnswer(questionElement, correctAnswer) {
         let userAnswer = null;
-
-        // Check for radio inputs (multiple_choice / true_false)
         const radios = questionElement.querySelectorAll('input[type="radio"]');
         if (radios.length > 0) {
             const checkedRadio = [...radios].find(r => r.checked);
             userAnswer = checkedRadio ? checkedRadio.value : null;
         } else {
-            // Check for unscramble type
             const unscrambleInputs = questionElement.querySelectorAll('.unscramble-input');
             if (unscrambleInputs.length > 0) {
-                // Sort inputs by data-index to ensure correct order
                 const sortedInputs = Array.from(unscrambleInputs).sort((a, b) => 
                     parseInt(a.dataset.index) - parseInt(b.dataset.index)
                 );
-                // Join all non-empty textContent from unscramble inputs
                 userAnswer = sortedInputs
                     .map(input => input.textContent.trim())
-                    .filter(char => char !== '') // Exclude empty inputs
+                    .filter(char => char !== '')
                     .join('');
             } else {
-                // Check for box-choose type
                 const blank = questionElement.querySelector(`.box-choose-blank[data-question-id="${questionElement.dataset.questionId}"]`);
                 if (blank && blank.textContent.trim() && blank.textContent !== '____') {
                     userAnswer = blank.textContent.trim();
                 } else {
-                    // Check for text input (fill_gaps, question, etc.)
                     const input = questionElement.querySelector('input[type="text"]');
                     if (input) {
                         userAnswer = input.value.trim();
@@ -2017,13 +2070,12 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
             return;
         }
 
-        // Compare with the correct answer (case-insensitive)
         if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
             showModalStatus("Correct answer Good Job!");
-            questionElement.style.backgroundColor = '#1b5e20'; // Green background
+            questionElement.style.backgroundColor = '#1b5e20';
         } else {
             showModalStatus(`Incorrect! Correct answer: ${correctAnswer}`);
-            questionElement.style.backgroundColor = '#b71c1c'; // Red background
+            questionElement.style.backgroundColor = '#b71c1c';
         }
     }
 
@@ -2048,7 +2100,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
 
     try {
         const response = await fetch(url);
-        console.log("Response Status:", response.status);
         const data = await (response.ok
             ? response.json()
             : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
@@ -2059,7 +2110,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
             return;
         }
 
-        // Показываем элементы после загрузки
         loadingSpinner.style.display = 'none';
         examHeader.style.display = 'none';
         finishExamButton.style.display = 'block';
@@ -2067,60 +2117,38 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         wrapper.style.display = 'flex';
         //initExamSecurity(true);
 
-        // Получаем шаблон вопроса
         const questionTemplate = document.getElementById('questionTemplate');
         let questionCounter = 0;
+        const fragment = document.createDocumentFragment();
 
-        // (A) Функция для получения инструкции по типу вопроса
         function getInstructionForType(type) {
             switch (type) {
-                case "true_false":
-                    return `<p><i class="fas fa-exclamation-circle"></i> Choose True or False.</p>`;
-                case "multiple_choice":
-                    return `<p><i class="fas fa-check-circle"></i> Select the correct answer.</p>`;
-                case "fill_gaps":
-                    return `<p><i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
-                case "unscramble":
-                    return `<p><i class="fas fa-random"></i> Unscramble the letters or gaps.</p>`;
-                case "reading":
-                    return `<p><i class="fas fa-book"></i> Read the text and answer the question.</p>`;
-                case "listening":
-                    return `<p><i class="fas fa-headphones"></i> Listen to the audio and enter the missing word.</p>`;
-                case "question":
-                    return `<p><i class="fas fa-question-circle"></i> Answer the question below.</p>`;
-                case "picture":
-                    return `<p><i class="fas fa-image"></i> Look at the image and answer the following questions.</p>`;
-                case "box-choose":
-                    return `<p><i class="fas fa-box"></i> Complete the questions with words/phrases from the box.</p>`;
-                default:
-                    return "";
+                case "true_false": return `<p><i class="fas fa-exclamation-circle"></i> Choose True or False.</p>`;
+                case "multiple_choice": return `<p><i class="fas fa-check-circle"></i> Select the correct answer.</p>`;
+                case "fill_gaps": return `<p><i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
+                case "unscramble": return `<p><i class="fas fa-random"></i> Unscramble the letters or gaps.</p>`;
+                case "reading": return `<p><i class="fas fa-book"></i> Read the text and answer the question.</p>`;
+                case "listening": return `<p><i class="fas fa-headphones"></i> Listen to the audio and enter the missing word.</p>`;
+                case "question": return `<p><i class="fas fa-question-circle"></i> Answer the question below.</p>`;
+                case "picture": return `<p><i class="fas fa-image"></i> Look at the image and answer the following questions.</p>`;
+                case "box-choose": return `<p><i class="fas fa-box"></i> Complete the questions with words/phrases from the box.</p>`;
+                default: return "";
             }
         }
 
-        // Функция для перемешивания элементов массива
         function shuffleArray(array) {
             return array.slice().sort(() => Math.random() - 0.5);
         }
 
-        // Переменная для хранения текущего выбранного option
         let selectedOption = null;
 
-        // Генерация вопросов
         data.questions.forEach((question) => {
-            // Вопрос с аудио (listening)
+            const parentContainer = document.createElement('div');
+            parentContainer.className = 'exam-parent-question';
+
             if (question.type === 'listening') {
-                const parentContainer = document.createElement('div');
-                parentContainer.className = 'exam-parent-question';
                 if (question.text) {
                     parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
-                }
-                if (question.type === 'box-choose' && Array.isArray(question.options)) {
-                    let optionsHtml = '<div class="box-choose-options">';
-                    question.options.forEach((option, index) => {
-                        optionsHtml += `<span class="box-choose-option" data-value="${option}" data-index="${index}">${option}</span>`;
-                    });
-                    optionsHtml += '</div>';
-                    parentContainer.insertAdjacentHTML('beforeend', optionsHtml);
                 }
                 parentContainer.innerHTML += `
                   <div class="custom-audio-player">
@@ -2129,15 +2157,11 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     <span class="custom-time-display">0:00 / 0:00</span>
                   </div>
                 `;
-                examContainer.appendChild(parentContainer);
-
                 if (question.subquestions && Array.isArray(question.subquestions)) {
                     question.subquestions.forEach((subq) => {
                         questionCounter++;
                         const instruction = getInstructionForType(subq.type);
                         const questionNode = document.importNode(questionTemplate.content, true);
-
-                        // (4) Сохраняем ссылку на div с классом .exam-question
                         const examQuestionDiv = questionNode.querySelector('.exam-question');
 
                         questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
@@ -2151,11 +2175,9 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
                                 <label for="false${subq.id}">False</label>
                             `;
-                        }
-                        else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                        } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
                             const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
                             let html = '';
-                            // Перемешиваем варианты ответа
                             const shuffledOptions = shuffleArray(subq.options);
                             shuffledOptions.forEach((option, index) => {
                                 const letter = letters[index] || '?';
@@ -2171,8 +2193,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 `;
                             });
                             optionsContainer.innerHTML = html;
-                        }
-                        else {
+                        } else {
                             optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
                         }
 
@@ -2190,41 +2211,25 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         parentContainer.appendChild(questionNode);
                     });
                 }
-            }
-            // Вопрос типа "picture" с одним или несколькими изображениями
-            else if (question.type === 'picture') {
-                const parentContainer = document.createElement('div');
-                parentContainer.className = 'exam-parent-question';
-
-                // Если есть текст — отображаем
+            } else if (question.type === 'picture') {
                 if (question.text) {
                     parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
                 }
-
-                // Проверяем, есть ли массив изображений
                 if (Array.isArray(question.images) && question.images.length > 0) {
-                    // Создаем контейнер под все картинки
                     const imagesContainer = document.createElement('div');
                     imagesContainer.className = 'exam-images-grid';
-
                     question.images.forEach(imgSrc => {
                         const imgElem = document.createElement('img');
                         imgElem.src = imgSrc;
                         imgElem.alt = 'Exam image';
-                        imgElem.className = 'exam-question-image'; // класс для стилизации
+                        imgElem.className = 'exam-question-image';
                         imagesContainer.appendChild(imgElem);
                     });
-
                     parentContainer.appendChild(imagesContainer);
-                }
-                // Если вдруг используется старое поле question.image (одна картинка), оставим поддержку
-                else if (question.image) {
+                } else if (question.image) {
                     parentContainer.innerHTML += `<img src="${question.image}" alt="Exam image" class="exam-question-image" style="max-width:100%; height:auto; margin-bottom: 10px;">`;
                 }
 
-                examContainer.appendChild(parentContainer);
-
-                // Далее — генерация subquestions (как раньше)
                 if (question.subquestions && Array.isArray(question.subquestions)) {
                     question.subquestions.forEach((subq) => {
                         questionCounter++;
@@ -2243,11 +2248,9 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
                                 <label for="false${subq.id}">False</label>
                             `;
-                        }
-                        else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                        } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
                             const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
                             let html = '';
-                            // Перемешиваем варианты ответа
                             const shuffledOptions = shuffleArray(subq.options);
                             shuffledOptions.forEach((option, index) => {
                                 const letter = letters[index] || '?';
@@ -2263,8 +2266,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 `;
                             });
                             optionsContainer.innerHTML = html;
-                        }
-                        else {
+                        } else {
                             optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
                         }
 
@@ -2282,12 +2284,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         parentContainer.appendChild(questionNode);
                     });
                 }
-            }
-            // Вопрос с под-вопросами (например, Reading) или обычный вопрос без под-вопросов
-            else if (question.subquestions && Array.isArray(question.subquestions)) {
-                const parentContainer = document.createElement('div');
-                parentContainer.className = 'exam-parent-question';
-
+            } else if (question.subquestions && Array.isArray(question.subquestions)) {
                 if (question.text) {
                     parentContainer.innerHTML = `<p class="parent-text">${question.text}</p>`;
                 }
@@ -2301,18 +2298,15 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     parentContainer.insertAdjacentHTML('beforeend', optionsHtml);
                 }
 
-                // Keep track of subquestions to attach interactivity later
                 const subquestionNodes = [];
 
                 if (question.type === 'box-choose') {
-                    // Combine all box-choose subquestions into a single .exam-question
                     const instruction = getInstructionForType(question.type);
                     const questionNode = document.importNode(questionTemplate.content, true);
                     const examQuestionDiv = questionNode.querySelector('.exam-question');
 
                     questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
-                    // Combine all subquestions into a single .question-text with numbering
                     let combinedText = '<div class="box-choose-questions">';
                     question.subquestions.forEach((subq, index) => {
                         questionCounter++;
@@ -2324,7 +2318,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 <span class="subquestion-text">${textWithBlank}</span>
                             </div>
                         `;
-                        // Track the subquestion for interactivity
                         subquestionNodes.push({ examQuestionDiv, subqId: subq.id });
                     });
                     combinedText += '</div>';
@@ -2332,37 +2325,31 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     questionNode.querySelector('.question-text').innerHTML = combinedText;
 
                     let optionsContainer = questionNode.querySelector('.question-options');
-                    optionsContainer.innerHTML = ''; // Clear the options container
+                    optionsContainer.innerHTML = '';
 
-                    // Add "Check my answer" buttons for each subquestion
                     question.subquestions.forEach((subq) => {
-                        if (subq.correct) {
+                        if (subq.correct && subq.type !== 'box-choose') {
                             const checkBtn = document.createElement('button');
                             checkBtn.className = 'check-answer-btn';
                             checkBtn.textContent = `Check answer ${subq.id}`;
                             checkBtn.addEventListener('click', () => {
-                                // Pass the entire .exam-question div but specify the subquestion ID for checking
                                 const tempDiv = examQuestionDiv.cloneNode(true);
-                                tempDiv.dataset.questionId = subq.id; // Temporarily override the questionId for checking
+                                tempDiv.dataset.questionId = subq.id;
                                 showCheckAnswerModal(tempDiv, subq.correct);
                             });
                             optionsContainer.appendChild(checkBtn);
                         }
                     });
 
-                    // Set a general question ID for the container (e.g., the first subquestion's ID)
                     examQuestionDiv.dataset.questionId = question.subquestions[0].id;
-
                     parentContainer.appendChild(questionNode);
                 } else {
-                    // Handle other types of subquestions as before
                     question.subquestions.forEach((subq) => {
                         questionCounter++;
                         const instruction = getInstructionForType(subq.type);
                         const questionNode = document.importNode(questionTemplate.content, true);
                         const examQuestionDiv = questionNode.querySelector('.exam-question');
 
-                        // Only set question text if the type is not 'unscramble'
                         if (subq.type !== 'unscramble') {
                             questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
                         } else {
@@ -2378,11 +2365,9 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 <input type="radio" name="q${subq.id}" value="False" id="false${subq.id}">
                                 <label for="false${subq.id}">False</label>
                             `;
-                        }
-                        else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
+                        } else if (subq.type === 'multiple_choice' && Array.isArray(subq.options)) {
                             const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
                             let html = '';
-                            // Перемешиваем варианты ответа
                             const shuffledOptions = shuffleArray(subq.options);
                             shuffledOptions.forEach((option, index) => {
                                 const letter = letters[index] || '?';
@@ -2398,20 +2383,15 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 `;
                             });
                             optionsContainer.innerHTML = html;
-                        }
-                        else if (subq.type === 'unscramble') {
-                            // Split the scrambled word into individual letters
+                        } else if (subq.type === 'unscramble') {
                             const letters = subq.text.split(' ').filter(letter => letter !== '');
-                            // Shuffle the letters array
                             const shuffledLetters = shuffleArray([...letters]);
                             let lettersHtml = '<div class="unscramble-letters">';
                             shuffledLetters.forEach((letter, index) => {
-                                // Use the index from the shuffled array for display, but store the original letter
                                 lettersHtml += `<span class="unscramble-letter" data-letter="${letter}" data-index="${index}">${letter}</span>`;
                             });
                             lettersHtml += '</div>';
 
-                            // Create input boxes for each letter (based on original length)
                             let inputsHtml = '<div class="unscramble-inputs">';
                             letters.forEach((_, index) => {
                                 inputsHtml += `<span class="unscramble-input" data-index="${index}"></span>`;
@@ -2420,30 +2400,23 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
 
                             optionsContainer.innerHTML = lettersHtml + inputsHtml;
 
-                            // Add interactivity for unscramble letters
                             const letterElements = optionsContainer.querySelectorAll('.unscramble-letter');
                             const inputElements = optionsContainer.querySelectorAll('.unscramble-input');
 
                             letterElements.forEach(letterEl => {
                                 letterEl.addEventListener('click', () => {
-                                    if (letterEl.classList.contains('used')) return; // Skip if already used
-
-                                    // Find the first empty input
+                                    if (letterEl.classList.contains('used')) return;
                                     const emptyInput = Array.from(inputElements).find(input => !input.textContent);
                                     if (emptyInput) {
                                         emptyInput.textContent = letterEl.dataset.letter;
                                         emptyInput.classList.add('filled');
                                         letterEl.classList.add('used');
-
-                                        // Store reference to the letter element for later removal
                                         emptyInput.dataset.letterIndex = letterEl.dataset.index;
                                     }
                                 });
                             });
 
-                            // Add ability to remove letters by clicking on filled inputs
                             inputElements.forEach(inputEl => {
-                                // Remove any existing listeners to prevent duplicates
                                 inputEl.removeEventListener('click', handleInputClick);
                                 inputEl.addEventListener('click', handleInputClick);
                             });
@@ -2451,21 +2424,16 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                             function handleInputClick() {
                                 const inputEl = this;
                                 if (!inputEl.classList.contains('filled')) return;
-
-                                // Find the corresponding letter element and re-enable it
                                 const letterIndex = inputEl.dataset.letterIndex;
                                 const letterEl = optionsContainer.querySelector(`.unscramble-letter[data-index="${letterIndex}"]`);
                                 if (letterEl) {
                                     letterEl.classList.remove('used');
                                 }
-
-                                // Clear the input
                                 inputEl.textContent = '';
                                 inputEl.classList.remove('filled');
                                 delete inputEl.dataset.letterIndex;
                             }
-                        }
-                        else {
+                        } else {
                             optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
                         }
 
@@ -2485,27 +2453,21 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     });
                 }
 
-                // Add box-choose interactivity after all subquestions are rendered
                 if (question.type === 'box-choose') {
                     const optionElements = parentContainer.querySelectorAll('.box-choose-option');
                     const blankElements = parentContainer.querySelectorAll('.box-choose-blank');
 
-                    // Add click event to each option to select it
                     optionElements.forEach(optionEl => {
                         optionEl.addEventListener('click', () => {
-                            if (optionEl.classList.contains('used')) return; // Skip if already used
-
-                            // Deselect any previously selected option
+                            if (optionEl.classList.contains('used')) return;
                             optionElements.forEach(el => el.classList.remove('selected'));
                             optionEl.classList.add('selected');
                             selectedOption = optionEl;
                         });
                     });
 
-                    // Add click event to each blank to insert or remove the selected option
                     blankElements.forEach(blankEl => {
                         blankEl.addEventListener('click', () => {
-                            // If the blank already has an option, remove it and return the option to the list
                             if (blankEl.textContent !== '____' && blankEl.dataset.optionIndex) {
                                 const optionIndex = blankEl.dataset.optionIndex;
                                 const optionEl = parentContainer.querySelector(`.box-choose-option[data-index="${optionIndex}"]`);
@@ -2519,26 +2481,20 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 return;
                             }
 
-                            // If no option is selected, show a notification
                             if (!selectedOption) {
                                 showToastNotification('<b>Please select an option first!</b>', 'warning', 5000);
                                 return;
                             }
 
-                            // Insert the selected option into the blank
                             blankEl.textContent = selectedOption.dataset.value;
                             blankEl.dataset.optionIndex = selectedOption.dataset.index;
                             selectedOption.classList.add('used');
                             selectedOption.classList.remove('selected');
-                            selectedOption = null; // Clear the selected option
+                            selectedOption = null;
                         });
                     });
                 }
-
-                examContainer.appendChild(parentContainer);
-            }
-            // Обычный вопрос (без под-вопросов)
-            else {
+            } else {
                 questionCounter++;
                 const instruction = getInstructionForType(question.type);
                 const questionNode = document.importNode(questionTemplate.content, true);
@@ -2565,11 +2521,9 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         <input type="radio" name="q${qId}" value="False" id="false${qId}">
                         <label for="false${qId}">False</label>
                     `;
-                }
-                else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
+                } else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
                     const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
                     let html = '';
-                    // Перемешиваем варианты ответа
                     const shuffledOptions = shuffleArray(question.options);
                     shuffledOptions.forEach((option, index) => {
                         const letter = letters[index] || '?';
@@ -2585,20 +2539,15 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         `;
                     });
                     optionsContainer.innerHTML = html;
-                }
-                else if (question.type === 'unscramble') {
-                    // Split the scrambled word into individual letters
+                } else if (question.type === 'unscramble') {
                     const letters = question.text.split(' ').filter(letter => letter !== '');
-                    // Shuffle the letters array
                     const shuffledLetters = shuffleArray([...letters]);
                     let lettersHtml = '<div class="unscramble-letters">';
                     shuffledLetters.forEach((letter, index) => {
-                        // Use the index from the shuffled array for display, but store the original letter
                         lettersHtml += `<span class="unscramble-letter" data-letter="${letter}" data-index="${index}">${letter}</span>`;
                     });
                     lettersHtml += '</div>';
 
-                    // Create input boxes for each letter (based on original length)
                     let inputsHtml = '<div class="unscramble-inputs">';
                     letters.forEach((_, index) => {
                         inputsHtml += `<span class="unscramble-input" data-index="${index}"></span>`;
@@ -2607,30 +2556,23 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
 
                     optionsContainer.innerHTML = lettersHtml + inputsHtml;
 
-                    // Add interactivity for unscramble letters
                     const letterElements = optionsContainer.querySelectorAll('.unscramble-letter');
                     const inputElements = questionNode.querySelectorAll('.unscramble-input');
 
                     letterElements.forEach(letterEl => {
                         letterEl.addEventListener('click', () => {
-                            if (letterEl.classList.contains('used')) return; // Skip if already used
-
-                            // Find the first empty input
+                            if (letterEl.classList.contains('used')) return;
                             const emptyInput = Array.from(inputElements).find(input => !input.textContent);
                             if (emptyInput) {
                                 emptyInput.textContent = letterEl.dataset.letter;
                                 emptyInput.classList.add('filled');
                                 letterEl.classList.add('used');
-
-                                // Store reference to the letter element for later removal
                                 emptyInput.dataset.letterIndex = letterEl.dataset.index;
                             }
                         });
                     });
 
-                    // Add ability to remove letters by clicking on filled inputs
                     inputElements.forEach(inputEl => {
-                        // Remove any existing listeners to prevent duplicates
                         inputEl.removeEventListener('click', handleInputClick);
                         inputEl.addEventListener('click', handleInputClick);
                     });
@@ -2638,50 +2580,37 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     function handleInputClick() {
                         const inputEl = this;
                         if (!inputEl.classList.contains('filled')) return;
-
-                        // Find the corresponding letter element and re-enable it
                         const letterIndex = inputEl.dataset.letterIndex;
                         const letterEl = optionsContainer.querySelector(`.unscramble-letter[data-index="${letterIndex}"]`);
                         if (letterEl) {
                             letterEl.classList.remove('used');
                         }
-
-                        // Clear the input
                         inputEl.textContent = '';
                         inputEl.classList.remove('filled');
                         delete inputEl.dataset.letterIndex;
                     }
-                }
-                else if (question.type === 'box-choose' && Array.isArray(question.options)) {
+                } else if (question.type === 'box-choose' && Array.isArray(question.options)) {
                     let optionsHtml = '<div class="box-choose-options">';
                     question.options.forEach((option, index) => {
                         optionsHtml += `<span class="box-choose-option" data-value="${option}" data-index="${index}">${option}</span>`;
                     });
                     optionsHtml += '</div>';
-
-                    // For box-choose type, do not add the blank to optionsContainer
-                    optionsContainer.innerHTML = ''; // Clear the options container
+                    optionsContainer.innerHTML = '';
 
                     const blank = questionNode.querySelector('.box-choose-blank');
                     const optionElements = parentContainer.querySelectorAll('.box-choose-option');
 
-                    // Add click event to each option to select it
                     optionElements.forEach(optionEl => {
                         optionEl.addEventListener('click', () => {
-                            if (optionEl.classList.contains('used')) return; // Skip if already used
-
-                            // Deselect any previously selected option
+                            if (optionEl.classList.contains('used')) return;
                             optionElements.forEach(el => el.classList.remove('selected'));
                             optionEl.classList.add('selected');
                             selectedOption = optionEl;
-
                             showToastNotification('<b>Option selected! Now click the blank to insert it.</b>', 'info', 5000);
                         });
                     });
 
-                    // Add click event to the blank to insert or remove the selected option
                     blank.addEventListener('click', () => {
-                        // If the blank already has an option, remove it and return the option to the list
                         if (blank.textContent !== '____' && blank.dataset.optionIndex) {
                             const optionIndex = blank.dataset.optionIndex;
                             const optionEl = optionsContainer.querySelector(`.box-choose-option[data-index="${optionIndex}"]`);
@@ -2695,21 +2624,18 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                             return;
                         }
 
-                        // If no option is selected, show a notification
                         if (!selectedOption) {
                             showToastNotification('<b>Please select an option first!</b>', 'warning', 5000);
                             return;
                         }
 
-                        // Insert the selected option into the blank
                         blank.textContent = selectedOption.dataset.value;
                         blank.dataset.optionIndex = selectedOption.dataset.index;
                         selectedOption.classList.add('used');
                         selectedOption.classList.remove('selected');
-                        selectedOption = null; // Clear the selected option
+                        selectedOption = null;
                     });
-                } 
-                else {
+                } else {
                     optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
                 }
 
@@ -2724,83 +2650,81 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 }
 
                 examQuestionDiv.dataset.questionId = qId;
-                examContainer.appendChild(questionNode);
+                parentContainer.appendChild(questionNode);
             }
+            fragment.appendChild(parentContainer);
         });
 
-        // Обработка оставшегося времени экзамена
+        examContainer.appendChild(fragment);
+
         const timeResponse = await fetch('/get_remaining_time');
         const timeData = await (timeResponse.ok
             ? timeResponse.json()
-            : response.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
+            : timeResponse.json().then(err => { throw new Error(err.error || 'Unknown error'); }));
 
         if (timeData.remaining_time) {
-            let remainingTime = timeData.remaining_time * 1000; // перевод в миллисекунды
+            let remainingTime = timeData.remaining_time * 1000;
 
-function updateTimer() {
-    if (remainingTime <= 0) {
-        finishExam();
-        return;
-    }
+            function updateTimer() {
+                if (remainingTime <= 0) {
+                    finishExam();
+                    return;
+                }
 
-    const totalSeconds = Math.floor(remainingTime / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+                const totalSeconds = Math.floor(remainingTime / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
 
-    // Анимируем числа
-    animateNumber(hoursEl, hours);
-    animateNumber(minutesEl, minutes);
-    animateNumber(secondsEl, seconds);
+                animateNumber(hoursEl, hours);
+                animateNumber(minutesEl, minutes);
+                animateNumber(secondsEl, seconds);
 
-    // Изменяем фон и цвет чисел в зависимости от оставшегося времени
-    if (remainingTime <= 60000) { // От 0 до 1 минуты
-        examTimer.classList.add('warning-red');
-        examTimer.classList.remove('warning-yellow');
-        changeTextColor('#FF0000'); // Красный цвет
-    } else if (remainingTime <= 300000) { // От 5 до 1 минуты
-        examTimer.classList.add('warning-yellow');
-        examTimer.classList.remove('warning-red');
-        changeTextColor('black'); // Желтый цвет
-    } else {
-        examTimer.classList.remove('warning-yellow', 'warning-red');
-        changeTextColor('#007AFF'); // Синий цвет для нормального времени
-    }
+                if (remainingTime <= 60000) {
+                    examTimer.classList.add('warning-red');
+                    examTimer.classList.remove('warning-yellow');
+                    changeTextColor('#FF0000');
+                } else if (remainingTime <= 300000) {
+                    examTimer.classList.add('warning-yellow');
+                    examTimer.classList.remove('warning-red');
+                    changeTextColor('black');
+                } else {
+                    examTimer.classList.remove('warning-yellow', 'warning-red');
+                    changeTextColor('#007AFF');
+                }
 
-    remainingTime -= 1000;
-}
+                remainingTime -= 1000;
+            }
 
-function animateNumber(element, newValue) {
-    const currentValue = parseInt(element.textContent, 10);
-    if (currentValue !== newValue) {
-        const oldValue = element.textContent;
-        element.textContent = newValue;
-        element.classList.remove('animate');
-        void element.offsetWidth;  // Сброс анимации
-        element.classList.add('animate');
-        
-        // Добавление анимации перемещения старого числа
-        createOldValueAnimation(element, oldValue);
-    }
-}
+            function animateNumber(element, newValue) {
+                const currentValue = parseInt(element.textContent, 10);
+                if (currentValue !== newValue) {
+                    const oldValue = element.textContent;
+                    element.textContent = newValue;
+                    element.classList.remove('animate');
+                    void element.offsetWidth;
+                    element.classList.add('animate');
+                    createOldValueAnimation(element, oldValue);
+                }
+            }
 
-function createOldValueAnimation(element, oldValue) {
-    const oldValueElement = document.createElement('span');
-    oldValueElement.textContent = oldValue;
-    oldValueElement.classList.add('old-value');
-    element.appendChild(oldValueElement);
+            function createOldValueAnimation(element, oldValue) {
+                const oldValueElement = document.createElement('span');
+                oldValueElement.textContent = oldValue;
+                oldValueElement.classList.add('old-value');
+                element.appendChild(oldValueElement);
 
-    setTimeout(() => {
-        oldValueElement.remove(); // Удаляем старое значение после анимации
-    }, 500); // Время, соответствующее длительности анимации
-}
+                setTimeout(() => {
+                    oldValueElement.remove();
+                }, 500);
+            }
 
-function changeTextColor(color) {
-    const timerNumbers = document.querySelectorAll('.timer-number');
-    timerNumbers.forEach((num) => {
-        num.style.color = color; // Изменяем цвет чисел
-    });
-}
+            function changeTextColor(color) {
+                const timerNumbers = document.querySelectorAll('.timer-number');
+                timerNumbers.forEach((num) => {
+                    num.style.color = color;
+                });
+            }
 
             const timerInterval = setInterval(updateTimer, 1000);
 
@@ -2853,39 +2777,27 @@ function changeTextColor(color) {
             }
         }
 
-        // Находим элементы для прогресс-бара
-        const progressBar = document.getElementById('progressExamLength');
-        const progressLabel = document.getElementById('progressExamLengthLabel');
-
-        // Предположим, что examContainer — это контейнер со списком вопросов
+        let scrollTimeout;
         examContainer.addEventListener('scroll', () => {
-            // Вычисляем максимальную величину прокрутки
-            const totalScrollHeight = examContainer.scrollHeight - examContainer.clientHeight;
-            const currentScrollTop = examContainer.scrollTop;
-            
-            let percentage = 0;
-            if (totalScrollHeight > 0) {
-                percentage = (currentScrollTop / totalScrollHeight) * 100;
-            }
-            
-            // Обновляем ширину заливки
-            progressBar.style.width = percentage + '%';
-            
-            // Обновляем внешний текст с процентом (округляем до целых)
-            progressLabel.textContent = Math.round(percentage) + '%';
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const totalScrollHeight = examContainer.scrollHeight - examContainer.clientHeight;
+                const currentScrollTop = examContainer.scrollTop;
+                let percentage = totalScrollHeight > 0 ? (currentScrollTop / totalScrollHeight) * 100 : 0;
+                progressBar.style.width = percentage + '%';
+                progressLabel.textContent = Math.round(percentage) + '%';
+            }, 100);
         });
 
-        // Инициализируем кастомные аудиоплееры
         initAllWavePlayers();
 
     } catch (error) {
-		initExamSecurity(0);
+        initExamSecurity(0);
         console.error('Error:', error.message);
         handleError(error.message);
         loadingSpinner.style.display = 'none';
     }
 });
-
 
 // Функция открытия модального окна
 function openMyExamResultsModal(userData) {

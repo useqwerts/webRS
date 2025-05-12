@@ -148,9 +148,9 @@ def get_student_progress():
     
 @app.route('/api/get-leaderboard', methods=['GET'])
 def get_leaderboard_myprogress():
-
+    time.sleep(1)
     # Получаем прогресс всех студентов
-    progress_data = get_student_progress()  # Предполагается, что эта функция возвращает словарь всех студентов и их прогресса
+    progress_data = get_student_progress()
 
     if not progress_data:
         return jsonify({"error": "No student progress data found"}), 404  # Если данных нет, возвращаем ошибку
@@ -159,14 +159,26 @@ def get_leaderboard_myprogress():
     leaderboard = {}
 
     for student, data in progress_data.items():
+        raw_progress = data.get("progress", 0)
+        rounded_progress = round(raw_progress, 2)  # Округляем до двух знаков после запятой
+
         leaderboard[student] = {
-            "progress": data.get("progress", 0),
+            "progress": rounded_progress,
             "start_date": data.get("start_date", None),
             "study_days": data.get("study_days", "odd")  # Default "odd" if not provided
         }
 
     # Возвращаем все данные о студентах в формате JSON
     return jsonify(leaderboard)
+    
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    try:
+        with open('users.json', 'r') as file:
+            users = json.load(file)
+        return jsonify(users)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/get-student-progress', methods=['GET'])
 def get_progress():
@@ -444,6 +456,7 @@ def add_transaction():
         "new_balance": balances[username]
     })
     
+    
 @app.route('/api/get_balance/<username>', methods=['GET'])
 def get_balance(username):
     balances = load_balances()
@@ -468,25 +481,25 @@ current_version = "2025-01-10-v1"
 exam_questions = [
 {
     "id": 1,
-    "text": "Are the sentences True (T) or False (F)?",
+    "text": "Listen again and write true (T), false (F) or no information (NI)",
     "type": "listening",
-    "audio_Exam": "/static/exam/ProgressTest1.mp3",
+    "audio": "/static/exam/15_ROADMAP_B2_Tests_EndT_R2.mp3",
     "subquestions": [
       {
         "id": "1.1",
         "type": "multiple_choice",
-        "text": "The woman is from Halifax.",
+        "text": "Rachel hasn’t been able to sleep.",
         "options": [
           "True",
           "False",
           "No information"
         ],
-        "correct": "False"
+        "correct": "No information"
       },
       {
         "id": "1.2",
         "type": "multiple_choice",
-        "text": "It's snowy in Bedford in December.",
+        "text": "Rachel threw the jeans away by accident.",
         "options": [
           "True",
           "False",
@@ -497,252 +510,296 @@ exam_questions = [
       {
         "id": "1.3",
         "type": "multiple_choice",
-        "text": "There are old buildings in Halifax.",
+        "text": "Dave demands Rachel replace the jeans.",
         "options": [
           "True",
           "False",
           "No information"
         ],
-        "correct": "True"
+        "correct": "False"
       },
       {
         "id": "1.4",
         "type": "multiple_choice",
-        "text": "The man's father is in Canada.",
+        "text": "Service at the Thai restaurant is slow.",
         "options": [
           "True",
           "False",
           "No information"
         ],
-        "correct": "False"
+        "correct": "True"
       },
       {
         "id": "1.5",
         "type": "multiple_choice",
-        "text": "The man wants to go to Toronto.",
+        "text": "Dave likes restaurants that offer value for money.",
         "options": [
           "True",
           "False",
           "No information"
         ],
         "correct": "True"
+      },
+      {
+        "id": "1.6",
+        "type": "multiple_choice",
+        "text": "Dave doesn’t think he spends enough time with Rachel.",
+        "options": [
+          "True",
+          "False",
+          "No information"
+        ],
+        "correct": "No information"
       }
     ]
   },
 {
-    "id": 2,
-    "text": "Choose correct option.",
-    "type": "listening",
-    "audio_Exam": "/static/exam/ProgressTest1.mp3",
-    "subquestions": [
-      {
-        "id": "2.1",
-        "type": "multiple_choice",
-        "text": "The small wallets are £16",
-        "options": [
-          "True",
-          "False",
-          "No information"
+  "id": 2,
+  "type": "reading",
+  "text": (
+    "<h1>The most unusual tourist attractions</h1>"
+    "<p>"
+    "A. <strong>Island of Dolls, Mexico</strong><br>"
+    "Deep in the verdant waterways of Xochimilco near Mexico City lies a small island with a history that chills to the bone. The Island of Dolls is a place where countless dolls, in varying states of decay, hang ominously from trees. These dolls, weathered by the elements, are said to be an offering by a grieving caretaker to soothe the restless spirit of a young girl who drowned in the canal nearby. Visitors describe an intense atmosphere, where the silence is broken only by the whispering leaves and the unblinking gazes of plastic figures. It’s an attraction that blends folklore, sadness, and the supernatural."
+    "</p>"
+    "<p>"
+    "B. <strong>Temple of Rats, Deshnok, India</strong><br>"
+    "At the Karni Mata Temple in the small town of Deshnok, Rajasthan, thousands of rats scurry underfoot, revered as sacred. Locals and travellers alike tread carefully so as not to disturb these holy creatures, believed to be the reincarnated kin of the goddess Karni Mata. The air is filled with the musky scent of incense and the quiet chitter of rodents. Offerings of milk and grain are left for them, and it’s considered particularly auspicious to spot the rare white rat among the throng."
+    "</p>"
+    "<p>"
+    "C. <strong>The Gum Wall, Seattle</strong><br>"
+    "Adjacent to the box office for Seattle’s Market Theater, this colourful wall covered with used chewing gum is a quirky testament to spontaneous urban art. Starting in the early 1990s as a peculiar habit by theatregoers, it has transformed into a picturesque collage. Despite several cleanings of the walls, the gum-sticking prevailed, and the authorities eventually reversed course and embraced the eccentric tradition."
+    "</p>"
+    "<p>"
+    "D. <strong>Baldwin Street, Dunedin, New Zealand</strong><br>"
+    "Dunedin’s claim to fame is Baldwin Street, recognised by the Guinness World Records as the world’s steepest street. Visitors huff up the 35% grade slope, where the footpath is practically vertical, and houses sit at gravity-defying angles. This quirky urban wonder is a hub for novelty events, including the annual Jaffa Race, where thousands of spherical candies roll down to the amusement of spectators."
+    "</p>"
+    "<p>"
+    "E. <strong>California’s Life-Sized Dinosaurs</strong><br>"
+    "Driving through the arid landscape of Cabazon, California, travellers are greeted by the sight of enormous prehistoric beasts. These life-sized concrete dinosaurs, remnants of a prehistoric-themed park, loom large against the desert sky. Visitors can clamber up the stairs into the belly of ‘Dinny the Dinosaur’ for a whimsical view or browse the gift shop nestled within ‘Mr. Rex.’"
+    "</p>"
+    "<p>"
+    "F. <strong>Catacombs, France</strong><br>"
+    "Twenty metres beneath Paris’s bustling streets, the Catacombs house the bones of over six million Parisians. This subterranean maze was created in the late 18th century to address public health issues arising from overflowing cemeteries. Corridors lined with skulls and femurs offer a stark and somber tableau."
+    "</p>"
+  ),
+  "subquestions": [
+    {
+      "id": "2.1",
+      "type": "multiple_choice",
+      "text": "Which attraction is famous for its steep incline?",
+      "options": [
+        "Island of Dolls",
+        "Temple of Rats",
+        "The Gum Wall",
+        "Baldwin Street",
+        "California’s Life-Sized Dinosaurs",
+        "Catacombs"
+      ],
+      "correct": "The Gum Wall"
+    },
+    {
+      "id": "2.2",
+      "type": "multiple_choice",
+      "text": "Where might you be inclined to search for something that uniquely distinguishes itself from the rest?",
+      "options": [
+        "Island of Dolls",
+        "Temple of Rats",
+        "The Gum Wall",
+        "Baldwin Street",
+        "California’s Life-Sized Dinosaurs",
+        "Catacombs"
+      ],
+      "correct": "Temple of Rats"
+    },
+    {
+      "id": "2.3",
+      "type": "multiple_choice",
+      "text": "Where will you be more likely to struggle to find your way back?",
+      "options": [
+        "Island of Dolls",
+        "Temple of Rats",
+        "The Gum Wall",
+        "Baldwin Street",
+        "California’s Life-Sized Dinosaurs",
+        "Catacombs"
+      ],
+      "correct": "Catacombs"
+    },
+    {
+      "id": "2.4",
+      "type": "multiple_choice",
+      "text": "Which attraction is a testament to remarkable persistence?",
+      "options": [
+        "Island of Dolls",
+        "Temple of Rats",
+        "The Gum Wall",
+        "Baldwin Street",
+        "California’s Life-Sized Dinosaurs",
+        "Catacombs"
+      ],
+      "correct": "The Gum Wall"
+    },
+    {
+      "id": "2.5",
+      "type": "multiple_choice",
+      "text": "Which place was created to appease an afflicted soul?",
+      "options": [
+        "Island of Dolls",
+        "Temple of Rats",
+        "The Gum Wall",
+        "Baldwin Street",
+        "California’s Life-Sized Dinosaurs",
+        "Catacombs"
+      ],
+      "correct": "Island of Dolls"
+    },
+    {
+      "id": "2.6",
+      "type": "multiple_choice",
+      "text": "Which place offers sights from a peculiar height?",
+      "options": [
+        "Island of Dolls",
+        "Temple of Rats",
+        "The Gum Wall",
+        "Baldwin Street",
+        "California’s Life-Sized Dinosaurs",
+        "Catacombs"
+      ],
+      "correct": "California’s Life-Sized Dinosaurs"
+    },
+    {
+      "id": "2.7",
+      "type": "multiple_choice",
+      "text": "Which place brings the locals together?",
+      "options": [
+        "Island of Dolls",
+        "Temple of Rats",
+        "The Gum Wall",
+        "Baldwin Street",
+        "California’s Life-Sized Dinosaurs",
+        "Catacombs"
+      ],
+      "correct": "Baldwin Street"
+    },
+    {
+      "id": "2.8",
+      "type": "multiple_choice",
+      "text": "Which place will fill you with a sense of eerie isolation?",
+      "options": [
+        "Island of Dolls",
+        "Temple of Rats",
+        "The Gum Wall",
+        "Baldwin Street",
+        "California’s Life-Sized Dinosaurs",
+        "Catacombs"
+      ],
+      "correct": "Island of Dolls"
+    }
+  ]
+},
+    {
+        "id": 3,
+        "type": "picture",
+        "text": "For each question, choose the correct answer.",
+        "images": [
+            "/static/exam/PET1.jpg"
         ],
-        "correct": "False"
-      },
-      {
-        "id": "2.2",
-        "type": "multiple_choice",
-        "text": "The man wants a small wallet.",
-        "options": [
-          "True",
-          "False",
-          "No information"
+        "subquestions": [
+            {
+                "id": "3.1",
+                "type": "multiple_choice",
+                "text": "Choose the correct answer.",
+                "options": [
+                "Order the cinema tickets.",
+                "Collect the tickets.",
+                "Meet after work to go to the cinema."
+                           ],
+                "correct": "Collect the tickets."
+            }
+        ]
+    },
+        {
+        "id": 4,
+        "type": "picture",
+        "text": "For each question, choose the correct answer.",
+        "images": [
+            "/static/exam/PET2.jpg"
         ],
-        "correct": "False"
-      },
-      {
-        "id": "2.3",
-        "type": "multiple_choice",
-        "text": "The man wants an umbrella.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "True"
-      },
-      {
-        "id": "2.4",
-        "type": "multiple_choice",
-        "text": "The shop hasn't got any umbrellas.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "True"
-      },
-      {
-        "id": "2.5",
-        "type": "multiple_choice",
-        "text": "The man buys a wallet for £19.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "True"
-      }
-    ]
-  },
-{
-    "id": 3,
-    "text": "Complete the sentences with the words in the box.",
-    "type": "box-choose",
-    "options": [
-      "apple",
-      "Australia",
-      "bus",
-      "father",
-      "friendly",
-      "holiday",
-      "next",
-      "nurse",
-      "Sunday",
-      "watch"
-    ],
-    "subquestions": [
-      {
-        "id": "3.1",
-        "type": "box-choose",
-        "text": "Susan lives in Sydney in ____.",
-        "correct": "Australia"
-      },
-      {
-        "id": "3.2",
-        "type": "box-choose",
-        "text": "My husband and I are here on ____.",
-        "correct": "holiday"
-      },
-      {
-        "id": "3.3",
-        "type": "box-choose",
-        "text": "His ____ is a teacher at my school.",
-        "correct": "father"
-      },
-      {
-        "id": "3.4",
-        "type": "box-choose",
-        "text": "Jan goes to work by ____.",
-        "correct": "bus"
-      },
-      {
-        "id": "3.5",
-        "type": "box-choose",
-        "text": "I'm a ____ in a hospital.",
-        "correct": "nurse"
-      },
-      {
-        "id": "3.6",
-        "type": "box-choose",
-        "text": "The hotel is ____ to the cinema.",
-        "correct": "next"
-      },
-      {
-        "id": "3.7",
-        "type": "box-choose",
-        "text": "I have lunch at two o'clock every ____.",
-        "correct": "Sunday"
-      },
-      {
-        "id": "3.8",
-        "type": "box-choose",
-        "text": "Our neighbours have got a ____ dog.",
-        "correct": "friendly"
-      },
-      {
-        "id": "3.9",
-        "type": "box-choose",
-        "text": "After dinner I ____ TV.",
-        "correct": "watch"
-      },
-      {
-        "id": "3.10",
-        "type": "box-choose",
-        "text": "I've got an ____ in my bag.",
-        "correct": "apple"
-      }
-    ]
-  },
-  {
-    "id": 4,
-    "text": "Choose the correct word to complete the sentences.",
-    "type": "multiple_choice",
-    "subquestions": [
-      {
-        "id": "4.1",
-        "type": "multiple_choice",
-        "text": "____ is your phone number?",
-        "options": [
-          "How",
-          "What",
-          "Where"
-        ],
-        "correct": "What"
-      },
-      {
-        "id": "4.2",
-        "type": "multiple_choice",
-        "text": "Is ____ your sister?",
-        "options": [
-          "that",
-          "these",
-          "he"
-        ],
-        "correct": "that"
-      },
-      {
-        "id": "4.3",
-        "type": "multiple_choice",
-        "text": "You ____ got any brothers.",
-        "options": [
-          "doesn't",
-          "haven't",
-          "hasn't"
-        ],
-        "correct": "haven't"
-      },
-      {
-        "id": "4.4",
-        "type": "multiple_choice",
-        "text": "Elijah and his friends like ____ school.",
-        "options": [
-          "they",
-          "there",
-          "their"
-        ],
-        "correct": "their"
-      },
-      {
-        "id": "4.5",
-        "type": "multiple_choice",
-        "text": "Mathias and Max ____ engineers.",
-        "options": [
-          "are",
-          "is",
-          "be"
-        ],
-        "correct": "are"
-      }
-    ]
-  },
-      {
+        "subquestions": [
+            {
+                "id": "4.1",
+                "type": "multiple_choice",
+                "text": "Choose the correct answer.",
+                "options": [
+                "The lift is only for employees.",
+                "Ask someone if you need help with the lift.",
+                "The lift isn't working."
+                           ],
+                "correct": "The lift isn't working."
+            }
+        ]
+    },
+        {
         "id": 5,
-        "text": "Put in right order the gaps.",
-        "type": "unscramble",
+        "type": "picture",
+        "text": "For each question, choose the correct answer.",
+        "images": [
+            "/static/exam/PET3.jpg"
+        ],
         "subquestions": [
             {
                 "id": "5.1",
-                "type": "unscramble",
-                "text": "What is your phone number",
-                "correct": "Whatisyourphonenumber"
+                "type": "multiple_choice",
+                "text": "Choose the correct answer.",
+                "options": [
+                "Think about what you can have for dinner.",
+                "Buy something for dinner.",
+                "Prepare the dinner."
+                           ],
+                "correct": "Prepare the dinner."
+            }
+        ]
+    },
+        {
+        "id": 6,
+        "type": "picture",
+        "text": "For each question, choose the correct answer.",
+        "images": [
+            "/static/exam/PET4.jpg"
+        ],
+        "subquestions": [
+            {
+                "id": "6.1",
+                "type": "multiple_choice",
+                "text": "Choose the correct answer.",
+                "options": [
+                "This car park is for people who use the shop.",
+                "No parking here.",
+                "Anyone can park here."
+                           ],
+                "correct": "This car park is for people who use the shop."
+            }
+        ]
+    },
+        {
+        "id": 7,
+        "type": "picture",
+        "text": "For each question, choose the correct answer.",
+        "images": [
+            "/static/exam/PET5.jpg"
+        ],
+        "subquestions": [
+            {
+                "id": "7.1",
+                "type": "multiple_choice",
+                "text": "Choose the correct answer.",
+                "options": [
+                "The cafe is where the builders eat.",
+                "Students will be told when the cafe is open.",
+                "The cafe will still be open while building work is being done."
+                           ],
+                "correct": "Students will be told when the cafe is open."
             }
         ]
     }
@@ -786,10 +843,14 @@ def get_leaderboard():
 def handle_temp_ban(data):
     username = data.get('username')
     duration = data.get('duration')
-    print(f"Temporary ban for {username} for {duration} seconds")
     # Эмиттируем событие обратно клиенту с именем пользователя и длительностью
     socketio.emit('tempBanUser', {'username': username, 'duration': duration})
-
+    
+@socketio.on('unblockUser')
+def handle_unblock_user(data):
+    username = data.get('username')
+    # Эмиттируем событие обратно клиенту с именем пользователя
+    socketio.emit('unblockUser', {'username': username})
 
 @socketio.on('unblockUserRequest')
 def handle_unblock(data):
@@ -1230,6 +1291,7 @@ def get_exam_questions_result():
 
 @app.route('/get_exam_questions', methods=['GET'])
 def get_exam_questions():
+    time.sleep(1)
 
     username = request.args.get("username")  # Получаем имя пользователя из запроса
 
@@ -1253,7 +1315,7 @@ def get_exam_questions():
 @app.route('/api/get_exam_results', methods=['GET'])
 def get_exam_results():
     try:
-        time.sleep(5)
+        time.sleep(2)
         # Проверяем, существует ли файл с результатами
         if not os.path.exists('exam_results.json'):
             return jsonify({"error": "No exam results found"}), 404
@@ -1416,6 +1478,10 @@ def handle_submitted_exam():
 @app.route("/chatCRM")
 def crm():
     return render_template("chatCRM.html")
+    
+@app.route("/CRM-platform")
+def crm_system():
+    return render_template("CRM-platform.html")
 
 @app.route("/release-update", methods=["POST"])
 def release_update():
@@ -1543,6 +1609,25 @@ def get_sessions():
             })
     
     return jsonify({'sessions': sessions_data})
+    
+@app.route('/api/sessions/')
+def get_sessions_api():
+    sessions_data = []
+
+    # Iterate through all users and their sessions
+    for username, devices in active_sessions.items():
+        for device in devices:
+            sessions_data.append({
+                'username': username,  # Include username in the response
+                'deviceType': device.get('Device-Type', 'Unknown'),
+                'platform': device.get('Platform', 'Unknown'),
+                'os': device.get('OS', 'Unknown'),
+                'browser': device.get('User-Agent', 'Unknown').split(' ')[0],  # Get only browser name
+                'ipAddress': device.get('IP-Address', 'Unknown'),
+                'language': device.get('Language', 'Unknown')
+            })
+    
+    return jsonify({'sessions': sessions_data})
 
 @app.route('/chat')
 def chat():
@@ -1550,7 +1635,6 @@ def chat():
         return redirect(url_for('login'))
     return render_template('index.html', username=session.get('username', ''))
     
-
 @app.route('/logout', methods=['POST'])
 def logout():
     username = session.pop('username', None)
