@@ -2361,31 +2361,62 @@ h2 {
     animation: pulseGlow 2s infinite ease-in-out;
 }
 
-/* 🔵 Timer Container */
+/* ⏳ Timer Container – Final Version with Clean Shimmer + Glow */
 .timer-container {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 1.5rem;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 40px;
-    padding: 20px 50px;
-    color: #ffffff;
+    padding: 22px 60px;
+    border-radius: 50px;
+    font-size: 1.6rem;
+    font-weight: 600;
     text-transform: uppercase;
-    backdrop-filter: blur(20px);
-    box-shadow: inset -4px -4px 8px rgba(255, 255, 255, 0.3),
-                inset 4px 4px 8px rgba(0, 0, 0, 0.2),
-                0 10px 30px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow:
+        0 0 25px rgba(255, 255, 255, 0.4),
+        0 0 40px rgba(0, 132, 255, 0.25),
+        inset 1px 1px 3px rgba(255, 255, 255, 0.2),
+        inset -1px -1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    cursor: default;
 }
 
-/* 🖱️ Hover Effect */
-.timer-container:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+/* ✨ True Shimmer Layer */
+.timer-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    height: 100%;
+    width: 150%;
+    background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-20deg);
+    animation: shimmer-timer 3s infinite ease-in-out;
+    pointer-events: none;
 }
+
+/* 🎞️ Smooth shimmer sweeping from left to right */
+@keyframes shimmer-timer {
+    0% {
+        left: -150%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
 
 /* 💡 Glowing Pulse Animation */
 @keyframes pulseGlow {
@@ -2796,7 +2827,6 @@ h2 {
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 20px;
-  text-shadow: 0 0 15px rgba(0, 255, 255, 0.3), 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 p {
@@ -4103,6 +4133,7 @@ p {
 
 /* Style the blank to indicate it’s clickable (empty state) */
 .box-choose-blank {
+	margin: 5px;
     position: relative;
     background: var(--glass-bg);
     backdrop-filter: blur(5px);
@@ -5301,7 +5332,6 @@ input[type="password"].error {
     border-radius: 15px;
     color: #ffffff;
     padding: 15px;
-    max-height: 600px;
     overflow-y: auto;
     text-align: left;
 }
@@ -6535,7 +6565,7 @@ hr {
   color: #f0f4f8; /* очень светлый текст для хорошей читаемости */
   font-size: 1.05em;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  max-height: 100%;
+  /*max-height: 100%;*/
   overflow-y: auto;
   backdrop-filter: blur(10px); /* создаём эффект стекла */
   transition: background 0.4s ease, box-shadow 0.4s ease;

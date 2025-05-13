@@ -1,1 +1,286 @@
-{}
+{
+    "Muhammadiso": {
+        "correct": 1,
+        "incorrect": 0,
+        "skipped": 33,
+        "total_questions": 34,
+        "correct_percentage": 2.941176470588235,
+        "rewarded": false,
+        "coins": 0,
+        "time_finished": "2025-05-13 16:29:01",
+        "results": [
+            {
+                "question_type": "true_false",
+                "question_id": "1.1",
+                "question": "The reviewer didn't think she was going to enjoy the first film.",
+                "user_answer": null,
+                "correct_answer": "True",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "1.2",
+                "question": "The first scene of the first film is important for the rest of the film.",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "1.3",
+                "question": "The reviewer was glad the first film was set in a different country.",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "1.4",
+                "question": "There is another sequel planned for the first film.",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "1.5",
+                "question": "The reviewer had some doubts about the actors who were chosen for the second film.",
+                "user_answer": null,
+                "correct_answer": "True",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "1.6",
+                "question": "The second film made the reviewer think about her children.",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "2.1",
+                "question": "_____ thought about leaving the Harry Potter series.",
+                "user_answer": null,
+                "correct_answer": "Rupert Grint",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "2.2",
+                "question": "_____ felt that (s)he and his/her character had a lot in common.",
+                "user_answer": null,
+                "correct_answer": "Emma Watson",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "2.3",
+                "question": "_____ didn\u2019t feel fashionable while acting in the series.",
+                "user_answer": null,
+                "correct_answer": "Daniel Ratcliffe",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "2.4",
+                "question": "As a teenager, ______ felt that other teens were different from him/her.",
+                "user_answer": null,
+                "correct_answer": "Rupert Grint",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "2.5",
+                "question": "______ felt ashamed because (s)he didn\u2019t like being famous.",
+                "user_answer": null,
+                "correct_answer": "Emma Watson",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "2.6",
+                "question": "______ is embarrassed by his/her lack of talent as a young actor.",
+                "user_answer": null,
+                "correct_answer": "Daniel Ratcliffe",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "2.7",
+                "question": "______ felt that his/her character\u2019s personality took over his/her own.",
+                "user_answer": null,
+                "correct_answer": "Emma Watson",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "2.8",
+                "question": "______ considered education as important as acting.",
+                "user_answer": null,
+                "correct_answer": "Emma Watson",
+                "is_correct": false
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "3.1",
+                "question": "____ you there?",
+                "user_answer": null,
+                "correct_answer": "Are",
+                "is_correct": false
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "3.2",
+                "question": "____ you thought about what to get her?",
+                "user_answer": null,
+                "correct_answer": "Have",
+                "is_correct": false
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "3.3",
+                "question": "____ you mean a present?",
+                "user_answer": null,
+                "correct_answer": "Do",
+                "is_correct": false
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "3.4",
+                "question": "____ you got any ideas?",
+                "user_answer": null,
+                "correct_answer": "Have",
+                "is_correct": false
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "3.5",
+                "question": "____ just had an idea for a gift.",
+                "user_answer": null,
+                "correct_answer": "I've",
+                "is_correct": false
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "3.6",
+                "question": "____ back now.",
+                "user_answer": null,
+                "correct_answer": "I'm",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "4.1",
+                "question": "Which sentence best summarises Banjo_Boy\u2019s situation?",
+                "user_answer": null,
+                "correct_answer": "He is worried about making mistakes in his language and behaviour when he goes to Britain.",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "4.2",
+                "question": "What is Sara_May\u2019s advice?",
+                "user_answer": null,
+                "correct_answer": "Neither the vocabulary nor the accent differences are hard to understand.",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "4.3",
+                "question": "According to Paulo_Riviera_166, British people are...",
+                "user_answer": null,
+                "correct_answer": "respectful and distant",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "4.4",
+                "question": "According to Nellie_111, Americans are ... than British people.",
+                "user_answer": null,
+                "correct_answer": "more likely to call their parents by a formal title",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "4.5",
+                "question": "Why does Bubbles disagree with Sara_May?",
+                "user_answer": null,
+                "correct_answer": "She thinks the British accent is difficult to understand.",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "4.6",
+                "question": "Which of the four people responded to the question: \u201cI heard that English people are more unfriendly and polite. Is that true?\u201d",
+                "user_answer": null,
+                "correct_answer": "Paulo_Riviera_166 and Nellie_111.",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "5.1",
+                "question": "No one really knows the truth about the situation with John.",
+                "user_answer": null,
+                "correct_answer": "True",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "5.2",
+                "question": "Kiera doesn't immediately share everything she knows about John.",
+                "user_answer": "True",
+                "correct_answer": "True",
+                "is_correct": true
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "5.3",
+                "question": "Susanne wasn't the original creator of the cars idea.",
+                "user_answer": null,
+                "correct_answer": "True",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "5.4",
+                "question": "Susanne reported John to people higher up in the company.",
+                "user_answer": null,
+                "correct_answer": "True",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "5.5",
+                "question": "Kiera disagrees with what Will has said about John's aggressive behaviour.",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "5.6",
+                "question": "Kiera saw John stealing ideas from other people.",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "5.7",
+                "question": "Kiera made an official complaint about John's behaviour.",
+                "user_answer": null,
+                "correct_answer": "False",
+                "is_correct": false
+            },
+            {
+                "question_type": "true_false",
+                "question_id": "5.8",
+                "question": "There was a culture of silence that meant John was not investigated earlier.",
+                "user_answer": null,
+                "correct_answer": "True",
+                "is_correct": false
+            }
+        ]
+    }
+}

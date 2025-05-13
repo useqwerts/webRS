@@ -2115,7 +2115,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         finishExamButton.style.display = 'block';
         examTimer.style.display = 'flex';
         wrapper.style.display = 'flex';
-        //initExamSecurity(true);
+        initExamSecurity(true);
 
         const questionTemplate = document.getElementById('questionTemplate');
         let questionCounter = 0;

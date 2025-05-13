@@ -28,7 +28,7 @@ messages = []  # Store messages locally
 
 API_KEY_EXPIRATION = 10
 
-exam_duration = 30 * 60  # 30 minutes in seconds
+exam_duration = 60 * 60  # 30 minutes in seconds
 exam_start_time = None  # Global variable to store exam start time
 exam_started = False  # Флаг начала экзамена
 exam_end_time = None
@@ -480,329 +480,356 @@ current_version = "2025-01-10-v1"
 
 exam_questions = [
 {
-    "id": 1,
-    "text": "Listen again and write true (T), false (F) or no information (NI)",
-    "type": "listening",
-    "audio": "/static/exam/15_ROADMAP_B2_Tests_EndT_R2.mp3",
-    "subquestions": [
-      {
-        "id": "1.1",
-        "type": "multiple_choice",
-        "text": "Rachel hasn’t been able to sleep.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "No information"
-      },
-      {
-        "id": "1.2",
-        "type": "multiple_choice",
-        "text": "Rachel threw the jeans away by accident.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "True"
-      },
-      {
-        "id": "1.3",
-        "type": "multiple_choice",
-        "text": "Dave demands Rachel replace the jeans.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "False"
-      },
-      {
-        "id": "1.4",
-        "type": "multiple_choice",
-        "text": "Service at the Thai restaurant is slow.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "True"
-      },
-      {
-        "id": "1.5",
-        "type": "multiple_choice",
-        "text": "Dave likes restaurants that offer value for money.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "True"
-      },
-      {
-        "id": "1.6",
-        "type": "multiple_choice",
-        "text": "Dave doesn’t think he spends enough time with Rachel.",
-        "options": [
-          "True",
-          "False",
-          "No information"
-        ],
-        "correct": "No information"
-      }
-    ]
-  },
+  "id": 1,
+  "text": "Listen the review. Are the sentences true or false?",
+  "type": "listening",
+  "audio": "/static/exam/LE_listening_B2_Film_reviews.mp3",
+  "subquestions": [
+    {
+      "id": "1.1",
+      "type": "true_false",
+      "text": "The reviewer didn't think she was going to enjoy the first film.",
+      "correct": "True"
+    },
+    {
+      "id": "1.2",
+      "type": "true_false",
+      "text": "The first scene of the first film is important for the rest of the film.",
+      "correct": "False"
+    },
+    {
+      "id": "1.3",
+      "type": "true_false",
+      "text": "The reviewer was glad the first film was set in a different country.",
+      "correct": "False"
+    },
+    {
+      "id": "1.4",
+      "type": "true_false",
+      "text": "There is another sequel planned for the first film.",
+      "correct": "False"
+    },
+    {
+      "id": "1.5",
+      "type": "true_false",
+      "text": "The reviewer had some doubts about the actors who were chosen for the second film.",
+      "correct": "True"
+    },
+    {
+      "id": "1.6",
+      "type": "true_false",
+      "text": "The second film made the reviewer think about her children.",
+      "correct": "False"
+    }
+  ]
+},
 {
   "id": 2,
   "type": "reading",
-  "text": (
-    "<h1>The most unusual tourist attractions</h1>"
+    "text": (
+    "<h1>Where Are the Harry Potter Stars Now?</h1>"
     "<p>"
-    "A. <strong>Island of Dolls, Mexico</strong><br>"
-    "Deep in the verdant waterways of Xochimilco near Mexico City lies a small island with a history that chills to the bone. The Island of Dolls is a place where countless dolls, in varying states of decay, hang ominously from trees. These dolls, weathered by the elements, are said to be an offering by a grieving caretaker to soothe the restless spirit of a young girl who drowned in the canal nearby. Visitors describe an intense atmosphere, where the silence is broken only by the whispering leaves and the unblinking gazes of plastic figures. It’s an attraction that blends folklore, sadness, and the supernatural."
+    "<strong>Daniel Radcliffe</strong><br>"
+    "Daniel Radcliffe, who played Harry Potter in all eight films, recently admitted he only just realized how cool people thought he was at the time—something he didn’t feel himself. Despite his current success, he finds it hard to watch the early movies because he didn’t receive acting training on set and believes his performances were one-dimensional. It wasn’t until working with actor Gary Oldman that he began to understand how to approach a role. Interestingly, Daniel never aimed to become an actor; in early interviews, he even said he wanted to be a professional wrestler!"
     "</p>"
     "<p>"
-    "B. <strong>Temple of Rats, Deshnok, India</strong><br>"
-    "At the Karni Mata Temple in the small town of Deshnok, Rajasthan, thousands of rats scurry underfoot, revered as sacred. Locals and travellers alike tread carefully so as not to disturb these holy creatures, believed to be the reincarnated kin of the goddess Karni Mata. The air is filled with the musky scent of incense and the quiet chitter of rodents. Offerings of milk and grain are left for them, and it’s considered particularly auspicious to spot the rare white rat among the throng."
+    "<strong>Rupert Grint</strong><br>"
+    "Rupert Grint, known for playing Ron Weasley, struggled with fame at a young age. Being constantly surrounded by adults, he felt out of place with peers when returning to school. After the fourth film, he even considered quitting the series, describing it as 'a bit of a drag.' He found being recognized everywhere unsettling and disliked being known only as Ron. Nevertheless, Rupert eventually came to terms with the attention and now looks back on the films as a meaningful and proud part of his life."
     "</p>"
     "<p>"
-    "C. <strong>The Gum Wall, Seattle</strong><br>"
-    "Adjacent to the box office for Seattle’s Market Theater, this colourful wall covered with used chewing gum is a quirky testament to spontaneous urban art. Starting in the early 1990s as a peculiar habit by theatregoers, it has transformed into a picturesque collage. Despite several cleanings of the walls, the gum-sticking prevailed, and the authorities eventually reversed course and embraced the eccentric tradition."
+    "<strong>Emma Watson</strong><br>"
+    "Emma Watson, who portrayed Hermione Granger, strongly identified with her character—both were top students and not considered cool. She became so immersed in playing Hermione that she struggled to separate her identity from the role and feels she missed out on her teenage years. After the series ended, Emma pursued academics and achieved top grades. She now chooses meaningful film roles and has become a prominent advocate for women’s rights. Though she has undergone therapy to cope with the effects of fame, focusing on her family has helped her rediscover who she is beyond Hermione."
     "</p>"
-    "<p>"
-    "D. <strong>Baldwin Street, Dunedin, New Zealand</strong><br>"
-    "Dunedin’s claim to fame is Baldwin Street, recognised by the Guinness World Records as the world’s steepest street. Visitors huff up the 35% grade slope, where the footpath is practically vertical, and houses sit at gravity-defying angles. This quirky urban wonder is a hub for novelty events, including the annual Jaffa Race, where thousands of spherical candies roll down to the amusement of spectators."
-    "</p>"
-    "<p>"
-    "E. <strong>California’s Life-Sized Dinosaurs</strong><br>"
-    "Driving through the arid landscape of Cabazon, California, travellers are greeted by the sight of enormous prehistoric beasts. These life-sized concrete dinosaurs, remnants of a prehistoric-themed park, loom large against the desert sky. Visitors can clamber up the stairs into the belly of ‘Dinny the Dinosaur’ for a whimsical view or browse the gift shop nestled within ‘Mr. Rex.’"
-    "</p>"
-    "<p>"
-    "F. <strong>Catacombs, France</strong><br>"
-    "Twenty metres beneath Paris’s bustling streets, the Catacombs house the bones of over six million Parisians. This subterranean maze was created in the late 18th century to address public health issues arising from overflowing cemeteries. Corridors lined with skulls and femurs offer a stark and somber tableau."
-    "</p>"
-  ),
+),
   "subquestions": [
     {
       "id": "2.1",
       "type": "multiple_choice",
-      "text": "Which attraction is famous for its steep incline?",
+      "text": "_____ thought about leaving the Harry Potter series.",
       "options": [
-        "Island of Dolls",
-        "Temple of Rats",
-        "The Gum Wall",
-        "Baldwin Street",
-        "California’s Life-Sized Dinosaurs",
-        "Catacombs"
+        "Daniel Ratcliffe",
+        "Rupert Grint",
+        "Emma Watson"
       ],
-      "correct": "The Gum Wall"
+      "correct": "Rupert Grint"
     },
     {
       "id": "2.2",
       "type": "multiple_choice",
-      "text": "Where might you be inclined to search for something that uniquely distinguishes itself from the rest?",
+      "text": "_____ felt that (s)he and his/her character had a lot in common.",
       "options": [
-        "Island of Dolls",
-        "Temple of Rats",
-        "The Gum Wall",
-        "Baldwin Street",
-        "California’s Life-Sized Dinosaurs",
-        "Catacombs"
+        "Daniel Ratcliffe",
+        "Rupert Grint",
+        "Emma Watson"
       ],
-      "correct": "Temple of Rats"
+      "correct": "Emma Watson"
     },
     {
       "id": "2.3",
       "type": "multiple_choice",
-      "text": "Where will you be more likely to struggle to find your way back?",
+      "text": "_____ didn’t feel fashionable while acting in the series.",
       "options": [
-        "Island of Dolls",
-        "Temple of Rats",
-        "The Gum Wall",
-        "Baldwin Street",
-        "California’s Life-Sized Dinosaurs",
-        "Catacombs"
+        "Daniel Ratcliffe",
+        "Rupert Grint",
+        "Emma Watson"
       ],
-      "correct": "Catacombs"
+      "correct": "Daniel Ratcliffe"
     },
     {
       "id": "2.4",
       "type": "multiple_choice",
-      "text": "Which attraction is a testament to remarkable persistence?",
+      "text": "As a teenager, ______ felt that other teens were different from him/her.",
       "options": [
-        "Island of Dolls",
-        "Temple of Rats",
-        "The Gum Wall",
-        "Baldwin Street",
-        "California’s Life-Sized Dinosaurs",
-        "Catacombs"
+        "Daniel Ratcliffe",
+        "Rupert Grint",
+        "Emma Watson"
       ],
-      "correct": "The Gum Wall"
+      "correct": "Rupert Grint"
     },
     {
       "id": "2.5",
       "type": "multiple_choice",
-      "text": "Which place was created to appease an afflicted soul?",
+      "text": "______ felt ashamed because (s)he didn’t like being famous.",
       "options": [
-        "Island of Dolls",
-        "Temple of Rats",
-        "The Gum Wall",
-        "Baldwin Street",
-        "California’s Life-Sized Dinosaurs",
-        "Catacombs"
+        "Daniel Ratcliffe",
+        "Rupert Grint",
+        "Emma Watson"
       ],
-      "correct": "Island of Dolls"
+      "correct": "Emma Watson"
     },
     {
       "id": "2.6",
       "type": "multiple_choice",
-      "text": "Which place offers sights from a peculiar height?",
+      "text": "______ is embarrassed by his/her lack of talent as a young actor.",
       "options": [
-        "Island of Dolls",
-        "Temple of Rats",
-        "The Gum Wall",
-        "Baldwin Street",
-        "California’s Life-Sized Dinosaurs",
-        "Catacombs"
+        "Daniel Ratcliffe",
+        "Rupert Grint",
+        "Emma Watson"
       ],
-      "correct": "California’s Life-Sized Dinosaurs"
+      "correct": "Daniel Ratcliffe"
     },
     {
       "id": "2.7",
       "type": "multiple_choice",
-      "text": "Which place brings the locals together?",
+      "text": "______ felt that his/her character’s personality took over his/her own.",
       "options": [
-        "Island of Dolls",
-        "Temple of Rats",
-        "The Gum Wall",
-        "Baldwin Street",
-        "California’s Life-Sized Dinosaurs",
-        "Catacombs"
+        "Daniel Ratcliffe",
+        "Rupert Grint",
+        "Emma Watson"
       ],
-      "correct": "Baldwin Street"
+      "correct": "Emma Watson"
     },
     {
       "id": "2.8",
       "type": "multiple_choice",
-      "text": "Which place will fill you with a sense of eerie isolation?",
+      "text": "______ considered education as important as acting.",
       "options": [
-        "Island of Dolls",
-        "Temple of Rats",
-        "The Gum Wall",
-        "Baldwin Street",
-        "California’s Life-Sized Dinosaurs",
-        "Catacombs"
+        "Daniel Ratcliffe",
+        "Rupert Grint",
+        "Emma Watson"
       ],
-      "correct": "Island of Dolls"
+      "correct": "Emma Watson"
     }
   ]
 },
+{
+  "id": 3,
+  "text": "Complete the questions with words/phrases from the box.",
+  "type": "box-choose",
+  "options": ["Are", "Have", "Do", "I'm", "I've", "Have"],
+  "subquestions": [
     {
-        "id": 3,
-        "type": "picture",
-        "text": "For each question, choose the correct answer.",
-        "images": [
-            "/static/exam/PET1.jpg"
-        ],
-        "subquestions": [
-            {
-                "id": "3.1",
-                "type": "multiple_choice",
-                "text": "Choose the correct answer.",
-                "options": [
-                "Order the cinema tickets.",
-                "Collect the tickets.",
-                "Meet after work to go to the cinema."
-                           ],
-                "correct": "Collect the tickets."
-            }
-        ]
+      "id": "3.1",
+      "type": "box-choose",
+      "text": "____ you there?",
+      "correct": "Are"
+    },
+    {
+      "id": "3.2",
+      "type": "box-choose",
+      "text": "____ you thought about what to get her?",
+      "correct": "Have"
     },
         {
-        "id": 4,
-        "type": "picture",
-        "text": "For each question, choose the correct answer.",
-        "images": [
-            "/static/exam/PET2.jpg"
-        ],
-        "subquestions": [
-            {
-                "id": "4.1",
-                "type": "multiple_choice",
-                "text": "Choose the correct answer.",
-                "options": [
-                "The lift is only for employees.",
-                "Ask someone if you need help with the lift.",
-                "The lift isn't working."
-                           ],
-                "correct": "The lift isn't working."
-            }
-        ]
+      "id": "3.3",
+      "type": "box-choose",
+      "text": "____ you mean a present?",
+      "correct": "Do"
     },
         {
-        "id": 5,
-        "type": "picture",
-        "text": "For each question, choose the correct answer.",
-        "images": [
-            "/static/exam/PET3.jpg"
-        ],
-        "subquestions": [
-            {
-                "id": "5.1",
-                "type": "multiple_choice",
-                "text": "Choose the correct answer.",
-                "options": [
-                "Think about what you can have for dinner.",
-                "Buy something for dinner.",
-                "Prepare the dinner."
-                           ],
-                "correct": "Prepare the dinner."
-            }
-        ]
+      "id": "3.4",
+      "type": "box-choose",
+      "text": "____ you got any ideas?",
+      "correct": "Have"
     },
         {
-        "id": 6,
-        "type": "picture",
-        "text": "For each question, choose the correct answer.",
-        "images": [
-            "/static/exam/PET4.jpg"
-        ],
-        "subquestions": [
-            {
-                "id": "6.1",
-                "type": "multiple_choice",
-                "text": "Choose the correct answer.",
-                "options": [
-                "This car park is for people who use the shop.",
-                "No parking here.",
-                "Anyone can park here."
-                           ],
-                "correct": "This car park is for people who use the shop."
-            }
-        ]
+      "id": "3.5",
+      "type": "box-choose",
+      "text": "____ just had an idea for a gift.",
+      "correct": "I've"
     },
         {
-        "id": 7,
-        "type": "picture",
-        "text": "For each question, choose the correct answer.",
-        "images": [
-            "/static/exam/PET5.jpg"
-        ],
-        "subquestions": [
-            {
-                "id": "7.1",
-                "type": "multiple_choice",
-                "text": "Choose the correct answer.",
-                "options": [
-                "The cafe is where the builders eat.",
-                "Students will be told when the cafe is open.",
-                "The cafe will still be open while building work is being done."
-                           ],
-                "correct": "Students will be told when the cafe is open."
-            }
-        ]
+      "id": "3.6",
+      "type": "box-choose",
+      "text": "____ back now.",
+      "correct": "I'm"
     }
+  ]
+},
+{
+  "id": 4,
+  "type": "reading",
+"text": (
+  "<h1>Forum Discussion: Studying English in the UK</h1>"
+  "<p><strong>Banjo_Boy asks:</strong><br>"
+  "I was in the USA on a language course last summer. It was a fantastic learning experience! People were so friendly and welcoming. I’m going on a British summer course this year. I heard that English people are more unfriendly and polite. Is that true? I’m worried about the language as well. I learned American English at school, and I’ve heard that British English is different. I’m worried that I’ll misunderstand everyone, make errors and appear impolite. Can anyone help?"
+  "</p>"
+  "<p><strong>Sara_May replies:</strong><br>"
+  "Don’t worry about the language! It’s mostly the same. In terms of grammar, there are no differences at all. There are a few vocabulary differences though, like in the USA they say ‘subway’, ‘gas’ and ‘apartment’, while in Britain they say ‘underground’, ‘petrol’ and ‘flat’. But it won’t be a problem. You’ll understand those unfamiliar words from the context. What’s more, British people will understand you if you use American words. After all, they watch lots of American shows on television. The British accent is very different from the American one, but personally, I find it easier to understand."
+  "</p>"
+  "<p><strong>Paulo_Riviera_166 replies:</strong><br>"
+  "You won’t find the language confusing, but people’s behaviour is very different, in my opinion. Americans are more informal and open. They talk about anything – their money, their weight, their health. They are enthusiastic and friendly, and it’s easy to get to know them. British people aren’t like that. They don’t like to talk about their personal lives until they know you well, and they think it is respectful to give you privacy. As a result, it isn’t easy to make friends with British people. They are friendly and polite, but they often remain rather distant."
+  "</p>"
+  "<p><strong>Nellie_111 replies:</strong><br>"
+  "Don’t worry about making social errors in Britain. People are so polite that if you do something wrong, they won’t comment! I agree with Paulo_Riviera_166 in some ways. British people are more distant, but they aren’t more formal, in my opinion. For example, in the States, kids sometimes call their dads ‘Sir’, but British people never do that! In America, success is important, so people will often tell you how great they are. In Britain, it’s considered rude to boast about your achievements. If you do, people may tease you or gossip about you. Also, British people hate being complimented. If you say something nice about them, they often look embarrassed and don’t know what to say!"
+  "</p>"
+  "<p><strong>Bubbles replies:</strong><br>"
+  "I don’t know where Sara_May was staying in the UK, but I was in the north of the country on a school trip a couple of years ago. We all stayed with host families, and the only person I could understand was the mother of the family. I couldn’t understand anyone else, even after three weeks! The people didn’t sound anything like the people I had heard in my course books at school, and I learned British English! I guess people sound different in different areas of the country. All I can say is, good luck, and if you don’t understand someone, ask them to write down what they are trying to say!"
+  "</p>"
+),
+"subquestions": [
+  {
+    "id": "4.1",
+    "type": "multiple_choice",
+    "text": "Which sentence best summarises Banjo_Boy’s situation?",
+    "options": [
+      "He is worried about making mistakes in his language and behaviour when he goes to Britain.",
+      "He is worried that his trip to America won’t be as fun as last year’s trip to Britain.",
+      "He wants to know whether it is more useful to learn American English or British English.",
+      "He wants to learn how to speak well and be polite to his American and British guests."
+    ],
+    "correct": "He is worried about making mistakes in his language and behaviour when he goes to Britain."
+  },
+  {
+    "id": "4.2",
+    "type": "multiple_choice",
+    "text": "What is Sara_May’s advice?",
+    "options": [
+      "Neither the vocabulary nor the accent differences are hard to understand.",
+      "The vocabulary differences are hard to understand, but the British accent is easy to understand.",
+      "The vocabulary differences are easy to understand, but the British accent is hard to understand.",
+      "Both the vocabulary and the accent differences are hard to understand."
+    ],
+    "correct": "Neither the vocabulary nor the accent differences are hard to understand."
+  },
+  {
+    "id": "4.3",
+    "type": "multiple_choice",
+    "text": "According to Paulo_Riviera_166, British people are...",
+    "options": [
+      "formal and unfriendly",
+      "enthusiastic and personal",
+      "friendly and open",
+      "respectful and distant"
+    ],
+    "correct": "respectful and distant"
+  },
+  {
+    "id": "4.4",
+    "type": "multiple_choice",
+    "text": "According to Nellie_111, Americans are ... than British people.",
+    "options": [
+      "less likely to comment if you make a social error",
+      "less likely to talk about their achievements",
+      "more likely to call their parents by a formal title",
+      "more likely to feel embarrassed by a compliment"
+    ],
+    "correct": "more likely to call their parents by a formal title"
+  },
+  {
+    "id": "4.5",
+    "type": "multiple_choice",
+    "text": "Why does Bubbles disagree with Sara_May?",
+    "options": [
+      "She thinks it’s hard to understand British vocabulary.",
+      "She thinks the British accent is difficult to understand.",
+      "She thinks British grammar is different from American grammar.",
+      "She thinks British people won’t understand American English."
+    ],
+    "correct": "She thinks the British accent is difficult to understand."
+  },
+  {
+    "id": "4.6",
+    "type": "multiple_choice",
+    "text": "Which of the four people responded to the question: “I heard that English people are more unfriendly and polite. Is that true?”",
+    "options": [
+      "Paulo_Riviera_166 only.",
+      "Paulo_Riviera_166 and Nellie_111.",
+      "Paulo_Riviera_166, Nellie_111 and Bubbles.",
+      "All of them."
+    ],
+    "correct": "Paulo_Riviera_166 and Nellie_111."
+  }
+]
+
+},
+{
+  "id": 5,
+  "text": "Listen to the recording. Are the sentences true or false?",
+  "type": "listening",
+  "audio": "/static/exam/LE_listening_B2_Talking_about_rumours.mp3",
+  "subquestions": [
+    {
+      "id": "5.1",
+      "type": "true_false",
+      "text": "No one really knows the truth about the situation with John.",
+      "correct": "True"
+    },
+    {
+      "id": "5.2",
+      "type": "true_false",
+      "text": "Kiera doesn't immediately share everything she knows about John.",
+      "correct": "True"
+    },
+    {
+      "id": "5.3",
+      "type": "true_false",
+      "text": "Susanne wasn't the original creator of the cars idea.",
+      "correct": "True"
+    },
+    {
+      "id": "5.4",
+      "type": "true_false",
+      "text": "Susanne reported John to people higher up in the company.",
+      "correct": "True"
+    },
+    {
+      "id": "5.5",
+      "type": "true_false",
+      "text": "Kiera disagrees with what Will has said about John's aggressive behaviour.",
+      "correct": "False"
+    },
+    {
+      "id": "5.6",
+      "type": "true_false",
+      "text": "Kiera saw John stealing ideas from other people.",
+      "correct": "False"
+    },
+    {
+      "id": "5.7",
+      "type": "true_false",
+      "text": "Kiera made an official complaint about John's behaviour.",
+      "correct": "False"
+    },
+    {
+      "id": "5.8",
+      "type": "true_false",
+      "text": "There was a culture of silence that meant John was not investigated earlier.",
+      "correct": "True"
+    }
+  ]
+}
+
 ]
 
 # Путь к файлу с балансами
