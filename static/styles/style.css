@@ -1777,16 +1777,14 @@ audio {
 }
 
 .exam-question-image {
-  width: 75%; /* Reduced from 100% to 75% */
-  /* Alternatively, use width: 75px; if a fixed pixel size is intended */
-  height: auto;
-  object-fit: cover;
-  border-radius: 30px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); /* Lighter shadow from second declaration */
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease, filter 0.2s ease;
-  /* Center the image within its container */
-  display: block;
-  margin: 0 auto;
+    width: 75%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 30px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease, filter 0.2s ease;
+    display: block;
+    margin: 10px auto;
 }
 
 /* Hover effect for better interactivity */
@@ -4730,12 +4728,6 @@ input[type="password"] {
     border-color 0.3s ease,
     box-shadow 0.3s ease,
     transform 0.2s ease;
-}
-
-/* Лёгкое «поднятие» при наведении */
-input[type="text"]:hover,
-input[type="password"]:hover {
-  transform: translateY(-2px);
 }
 
 /* Стили фокуса */
@@ -9443,3 +9435,42 @@ input.word-search:focus {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
+input.write-in-blank-input {
+	margin: 5px;
+    margin-top: auto;
+    display: inline-block;
+    border: 1px solid #555; /* Subtle base border */
+    border-radius: 10px; /* Matches the rounded corners in the image */
+    padding: 6px 10px; /* Consistent padding for a clean look */
+    font-size: 16px;
+    background-color: #2a2a2a; /* Dark background matching the image */
+    color: #e0e0e0; /* Light text for contrast */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Simplified transitions */
+    width: auto;
+    min-width: 70px; /* Minimum width to avoid cramped text */
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for floating effect */
+}
+
+input.write-in-blank-input:disabled {
+    background-color: #333; /* Slightly lighter for disabled state */
+    color: #999; /* Dimmed text */
+    cursor: not-allowed;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Softer shadow when disabled */
+}
+
+input.write-in-blank-input:focus {
+    outline: none;
+    border-color: #1e90ff; /* Blue accent matching the image's focus outline */
+    box-shadow: 0 0 5px rgba(30, 144, 255, 0.5); /* Subtle blue glow */
+}
+
+.write-in-blank-correct {
+    border-color: #4CAF50 !important; /* Green for correct, consistent with your scheme */
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); /* Subtle green glow */
+}
+
+.write-in-blank-incorrect {
+    border-color: #F44336 !important; /* Red for incorrect, consistent with your scheme */
+    box-shadow: 0 0 5px rgba(244, 67, 54, 0.3); /* Subtle red glow */
+}

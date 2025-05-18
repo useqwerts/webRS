@@ -84,6 +84,10 @@
                 <i class="fa-solid fa-shield-halved icon"></i>
                 <span class="text">Battle</span>
             </a>
+			<a href="#" class="nav-item settings" onclick="showSection(this, 'settings')">
+            <i class="fa-solid fa-gear icon"></i>
+            <span class="text">Settings</span>
+        </a>
         </nav>
     </aside>
 
@@ -234,8 +238,35 @@
         <random-teams-button onclick="generateTeams()">Generate Teams</random-teams-button>
     </div>
 	  </section>
+	  
+	  <section id="settings" class="section">
+	  <div class="settings-card">
+    <div class="settings-item">
+        <span class="settings-label">
+            <i class="fa-solid fa-moon icon"></i>
+            Dark Mode
+        </span>
+        <label class="toggle-switch">
+            <input type="checkbox" checked>
+            <span class="slider">
+                <span class="toggle-text on">On</span>
+                <span class="toggle-text off">Off</span>
+            </span>
+        </label>
+    </div>
+</div>
+	  </section>
     </main>
   </div>
+  
+<div id="customMenu">
+    <ul>
+        <li onclick="copyText()"><i class="fas fa-copy"></i> Copy</li>
+        <li onclick="pasteText()"><i class="fas fa-paste"></i> Paste</li>
+        <li onclick="searchText()"><i class="fas fa-search"></i> Search</li>
+    </ul>
+</div>
+
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script src="/static/js/CRM-platform.js"></script>

@@ -1623,11 +1623,11 @@ document.getElementById('examQuestions').addEventListener('change', function(eve
         const labels = document.querySelectorAll(`input[name="${questionName}"] + label`);
 
         // Убираем стили с предыдущего выбранного варианта
-        labels.forEach(label => {
-            label.style.borderColor = '#ddd';
-            label.style.backgroundColor = '#f9f9f9';
-            label.style.color = '#333';
-        });
+labels.forEach(label => {
+    label.style.borderColor = 'rgb(100, 100, 100)';       // средне-тёмный серый
+    label.style.backgroundColor = 'rgb(120, 120, 120)';   // тёмный серый фон
+    label.style.color = 'rgb(230, 230, 230)';             // почти белый текст для контраста
+});
 
         // Находим label, связанный с выбранным радио
         const selectedRadio = event.target;
@@ -1976,7 +1976,6 @@ function showModalStatus(text) {
 }
 
 document.getElementById('examTaskOption').addEventListener('click', async function() {
-    // Получаем необходимые элементы
     await toggleRulesModal('open');
     const examModal = document.getElementById('examModal');
     const examContainer = document.getElementById('examQuestions');
@@ -1988,22 +1987,16 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
     const wrapper = document.getElementById('progressExamLengthWrapper');
     const progressBar = document.getElementById('progressExamLength');
     const progressLabel = document.getElementById('progressExamLengthLabel');
-
-    // Модальное окно для списания монет
     const checkAnswerModal = document.getElementById('checkAnswerModal');
     const approveCheckAnswerBtn = document.getElementById('approveCheckAnswer');
     const cancelCheckAnswerBtn = document.getElementById('cancelCheckAnswer');
-
-    // ID вопроса, который мы хотим проверить
     let questionToCheck = null;
 
-    // Функция показа модального окна для списания 100 coins
     function showCheckAnswerModal(questionElement, correctAnswer) {
       questionToCheck = { element: questionElement, correct: correctAnswer };
       checkAnswerModal.style.display = 'flex';
     }
 
-    // Обработчики кнопок модального окна
     approveCheckAnswerBtn.addEventListener('click', async function() {
       if (!questionToCheck) return;
       try {
@@ -2035,7 +2028,6 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
       checkAnswerModal.style.display = 'none';
     });
 
-    // Функция для проверки ответа одного вопроса
     function checkSingleAnswer(questionElement, correctAnswer) {
         let userAnswer = null;
         const radios = questionElement.querySelectorAll('input[type="radio"]');
@@ -2079,12 +2071,10 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
         }
     }
 
-    // Элементы таймера
     const hoursEl = document.getElementById('hours');
     const minutesEl = document.getElementById('minutes');
     const secondsEl = document.getElementById('seconds');
 
-    // Настраиваем видимость элементов
     examHeader.style.display = 'none';
     finishExamButton.style.display = 'none';
     examTimer.style.display = 'none';
@@ -2125,7 +2115,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
             switch (type) {
                 case "true_false": return `<p><i class="fas fa-exclamation-circle"></i> Choose True or False.</p>`;
                 case "multiple_choice": return `<p><i class="fas fa-check-circle"></i> Select the correct answer.</p>`;
-                case "fill_gaps": return `<p><i class="fas fa-pencil-alt"></i> Fill in the blank.</p>`;
+                case "write-in-blank": return `<p><i class="fas fa-pencil-alt"></i> Write the missing word in the blank.</p>`;
                 case "unscramble": return `<p><i class="fas fa-random"></i> Unscramble the letters or gaps.</p>`;
                 case "reading": return `<p><i class="fas fa-book"></i> Read the text and answer the question.</p>`;
                 case "listening": return `<p><i class="fas fa-headphones"></i> Listen to the audio and enter the missing word.</p>`;
@@ -2158,13 +2148,53 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                   </div>
                 `;
                 if (question.subquestions && Array.isArray(question.subquestions)) {
-                    question.subquestions.forEach((subq) => {
+                    const writeInBlankSubquestions = question.subquestions.filter(subq => subq.type === 'write-in-blank');
+                    const otherSubquestions = question.subquestions.filter(subq => subq.type !== 'write-in-blank');
+
+                    if (writeInBlankSubquestions.length > 0) {
+                        questionCounter++;
+                        const instruction = getInstructionForType('write-in-blank');
+                        const questionNode = document.importNode(questionTemplate.content, true);
+                        const examQuestionDiv = questionNode.querySelector('.exam-question');
+
+                        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+                        let combinedText = '<div class="write-in-blank-questions">';
+                        writeInBlankSubquestions.forEach((subq, index) => {
+                            const textWithInput = subq.text.replace('____', `<input type="text" name="q${subq.id}" class="write-in-blank-input" autocomplete="off" spellcheck="false">`);
+                            combinedText += `
+                                <div class="write-in-blank-subquestion">
+                                    <span class="subquestion-number">${subq.id}:</span>
+                                    <span class="subquestion-text">${textWithInput}</span>
+                                </div>
+                            `;
+                        });
+                        combinedText += '</div>';
+
+                        questionNode.querySelector('.question-text').innerHTML = combinedText;
+
+                        let optionsContainer = questionNode.querySelector('.question-options');
+                        optionsContainer.innerHTML = '';
+
+                        // Removed check answer button for write-in-blank subquestions
+                        // No check button added here
+
+                        examQuestionDiv.dataset.questionId = writeInBlankSubquestions[0].id;
+                        parentContainer.appendChild(questionNode);
+                    }
+
+                    otherSubquestions.forEach((subq) => {
                         questionCounter++;
                         const instruction = getInstructionForType(subq.type);
                         const questionNode = document.importNode(questionTemplate.content, true);
                         const examQuestionDiv = questionNode.querySelector('.exam-question');
 
-                        questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                        if (subq.type === 'write-in-blank') {
+                            const textWithInput = subq.text.replace('____', `<input type="text" name="q${subq.id}" class="write-in-blank-input" autocomplete="off" spellcheck="false">`);
+                            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${textWithInput}`;
+                        } else {
+                            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                        }
                         questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
                         let optionsContainer = questionNode.querySelector('.question-options');
@@ -2193,8 +2223,10 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 `;
                             });
                             optionsContainer.innerHTML = html;
-                        } else {
+                        } else if (subq.type !== 'write-in-blank') {
                             optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+                        } else {
+                            optionsContainer.innerHTML = '';
                         }
 
                         if (subq.correct) {
@@ -2231,13 +2263,53 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 }
 
                 if (question.subquestions && Array.isArray(question.subquestions)) {
-                    question.subquestions.forEach((subq) => {
+                    const writeInBlankSubquestions = question.subquestions.filter(subq => subq.type === 'write-in-blank');
+                    const otherSubquestions = question.subquestions.filter(subq => subq.type !== 'write-in-blank');
+
+                    if (writeInBlankSubquestions.length > 0) {
+                        questionCounter++;
+                        const instruction = getInstructionForType('write-in-blank');
+                        const questionNode = document.importNode(questionTemplate.content, true);
+                        const examQuestionDiv = questionNode.querySelector('.exam-question');
+
+                        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+                        let combinedText = '<div class="write-in-blank-questions">';
+                        writeInBlankSubquestions.forEach((subq, index) => {
+                            const textWithInput = subq.text.replace('____', `<input type="text" name="q${subq.id}" class="write-in-blank-input" autocomplete="off" spellcheck="false">`);
+                            combinedText += `
+                                <div class="write-in-blank-subquestion">
+                                    <span class="subquestion-number">${subq.id}:</span>
+                                    <span class="subquestion-text">${textWithInput}</span>
+                                </div>
+                            `;
+                        });
+                        combinedText += '</div>';
+
+                        questionNode.querySelector('.question-text').innerHTML = combinedText;
+
+                        let optionsContainer = questionNode.querySelector('.question-options');
+                        optionsContainer.innerHTML = '';
+
+                        // Removed check answer button for write-in-blank subquestions
+                        // No check button added here
+
+                        examQuestionDiv.dataset.questionId = writeInBlankSubquestions[0].id;
+                        parentContainer.appendChild(questionNode);
+                    }
+
+                    otherSubquestions.forEach((subq) => {
                         questionCounter++;
                         const instruction = getInstructionForType(subq.type);
                         const questionNode = document.importNode(questionTemplate.content, true);
                         const examQuestionDiv = questionNode.querySelector('.exam-question');
 
-                        questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                        if (subq.type === 'write-in-blank') {
+                            const textWithInput = subq.text.replace('____', `<input type="text" name="q${subq.id}" class="write-in-blank-input" autocomplete="off" spellcheck="false">`);
+                            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${textWithInput}`;
+                        } else {
+                            questionNode.querySelector('.question-text').innerHTML = `${subq.id}: ${subq.text}`;
+                        }
                         questionNode.querySelector('.question-instruction').innerHTML = instruction;
 
                         let optionsContainer = questionNode.querySelector('.question-options');
@@ -2266,8 +2338,10 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                                 `;
                             });
                             optionsContainer.innerHTML = html;
-                        } else {
+                        } else if (subq.type !== 'write-in-blank') {
                             optionsContainer.innerHTML = `<input type="text" name="q${subq.id}" autocomplete="off" spellcheck="false">`;
+                        } else {
+                            optionsContainer.innerHTML = '';
                         }
 
                         if (subq.correct) {
@@ -2328,7 +2402,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     optionsContainer.innerHTML = '';
 
                     question.subquestions.forEach((subq) => {
-                        if (subq.correct && subq.type !== 'box-choose') {
+                        if (subq.correct && subq.type !== 'box-choose' && subq.type !== 'write-in-blank') {
                             const checkBtn = document.createElement('button');
                             checkBtn.className = 'check-answer-btn';
                             checkBtn.textContent = `Check answer ${subq.id}`;
@@ -2344,7 +2418,42 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                     examQuestionDiv.dataset.questionId = question.subquestions[0].id;
                     parentContainer.appendChild(questionNode);
                 } else {
-                    question.subquestions.forEach((subq) => {
+                    const writeInBlankSubquestions = question.subquestions.filter(subq => subq.type === 'write-in-blank');
+                    const otherSubquestions = question.subquestions.filter(subq => subq.type !== 'write-in-blank');
+
+                    if (writeInBlankSubquestions.length > 0) {
+                        questionCounter++;
+                        const instruction = getInstructionForType('write-in-blank');
+                        const questionNode = document.importNode(questionTemplate.content, true);
+                        const examQuestionDiv = questionNode.querySelector('.exam-question');
+
+                        questionNode.querySelector('.question-instruction').innerHTML = instruction;
+
+                        let combinedText = '<div class="write-in-blank-questions">';
+                        writeInBlankSubquestions.forEach((subq, index) => {
+                            const textWithInput = subq.text.replace('____', `<input type="text" name="q${subq.id}" class="write-in-blank-input" autocomplete="off" spellcheck="false">`);
+                            combinedText += `
+                                <div class="write-in-blank-subquestion">
+                                    <span class="subquestion-number">${subq.id}:</span>
+                                    <span class="subquestion-text">${textWithInput}</span>
+                                </div>
+                            `;
+                        });
+                        combinedText += '</div>';
+
+                        questionNode.querySelector('.question-text').innerHTML = combinedText;
+
+                        let optionsContainer = questionNode.querySelector('.question-options');
+                        optionsContainer.innerHTML = '';
+
+                        // Removed check answer button for write-in-blank subquestions
+                        // No check button added here
+
+                        examQuestionDiv.dataset.questionId = writeInBlankSubquestions[0].id;
+                        parentContainer.appendChild(questionNode);
+                    }
+
+                    otherSubquestions.forEach((subq) => {
                         questionCounter++;
                         const instruction = getInstructionForType(subq.type);
                         const questionNode = document.importNode(questionTemplate.content, true);
@@ -2501,13 +2610,16 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                 const examQuestionDiv = questionNode.querySelector('.exam-question');
                 const qId = question.id ? question.id : questionCounter;
 
-                if (question.type !== 'unscramble') {
+                if (question.type !== 'unscramble' && question.type !== 'write-in-blank') {
                     if (question.type === 'box-choose') {
                         const textWithBlank = question.text.replace('____', `<span class="box-choose-blank" data-question-id="${qId}">____</span>`);
                         questionNode.querySelector('.question-text').innerHTML = `${qId}. ${textWithBlank}`;
                     } else {
                         questionNode.querySelector('.question-text').innerHTML = `${qId}. ${question.text}`;
                     }
+                } else if (question.type === 'write-in-blank') {
+                    const textWithInput = question.text.replace('____', `<input type="text" name="q${qId}" class="write-in-blank-input" autocomplete="off" spellcheck="false">`);
+                    questionNode.querySelector('.question-text').innerHTML = `${qId}. ${textWithInput}`;
                 } else {
                     questionNode.querySelector('.question-text').innerHTML = `${qId}.`;
                 }
@@ -2615,8 +2727,7 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                             const optionIndex = blank.dataset.optionIndex;
                             const optionEl = optionsContainer.querySelector(`.box-choose-option[data-index="${optionIndex}"]`);
                             if (optionEl) {
-                                optionEl.classList.remove('used');
-                                optionEl.classList.remove('selected');
+                                optionEl.className = 'box-choose-option';
                             }
                             blank.textContent = '____';
                             delete blank.dataset.optionIndex;
@@ -2635,11 +2746,13 @@ document.getElementById('examTaskOption').addEventListener('click', async functi
                         selectedOption.classList.remove('selected');
                         selectedOption = null;
                     });
-                } else {
+                } else if (question.type !== 'write-in-blank') {
                     optionsContainer.innerHTML = `<input type="text" name="q${qId}" autocomplete="off" spellcheck="false">`;
+                } else {
+                    optionsContainer.innerHTML = '';
                 }
 
-                if (question.correct) {
+                if (question.correct && question.type !== 'write-in-blank') {
                     const checkBtn = document.createElement('button');
                     checkBtn.className = 'check-answer-btn';
                     checkBtn.textContent = 'Check my answer';
@@ -3326,36 +3439,49 @@ function submitExamResults() {
                 }
             });
         } else {
-            // Handle other question types
-            let userAnswer = '';
-            // Check if the question is of type "unscramble"
-            const isUnscramble = questionElem.querySelector('.unscramble-input') !== null;
-
-            if (isUnscramble) {
-                // For unscramble type, collect letters from .unscramble-input elements
-                const unscrambleInputs = questionElem.querySelectorAll('.unscramble-input');
-                if (unscrambleInputs.length > 0) {
-                    // Sort inputs by data-index to ensure correct order
-                    const sortedInputs = Array.from(unscrambleInputs).sort((a, b) => 
-                        parseInt(a.dataset.index) - parseInt(b.dataset.index)
-                    );
-                    userAnswer = sortedInputs
-                        .map(input => input.textContent.trim())
-                        .filter(char => char !== '') // Exclude empty inputs
-                        .join('');
-                }
+            // Handle write-in-blank subquestions (e.g., under listening)
+            const isWriteInBlank = questionElem.querySelector('.write-in-blank-questions') !== null;
+            if (isWriteInBlank) {
+                const inputs = questionElem.querySelectorAll('.write-in-blank-input');
+                inputs.forEach(input => {
+                    const subqId = input.name.replace('q', ''); // Extract ID from name (e.g., q2.1 -> 2.1)
+                    let userAnswer = input.value.trim();
+                    if (subqId && userAnswer) {
+                        answers[`q${subqId}`] = userAnswer;
+                    }
+                });
             } else {
-                // For other question types, use the existing logic
-                const selectedOption =
-                    questionElem.querySelector('input:checked') ||
-                    questionElem.querySelector('input[type="text"]');
-                if (selectedOption && selectedOption.value) {
-                    userAnswer = selectedOption.value;
-                }
-            }
+                // Handle other question types
+                let userAnswer = '';
+                // Check if the question is of type "unscramble"
+                const isUnscramble = questionElem.querySelector('.unscramble-input') !== null;
 
-            if (qKey && userAnswer) {
-                answers[`q${qKey}`] = userAnswer;
+                if (isUnscramble) {
+                    // For unscramble type, collect letters from .unscramble-input elements
+                    const unscrambleInputs = questionElem.querySelectorAll('.unscramble-input');
+                    if (unscrambleInputs.length > 0) {
+                        // Sort inputs by data-index to ensure correct order
+                        const sortedInputs = Array.from(unscrambleInputs).sort((a, b) => 
+                            parseInt(a.dataset.index) - parseInt(b.dataset.index)
+                        );
+                        userAnswer = sortedInputs
+                            .map(input => input.textContent.trim())
+                            .filter(char => char !== '') // Exclude empty inputs
+                            .join('');
+                    }
+                } else {
+                    // For other question types (e.g., multiple_choice, true_false)
+                    const selectedOption =
+                        questionElem.querySelector('input:checked') ||
+                        questionElem.querySelector('input[type="text"]');
+                    if (selectedOption && selectedOption.value) {
+                        userAnswer = selectedOption.value.trim();
+                    }
+                }
+
+                if (qKey && userAnswer) {
+                    answers[`q${qKey}`] = userAnswer;
+                }
             }
         }
     });
@@ -3381,8 +3507,6 @@ function submitExamResults() {
                 if (result.error) {
                     showToastNotification(`<b>Error</b> <span>${result.error}</span>`, 'error', 5000);
                     return;
-                } else {
-                    //showModalStatus("Exam submitted! Please hold on while we evaluate your exam. Your results will be displayed shortly.");
                 }
 
                 const totalQuestions = result.correct + result.incorrect + result.skipped;
@@ -3425,7 +3549,7 @@ function submitExamResults() {
                         showToastNotification('Failed to update progress.');
                     });
 
-                // Анимация прогресс-бара
+                // Progress bar animation
                 const progressBar = document.getElementById('progressBar');
                 const progressText = document.getElementById('progressText');
 
@@ -3456,7 +3580,7 @@ function submitExamResults() {
                     }
                 }, 20);
 
-                // Определение вознаграждения
+                // Determine reward
                 let motivationText = 'Keep up the good work!';
                 let iconClass = 'fa-smile';
                 let pointsText = '';
@@ -3490,7 +3614,7 @@ function submitExamResults() {
                     }
                 }
 
-                // Построение HTML для результатов экзамена
+                // Build HTML for exam results
                 examQuestions.forEach((question, index) => {
                     const questionType = question.type ? question.type : 'multiple_choice';
 
@@ -3550,13 +3674,11 @@ function submitExamResults() {
                 finishExamButton.disabled = false;
             });
     });
-	
-	socket.emit('submitted_exam');
-	
+
+    socket.emit('submitted_exam');
 }
 
 
-// Modal for detailed question view
 function openQuestionModal(qKey, event) {
     event?.stopPropagation();
 
@@ -3589,7 +3711,6 @@ function openQuestionModal(qKey, event) {
 
         let questionsHtml = '<div class="questions-container">';
         if (parentQuestion.type === 'box-choose') {
-            // Combine all box-choose subquestions into a single .question-text with numbering
             let combinedText = '<div class="box-choose-questions">';
             parentQuestion.subquestions.forEach((subq, index) => {
                 const userAnswer = window.examAnswers?.[`q${subq.id}`] ?? '';
@@ -3616,15 +3737,28 @@ function openQuestionModal(qKey, event) {
                 const isCorrect = userAnswer.trim().toLowerCase() === subq.correct.trim().toLowerCase();
                 const questionNumber = index + 1;
 
-                questionsHtml += `
-                    <div class="question-item">
-                        <div class="question-header">
-                            <span class="main-question-number">${questionNumber}</span>
-                            <div class="question-text">${subq.text}</div>
+                if (subq.type === 'write-in-blank') {
+                    const inputClass = isCorrect ? 'write-in-blank-input write-in-blank-correct' : 'write-in-blank-input write-in-blank-incorrect';
+                    const displayText = subq.text.replace('____', `<input type="text" class="${inputClass}" value="${userAnswer || ''}" disabled>`);
+                    questionsHtml += `
+                        <div class="question-item">
+                            <div class="question-header">
+                                <span class="main-question-number">${questionNumber}</span>
+                                <div class="question-text">${displayText}</div>
+                            </div>
                         </div>
-                        ${renderAnswerInput(subq, userAnswer, isCorrect)}
-                    </div>
-                `;
+                    `;
+                } else {
+                    questionsHtml += `
+                        <div class="question-item">
+                            <div class="question-header">
+                                <span class="main-question-number">${questionNumber}</span>
+                                <div class="question-text">${subq.text}</div>
+                            </div>
+                            ${renderAnswerInput(subq, userAnswer, isCorrect)}
+                        </div>
+                    `;
+                }
             });
         }
         questionsHtml += '</div>';
@@ -3651,16 +3785,28 @@ function openQuestionModal(qKey, event) {
         const userAnswer = window.examAnswers?.[`q${qKey}`] ?? '';
         const isCorrect = userAnswer.trim().toLowerCase() === foundQuestion.correct.trim().toLowerCase();
 
-        const questionsHtml = `
-            <div class="questions-container">
-                <div class="question-item">
-                    <div class="question-text">${foundQuestion.text}</div>
-                    ${renderAnswerInput(foundQuestion, userAnswer, isCorrect)}
+        if (foundQuestion.type === 'write-in-blank') {
+            const inputClass = isCorrect ? 'write-in-blank-input write-in-blank-correct' : 'write-in-blank-input write-in-blank-incorrect';
+            const displayText = foundQuestion.text.replace('____', `<input type="text" class="${inputClass}" value="${userAnswer || ''}" disabled>`);
+            const questionsHtml = `
+                <div class="questions-container">
+                    <div class="question-item">
+                        <div class="question-text">${displayText}</div>
+                    </div>
                 </div>
-            </div>
-        `;
-
-        modal.innerHTML = headerHtml + typeHtml + passageHtml + instructionHtml + questionsHtml;
+            `;
+            modal.innerHTML = headerHtml + typeHtml + passageHtml + instructionHtml + questionsHtml;
+        } else {
+            const questionsHtml = `
+                <div class="questions-container">
+                    <div class="question-item">
+                        <div class="question-text">${foundQuestion.text}</div>
+                        ${renderAnswerInput(foundQuestion, userAnswer, isCorrect)}
+                    </div>
+                </div>
+            `;
+            modal.innerHTML = headerHtml + typeHtml + passageHtml + instructionHtml + questionsHtml;
+        }
     }
 
     document.body.appendChild(modal);
@@ -3676,28 +3822,28 @@ function detailedQuestionReviewClose(modal) {
 
 function renderAnswerInput(question, userAnswer, isCorrect) {
     const correctnessTag = isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect';
+    const safeUserAnswer = userAnswer || '';
 
     if (question.type === 'true_false') {
         return `
             <div class="options">
-                <input type="radio" id="true-option" ${userAnswer === 'True' ? 'checked' : ''} disabled class="${correctnessTag}">
-                <label for="true-option" ${isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect'}>True</label>
-
-                <input type="radio" id="false-option" ${userAnswer === 'False' ? 'checked' : ''} disabled class="${correctnessTag}">
-                <label for="false-option" ${isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect'}>False</label>
+                <input type="radio" id="true-option" ${safeUserAnswer === 'True' ? 'checked' : ''} disabled class="${correctnessTag}">
+                <label for="true-option" class="${safeUserAnswer === 'True' ? correctnessTag : ''}">True</label>
+                <input type="radio" id="false-option" ${safeUserAnswer === 'False' ? 'checked' : ''} disabled class="${correctnessTag}">
+                <label for="false-option" class="${safeUserAnswer === 'False' ? correctnessTag : ''}">False</label>
             </div>
         `;
     } else if (question.type === 'multiple_choice' && Array.isArray(question.options)) {
         return `
             <div class="options">
                 ${question.options.map((option, index) => `
-                    <input type="radio" id="option-${index}" ${userAnswer === option ? 'checked' : ''} disabled class="${correctnessTag}">
-                    <label for="option-${index}" ${isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect'}>${option}</label>
+                    <input type="radio" id="option-${index}" ${safeUserAnswer === option ? 'checked' : ''} disabled class="${safeUserAnswer === option ? correctnessTag : ''}">
+                    <label for="option-${index}" class="${safeUserAnswer === option ? correctnessTag : ''}">${option}</label>
                 `).join('')}
             </div>
         `;
     } else if (question.type === 'unscramble') {
-        const userLetters = userAnswer ? userAnswer.split('') : [];
+        const userLetters = safeUserAnswer ? safeUserAnswer.split('') : [];
         let lettersHtml = '<div class="unscramble-letters-review">';
         userLetters.forEach(letter => {
             lettersHtml += `<span class="unscramble-letter ${correctnessTag}">${letter}</span>`;
@@ -3711,16 +3857,21 @@ function renderAnswerInput(question, userAnswer, isCorrect) {
         `;
     } else if (question.type === 'box-choose') {
         return '';
+    } else if (question.type === 'write-in-blank') {
+        return `
+            <div style="display: flex; align-items: center;">
+                <input class="write-in-blank-input ${isCorrect ? 'write-in-blank-correct' : 'write-in-blank-incorrect'}" type="text" disabled value="${safeUserAnswer}">
+            </div>
+        `;
     } else if (['fill_gaps', 'reading', 'listening', 'question'].includes(question.type)) {
         return `
             <div style="display: flex; align-items: center;">
-                <input class="filled-answer ${correctnessTag}" type="text" disabled value="${userAnswer}">
+                <input class="filled-answer ${correctnessTag}" type="text" disabled value="${safeUserAnswer}">
             </div>
         `;
     }
     return '';
 }
-
 
 
 
@@ -5743,4 +5894,3 @@ function submitHomeworkAnswers() {
       finishBtn.disabled = false;
     });
 }
-

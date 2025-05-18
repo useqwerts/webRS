@@ -3,6 +3,9 @@
   --toast-exit-duration: 0.4s;
   --toast-easing-in: cubic-bezier(0.22, 1, 0.36, 1);
   --toast-easing-out: ease-in;
+
+  --dark-bg-color: #1a1a1a;
+  --dark-text-color: #e0e0e0;
 }
 
 * {
@@ -17,22 +20,21 @@ body {
   font-family: 'Poppins', sans-serif;
   height: 100vh;
   background-color: #f9f9f9;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Ensure full height for the entire layout */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  color: #333;
 }
 
-/* Parent container for sidebar and content */
 .container {
   display: flex;
-  height: 100vh; /* Full height of the viewport */
+  height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
   width: 220px;
   background-color: #ffffff;
@@ -40,10 +42,15 @@ html, body {
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  height: 100%; /* Ensures sidebar takes full height */
+  height: 100%;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Content */
+.sidebar.dark-theme {
+  background-color: #2c2c2c;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
 .content {
   flex-grow: 1;
   padding: 40px;
@@ -51,6 +58,7 @@ html, body {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInContent 0.6s ease forwards;
+  background-color: #f9f9f9;
 }
 
 @keyframes fadeInContent {
@@ -60,20 +68,34 @@ html, body {
   }
 }
 
+/* Темная тема: единый фон и текст */
+html.dark-theme,
+body.dark-theme,
+body.dark-theme .content {
+  background-color: var(--dark-bg-color);
+  color: var(--dark-text-color);
+}
 
+/* Logo */
 .logo {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 40px;
   color: #555;
   text-transform: lowercase;
+  transition: color 0.3s ease;
 }
 
+.sidebar.dark-theme .logo {
+  color: #cccccc;
+}
+
+/* Navigation */
 .nav {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 10px 0; /* Добавлен небольшой отступ для контейнера */
+  padding: 10px 0;
 }
 
 .nav-item {
@@ -84,17 +106,25 @@ html, body {
   border-radius: 20px;
   color: #555;
   text-decoration: none;
-  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease; /* Добавлен transform */
-  position: relative; /* Для анимации псевдоэлементов */
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.sidebar.dark-theme .nav-item {
+  color: #cccccc;
 }
 
 .nav-item:hover {
   background-color: #f0f0f0;
-  transform: translateX(5px); /* Легкое смещение вправо при наведении */
-  color: #333; /* Более темный цвет текста при наведении */
+  transform: translateX(5px);
+  color: #333;
 }
 
-/* Анимация для состояния hover */
+.sidebar.dark-theme .nav-item:hover {
+  background-color: #3a3a3a;
+  color: #ffffff;
+}
+
 @keyframes hoverFade {
   0% {
     background-color: transparent;
@@ -110,17 +140,35 @@ html, body {
   }
 }
 
+@keyframes hoverFadeDark {
+  0% {
+    background-color: transparent;
+    transform: translateX(0);
+  }
+  50% {
+    background-color: #3a3a3a;
+    transform: translateX(3px);
+  }
+  100% {
+    background-color: #3a3a3a;
+    transform: translateX(5px);
+  }
+}
+
 .nav-item:hover {
   animation: hoverFade 0.4s ease forwards;
 }
 
-.nav-item.active {
-  background-color: #1e90ff; /* Синий цвет для активного состояния */
-  color: white;
-  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.3); /* Легкая тень для глубины */
+.sidebar.dark-theme .nav-item:hover {
+  animation: hoverFadeDark 0.4s ease forwards;
 }
 
-/* Анимация для активного состояния */
+.nav-item.active {
+  background-color: #1e90ff;
+  color: white;
+  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.3);
+}
+
 @keyframes activePulse {
   0% {
     transform: scale(1);
@@ -140,21 +188,97 @@ html, body {
   animation: activePulse 0.6s ease-in-out;
 }
 
-.nav-item.active .icon {
+/* Settings Item */
+.nav-item.settings {
+  margin-top: auto;
+  background-color: #ffe6e6;
+  color: #d32f2f;
+}
+
+.sidebar.dark-theme .nav-item.settings {
+  background-color: #4a2c2c;
+  color: #ff6666;
+}
+
+.nav-item.settings:hover {
+  background-color: #ffcccc;
+  transform: translateX(5px);
+  color: #b71c1c;
+}
+
+.sidebar.dark-theme .nav-item.settings:hover {
+  background-color: #5a3c3c;
+  color: #ff9999;
+}
+
+.nav-item.settings.active {
+  background-color: #ff4d4d;
   color: white;
-  transform: scale(1.1); /* Легкое увеличение иконки в активном состоянии */
-  transition: transform 0.3s ease; /* Плавный переход для иконки */
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+}
+
+@keyframes settingsPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+  }
+}
+
+.nav-item.settings.active {
+  animation: settingsPulse 0.6s ease-in-out;
+}
+
+/* Icons */
+.nav-item .icon {
+  font-size: 18px;
+  margin-right: 12px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.sidebar.dark-theme .nav-item .icon {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.settings .icon {
+  border-color: rgba(211, 47, 47, 0.3);
+  background: rgba(211, 47, 47, 0.1);
+}
+
+.sidebar.dark-theme .nav-item.settings .icon {
+  border-color: rgba(255, 102, 102, 0.4);
+  background: rgba(255, 102, 102, 0.15);
 }
 
 .icon {
   font-size: 18px;
-  transition: color 0.3s ease, transform 0.3s ease; /* Добавлен переход для transform */
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .text {
   font-size: 15px;
-  font-weight: 500; /* Улучшена читаемость текста */
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); /* Легкая тень для текста */
+  font-weight: 500;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.dark-theme .text {
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
 .section {
@@ -188,11 +312,6 @@ html, body {
   }
 }
 
-
-
-
-
-
 @font-face {
   font-family: 'OriginEthnic';
   src: url('/static/fonts/OriginEthnic.otf') format('opentype');
@@ -200,12 +319,19 @@ html, body {
 
 .fancy-logo {
   font-family: 'OriginEthnic', serif;
-  font-size: 44px; /* увеличено с 38px */
+  font-size: 44px;
   color: #222;
   letter-spacing: 2.5px;
   text-align: left;
   margin-bottom: 40px;
   text-shadow: 1px 2px 6px rgba(0, 0, 0, 0.2);
+  transition: color 0.3s ease;
+}
+
+
+.sidebar.dark-theme .fancy-logo {
+  color: #cccccc;
+  text-shadow: 1px 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .exam-timer-card {
@@ -519,6 +645,7 @@ html, body {
 }
 
 .progress-wrapper {
+  width: 70%;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -596,7 +723,7 @@ html, body {
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
-    padding: 10px 80px;
+    padding: 10px 25px;
     margin-bottom: 18px;
     background: #2D303E;
     border-radius: 14px;
@@ -1314,37 +1441,40 @@ html, body {
             background: #1a1a1a; /* Dark background matching the image */
             color: #fff; /* White text */
             overflow-y: auto;
-            z-index: 9999;
+            z-index: 2000;
             padding: 15px;
             box-sizing: border-box;
             animation: slideIn 0.3s ease-in-out forwards; /* Slide-in animation */
         }
 		
+		.detailed-questions-review {
+    background-color: #1a1a1a;
+    scrollbar-width: thin;
+    scrollbar-color: #888 transparent;
+}
+
+/* Для Chrome, Edge, Safari */
 .detailed-questions-review::-webkit-scrollbar {
-    width: 8px; /* Ширина скроллбара */
+    width: 10px;
+    height: 10px;
 }
 
 .detailed-questions-review::-webkit-scrollbar-track {
-    background: #2c2c2c; /* Цвет фона трека */
-    border-radius: 4px;
+    background: transparent;
 }
 
 .detailed-questions-review::-webkit-scrollbar-thumb {
-    background: #555; /* Цвет ползунка */
-    border-radius: 4px;
+    background-color: #888;
+    border-radius: 16px; /* увеличенный скруглённый угол */
+    border: 2px solid transparent;
+    background-clip: padding-box;
 }
 
 .detailed-questions-review::-webkit-scrollbar-thumb:hover {
-    background: #777; /* Цвет ползунка при наведении */
+    background-color: #aaa;
 }
 
-/* Кастомизация скроллбара для Firefox */
-.detailed-questions-review {
-    scrollbar-width: thin; /* Тонкий скроллбар */
-    scrollbar-color: #555 #2c2c2c; /* Цвет ползунка и трека */
-}
-
-        /* Slide-in animation from left to right */
+		        /* Slide-in animation from left to right */
         @keyframes slideIn {
             0% {
                 transform: translateX(-100%);
@@ -1494,6 +1624,10 @@ html, body {
             max-height: 100%; /* Limit height */
             overflow-y: auto; /* Vertical scroll if content overflows */
         }
+		
+		.passage-text p {
+		user-select: text; /* Явно разрешаем выделение для <p> */
+		}
 
         .questions-container {
             display: flex;
@@ -1507,17 +1641,19 @@ html, body {
         }
 
         .question-text {
+			user-select: text;
             margin-bottom: 15px;
             font-weight: 500;
             font-size: 16px;
             color: #fff;
         }
 
-        .options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+		.options {
+		display: grid;
+		grid-template-columns: repeat(4, 2fr);
+		grid-auto-rows: auto;
+		gap: 14px;
+		}
 
         .options label {
             display: inline-block;
@@ -1528,6 +1664,7 @@ html, body {
         }
 
         .options label {
+			user-select: all;
             background: #2a2a2a; /* Dark button background */
             color: #fff; /* White text */
             padding: 10px 20px;
@@ -1644,6 +1781,7 @@ html, body {
 
 /* Style the blank when it contains an option (filled state) */
 .box-choose-blank:not(:empty) {
+	margin: 5px;
     background: var(--glass-filled-bg);
     border: 1px solid #b7bec7;
     color: #333;
@@ -1809,21 +1947,84 @@ html, body {
     font-weight: 500;
     box-shadow: 0 3px 8px rgba(200, 200, 200, 0.2); /* Мягкая тень */
     backdrop-filter: blur(5px);
-    cursor: pointer;
+    cursor: text;
+}
+
+.main-question-id {
+  margin: 8px;
+  display: inline-block;
+  width: 38px; /* Circular shape */
+  height: 38px;
+  background: #d32f2f; /* Solid vibrant red */
+  color: #ffffff; /* Pure white for contrast */
+  text-align: center;
+  line-height: 38px; /* Adjusted to match height */
+  border-radius: 50%; /* Back to circular shape */
+  font-weight: 700; /* Bold text */
+  margin-right: 14px; /* Balanced spacing */
+  font-size: 18px; /* Readable size */
+  position: relative; /* For pseudo-element positioning */
+  box-shadow: 0 0 10px rgba(211, 47, 47, 0.5); /* Initial glow */
+  animation: glowPulse 2s infinite ease-in-out; /* Combined animations */
+}
+
+/* Pseudo-element for glowing ring effect */
+.main-question-id::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid rgba(211, 47, 47, 0.7); /* Semi-transparent red ring */
+  border-radius: 50%;
+  opacity: 0;
+  animation: ringFade 2s infinite ease-in-out; /* Fading ring animation */
+}
+
+/* Keyframes for glowing pulse effect */
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 10px rgba(211, 47, 47, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(211, 47, 47, 1); /* Brighter glow */
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(211, 47, 47, 0.5);
+  }
+}
+
+/* Keyframes for fading ring effect */
+@keyframes ringFade {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1); /* Slight expansion */
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2); /* Fade out while expanding */
+  }
 }
 
 .main-question-number {
   margin: 5px;
   display: inline-block;
-  background-color: #007bff; /* Синий цвет */
+  width: 32px;
+  height: 32px;
+  background: #0984e3; /* Blue background (original) */
   color: white;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  line-height: 28px;
   text-align: center;
+  line-height: 32px;
+  border-radius: 50%;
   font-weight: bold;
-  margin-right: 8px;
+  margin-right: 12px;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(9, 132, 227, 0.5); /* Original blue shadow */
 }
 
 .unscramble-letters-review {
@@ -1842,7 +2043,307 @@ html, body {
     color: #fff;
 }
 
+/* Общие стили */
+.detailed-question-correct,
+.detailed-question-incorrect {
+    border-radius: 16px;
+    padding: 16px 24px;
+    color: #fff;
+    animation: bounceGlowIn 0.9s ease-out;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+    perspective: 1000px;
+}
 
+/* Корректный ответ */
+.detailed-question-correct {
+    background: linear-gradient(135deg, #1b5e20, #4caf50);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.6), 0 0 40px rgba(76, 175, 80, 0.3);
+}
+
+/* Неправильный ответ */
+.detailed-question-incorrect {
+    background: linear-gradient(135deg, #b71c1c, #f44336);
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
+}
+
+/* Улучшенная анимация с подскоком и поворотом */
+@keyframes bounceGlowIn {
+    0% {
+        opacity: 0;
+        transform: rotateX(90deg) scale(0.3) translateY(-60px);
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    40% {
+        opacity: 1;
+        transform: rotateX(-15deg) scale(1.05) translateY(8px);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+    }
+    70% {
+        transform: rotateX(5deg) scale(0.98) translateY(-4px);
+    }
+    100% {
+        transform: rotateX(0) scale(1) translateY(0);
+    }
+}
+
+/* Question Divider with a beautiful geometric flourish */
+.detailed-questions-review .question-divider {
+  border: none;
+  height: 24px;
+  margin: 24px 0;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Horizontal lines with gradient */
+.detailed-questions-review .question-divider::before,
+.detailed-questions-review .question-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+  position: relative;
+}
+
+.detailed-questions-review .question-divider::before {
+  margin-right: 12px;
+}
+
+.detailed-questions-review .question-divider::after {
+  margin-left: 12px;
+}
+
+/* Diamond shapes at the ends with a subtle glow */
+.detailed-questions-review .question-divider::before::before,
+.detailed-questions-review .question-divider::after::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.detailed-questions-review .question-divider::before::before {
+  left: 0;
+}
+
+.detailed-questions-review .question-divider::after::after {
+  right: 0;
+}
+
+.detailed-questions-review .question-divider:hover::before::before,
+.detailed-questions-review .question-divider:hover::after::after {
+  transform: rotate(45deg) scale(1.2);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+}
+
+/* Central geometric flourish using SVG */
+.detailed-questions-review .question-divider .flourish {
+  width: 48px;
+  height: 24px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 24"><path d="M24 6c-6 0-8 6-12 6s-6-6-12-6M24 6c6 0 8 6 12 6s6-6 12-6M24 12v6" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>') no-repeat center;
+  background-size: contain;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.detailed-questions-review .question-divider:hover .flourish {
+  transform: scale(1.1);
+}
+
+/* Picture Gallery */
+.detailed-questions-review .picture-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.detailed-questions-review .picture-images img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+}
+
+.detailed-questions-review .picture-images img:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+  filter: brightness(1.15);
+}
+
+/* No Images Placeholder */
+.detailed-questions-review .no-images-placeholder {
+  background: rgba(255, 255, 255, 0.05);
+  height: 120px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Media Viewer Styles */
+.media-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.media-viewer img {
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  transition: opacity 0.2s ease;
+}
+
+.media-viewer .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.media-viewer .close-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.media-viewer .nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.media-viewer .nav-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.media-viewer .prev-btn {
+  left: 20px;
+}
+
+.media-viewer .next-btn {
+  right: 20px;
+}
+
+.media-viewer .image-counter {
+    position: absolute;
+    bottom: 20px;
+    color: #fff;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    background: rgb(77 73 73 / 50%);
+    padding: 6px 12px;
+    border-radius: 12px;
+}
+
+.picture-image {
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.picture-image:hover {
+  transform: translateY(-4px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .media-viewer img {
+    max-width: 95%;
+    max-height: 70%;
+  }
+  .media-viewer .close-btn,
+  .media-viewer .nav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+  .media-viewer .image-counter {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .media-viewer img {
+    max-width: 95%;
+    max-height: 70%;
+  }
+  .media-viewer .close-btn,
+  .media-viewer .nav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+  .media-viewer .image-counter {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+}
 	
     .progress-card {
       background: linear-gradient(145deg, #1e3a8a, #3b82f6);
@@ -1855,7 +2356,6 @@ html, body {
       margin-left: auto;
       margin-right: auto;
       height: auto;
-      border: 1px solid #60a5fa;
     }
 
     .progress-table {
@@ -2197,7 +2697,6 @@ html, body {
       margin-left: auto;
       margin-right: auto;
       height: auto;
-      border: 1px solid #60a5fa;
     }
 
     .ban-users-table {
@@ -2679,3 +3178,269 @@ html, body {
             0% { transform: translateY(0); box-shadow: 0 4px 10px rgba(255, 235, 59, 0.3); }
             100% { transform: translateY(-5px) scale(1.05); box-shadow: 0 8px 20px rgba(255, 235, 59, 0.7); }
         }
+		
+		.question-divider {
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  margin: 20px 0;
+  width: 100%;
+}
+
+#customMenu {
+    position: absolute;
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); /* Dark gradient background */
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.05); /* Deeper shadow with inner highlight */
+    display: none;
+    z-index: 9999;
+    padding: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    opacity: 0;
+    transition: opacity 0.25s ease, left 0.3s ease, top 0.3s ease, transform 0.2s ease;
+}
+
+#customMenu:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+#customMenu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 8px; /* Slightly more spacing between items */
+}
+
+#customMenu li {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px; /* Slightly larger for better readability */
+    font-weight: 500;
+    color: #e2e8f0; /* Light gray text for contrast */
+    background: rgba(255, 255, 255, 0.05); /* Subtle transparent background */
+    border-radius: 8px;
+    transition: transform 0.2s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjusted space between icon and text */
+    position: relative; /* For pseudo-element effects */
+    overflow: hidden; /* For background effects */
+}
+
+/* Subtle hover effect with gradient underline */
+#customMenu li::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #60a5fa, transparent); /* Gradient underline */
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: scaleX(0);
+}
+
+#customMenu li:hover::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+#customMenu li:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff; /* Brighter text on hover */
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Slight shadow on hover */
+}
+
+#customMenu li:active {
+    transform: scale(0.97);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Inset shadow on click */
+}
+
+/* Icon styling */
+#customMenu li i {
+    font-size: 14px;
+    color: #93c5fd; /* Soft blue for icons */
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+/* Icon hover and active effects */
+#customMenu li:hover i {
+    color: #ffffff; /* White on hover */
+    transform: scale(1.1); /* Slight scale for emphasis */
+}
+
+#customMenu li:active i {
+    transform: scale(0.9); /* Shrink on click */
+}
+
+.write-in-blank-input {
+  margin: 6px;
+  padding: 10px 14px;
+  font-size: 16px;
+  width: 150px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f0f0f0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.write-in-blank-input:disabled {
+  background: rgba(255, 255, 255, 0.03);
+  color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.write-in-blank-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+/* ✅ Correct Answer */
+.write-in-blank-correct {
+  border: 1px solid rgba(76, 175, 80, 0.8) !important;
+  background: rgba(76, 175, 80, 0.15);
+  color: #a8e6a1;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.35);
+}
+
+/* ❌ Incorrect User Answer */
+.write-in-blank-incorrect {
+  border: 1px solid rgba(244, 67, 54, 0.8) !important;
+  background: rgba(244, 67, 54, 0.15);
+  color: #f8b9b9;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.3);
+}
+
+.settings-card {
+    margin-top: 32px;
+    background: linear-gradient(90deg, #121959,#172179,#384194);
+    border-radius: 24px;
+    padding: 24px;
+    color: white;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Settings Item */
+.settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* Settings Label */
+.settings-label {
+    font-size: 18px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.settings-label .icon {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; /* Gray when off */
+    border-radius: 34px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    box-sizing: border-box;
+}
+
+.slider:before {
+	border-radius: 6px;
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 7px; /* Adjusted for proper positioning */
+    bottom: 7px;
+    background-color: white;
+    transition: transform 0.3s ease;
+    /* Create a diamond shape by rotating a square */
+    transform: rotate(45deg);
+}
+
+input:checked + .slider {
+    background-color: #2196F3; /* Blue when on, matching the image */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px) rotate(45deg); /* Slide the diamond to the right */
+}
+
+/* Toggle Text */
+.toggle-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    transition: opacity 0.3s ease;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.toggle-text.on {
+    left: 6px;
+    opacity: 1;
+}
+
+.toggle-text.off {
+    right: 6px;
+    opacity: 0;
+}
+
+input:checked + .slider .toggle-text.on {
+    opacity: 1;
+}
+
+input:checked + .slider .toggle-text.off {
+    opacity: 0;
+}
+
+input:not(:checked) + .slider .toggle-text.on {
+    opacity: 0;
+}
+
+input:not(:checked) + .slider .toggle-text.off {
+    opacity: 1;
+}

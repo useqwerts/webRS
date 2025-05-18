@@ -28,7 +28,7 @@ messages = []  # Store messages locally
 
 API_KEY_EXPIRATION = 10
 
-exam_duration = 60 * 60  # 30 minutes in seconds
+exam_duration = 90 * 60  # 30 minutes in seconds
 exam_start_time = None  # Global variable to store exam start time
 exam_started = False  # Флаг начала экзамена
 exam_end_time = None
@@ -480,357 +480,533 @@ current_version = "2025-01-10-v1"
 
 exam_questions = [
 {
-  "id": 1,
-  "text": "Listen the review. Are the sentences true or false?",
+  "id": 0,
+  "text": "Part 1. For each question choose correct option.",
   "type": "listening",
-  "audio": "/static/exam/LE_listening_B2_Film_reviews.mp3",
+  "audio": "/static/exam/Preliminary1_test2_audio1.mp3",
+  "correct": ""
+},
+{
+  "id": 1,
+  "type": "picture",
+  "text": "What has the man forgotten to pack for the trip?",
+  "images": [
+    "/static/exam/photos/PET1.jpg"
+  ],
   "subquestions": [
     {
       "id": "1.1",
-      "type": "true_false",
-      "text": "The reviewer didn't think she was going to enjoy the first film.",
-      "correct": "True"
-    },
-    {
-      "id": "1.2",
-      "type": "true_false",
-      "text": "The first scene of the first film is important for the rest of the film.",
-      "correct": "False"
-    },
-    {
-      "id": "1.3",
-      "type": "true_false",
-      "text": "The reviewer was glad the first film was set in a different country.",
-      "correct": "False"
-    },
-    {
-      "id": "1.4",
-      "type": "true_false",
-      "text": "There is another sequel planned for the first film.",
-      "correct": "False"
-    },
-    {
-      "id": "1.5",
-      "type": "true_false",
-      "text": "The reviewer had some doubts about the actors who were chosen for the second film.",
-      "correct": "True"
-    },
-    {
-      "id": "1.6",
-      "type": "true_false",
-      "text": "The second film made the reviewer think about her children.",
-      "correct": "False"
+      "type": "multiple_choice",
+      "text": "What has the man forgotten to pack for the trip?",
+      "options": [
+        "A",
+        "B",
+        "C"
+      ],
+      "correct": "A"
     }
   ]
 },
 {
   "id": 2,
-  "type": "reading",
-    "text": (
-    "<h1>Where Are the Harry Potter Stars Now?</h1>"
-    "<p>"
-    "<strong>Daniel Radcliffe</strong><br>"
-    "Daniel Radcliffe, who played Harry Potter in all eight films, recently admitted he only just realized how cool people thought he was at the time—something he didn’t feel himself. Despite his current success, he finds it hard to watch the early movies because he didn’t receive acting training on set and believes his performances were one-dimensional. It wasn’t until working with actor Gary Oldman that he began to understand how to approach a role. Interestingly, Daniel never aimed to become an actor; in early interviews, he even said he wanted to be a professional wrestler!"
-    "</p>"
-    "<p>"
-    "<strong>Rupert Grint</strong><br>"
-    "Rupert Grint, known for playing Ron Weasley, struggled with fame at a young age. Being constantly surrounded by adults, he felt out of place with peers when returning to school. After the fourth film, he even considered quitting the series, describing it as 'a bit of a drag.' He found being recognized everywhere unsettling and disliked being known only as Ron. Nevertheless, Rupert eventually came to terms with the attention and now looks back on the films as a meaningful and proud part of his life."
-    "</p>"
-    "<p>"
-    "<strong>Emma Watson</strong><br>"
-    "Emma Watson, who portrayed Hermione Granger, strongly identified with her character—both were top students and not considered cool. She became so immersed in playing Hermione that she struggled to separate her identity from the role and feels she missed out on her teenage years. After the series ended, Emma pursued academics and achieved top grades. She now chooses meaningful film roles and has become a prominent advocate for women’s rights. Though she has undergone therapy to cope with the effects of fame, focusing on her family has helped her rediscover who she is beyond Hermione."
-    "</p>"
-),
+  "type": "picture",
+  "text": "What time is the plane expected to depart?",
+  "images": [
+    "/static/exam/photos/PET2.jpg",
+    "/static/exam/photos/PET2.jpg"
+  ],
   "subquestions": [
     {
       "id": "2.1",
       "type": "multiple_choice",
-      "text": "_____ thought about leaving the Harry Potter series.",
+      "text": "What time is the plane expected to depart?",
       "options": [
-        "Daniel Ratcliffe",
-        "Rupert Grint",
-        "Emma Watson"
+        "A",
+        "B",
+        "C"
       ],
-      "correct": "Rupert Grint"
-    },
-    {
-      "id": "2.2",
-      "type": "multiple_choice",
-      "text": "_____ felt that (s)he and his/her character had a lot in common.",
-      "options": [
-        "Daniel Ratcliffe",
-        "Rupert Grint",
-        "Emma Watson"
-      ],
-      "correct": "Emma Watson"
-    },
-    {
-      "id": "2.3",
-      "type": "multiple_choice",
-      "text": "_____ didn’t feel fashionable while acting in the series.",
-      "options": [
-        "Daniel Ratcliffe",
-        "Rupert Grint",
-        "Emma Watson"
-      ],
-      "correct": "Daniel Ratcliffe"
-    },
-    {
-      "id": "2.4",
-      "type": "multiple_choice",
-      "text": "As a teenager, ______ felt that other teens were different from him/her.",
-      "options": [
-        "Daniel Ratcliffe",
-        "Rupert Grint",
-        "Emma Watson"
-      ],
-      "correct": "Rupert Grint"
-    },
-    {
-      "id": "2.5",
-      "type": "multiple_choice",
-      "text": "______ felt ashamed because (s)he didn’t like being famous.",
-      "options": [
-        "Daniel Ratcliffe",
-        "Rupert Grint",
-        "Emma Watson"
-      ],
-      "correct": "Emma Watson"
-    },
-    {
-      "id": "2.6",
-      "type": "multiple_choice",
-      "text": "______ is embarrassed by his/her lack of talent as a young actor.",
-      "options": [
-        "Daniel Ratcliffe",
-        "Rupert Grint",
-        "Emma Watson"
-      ],
-      "correct": "Daniel Ratcliffe"
-    },
-    {
-      "id": "2.7",
-      "type": "multiple_choice",
-      "text": "______ felt that his/her character’s personality took over his/her own.",
-      "options": [
-        "Daniel Ratcliffe",
-        "Rupert Grint",
-        "Emma Watson"
-      ],
-      "correct": "Emma Watson"
-    },
-    {
-      "id": "2.8",
-      "type": "multiple_choice",
-      "text": "______ considered education as important as acting.",
-      "options": [
-        "Daniel Ratcliffe",
-        "Rupert Grint",
-        "Emma Watson"
-      ],
-      "correct": "Emma Watson"
+      "correct": "C"
     }
   ]
 },
 {
   "id": 3,
-  "text": "Complete the questions with words/phrases from the box.",
-  "type": "box-choose",
-  "options": ["Are", "Have", "Do", "I'm", "I've", "Have"],
+  "type": "picture",
+  "text": "Where did the family go at the weekend?",
+  "images": [
+    "/static/exam/photos/PET3.jpg"
+  ],
   "subquestions": [
     {
       "id": "3.1",
-      "type": "box-choose",
-      "text": "____ you there?",
-      "correct": "Are"
-    },
-    {
-      "id": "3.2",
-      "type": "box-choose",
-      "text": "____ you thought about what to get her?",
-      "correct": "Have"
-    },
-        {
-      "id": "3.3",
-      "type": "box-choose",
-      "text": "____ you mean a present?",
-      "correct": "Do"
-    },
-        {
-      "id": "3.4",
-      "type": "box-choose",
-      "text": "____ you got any ideas?",
-      "correct": "Have"
-    },
-        {
-      "id": "3.5",
-      "type": "box-choose",
-      "text": "____ just had an idea for a gift.",
-      "correct": "I've"
-    },
-        {
-      "id": "3.6",
-      "type": "box-choose",
-      "text": "____ back now.",
-      "correct": "I'm"
+      "type": "multiple_choice",
+      "text": "Where did the family go at the weekend?",
+      "options": [
+        "A",
+        "B",
+        "C"
+      ],
+      "correct": "B"
     }
   ]
 },
 {
   "id": 4,
-  "type": "reading",
-"text": (
-  "<h1>Forum Discussion: Studying English in the UK</h1>"
-  "<p><strong>Banjo_Boy asks:</strong><br>"
-  "I was in the USA on a language course last summer. It was a fantastic learning experience! People were so friendly and welcoming. I’m going on a British summer course this year. I heard that English people are more unfriendly and polite. Is that true? I’m worried about the language as well. I learned American English at school, and I’ve heard that British English is different. I’m worried that I’ll misunderstand everyone, make errors and appear impolite. Can anyone help?"
-  "</p>"
-  "<p><strong>Sara_May replies:</strong><br>"
-  "Don’t worry about the language! It’s mostly the same. In terms of grammar, there are no differences at all. There are a few vocabulary differences though, like in the USA they say ‘subway’, ‘gas’ and ‘apartment’, while in Britain they say ‘underground’, ‘petrol’ and ‘flat’. But it won’t be a problem. You’ll understand those unfamiliar words from the context. What’s more, British people will understand you if you use American words. After all, they watch lots of American shows on television. The British accent is very different from the American one, but personally, I find it easier to understand."
-  "</p>"
-  "<p><strong>Paulo_Riviera_166 replies:</strong><br>"
-  "You won’t find the language confusing, but people’s behaviour is very different, in my opinion. Americans are more informal and open. They talk about anything – their money, their weight, their health. They are enthusiastic and friendly, and it’s easy to get to know them. British people aren’t like that. They don’t like to talk about their personal lives until they know you well, and they think it is respectful to give you privacy. As a result, it isn’t easy to make friends with British people. They are friendly and polite, but they often remain rather distant."
-  "</p>"
-  "<p><strong>Nellie_111 replies:</strong><br>"
-  "Don’t worry about making social errors in Britain. People are so polite that if you do something wrong, they won’t comment! I agree with Paulo_Riviera_166 in some ways. British people are more distant, but they aren’t more formal, in my opinion. For example, in the States, kids sometimes call their dads ‘Sir’, but British people never do that! In America, success is important, so people will often tell you how great they are. In Britain, it’s considered rude to boast about your achievements. If you do, people may tease you or gossip about you. Also, British people hate being complimented. If you say something nice about them, they often look embarrassed and don’t know what to say!"
-  "</p>"
-  "<p><strong>Bubbles replies:</strong><br>"
-  "I don’t know where Sara_May was staying in the UK, but I was in the north of the country on a school trip a couple of years ago. We all stayed with host families, and the only person I could understand was the mother of the family. I couldn’t understand anyone else, even after three weeks! The people didn’t sound anything like the people I had heard in my course books at school, and I learned British English! I guess people sound different in different areas of the country. All I can say is, good luck, and if you don’t understand someone, ask them to write down what they are trying to say!"
-  "</p>"
-),
-"subquestions": [
-  {
-    "id": "4.1",
-    "type": "multiple_choice",
-    "text": "Which sentence best summarises Banjo_Boy’s situation?",
-    "options": [
-      "He is worried about making mistakes in his language and behaviour when he goes to Britain.",
-      "He is worried that his trip to America won’t be as fun as last year’s trip to Britain.",
-      "He wants to know whether it is more useful to learn American English or British English.",
-      "He wants to learn how to speak well and be polite to his American and British guests."
-    ],
-    "correct": "He is worried about making mistakes in his language and behaviour when he goes to Britain."
-  },
-  {
-    "id": "4.2",
-    "type": "multiple_choice",
-    "text": "What is Sara_May’s advice?",
-    "options": [
-      "Neither the vocabulary nor the accent differences are hard to understand.",
-      "The vocabulary differences are hard to understand, but the British accent is easy to understand.",
-      "The vocabulary differences are easy to understand, but the British accent is hard to understand.",
-      "Both the vocabulary and the accent differences are hard to understand."
-    ],
-    "correct": "Neither the vocabulary nor the accent differences are hard to understand."
-  },
-  {
-    "id": "4.3",
-    "type": "multiple_choice",
-    "text": "According to Paulo_Riviera_166, British people are...",
-    "options": [
-      "formal and unfriendly",
-      "enthusiastic and personal",
-      "friendly and open",
-      "respectful and distant"
-    ],
-    "correct": "respectful and distant"
-  },
-  {
-    "id": "4.4",
-    "type": "multiple_choice",
-    "text": "According to Nellie_111, Americans are ... than British people.",
-    "options": [
-      "less likely to comment if you make a social error",
-      "less likely to talk about their achievements",
-      "more likely to call their parents by a formal title",
-      "more likely to feel embarrassed by a compliment"
-    ],
-    "correct": "more likely to call their parents by a formal title"
-  },
-  {
-    "id": "4.5",
-    "type": "multiple_choice",
-    "text": "Why does Bubbles disagree with Sara_May?",
-    "options": [
-      "She thinks it’s hard to understand British vocabulary.",
-      "She thinks the British accent is difficult to understand.",
-      "She thinks British grammar is different from American grammar.",
-      "She thinks British people won’t understand American English."
-    ],
-    "correct": "She thinks the British accent is difficult to understand."
-  },
-  {
-    "id": "4.6",
-    "type": "multiple_choice",
-    "text": "Which of the four people responded to the question: “I heard that English people are more unfriendly and polite. Is that true?”",
-    "options": [
-      "Paulo_Riviera_166 only.",
-      "Paulo_Riviera_166 and Nellie_111.",
-      "Paulo_Riviera_166, Nellie_111 and Bubbles.",
-      "All of them."
-    ],
-    "correct": "Paulo_Riviera_166 and Nellie_111."
-  }
-]
-
+  "type": "picture",
+  "text": "What are the man and woman going to order?",
+  "images": [
+    "/static/exam/photos/PET4.jpg"
+  ],
+  "subquestions": [
+    {
+      "id": "4.1",
+      "type": "multiple_choice",
+      "text": "What are the man and woman going to order?",
+      "options": [
+        "A",
+        "B",
+        "C"
+      ],
+      "correct": "A"
+    }
+  ]
 },
 {
   "id": 5,
-  "text": "Listen to the recording. Are the sentences true or false?",
-  "type": "listening",
-  "audio": "/static/exam/LE_listening_B2_Talking_about_rumours.mp3",
+  "type": "picture",
+  "text": "Which photograph did the man take?",
+  "images": [
+    "/static/exam/photos/PET5.jpg"
+  ],
   "subquestions": [
     {
       "id": "5.1",
-      "type": "true_false",
-      "text": "No one really knows the truth about the situation with John.",
-      "correct": "True"
+      "type": "multiple_choice",
+      "text": "Which photograph did the man take?",
+      "options": [
+        "A",
+        "B",
+        "C"
+      ],
+      "correct": "A"
+    }
+  ]
+},
+{
+  "id": 6,
+  "type": "picture",
+  "text": "How does the man suggest his friends should travel to the concert?",
+  "images": [
+    "/static/exam/photos/PET6.jpg"
+  ],
+  "subquestions": [
+    {
+      "id": "6.1",
+      "type": "multiple_choice",
+      "text": "How does the man suggest his friends should travel to the concert?",
+      "options": [
+        "A",
+        "B",
+        "C"
+      ],
+      "correct": "A"
+    }
+  ]
+},
+{
+  "id": 7,
+  "type": "picture",
+  "text": "What is the weather forecast for the north this morning?",
+  "images": [
+    "/static/exam/photos/PET7.jpg"
+  ],
+  "subquestions": [
+    {
+      "id": "7.1",
+      "type": "multiple_choice",
+      "text": "What is the weather forecast for the north this morning?",
+      "options": [
+        "A",
+        "B",
+        "C"
+      ],
+      "correct": "C"
+    }
+  ]
+},
+{
+  "id": 8,
+  "text": "Part 2. For each question, choose the correct answer.",
+  "type": "listening",
+  "audio": "/static/exam/Preliminary1_test2_audio2.mp3",
+  "subquestions": [
+    {
+      "id": "8.8",
+      "type": "multiple_choice",
+      "text": "You will hear a boy telling a friend about plans for his birthday. How does he feel about the plans he’s made?",
+      "options": [
+        "annoyed that some of his friends don’t want to come",
+        "disappointed that he can’t invite more friends",
+        "worried that it might be boring for his friends"
+      ],
+      "correct": "disappointed that he can’t invite more friends"
     },
     {
-      "id": "5.2",
-      "type": "true_false",
-      "text": "Kiera doesn't immediately share everything she knows about John.",
-      "correct": "True"
+      "id": "8.9",
+      "type": "multiple_choice",
+      "text": "You will hear two friends talking about a football match they went to. They both think that...",
+      "options": [
+        "the crowd was smaller than usual",
+        "the match was quite boring",
+        "the referee made some bad decisions"
+      ],
+      "correct": "the crowd was smaller than usual"
     },
     {
-      "id": "5.3",
-      "type": "true_false",
-      "text": "Susanne wasn't the original creator of the cars idea.",
-      "correct": "True"
+      "id": "8.10",
+      "type": "multiple_choice",
+      "text": "You will hear a man telling his friend about a skiing holiday. How did he feel during the holiday?",
+      "options": [
+        "upset that he was injured",
+        "embarrassed by his skiing ability",
+        "angry that his friends put photos online"
+      ],
+      "correct": "embarrassed by his skiing ability"
     },
     {
-      "id": "5.4",
-      "type": "true_false",
-      "text": "Susanne reported John to people higher up in the company.",
-      "correct": "True"
+      "id": "8.11",
+      "type": "multiple_choice",
+      "text": "You will hear two friends talking about cars. The woman thinks the best way to get information about new cars is from...",
+      "options": [
+        "advertisements",
+        "TV programmes",
+        "internet reviews"
+      ],
+      "correct": "internet reviews"
     },
     {
-      "id": "5.5",
-      "type": "true_false",
-      "text": "Kiera disagrees with what Will has said about John's aggressive behaviour.",
-      "correct": "False"
+      "id": "8.12",
+      "type": "multiple_choice",
+      "text": "You will hear a woman telling a friend about a singing competition. What does the woman say about it?",
+      "options": [
+        "Judging it is the easiest part",
+        "It is taking a long time to organise it",
+        "She would love to perform in it"
+      ],
+      "correct": "It is taking a long time to organise it"
     },
     {
-      "id": "5.6",
-      "type": "true_false",
-      "text": "Kiera saw John stealing ideas from other people.",
-      "correct": "False"
+      "id": "8.13",
+      "type": "multiple_choice",
+      "text": "You will hear a woman talking to a friend about her recent move to a city. How does the woman feel about it?",
+      "options": [
+        "pleased about a surprising health benefit",
+        "glad that she has met friendly people",
+        "satisfied with her local area"
+      ],
+      "correct": "pleased about a surprising health benefit"
+    }
+  ]
+},
+{
+  "id": 9,
+  "text": "Part 3. Listen and fill in the gaps. ATTENTION Don't write numbers in letters!",
+  "type": "listening",
+  "audio": "/static/exam/Preliminary1_test2_audio3.mp3",
+  "subquestions": [
+    {
+      "id": "9.1",
+      "type": "write-in-blank",
+      "text": "Kelly did a degree in (14) ____ at university.",
+      "correct": "art"
     },
     {
-      "id": "5.7",
-      "type": "true_false",
-      "text": "Kiera made an official complaint about John's behaviour.",
-      "correct": "False"
+      "id": "9.2",
+      "type": "write-in-blank",
+      "text": "Kelly really enjoys going to work because of the (15) ____ at the company.",
+      "correct": "people"
     },
     {
-      "id": "5.8",
-      "type": "true_false",
-      "text": "There was a culture of silence that meant John was not investigated earlier.",
-      "correct": "True"
+      "id": "9.3",
+      "type": "write-in-blank",
+      "text": "Kelly's department is responsible for creating (16) ____ in cartoons.",
+      "correct": "animals"
+    },
+    {
+      "id": "9.4",
+      "type": "write-in-blank",
+      "text": "At the moment Kelly is trying to develop (17) ____ skills.",
+      "correct": "acting"
+    },
+    {
+      "id": "9.5",
+      "type": "write-in-blank",
+      "text": "It takes Kelly's company (18) ____ to make a full-length cartoon film.",
+      "correct": "8 months"
+    },
+    {
+      "id": "9.6",
+      "type": "write-in-blank",
+      "text": "Kelly's next project will be some cartoons for a (19) ____.",
+      "correct": "website"
+    }
+  ]
+},
+{
+  "id": 10,
+  "text": "Part 4 You will hear an interview with a girl called Rosie Banks, who swims in international competitions.",
+  "type": "listening",
+  "audio": "/static/exam/Preliminary1_test2_audio4.mp3",
+  "subquestions": [
+    {
+      "id": "10.20",
+      "type": "multiple_choice",
+      "text": "Rosie swam a lot when she was very young because...",
+      "options": [
+        "her father thought it was an important skill",
+        "she wanted to be like her brother",
+        "there were free classes at her local pool"
+      ],
+      "correct": "she wanted to be like her brother"
+    },
+    {
+      "id": "10.21",
+      "type": "multiple_choice",
+      "text": "What did Rosie dislike about doing serious swimming training?",
+      "options": [
+        "being away from her friends",
+        "the long journey from home",
+        "missing some school lessons"
+      ],
+      "correct": "missing some school lessons"
+    },
+    {
+      "id": "10.22",
+      "type": "multiple_choice",
+      "text": "When Rosie won the Swim Stars International competition she was...",
+      "options": [
+        "surprised by the public interest",
+        "amazed that she had done so well",
+        "excited about meeting other famous sportspeople"
+      ],
+      "correct": "surprised by the public interest"
+    },
+    {
+      "id": "10.23",
+      "type": "multiple_choice",
+      "text": "Rosie says she needs more help with the cost of...",
+      "options": [
+        "transport to competitions",
+        "the kit she needs",
+        "her accommodation while she’s abroad"
+      ],
+      "correct": "her accommodation while she’s abroad"
+    },
+    {
+      "id": "10.24",
+      "type": "multiple_choice",
+      "text": "What has Rosie changed since she got a new coach?",
+      "options": [
+        "her swimming style",
+        "what she eats",
+        "her fitness routine"
+      ],
+      "correct": "her swimming style"
+    },
+    {
+      "id": "10.25",
+      "type": "multiple_choice",
+      "text": "What is Rosie planning to do in Spain?",
+      "options": [
+        "take part in some races",
+        "train with different people",
+        "have some time to relax"
+      ],
+      "correct": "train with different people"
+    }
+  ]
+},
+  {
+    "id": 11,
+    "type": "picture",
+    "text": "Why is Anne texting?",
+    "images": [
+      "/static/exam/photos/PETR1.png"
+    ],
+    "subquestions": [
+      {
+        "id": "11.1",
+        "type": "multiple_choice",
+        "text": "Why is Anne texting?",
+        "options": [
+          "to ask Eric if he can do her a favour",
+          "to remind Eric about what they have agreed",
+          "to give Eric an update regarding their arrangement"
+        ],
+        "correct": "to give Eric an update regarding their arrangement"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "type": "picture",
+    "text": "What does the notice say about the careers talk?",
+    "images": [
+      "/static/exam/photos/PETR2.png"
+    ],
+    "subquestions": [
+      {
+        "id": "12.1",
+        "type": "multiple_choice",
+        "text": "What does the notice say about the careers talk?",
+        "options": [
+          "Students of any year group are able to come to the careers talk",
+          "Students should go to the talk if they need help applying for a job",
+          "Students must register quickly because places at the event are limited"
+        ],
+        "correct": "Students must register quickly because places at the event are limited"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "type": "picture",
+    "text": "What does the notice say about using the recycling centre?",
+    "images": [
+      "/static/exam/photos/PETR3.png"
+    ],
+    "subquestions": [
+      {
+        "id": "13.1",
+        "type": "multiple_choice",
+        "text": "What does the notice say about using the recycling centre?",
+        "options": [
+          "Recycling centre staff will clean items for recycling",
+          "Certain items need to be washed before they are recycled",
+          "All items can be placed in the same recycling bin"
+        ],
+        "correct": "Certain items need to be washed before they are recycled"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "type": "picture",
+    "text": "Why is Gabriel texting Nora?",
+    "images": [
+      "/static/exam/photos/PETR4.png"
+    ],
+    "subquestions": [
+      {
+        "id": "14.1",
+        "type": "multiple_choice",
+        "text": "Why is Gabriel texting Nora?",
+        "options": [
+          "Gabriel has got a ticket for Nora to go to the special dance event",
+          "Gabriel is informing Nora that she needs to remember to bring headphones",
+          "Gabriel wants Nora to suggest who may be interested in going to the disco"
+        ],
+        "correct": "Gabriel wants Nora to suggest who may be interested in going to the disco"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "type": "picture",
+    "text": "What does the notice say about ingredients?",
+    "images": [
+      "/static/exam/photos/PETR5.png"
+    ],
+    "subquestions": [
+      {
+        "id": "15.1",
+        "type": "multiple_choice",
+        "text": "What does the notice say about ingredients?",
+        "options": [
+          "Our staff can let you know about what we've used to make our dishes",
+          "Read the information on our menu if you need to avoid eating certain ingredients",
+          "Tell your waiter if you'd prefer something different from what's on the menu"
+        ],
+        "correct": "Our staff can let you know about what we've used to make our dishes"
+      }
+    ]
+  },
+  {
+  "id": 16,
+  "type": "reading",
+  "text": "<h1>Curriculum Vitaes: Tips that can Help</h1>\n<p>Six out of ten CV’s which are prepared by Information Technology professionals fail to meet the basic standards and are turned down without even being read fully, according to a recruitment company. As a consequence, thousands of candidates are excluding themselves from attractive job opportunities.</p>\n<p>Although the company handles over 60,000 CV’s per year, it estimates that at least 60% would not be admitted if they were sent directly to potential clients due to basic errors.</p>\n<p>The company Marketing Director said, “Sadly it’s often the most highly qualified candidates whose CV’s are so poorly constructed that they are literally dead on arrival. Attractive job opportunities in the IT industry often generate intense competition and there is often little to choose between the candidates”.</p>\n<p>“Advice on the presentation format of CV’s in relation to the requirements that they are being submitted for should be an Industry standard so as to add real value to the candidates that you are representing and indeed to fulfil your professional obligations to your clients”.</p>\n<p>“Writing a CV can be extremely difficult and too often a CV turns out to be a generic overview including a lot of information that is irrelevant. People should remember that an employer typically spends between 15 and 30 seconds scanning each CV and you have that one chance to make an impression”.</p>\n<p>“A good CV is more than just documentation of your career path; it is a marketing tool designed to present your professional career experience according to the new job specification. It should also include details of past professional successes that effectively demonstrate your ability to undertake the job responsibilities outlined”.</p>",
+  "subquestions": [
+    {
+      "id": "16.1",
+      "type": "multiple_choice",
+      "text": "Recruitment companies say that potential clients ...",
+      "options": [
+        "make basic mistakes",
+        "only get 60% of CV’s",
+        "reject CV’s with mistakes"
+      ],
+      "correct": "reject CV’s with mistakes"
+    },
+    {
+      "id": "16.2",
+      "type": "multiple_choice",
+      "text": "The Marketing Director said that the best candidates ...",
+      "options": [
+        "are the most affected",
+        "do not send CV’s",
+        "write the best CV’s"
+      ],
+      "correct": "are the most affected"
+    },
+    {
+      "id": "16.3",
+      "type": "multiple_choice",
+      "text": "The Marketing Director suggests that candidates ought to pay attention to ...",
+      "options": [
+        "CV’s presentation",
+        "other companies",
+        "other competitors"
+      ],
+      "correct": "CV’s presentation"
+    },
+    {
+      "id": "16.4",
+      "type": "multiple_choice",
+      "text": "The Marketing Director says that very often CV’s include ...",
+      "options": [
+        "necessary details",
+        "unimportant information",
+        "very little information"
+      ],
+      "correct": "unimportant information"
+    },
+    {
+      "id": "16.5",
+      "type": "multiple_choice",
+      "text": "Candidates should remember that employers ...",
+      "options": [
+        "are typical people",
+        "are very busy people",
+        "make an impression on people"
+      ],
+      "correct": "are very busy people"
+    },
+    {
+      "id": "16.6",
+      "type": "multiple_choice",
+      "text": "A good curriculum should show ...",
+      "options": [
+        "the new job specifications",
+        "your marketing tools",
+        "your overall skills"
+      ],
+      "correct": "your overall skills"
     }
   ]
 }
-
 ]
+            
+
 
 # Путь к файлу с балансами
 BALANCE_FILE = 'balance.json'
@@ -1245,6 +1421,9 @@ def handle_exam_started():
     exam_started = True
     emit('exam_started', {'message': 'Exam has started'}) 
 
+import json
+import os
+
 @app.route('/api/start-exam', methods=['POST'])
 def start_exam():
     global exam_start_time, exam_end_time, exam_passed
@@ -1258,10 +1437,18 @@ def start_exam():
     # Очищаем список пользователей, которые прошли экзамен
     exam_passed.clear()
 
+    # Очищаем файл с результатами экзамена
+    try:
+        with open('exam_results.json', 'w') as f:
+            json.dump({}, f)  # или [] в зависимости от структуры файла
+    except Exception as e:
+        return jsonify({"error": f"Failed to clear exam_results.json: {str(e)}"}), 500
+
     # Отправляем сообщение о старте экзамена
-    socketio.emit('exam_started', {'message': 'Exam has started'})  # Исправленный emit
+    socketio.emit('exam_started', {'message': 'Exam has started'})
 
     return jsonify({"message": "Exam has started and the passed list is cleared."}), 200
+
     
 @socketio.on('exam_ended')
 def handle_exam_ended():

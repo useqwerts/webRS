@@ -1,284 +1,308 @@
 {
     "Muhammadiso": {
-        "correct": 1,
-        "incorrect": 0,
-        "skipped": 33,
-        "total_questions": 34,
-        "correct_percentage": 2.941176470588235,
+        "correct": 0,
+        "incorrect": 1,
+        "skipped": 36,
+        "total_questions": 37,
+        "correct_percentage": 0.0,
         "rewarded": false,
         "coins": 0,
-        "time_finished": "2025-05-13 16:29:01",
+        "time_finished": "2025-05-18 05:15:48",
         "results": [
             {
-                "question_type": "true_false",
+                "question_type": "listening",
+                "question_id": 0,
+                "question": "Part 1. For each question choose correct option.",
+                "user_answer": null,
+                "correct_answer": "",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
                 "question_id": "1.1",
-                "question": "The reviewer didn't think she was going to enjoy the first film.",
+                "question": "What has the man forgotten to pack for the trip?",
                 "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "1.2",
-                "question": "The first scene of the first film is important for the rest of the film.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "1.3",
-                "question": "The reviewer was glad the first film was set in a different country.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "1.4",
-                "question": "There is another sequel planned for the first film.",
-                "user_answer": null,
-                "correct_answer": "False",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "1.5",
-                "question": "The reviewer had some doubts about the actors who were chosen for the second film.",
-                "user_answer": null,
-                "correct_answer": "True",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "1.6",
-                "question": "The second film made the reviewer think about her children.",
-                "user_answer": null,
-                "correct_answer": "False",
+                "correct_answer": "A",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "2.1",
-                "question": "_____ thought about leaving the Harry Potter series.",
-                "user_answer": null,
-                "correct_answer": "Rupert Grint",
+                "question": "What time is the plane expected to depart?",
+                "user_answer": "A",
+                "correct_answer": "C",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "2.2",
-                "question": "_____ felt that (s)he and his/her character had a lot in common.",
-                "user_answer": null,
-                "correct_answer": "Emma Watson",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.3",
-                "question": "_____ didn\u2019t feel fashionable while acting in the series.",
-                "user_answer": null,
-                "correct_answer": "Daniel Ratcliffe",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.4",
-                "question": "As a teenager, ______ felt that other teens were different from him/her.",
-                "user_answer": null,
-                "correct_answer": "Rupert Grint",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.5",
-                "question": "______ felt ashamed because (s)he didn\u2019t like being famous.",
-                "user_answer": null,
-                "correct_answer": "Emma Watson",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.6",
-                "question": "______ is embarrassed by his/her lack of talent as a young actor.",
-                "user_answer": null,
-                "correct_answer": "Daniel Ratcliffe",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.7",
-                "question": "______ felt that his/her character\u2019s personality took over his/her own.",
-                "user_answer": null,
-                "correct_answer": "Emma Watson",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "2.8",
-                "question": "______ considered education as important as acting.",
-                "user_answer": null,
-                "correct_answer": "Emma Watson",
-                "is_correct": false
-            },
-            {
-                "question_type": "box-choose",
                 "question_id": "3.1",
-                "question": "____ you there?",
+                "question": "Where did the family go at the weekend?",
                 "user_answer": null,
-                "correct_answer": "Are",
-                "is_correct": false
-            },
-            {
-                "question_type": "box-choose",
-                "question_id": "3.2",
-                "question": "____ you thought about what to get her?",
-                "user_answer": null,
-                "correct_answer": "Have",
-                "is_correct": false
-            },
-            {
-                "question_type": "box-choose",
-                "question_id": "3.3",
-                "question": "____ you mean a present?",
-                "user_answer": null,
-                "correct_answer": "Do",
-                "is_correct": false
-            },
-            {
-                "question_type": "box-choose",
-                "question_id": "3.4",
-                "question": "____ you got any ideas?",
-                "user_answer": null,
-                "correct_answer": "Have",
-                "is_correct": false
-            },
-            {
-                "question_type": "box-choose",
-                "question_id": "3.5",
-                "question": "____ just had an idea for a gift.",
-                "user_answer": null,
-                "correct_answer": "I've",
-                "is_correct": false
-            },
-            {
-                "question_type": "box-choose",
-                "question_id": "3.6",
-                "question": "____ back now.",
-                "user_answer": null,
-                "correct_answer": "I'm",
+                "correct_answer": "B",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
                 "question_id": "4.1",
-                "question": "Which sentence best summarises Banjo_Boy\u2019s situation?",
+                "question": "What are the man and woman going to order?",
                 "user_answer": null,
-                "correct_answer": "He is worried about making mistakes in his language and behaviour when he goes to Britain.",
+                "correct_answer": "A",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "4.2",
-                "question": "What is Sara_May\u2019s advice?",
-                "user_answer": null,
-                "correct_answer": "Neither the vocabulary nor the accent differences are hard to understand.",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "4.3",
-                "question": "According to Paulo_Riviera_166, British people are...",
-                "user_answer": null,
-                "correct_answer": "respectful and distant",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "4.4",
-                "question": "According to Nellie_111, Americans are ... than British people.",
-                "user_answer": null,
-                "correct_answer": "more likely to call their parents by a formal title",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "4.5",
-                "question": "Why does Bubbles disagree with Sara_May?",
-                "user_answer": null,
-                "correct_answer": "She thinks the British accent is difficult to understand.",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
-                "question_id": "4.6",
-                "question": "Which of the four people responded to the question: \u201cI heard that English people are more unfriendly and polite. Is that true?\u201d",
-                "user_answer": null,
-                "correct_answer": "Paulo_Riviera_166 and Nellie_111.",
-                "is_correct": false
-            },
-            {
-                "question_type": "true_false",
                 "question_id": "5.1",
-                "question": "No one really knows the truth about the situation with John.",
+                "question": "Which photograph did the man take?",
                 "user_answer": null,
-                "correct_answer": "True",
+                "correct_answer": "A",
                 "is_correct": false
             },
             {
-                "question_type": "true_false",
-                "question_id": "5.2",
-                "question": "Kiera doesn't immediately share everything she knows about John.",
-                "user_answer": "True",
-                "correct_answer": "True",
-                "is_correct": true
-            },
-            {
-                "question_type": "true_false",
-                "question_id": "5.3",
-                "question": "Susanne wasn't the original creator of the cars idea.",
+                "question_type": "multiple_choice",
+                "question_id": "6.1",
+                "question": "How does the man suggest his friends should travel to the concert?",
                 "user_answer": null,
-                "correct_answer": "True",
+                "correct_answer": "A",
                 "is_correct": false
             },
             {
-                "question_type": "true_false",
-                "question_id": "5.4",
-                "question": "Susanne reported John to people higher up in the company.",
+                "question_type": "multiple_choice",
+                "question_id": "7.1",
+                "question": "What is the weather forecast for the north this morning?",
                 "user_answer": null,
-                "correct_answer": "True",
+                "correct_answer": "C",
                 "is_correct": false
             },
             {
-                "question_type": "true_false",
-                "question_id": "5.5",
-                "question": "Kiera disagrees with what Will has said about John's aggressive behaviour.",
+                "question_type": "multiple_choice",
+                "question_id": "8.8",
+                "question": "You will hear a boy telling a friend about plans for his birthday. How does he feel about the plans he\u2019s made?",
                 "user_answer": null,
-                "correct_answer": "False",
+                "correct_answer": "disappointed that he can\u2019t invite more friends",
                 "is_correct": false
             },
             {
-                "question_type": "true_false",
-                "question_id": "5.6",
-                "question": "Kiera saw John stealing ideas from other people.",
+                "question_type": "multiple_choice",
+                "question_id": "8.9",
+                "question": "You will hear two friends talking about a football match they went to. They both think that...",
                 "user_answer": null,
-                "correct_answer": "False",
+                "correct_answer": "the crowd was smaller than usual",
                 "is_correct": false
             },
             {
-                "question_type": "true_false",
-                "question_id": "5.7",
-                "question": "Kiera made an official complaint about John's behaviour.",
+                "question_type": "multiple_choice",
+                "question_id": "8.10",
+                "question": "You will hear a man telling his friend about a skiing holiday. How did he feel during the holiday?",
                 "user_answer": null,
-                "correct_answer": "False",
+                "correct_answer": "embarrassed by his skiing ability",
                 "is_correct": false
             },
             {
-                "question_type": "true_false",
-                "question_id": "5.8",
-                "question": "There was a culture of silence that meant John was not investigated earlier.",
+                "question_type": "multiple_choice",
+                "question_id": "8.11",
+                "question": "You will hear two friends talking about cars. The woman thinks the best way to get information about new cars is from...",
                 "user_answer": null,
-                "correct_answer": "True",
+                "correct_answer": "internet reviews",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "8.12",
+                "question": "You will hear a woman telling a friend about a singing competition. What does the woman say about it?",
+                "user_answer": null,
+                "correct_answer": "It is taking a long time to organise it",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "8.13",
+                "question": "You will hear a woman talking to a friend about her recent move to a city. How does the woman feel about it?",
+                "user_answer": null,
+                "correct_answer": "pleased about a surprising health benefit",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "9.1",
+                "question": "Kelly did a degree in (14) ____ at university.",
+                "user_answer": null,
+                "correct_answer": "art",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "9.2",
+                "question": "Kelly really enjoys going to work because of the (15) ____ at the company.",
+                "user_answer": null,
+                "correct_answer": "people",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "9.3",
+                "question": "Kelly's department is responsible for creating (16) ____ in cartoons.",
+                "user_answer": null,
+                "correct_answer": "animals",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "9.4",
+                "question": "At the moment Kelly is trying to develop (17) ____ skills.",
+                "user_answer": null,
+                "correct_answer": "acting",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "9.5",
+                "question": "It takes Kelly's company (18) ____ to make a full-length cartoon film.",
+                "user_answer": null,
+                "correct_answer": "8 months",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "9.6",
+                "question": "Kelly's next project will be some cartoons for a (19) ____.",
+                "user_answer": null,
+                "correct_answer": "website",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "10.20",
+                "question": "Rosie swam a lot when she was very young because...",
+                "user_answer": null,
+                "correct_answer": "she wanted to be like her brother",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "10.21",
+                "question": "What did Rosie dislike about doing serious swimming training?",
+                "user_answer": null,
+                "correct_answer": "missing some school lessons",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "10.22",
+                "question": "When Rosie won the Swim Stars International competition she was...",
+                "user_answer": null,
+                "correct_answer": "surprised by the public interest",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "10.23",
+                "question": "Rosie says she needs more help with the cost of...",
+                "user_answer": null,
+                "correct_answer": "her accommodation while she\u2019s abroad",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "10.24",
+                "question": "What has Rosie changed since she got a new coach?",
+                "user_answer": null,
+                "correct_answer": "her swimming style",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "10.25",
+                "question": "What is Rosie planning to do in Spain?",
+                "user_answer": null,
+                "correct_answer": "train with different people",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "11.1",
+                "question": "Why is Anne texting?",
+                "user_answer": null,
+                "correct_answer": "to give Eric an update regarding their arrangement",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "12.1",
+                "question": "What does the notice say about the careers talk?",
+                "user_answer": null,
+                "correct_answer": "Students must register quickly because places at the event are limited",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "13.1",
+                "question": "What does the notice say about using the recycling centre?",
+                "user_answer": null,
+                "correct_answer": "Certain items need to be washed before they are recycled",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "14.1",
+                "question": "Why is Gabriel texting Nora?",
+                "user_answer": null,
+                "correct_answer": "Gabriel wants Nora to suggest who may be interested in going to the disco",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "15.1",
+                "question": "What does the notice say about ingredients?",
+                "user_answer": null,
+                "correct_answer": "Our staff can let you know about what we've used to make our dishes",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "16.1",
+                "question": "Recruitment companies say that potential clients ...",
+                "user_answer": null,
+                "correct_answer": "reject CV\u2019s with mistakes",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "16.2",
+                "question": "The Marketing Director said that the best candidates ...",
+                "user_answer": null,
+                "correct_answer": "are the most affected",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "16.3",
+                "question": "The Marketing Director suggests that candidates ought to pay attention to ...",
+                "user_answer": null,
+                "correct_answer": "CV\u2019s presentation",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "16.4",
+                "question": "The Marketing Director says that very often CV\u2019s include ...",
+                "user_answer": null,
+                "correct_answer": "unimportant information",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "16.5",
+                "question": "Candidates should remember that employers ...",
+                "user_answer": null,
+                "correct_answer": "are very busy people",
+                "is_correct": false
+            },
+            {
+                "question_type": "multiple_choice",
+                "question_id": "16.6",
+                "question": "A good curriculum should show ...",
+                "user_answer": null,
+                "correct_answer": "your overall skills",
                 "is_correct": false
             }
         ]

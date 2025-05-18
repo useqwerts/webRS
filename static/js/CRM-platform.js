@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 let remainingTime = null;
 let lastFetchTime = 0;
-const FETCH_INTERVAL = 10000;
+const FETCH_INTERVAL = 20 * 60 * 1000;
 let timerInterval = null;
 let stopFetching = false; // Флаг для остановки запросов после 400
 
@@ -43,6 +43,7 @@ function updateTimer() {
       })
       .catch(error => {
         console.error('Error fetching time:', error);
+		stopFetching = true;
       });
   } else {
     if (remainingTime !== null) {
@@ -79,6 +80,54 @@ function updateTimer() {
 
   // Запуск таймера
   timerInterval = setInterval(updateTimer, 1000);
+  
+const toggleSwitch = document.querySelector('.toggle-switch input[type="checkbox"]');
+const sidebar = document.querySelector('.sidebar');
+const html = document.documentElement;
+const body = document.body;
+const content = document.querySelector('.content');
+
+// Функция переключения темы
+const toggleTheme = () => {
+  const isDarkTheme = sidebar.classList.contains('dark-theme');
+  if (isDarkTheme) {
+    sidebar.classList.remove('dark-theme');
+    html.classList.remove('dark-theme');
+    body.classList.remove('dark-theme');
+    content.classList.remove('dark-theme');
+    toggleSwitch.checked = false;
+    localStorage.setItem('theme', 'light');
+  } else {
+    sidebar.classList.add('dark-theme');
+    html.classList.add('dark-theme');
+    body.classList.add('dark-theme');
+    content.classList.add('dark-theme');
+    toggleSwitch.checked = true;
+    localStorage.setItem('theme', 'dark');
+  }
+};
+
+// Загрузка сохранённой темы и установка состояния чекбокса
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+  sidebar.classList.add('dark-theme');
+  html.classList.add('dark-theme');
+  body.classList.add('dark-theme');
+  content.classList.add('dark-theme');
+  toggleSwitch.checked = true;
+} else {
+  sidebar.classList.remove('dark-theme');
+  html.classList.remove('dark-theme');
+  body.classList.remove('dark-theme');
+  content.classList.remove('dark-theme');
+  toggleSwitch.checked = false;
+  localStorage.setItem('theme', 'light'); // Установка значения по умолчанию
+}
+
+// Обработчик переключателя
+toggleSwitch.addEventListener('change', toggleTheme);
+
+  
 });
 
 socket.on('update-results', function() {
@@ -173,36 +222,26 @@ async function loadExamResults() {
 }
 
 async function openUserDetailedReview(username, userData) {
-  // Удаляем существующее модальное окно, если есть
   document.querySelector('.detailed-questions-review')?.remove();
 
-  // Создаем модальное окно
   const modal = document.createElement('div');
   modal.className = 'detailed-questions-review';
 
-  // Создаем контейнер для Lottie-анимации
   const loadingContainer = document.createElement('div');
   loadingContainer.id = 'loading-animation';
   loadingContainer.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px;';
   modal.appendChild(loadingContainer);
 
-  // Добавляем модальное окно в DOM сразу, чтобы показать анимацию
   document.body.appendChild(modal);
 
-  // Инициализируем Lottie-анимацию с рандомным выбором файла
   let animation;
   try {
-    if (typeof lottie === 'undefined') {
-      throw new Error('Lottie-web is not loaded');
-    }
-    // Массив с путями к анимациям
+    if (typeof lottie === 'undefined') throw new Error('Lottie-web is not loaded');
     const animationPaths = [
       '/static/animations/loading-questions.json',
       '/static/animations/loading-questions-alt.json'
     ];
-    // Случайный выбор пути
     const randomPath = animationPaths[Math.floor(Math.random() * animationPaths.length)];
-    
     animation = lottie.loadAnimation({
       container: loadingContainer,
       renderer: 'svg',
@@ -212,7 +251,6 @@ async function openUserDetailedReview(username, userData) {
     });
   } catch (error) {
     console.error('Failed to initialize Lottie animation:', error);
-    // Продолжаем без анимации, если Lottie не загружен
     loadingContainer.innerHTML = '<p style="color:white;">Loading...</p>';
   }
 
@@ -228,29 +266,22 @@ async function openUserDetailedReview(username, userData) {
   let questionsHtml = '<div class="questions-container">';
 
   try {
-    // Запрос результатов пользователя
     const resultsRes = await fetch(`/api/get_exam_results?username=${username}`);
     const resultsData = await resultsRes.json();
-
-    // Запрос структуры вопросов
     const questionsRes = await fetch(`/get_exam_questions_result`);
     const questionsData = await questionsRes.json();
 
-    // Удаляем анимацию после успешной загрузки данных
-    if (animation) {
-      animation.destroy();
-    }
+    if (animation) animation.destroy();
     loadingContainer.remove();
 
     if (resultsData.error) {
       questionsHtml = `<p style="color:white;">${resultsData.error}</p>`;
     } else {
       window.examResultsData = resultsData[username]?.results || [];
-
-      // Создаем карту вопросов для быстрого доступа по id
       const questionMap = {};
       questionsData.questions.forEach(parentQuestion => {
         if (parentQuestion.subquestions) {
+          questionMap[parentQuestion.id] = parentQuestion;
           parentQuestion.subquestions.forEach(subq => {
             questionMap[subq.id] = { ...subq, parent: parentQuestion };
           });
@@ -259,17 +290,17 @@ async function openUserDetailedReview(username, userData) {
         }
       });
 
-      // Группируем результаты по родительским вопросам
       const parentQuestions = {};
       for (const result of window.examResultsData) {
         const { question, user_answer, correct_answer, is_correct, question_type, question_id, parent_question_id, text } = result;
         const questionDetails = questionMap[question_id] || {};
-        const parentId = parent_question_id || questionDetails?.parent?.id || question_id;
-
+        const parentId = parent_question_id || questionDetails.parent?.id || question_id;
         if (!parentQuestions[parentId]) {
           parentQuestions[parentId] = {
-            type: questionDetails?.parent?.type || question_type,
-            text: questionDetails?.parent?.text || text || '',
+            type: questionDetails.parent?.type || question_type,
+            text: questionDetails.parent?.text || text || '',
+            audio: questionDetails.parent?.audio || questionDetails.parent?.audio_Exam || null,
+            images: questionDetails.parent?.images || null,
             subquestions: [],
           };
         }
@@ -280,54 +311,90 @@ async function openUserDetailedReview(username, userData) {
         });
       }
 
-      // Рендерим каждую родительскую группу
       for (const parentId in parentQuestions) {
         const parent = parentQuestions[parentId];
-
-        // Добавляем Type для каждого родительского вопроса
+        questionsHtml += `<span class="main-question-id">${parentId}</span>`;
         questionsHtml += parent.type ? `<div class="type-label">Type: ${parent.type}</div>` : '';
 
-        // Добавляем пассаж для reading
         if (parent.type === 'reading' && parent.text) {
           questionsHtml += `<div class="passage-text">${parent.text}</div>`;
         }
-
-        // Добавляем инструкцию (кроме reading)
-        if (parent.text && parent.type !== 'reading') {
+        if (parent.text && parent.type !== 'reading' && parent.type !== 'picture') {
           questionsHtml += `<div class="instruction">${parent.text}</div>`;
         }
+
+        if (parent.type === 'listening' && parent.audio) {
+          questionsHtml += `
+            <div class="listening-audio">
+              <div class="custom-audio-player">
+                <button class="custom-play-btn"><i class="fas fa-play"></i></button>
+                <div class="custom-audio-waves"><div class="progress"></div></div>
+                <div class="custom-time-display">0:00</div>
+              </div>
+              <audio src="${parent.audio}" preload="metadata" style="display:none;"></audio>
+            </div>
+          `;
+        }
+
+        if (parent.type === 'picture' && parent.images?.length > 0) {
+          questionsHtml += `<div class="picture-images" data-images='${JSON.stringify(parent.images)}'>`;
+          parent.images.forEach((src, index) => {
+            questionsHtml += `<img src="${src}" alt="Picture question image" data-index="${index}" class="picture-image" onclick="openMediaViewer(this)" onerror="this.style.background='white'; this.style.border='2px solid #ccc'; this.src='data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20150%20100%27%3E%3Crect%20width=%27150%27%20height=%27100%27%20fill=%27%23f0f0f0%27/%3E%3Ctext%20x=%2750%27%20y=%2755%27%20font-size=%2714%27%20text-anchor=%27middle%27%20fill=%27%23999%27%3ENo%20Image%3C/text%3E%3C/svg%3E';" />`;
+          });
+          questionsHtml += `</div>`;
+        } else if (parent.type === 'picture') {
+          questionsHtml += `<div class="no-images-placeholder">No images available</div>`;
+        }
+
+        questionsHtml += `<div class="subquestions-group">`;
 
         if (parent.type === 'box-choose') {
           let combinedText = '<div class="box-choose-questions">';
           parent.subquestions.forEach((subq, index) => {
             const userAnswer = subq.user_answer || '';
             const isCorrect = userAnswer.trim().toLowerCase() === subq.correct_answer.trim().toLowerCase();
-            const questionNumber = index + 1;
             const displayText = subq.text.replace('____', `<span class="box-choose-blank ${isCorrect ? 'correct' : 'incorrect'}">${userAnswer || '____'}</span>`);
             combinedText += `
               <div class="box-choose-subquestion">
-                <span class="main-question-number">${questionNumber}</span>
+                <span class="main-question-number">${index + 1}</span>
                 <span class="subquestion-text">${displayText}</span>
               </div>
             `;
           });
           combinedText += '</div>';
+          questionsHtml += `<div class="question-item"><div class="question-text">${combinedText}</div></div>`;
+
+        } else if (parent.subquestions[0]?.question_type === 'write-in-blank') {
+          let combinedText = '';
+          parent.subquestions.forEach((subq, index) => {
+            const userAnswer = subq.user_answer || '';
+            const correctAnswer = subq.correct_answer || '';
+            const isCorrect = userAnswer.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+
+            const userInput = `<input type="text" class="write-in-blank-input ${isCorrect ? 'write-in-blank-correct' : 'write-in-blank-incorrect'}" value="${userAnswer}" disabled>`;
+            const correctInput = !isCorrect
+              ? ` <input type="text" class="write-in-blank-input write-in-blank-correct" value="${correctAnswer}" disabled>`
+              : '';
+
+            const combinedInputs = userInput + correctInput;
+            const textWithInputs = subq.text.replace('____', combinedInputs);
+            combinedText += textWithInputs + ' ';
+          });
 
           questionsHtml += `
             <div class="question-item">
-              <div class="question-text">${combinedText}</div>
+              <div class="question-text">${combinedText.trim()}</div>
             </div>
           `;
+
         } else {
           parent.subquestions.forEach((subq, index) => {
             const userAnswer = subq.user_answer || '';
             const isCorrect = userAnswer.trim().toLowerCase() === subq.correct_answer.trim().toLowerCase();
-            const questionNumber = index + 1;
-
             questionsHtml += `
               <div class="question-item">
                 <div class="question-header">
-                  <span class="main-question-number">${questionNumber}</span>
+                  <span class="main-question-number">${index + 1}</span>
                   <div class="question-text">${subq.text}</div>
                 </div>
                 ${renderAnswerInput(subq, userAnswer, isCorrect)}
@@ -335,42 +402,96 @@ async function openUserDetailedReview(username, userData) {
             `;
           });
         }
+
+        questionsHtml += `<hr class="question-divider"></div>`;
       }
     }
   } catch (error) {
-    // Удаляем анимацию при ошибке
-    if (animation) {
-      animation.destroy();
-    }
+    if (animation) animation.destroy();
     loadingContainer.remove();
     console.error("Error loading exam results or questions:", error);
     questionsHtml = `<p style="color:white;">An error occurred while loading results.</p>`;
   }
 
-  // Обновляем содержимое модального окна
   questionsHtml += '</div>';
   modal.innerHTML = headerHtml + questionsHtml;
+
+  modal.querySelectorAll('.listening-audio').forEach(card => {
+    setupCustomPlayer(card);
+  });
+}
+
+
+
+
+
+// Media Viewer function
+function openMediaViewer(imgElement) {
+  const pictureContainer = imgElement.closest('.picture-images');
+  const images = JSON.parse(pictureContainer.dataset.images);
+  let currentIndex = parseInt(imgElement.dataset.index);
+
+  // Create Media Viewer modal
+  const viewer = document.createElement('div');
+  viewer.className = 'media-viewer';
+  viewer.innerHTML = `
+    <button class="close-btn"><i class="fas fa-times"></i></button>
+    <button class="nav-btn prev-btn" style="display: ${images.length > 1 ? 'block' : 'none'}"><i class="fas fa-chevron-left"></i></button>
+    <button class="nav-btn next-btn" style="display: ${images.length > 1 ? 'block' : 'none'}"><i class="fas fa-chevron-right"></i></button>
+    <img src="${images[currentIndex]}" alt="Media view">
+    <div class="image-counter">${currentIndex + 1} / ${images.length}</div>
+  `;
+  document.body.appendChild(viewer);
+
+  // Close button handler
+  viewer.querySelector('.close-btn').onclick = () => viewer.remove();
+
+  // Navigation handler
+  const navigate = direction => {
+    currentIndex = (currentIndex + direction + images.length) % images.length;
+    const img = viewer.querySelector('img');
+    img.style.opacity = '0';
+    setTimeout(() => {
+      img.src = images[currentIndex];
+      img.style.opacity = '1';
+    }, 200);
+    viewer.querySelector('.image-counter').textContent = `${currentIndex + 1} / ${images.length}`;
+  };
+
+  // Button navigation
+  viewer.querySelector('.prev-btn').onclick = () => navigate(-1);
+  viewer.querySelector('.next-btn').onclick = () => navigate(1);
+
+  // Keyboard navigation
+  const handleKeydown = e => {
+    if (e.key === 'ArrowLeft') navigate(-1);
+    if (e.key === 'ArrowRight') navigate(1);
+    if (e.key === 'Escape') viewer.remove();
+  };
+  document.addEventListener('keydown', handleKeydown);
+  viewer.addEventListener('remove', () => document.removeEventListener('keydown', handleKeydown));
 }
 
 function renderAnswerInput(result, userAnswer, isCorrect) {
   const { question_type, question_id, correct_answer, options } = result;
-  const correctnessTag = isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect';
+  const safeUserAnswer = userAnswer || '';
+  const safeCorrectAnswer = correct_answer || '';
 
   if (question_type === 'true_false') {
     return `
       <div class="options">
-        <input type="radio" id="true-option-${question_id}" ${userAnswer === 'True' ? 'checked' : ''} disabled class="${userAnswer === 'True' ? correctnessTag : ''}">
-        <label for="true-option-${question_id}" class="${correct_answer === 'True' ? 'detailed-question-correct' : userAnswer === 'True' && !isCorrect ? 'detailed-question-incorrect' : ''}">True ${correct_answer === 'True' ? '<i class="fas fa-check correct-icon"></i>' : userAnswer === 'True' && !isCorrect ? '<i class="fas fa-times incorrect-icon"></i>' : ''}</label>
-        <input type="radio" id="false-option-${question_id}" ${userAnswer === 'False' ? 'checked' : ''} disabled class="${userAnswer === 'False' ? correctnessTag : ''}">
-        <label for="false-option-${question_id}" class="${correct_answer === 'False' ? 'detailed-question-correct' : userAnswer === 'False' && !isCorrect ? 'detailed-question-incorrect' : ''}">False ${correct_answer === 'False' ? '<i class="fas fa-check correct-icon"></i>' : userAnswer === 'False' && !isCorrect ? '<i class="fas fa-times incorrect-icon"></i>' : ''}</label>
+        <input type="radio" id="true-option-${question_id}" ${safeUserAnswer === 'True' ? 'checked' : ''} disabled class="${safeUserAnswer === 'True' ? (isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect') : ''}">
+        <label for="true-option-${question_id}" class="${safeCorrectAnswer === 'True' ? 'detailed-question-correct' : safeUserAnswer === 'True' && !isCorrect ? 'detailed-question-incorrect' : ''}">True ${safeCorrectAnswer === 'True' ? '<i class="fas fa-check correct-icon"></i>' : safeUserAnswer === 'True' && !isCorrect ? '<i class="fas fa-times incorrect-icon"></i>' : ''}</label>
+        <input type="radio" id="false-option-${question_id}" ${safeUserAnswer === 'False' ? 'checked' : ''} disabled class="${safeUserAnswer === 'False' ? (isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect') : ''}">
+        <label for="false-option-${question_id}" class="${safeCorrectAnswer === 'False' ? 'detailed-question-correct' : safeUserAnswer === 'False' && !isCorrect ? 'detailed-question-incorrect' : ''}">False ${safeCorrectAnswer === 'False' ? '<i class="fas fa-check correct-icon"></i>' : safeUserAnswer === 'False' && !isCorrect ? '<i class="fas fa-times incorrect-icon"></i>' : ''}</label>
       </div>
     `;
   } else if (question_type === 'multiple_choice' && Array.isArray(options)) {
     return `
       <div class="options">
         ${options.map((option, index) => {
-          const isUserAnswer = userAnswer === option;
-          const isCorrectAnswer = correct_answer === option;
+          const isUserAnswer = safeUserAnswer === option;
+          const isCorrectAnswer = safeCorrectAnswer === option;
           const optionClass = isUserAnswer
             ? isCorrect
               ? 'detailed-question-correct'
@@ -395,10 +516,10 @@ function renderAnswerInput(result, userAnswer, isCorrect) {
       </div>
     `;
   } else if (question_type === 'unscramble') {
-    const userLetters = userAnswer ? userAnswer.split('') : [];
+    const userLetters = safeUserAnswer ? safeUserAnswer.split('') : [];
     let lettersHtml = '<div class="unscramble-letters-review">';
     userLetters.forEach(letter => {
-      lettersHtml += `<span class="unscramble-letter ${correctnessTag}">${letter}</span>`;
+      lettersHtml += `<span class="unscramble-letter ${isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect'}">${letter}</span>`;
     });
     lettersHtml += '</div>';
 
@@ -409,12 +530,20 @@ function renderAnswerInput(result, userAnswer, isCorrect) {
     `;
   } else if (question_type === 'box-choose') {
     return '';
-  } else if (['fill_gaps', 'reading', 'listening', 'question'].includes(question_type)) {
+  } else if (['write-in-blank', 'fill_gaps', 'listening'].includes(question_type)) {
+    const inputClass = isCorrect ? 'write-in-blank-input write-in-blank-correct' : 'write-in-blank-input write-in-blank-incorrect';
     return `
       <div style="display: flex; align-items: center;">
-        <input class="filled-answer ${correctnessTag}" type="text" disabled value="${userAnswer}">
+        <input class="${inputClass}" type="text" disabled value="${safeUserAnswer}">
+        ${!isCorrect ? `<div class="answer-feedback incorrect" style="color: #4CAF50;">${safeCorrectAnswer}</div>` : ''}
+      </div>
+    `;
+  } else if (['reading', 'question'].includes(question_type)) {
+    return `
+      <div style="display: flex; align-items: center;">
+        <input class="filled-answer ${isCorrect ? 'detailed-question-correct' : 'detailed-question-incorrect'}" type="text" disabled value="${safeUserAnswer}">
         ${isCorrect ? '<i class="fas fa-check correct-icon"></i>' : '<i class="fas fa-times incorrect-icon"></i>'}
-        ${!isCorrect ? `<div class="correct-answer">Correct: ${correct_answer}</div>` : ''}
+        ${!isCorrect && safeCorrectAnswer ? `<div class="correct-answer">Correct: ${safeCorrectAnswer}</div>` : ''}
       </div>
     `;
   }
@@ -427,6 +556,13 @@ function detailedQuestionReviewClose(modal) {
   modal.addEventListener('animationend', () => {
     modal.remove();
   }, { once: true });
+
+  // Fallback to remove modal if animation fails (e.g., after 300ms)
+  setTimeout(() => {
+    if (modal.parentNode) {
+      modal.remove();
+    }
+  }, 300);
 }
 
 function showSection(element, id) {
@@ -515,6 +651,7 @@ function animateTextChange(element, newValue) {
 
 function startExam() {
   loadAudioExamQuestions();
+  loadExamResults();
   fetch('/api/start-exam', {
     method: 'POST'
   })
@@ -1147,3 +1284,154 @@ async function generateTeams() {
             }
         }
         customElements.define('random-teams-button', RandomTeamsButton);
+		
+// Отключение стандартного контекстного меню
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// Показ меню при выделении текста
+document.addEventListener('mouseup', function(e) {
+    setTimeout(() => {
+        const selection = window.getSelection();
+        const menu = document.getElementById('customMenu');
+        if (selection.toString().length > 0 && !selection.isCollapsed) {
+            // Adjust position to prevent off-screen placement
+            const { adjustedX, adjustedY } = adjustMenuPosition(e.pageX, e.pageY, menu);
+            showCustomMenu(adjustedX, adjustedY);
+        } else {
+            hideCustomMenu();
+        }
+    }, 10);
+});
+
+// Показ кастомного меню с анимацией
+function showCustomMenu(x, y) {
+    const menu = document.getElementById('customMenu');
+    menu.style.display = 'block';
+    menu.style.opacity = '0'; // Start with opacity 0 for fade-in
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+
+    // Trigger fade-in animation
+    setTimeout(() => {
+        menu.style.opacity = '1';
+    }, 10);
+}
+
+// Скрытие меню с анимацией
+function hideCustomMenu() {
+    const menu = document.getElementById('customMenu');
+    menu.style.opacity = '0'; // Start fade-out
+    setTimeout(() => {
+        menu.style.display = 'none';
+    }, 200); // Match the transition duration
+}
+
+// Закрытие меню при клике вне меню или отмене выделения
+document.addEventListener('mousedown', function(e) {
+    const menu = document.getElementById('customMenu');
+    const selection = window.getSelection();
+    // Close if clicking outside the menu and the click is not on the menu itself
+    if (!menu.contains(e.target) && menu.style.display === 'block') {
+        hideCustomMenu();
+    }
+    // Also close if the selection is cleared
+    if (selection.toString().length === 0 || selection.isCollapsed) {
+        hideCustomMenu();
+    }
+});
+
+// Закрытие меню при нажатии клавиши Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideCustomMenu();
+        window.getSelection().removeAllRanges(); // Clear selection
+    }
+});
+
+// Предотвращение выхода меню за пределы экрана
+function adjustMenuPosition(x, y, menu) {
+    const menuWidth = menu.offsetWidth;
+    const menuHeight = menu.offsetHeight;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    let adjustedX = x;
+    let adjustedY = y;
+
+    // Adjust X position
+    if (x + menuWidth > windowWidth - 10) {
+        adjustedX = windowWidth - menuWidth - 10; // Keep 10px padding from edge
+    }
+    if (x < 10) {
+        adjustedX = 10; // Keep 10px padding from left edge
+    }
+
+    // Adjust Y position
+    if (y + menuHeight > windowHeight - 10) {
+        adjustedY = windowHeight - menuHeight - 10; // Keep 10px padding from bottom
+    }
+    if (y < 10) {
+        adjustedY = 10; // Keep 10px padding from top
+    }
+
+    return { adjustedX, adjustedY };
+}
+
+function searchText() {
+    const selection = window.getSelection().toString();
+    if (selection) {
+        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(selection)}`;
+        window.open(searchUrl, '_blank');
+        hideCustomMenu();
+    }
+}
+
+// Функция копирования через Clipboard API
+async function copyText() {
+    const selection = window.getSelection().toString();
+    if (!selection) return;
+    try {
+        // Пытаемся записать в буфер обмена
+        await navigator.clipboard.writeText(selection);
+        console.log('Текст скопирован через Clipboard API');
+    } catch (err) {
+        console.warn('Clipboard API не поддерживается, пробуем execCommand…', err);
+        // Фолбэк на старый метод
+        const temp = document.createElement('textarea');
+        temp.value = selection;
+        temp.style.position = 'fixed';
+        temp.style.opacity = '0';
+        document.body.appendChild(temp);
+        temp.select();
+        try {
+            document.execCommand('copy');
+            console.log('Текст скопирован через execCommand');
+        } catch (err2) {
+            console.error('Не удалось скопировать текст:', err2);
+        }
+        document.body.removeChild(temp);
+    }
+}
+
+// Функция вставки через Clipboard API (будет работать только внутри обработчика события, например, по клику)
+async function pasteText() {
+    const active = document.activeElement;
+    if (!active || !('value' in active)) return;
+    try {
+        const text = await navigator.clipboard.readText();
+        // Вставляем на текущее положение курсора
+        const start = active.selectionStart;
+        const end   = active.selectionEnd;
+        const before = active.value.slice(0, start);
+        const after  = active.value.slice(end);
+        active.value = before + text + after;
+        // Сдвигаем курсор после вставленного текста
+        const pos = start + text.length;
+        active.setSelectionRange(pos, pos);
+        console.log('Текст вставлен через Clipboard API');
+    } catch (err) {
+        console.error('Ошибка вставки через Clipboard API:', err);
+    }
+}
