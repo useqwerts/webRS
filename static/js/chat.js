@@ -5894,3 +5894,400 @@ function submitHomeworkAnswers() {
       finishBtn.disabled = false;
     });
 }
+
+// ---- speaking-exam-modal.js ----
+async function openSpeakingExamModal() {
+	await toggleRulesModal('open');
+  const userId = getCurrentUser();
+  if (!userId) return showToastNotification('User not logged in', 'error');
+
+  // Show overlay with skeleton animation
+  document.querySelector('.detailed-questions-review')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'detailed-questions-review speaking-exam';
+  const modal = document.createElement('div');
+  modal.className = 'speaking-exam-modal';
+  overlay.appendChild(modal);
+  document.getElementById('speaking-exam-details').appendChild(overlay);
+
+  // Temporary skeleton content
+  modal.innerHTML = `
+    <div class="speaking-header">
+      <div>
+        <div class="title"><div class="speaking-exam-skeleton skeleton-header-title"></div></div>
+        <div class="progress-info"><div class="speaking-exam-skeleton" style="width: 100px; height: 16px; margin-top: 6px; border-radius: 6px;"></div></div>
+        <div class="speaking-progress-container" style="margin-top: 12px;">
+          <div class="speaking-progress">
+            <div class="bar" style="width: 0%;"></div>
+          </div>
+          <div class="speaking-exam-skeleton" style="width: 40px; height: 16px; border-radius: 6px;"></div>
+        </div>
+      </div>
+      <div style="width: 100px; height: 40px;"><div class="speaking-exam-skeleton" style="width: 100%; height: 100%; border-radius: 12px;"></div></div>
+    </div>
+    <div class="speaking-body">
+      <div class="speaking-exam-skeleton skeleton-body-photo"></div>
+    </div>
+  `;
+
+  // Fetch exam status
+  let stJson;
+  try {
+    const stRes = await fetch(`/api/get-status-sp-exam/${userId}`);
+    stJson = await stRes.json();
+  } catch {
+    overlay.remove();
+    return showToastNotification('Failed to fetch exam status', 'error');
+  }
+
+  if (stJson.status !== 'started' && stJson.status !== 'completed') {
+    overlay.remove();
+    return showToastNotification('Exam not started or completed', 'error');
+  }
+  
+  // Default parameters
+  initExamSecurity(true);
+  let score = 100;
+  let progressText = 'Done 0 of 1 parts';
+  let progressBarWidth = '0%';
+  let percentageText = '';
+  let gradeIcon = '';
+  let isCompleted = stJson.status === 'completed';
+
+  let finishBtnDisabled = '';
+  let recordBtnDisabled = '';
+
+  let closeButtonHtml = `
+    <button class="finish-btn"><i class="fas fa-flag-checkered"></i> Finish Test</button>
+  `;
+  if (isCompleted) {
+    closeButtonHtml = `
+      <button class="finish-btn close-btn"><i class="fas fa-times"></i></button>
+    `;
+  }
+
+  // Load score and grade if completed
+  if (isCompleted) {
+    try {
+		initExamSecurity(false);
+      const scoreRes = await fetch(`/api/get-score-sp-exam/${userId}`);
+      const scoreData = await scoreRes.json();
+      score = scoreData.score || 100;
+      progressText = 'Done 1 of 1 parts';
+      progressBarWidth = `${score}%`;
+      percentageText = `<span class="percentage">${score}%</span>`;
+      finishBtnDisabled = 'disabled';
+      recordBtnDisabled = 'disabled';
+
+      let grade = 'A+';
+      let gradeClass = 'grade-a-plus';
+      if (score >= 90) {
+        grade = 'A+';
+        gradeClass = 'grade-a-plus';
+      } else if (score >= 80) {
+        grade = 'A';
+        gradeClass = 'grade-a';
+      } else if (score >= 70) {
+        grade = 'B';
+        gradeClass = 'grade-b';
+      } else if (score >= 60) {
+        grade = 'C';
+        gradeClass = 'grade-c';
+      } else {
+        grade = 'D';
+        gradeClass = 'grade-d';
+      }
+      gradeIcon = `<span class="grade-icon ${gradeClass}"><i class="fas fa-check-circle"></i> ${grade}</span>`;
+    }
+	catch (err) {
+		initExamSecurity(false);
+      showToastNotification('Failed to fetch score', 'error');
+    }
+  }
+
+  // Update modal content
+  modal.innerHTML = `
+    <div class="speaking-header">
+      <div>
+        <div class="title">${gradeIcon}Final Exam</div>
+        <div class="progress-info">${progressText}</div>
+        <div class="speaking-progress-container">
+          <div class="speaking-progress">
+            <div class="bar" style="width: ${progressBarWidth};"></div>
+          </div>
+          ${percentageText}
+        </div>
+      </div>
+      ${closeButtonHtml}
+    </div>
+    <div class="speaking-body">
+      <div class="speaking-exam-skeleton skeleton-body-photo"></div>
+    </div>
+  `;
+
+  const body = modal.querySelector('.speaking-body');
+
+  // Load photo with skeleton
+  try {
+    const resp = await fetch(`/api/get-sp-details/${userId}`);
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    body.innerHTML = `<div class="photo-container"><img src="${url}" alt="Exam photo"></div>`;
+    const imgEl = body.querySelector('img');
+    if (imgEl) {
+      imgEl.addEventListener('load', () => imgEl.classList.add('loaded'));
+      imgEl.addEventListener('click', () => openMediaViewer(imgEl));
+    }
+  } catch {
+    body.innerHTML = `<p>Photo not available</p>`;
+  }
+
+  // Record button
+  let recorder = null;
+  let audioChunks = [];
+
+  const recordBtn = document.createElement('button');
+  recordBtn.className = 'record-btn';
+  recordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+  if (isCompleted) recordBtn.disabled = true;
+  body.appendChild(recordBtn);
+
+  if (!isCompleted) {
+    recordBtn.addEventListener('click', async () => {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        return showToastNotification('Audio recording not supported', 'error');
+      }
+
+      if (recorder && recorder.state === 'recording') {
+        recorder.stop();
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+
+        recorder.ondataavailable = e => audioChunks.push(e.data);
+        recorder.onstop = () => {
+          stream.getTracks().forEach(t => t.stop());
+          recordBtn.className = 'record-btn';
+        };
+
+        recorder.start();
+        recordBtn.className = 'record-btn recording';
+      } catch {
+        showToastNotification('Could not start recording', 'error');
+      }
+    });
+  }
+
+  async function convertToMP3(chunks) {
+    return new Promise((resolve, reject) => {
+      if (!window.lamejs) {
+        return reject(new Error('lamejs library not loaded. Please check the CDN or network connection.'));
+      }
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const arrayBuffer = reader.result;
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+          const channelData = audioBuffer.getChannelData(0);
+          const sampleRate = audioBuffer.sampleRate;
+
+          const mp3encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
+          const mp3Data = [];
+          const sampleBlockSize = 1152;
+
+          for (let i = 0; i < channelData.length; i += sampleBlockSize) {
+            const block = channelData.subarray(i, i + sampleBlockSize);
+            const samples = new Int16Array(sampleBlockSize);
+            for (let j = 0; j < block.length; j++) {
+              samples[j] = block[j] * 32767;
+            }
+            const mp3buf = mp3encoder.encodeBuffer(samples);
+            if (mp3buf.length > 0) mp3Data.push(mp3buf);
+          }
+          const mp3end = mp3encoder.flush();
+          if (mp3end.length > 0) mp3Data.push(mp3end);
+
+          const mp3Blob = new Blob(mp3Data, { type: 'audio/mp3' });
+          resolve(mp3Blob);
+        } catch (err) {
+          reject(new Error(`MP3 conversion failed: ${err.message}`));
+        }
+      };
+      reader.onerror = () => reject(new Error('Failed to read audio data'));
+      reader.readAsArrayBuffer(new Blob(chunks, { type: 'audio/webm' }));
+    });
+  }
+
+  if (!isCompleted) {
+    modal.querySelector('.finish-btn').addEventListener('click', async () => {
+      if (recorder && recorder.state === 'recording') {
+		initExamSecurity(false);
+        recorder.stop();
+        await new Promise(res => recorder.addEventListener('stop', res, { once: true }));
+      }
+
+      if (!audioChunks.length) {
+        return showToastNotification('No recording made', 'error');
+      }
+
+      const animationContainer = document.createElement('div');
+      animationContainer.className = 'lottie-container speaking-exam';
+      const animationBox = document.createElement('div');
+      animationBox.className = 'lottie-box';
+      animationContainer.appendChild(animationBox);
+      modal.appendChild(animationContainer);
+
+      const header = modal.querySelector('.speaking-header');
+      const finishButton = modal.querySelector('.finish-btn');
+      finishButton.style.display = 'none';
+
+      let animation = null;
+      try {
+        animation = lottie.loadAnimation({
+          container: animationBox,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: '/static/animations/Speaking-Loading.json'
+        });
+
+        animation.addEventListener('error', (e) => {
+          console.error('Lottie animation failed to load:', e);
+          showToastNotification('Failed to load animation', 'error');
+        });
+
+        animation.addEventListener('DOMLoaded', () => {
+          console.log('Lottie animation loaded successfully');
+        });
+      } catch (err) {
+        console.error('Error initializing Lottie animation:', err);
+        showToastNotification('Error loading animation', 'error');
+        animationContainer.remove();
+        finishButton.style.display = 'flex';
+        return;
+      }
+
+      try {
+        const mp3Blob = await convertToMP3(audioChunks);
+        const fd = new FormData();
+        fd.append('file', mp3Blob, `${userId}.mp3`);
+
+        const up = await fetch(`/api/upload-speaking/${userId}`, { method: 'POST', body: fd });
+        if (!up.ok) throw new Error('Upload failed');
+
+        const scoreRes = await fetch(`/api/get-score-sp-exam/${userId}`);
+        const { score = 100 } = await scoreRes.json();
+
+        modal.querySelector('.progress-info').textContent = 'Done 1 of 1 parts';
+        modal.querySelector('.bar').style.width = `${score}%`;
+        modal.querySelector('.speaking-progress-container').innerHTML = `
+          <div class="speaking-progress">
+            <div class="bar" style="width: ${score}%;"></div>
+          </div>
+          <span class="percentage">${score}%</span>
+        `;
+
+        if (animation) animation.destroy();
+        animationContainer.remove();
+
+        const newCloseButton = document.createElement('div');
+        newCloseButton.className = 'finish-btn close-btn';
+        newCloseButton.innerHTML = '<i class="fas fa-times"></i>';
+        header.replaceChild(newCloseButton, finishButton);
+
+        newCloseButton.addEventListener('click', () => {
+          overlay.remove();
+        });
+
+        showToastNotification('Speaking exam submitted', 'success');
+		initExamSecurity(false);
+      } catch (err) {
+        if (animation) animation.destroy();
+        animationContainer.remove();
+        finishButton.style.display = 'flex';
+        showToastNotification(`Error: ${err.message}`, 'error');
+      }
+    });
+  } else {
+    modal.querySelector('.close-btn').addEventListener('click', () => {
+      overlay.remove();
+    });
+  }
+}
+
+
+
+// Привязываем к кнопке Speaking где нужно
+document.querySelectorAll('.btn-view-photo').forEach(btn => {
+  btn.addEventListener('click', openSpeakingExamModal);
+});
+
+// После того, как openSpeakingExamModal определена и подключена:
+document.getElementById('speakingExamOption').addEventListener('click', () => {
+  openSpeakingExamModal();
+});
+
+function openMediaViewer(imgElement) {
+  const pictureContainer = imgElement.closest('.picture-images');
+  let images, currentIndex;
+
+  if (pictureContainer && pictureContainer.dataset.images) {
+    // галерея
+    images = JSON.parse(pictureContainer.dataset.images);
+    currentIndex = parseInt(imgElement.dataset.index, 10);
+  } else {
+    // одиночное фото
+    images = [imgElement.src];
+    currentIndex = 0;
+  }
+
+  // Create Media Viewer modal
+  const viewer = document.createElement('div');
+  viewer.className = 'media-viewer';
+  viewer.innerHTML = `
+    <button class="close-btn"><i class="fas fa-times"></i></button>
+    <button class="nav-btn prev-btn" style="display: ${images.length > 1 ? 'block' : 'none'}">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="nav-btn next-btn" style="display: ${images.length > 1 ? 'block' : 'none'}">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+    <img src="${images[currentIndex]}" alt="Media view">
+    ${images.length > 1
+      ? `<div class="image-counter">${currentIndex + 1} / ${images.length}</div>`
+      : ''}
+  `;
+  document.body.appendChild(viewer);
+
+  // Close
+  viewer.querySelector('.close-btn').onclick = () => viewer.remove();
+
+  const navigate = dir => {
+    currentIndex = (currentIndex + dir + images.length) % images.length;
+    const img = viewer.querySelector('img');
+    img.style.opacity = '0';
+    setTimeout(() => {
+      img.src = images[currentIndex];
+      img.style.opacity = '1';
+    }, 200);
+    const counter = viewer.querySelector('.image-counter');
+    if (counter) counter.textContent = `${currentIndex + 1} / ${images.length}`;
+  };
+  viewer.querySelector('.prev-btn').onclick = () => navigate(-1);
+  viewer.querySelector('.next-btn').onclick = () => navigate(1);
+
+  const onKey = e => {
+    if (e.key === 'ArrowLeft') navigate(-1);
+    if (e.key === 'ArrowRight') navigate(1);
+    if (e.key === 'Escape') viewer.remove();
+  };
+  document.addEventListener('keydown', onKey);
+  viewer.addEventListener('remove', () => document.removeEventListener('keydown', onKey));
+}

@@ -13,6 +13,7 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 	<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
+	<script defer src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 </head>
 <body>
  <div id="toast-container"></div>
@@ -137,12 +138,14 @@
     <li id="myExamResultsOption" class="menu-item disabled"><i class="fas fa-clipboard-list"></i> My Exam Results</li>
     <li id="vocabulary-option" class="menu-item"><i class="fas fa-book-open"></i> Vocabulary</li>
     <li id="homework-option" class="menu-item"><i class="fas fa-book"></i> Homework</li>
-	<div class="menu-item disabled" id="menu-settings">
-	<i class="fas fa-cog"></i> Settings
-	</div>
+    <li id="speakingExamOption" class="menu-item"><i class="fas fa-comment-dots"></i> Speaking Exam</li>
+    <div class="menu-item disabled" id="menu-settings">
+      <i class="fas fa-cog"></i> Settings
+    </div>
     <li id="logout-option" class="menu-item logout"><i class="fas fa-sign-out-alt"></i> Logout</li>
   </ul>
 </div>
+
 
 
 
@@ -787,6 +790,11 @@
 </div>
 
     </div>
+	
+	<!-- куда-нибудь в конец <body> -->
+<div id="speaking-exam-details"></div>
+
+	
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
     <script src="/static/js/chat.js"></script>

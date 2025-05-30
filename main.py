@@ -5,10 +5,12 @@ import json
 import platform
 import time
 import requests 
+import random
 from datetime import datetime , timedelta
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+from flask import send_from_directory, make_response
 
 # Initialize app and socket
 app = Flask(__name__)
@@ -479,531 +481,80 @@ active_sessions = {}  # Track active sessions by username
 current_version = "2025-01-10-v1"
 
 exam_questions = [
-{
-  "id": 0,
-  "text": "Part 1. For each question choose correct option.",
-  "type": "listening",
-  "audio": "/static/exam/Preliminary1_test2_audio1.mp3",
-  "correct": ""
-},
-{
-  "id": 1,
-  "type": "picture",
-  "text": "What has the man forgotten to pack for the trip?",
-  "images": [
-    "/static/exam/photos/PET1.jpg"
-  ],
-  "subquestions": [
     {
-      "id": "1.1",
-      "type": "multiple_choice",
-      "text": "What has the man forgotten to pack for the trip?",
-      "options": [
-        "A",
-        "B",
-        "C"
-      ],
-      "correct": "A"
+        "id": 1,
+        "text": "Section 1. Listen and choose correct answer.",
+        "type": "listening",
+        "audio": "/static/exam-files/ProgressTest1.mp3",
+        "subquestions": [
+            {
+                "id": "1.1",
+                "type": "multiple_choice",
+                "text": "1 The woman __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "asks about the weather"
+            },
+            {
+                "id": "1.2",
+                "type": "multiple_choice",
+                "text": "The woman's friend __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "went to Russia"
+            },
+            {
+                "id": "1.3",
+                "type": "multiple_choice",
+                "text": "3 Russia __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "is warm in summer"
+            },
+            {
+                "id": "1.4",
+                "type": "multiple_choice",
+                "text": "4 The man __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "is going to go on holiday"
+            },
+            {
+                "id": "1.5",
+                "type": "multiple_choice",
+                "text": "5 The woman's holiday plans __",
+                "options": [
+                    "asks about the weather",
+                    "is warm in summer",
+                    "are going to change",
+                    "is going to go on holiday",
+                    "went to Russia"
+                ],
+                "correct": "are going to change"
+            }
+        ]
     }
-  ]
-},
-{
-  "id": 2,
-  "type": "picture",
-  "text": "What time is the plane expected to depart?",
-  "images": [
-    "/static/exam/photos/PET2.jpg",
-    "/static/exam/photos/PET2.jpg"
-  ],
-  "subquestions": [
-    {
-      "id": "2.1",
-      "type": "multiple_choice",
-      "text": "What time is the plane expected to depart?",
-      "options": [
-        "A",
-        "B",
-        "C"
-      ],
-      "correct": "C"
-    }
-  ]
-},
-{
-  "id": 3,
-  "type": "picture",
-  "text": "Where did the family go at the weekend?",
-  "images": [
-    "/static/exam/photos/PET3.jpg"
-  ],
-  "subquestions": [
-    {
-      "id": "3.1",
-      "type": "multiple_choice",
-      "text": "Where did the family go at the weekend?",
-      "options": [
-        "A",
-        "B",
-        "C"
-      ],
-      "correct": "B"
-    }
-  ]
-},
-{
-  "id": 4,
-  "type": "picture",
-  "text": "What are the man and woman going to order?",
-  "images": [
-    "/static/exam/photos/PET4.jpg"
-  ],
-  "subquestions": [
-    {
-      "id": "4.1",
-      "type": "multiple_choice",
-      "text": "What are the man and woman going to order?",
-      "options": [
-        "A",
-        "B",
-        "C"
-      ],
-      "correct": "A"
-    }
-  ]
-},
-{
-  "id": 5,
-  "type": "picture",
-  "text": "Which photograph did the man take?",
-  "images": [
-    "/static/exam/photos/PET5.jpg"
-  ],
-  "subquestions": [
-    {
-      "id": "5.1",
-      "type": "multiple_choice",
-      "text": "Which photograph did the man take?",
-      "options": [
-        "A",
-        "B",
-        "C"
-      ],
-      "correct": "A"
-    }
-  ]
-},
-{
-  "id": 6,
-  "type": "picture",
-  "text": "How does the man suggest his friends should travel to the concert?",
-  "images": [
-    "/static/exam/photos/PET6.jpg"
-  ],
-  "subquestions": [
-    {
-      "id": "6.1",
-      "type": "multiple_choice",
-      "text": "How does the man suggest his friends should travel to the concert?",
-      "options": [
-        "A",
-        "B",
-        "C"
-      ],
-      "correct": "A"
-    }
-  ]
-},
-{
-  "id": 7,
-  "type": "picture",
-  "text": "What is the weather forecast for the north this morning?",
-  "images": [
-    "/static/exam/photos/PET7.jpg"
-  ],
-  "subquestions": [
-    {
-      "id": "7.1",
-      "type": "multiple_choice",
-      "text": "What is the weather forecast for the north this morning?",
-      "options": [
-        "A",
-        "B",
-        "C"
-      ],
-      "correct": "C"
-    }
-  ]
-},
-{
-  "id": 8,
-  "text": "Part 2. For each question, choose the correct answer.",
-  "type": "listening",
-  "audio": "/static/exam/Preliminary1_test2_audio2.mp3",
-  "subquestions": [
-    {
-      "id": "8.8",
-      "type": "multiple_choice",
-      "text": "You will hear a boy telling a friend about plans for his birthday. How does he feel about the plans he’s made?",
-      "options": [
-        "annoyed that some of his friends don’t want to come",
-        "disappointed that he can’t invite more friends",
-        "worried that it might be boring for his friends"
-      ],
-      "correct": "disappointed that he can’t invite more friends"
-    },
-    {
-      "id": "8.9",
-      "type": "multiple_choice",
-      "text": "You will hear two friends talking about a football match they went to. They both think that...",
-      "options": [
-        "the crowd was smaller than usual",
-        "the match was quite boring",
-        "the referee made some bad decisions"
-      ],
-      "correct": "the crowd was smaller than usual"
-    },
-    {
-      "id": "8.10",
-      "type": "multiple_choice",
-      "text": "You will hear a man telling his friend about a skiing holiday. How did he feel during the holiday?",
-      "options": [
-        "upset that he was injured",
-        "embarrassed by his skiing ability",
-        "angry that his friends put photos online"
-      ],
-      "correct": "embarrassed by his skiing ability"
-    },
-    {
-      "id": "8.11",
-      "type": "multiple_choice",
-      "text": "You will hear two friends talking about cars. The woman thinks the best way to get information about new cars is from...",
-      "options": [
-        "advertisements",
-        "TV programmes",
-        "internet reviews"
-      ],
-      "correct": "internet reviews"
-    },
-    {
-      "id": "8.12",
-      "type": "multiple_choice",
-      "text": "You will hear a woman telling a friend about a singing competition. What does the woman say about it?",
-      "options": [
-        "Judging it is the easiest part",
-        "It is taking a long time to organise it",
-        "She would love to perform in it"
-      ],
-      "correct": "It is taking a long time to organise it"
-    },
-    {
-      "id": "8.13",
-      "type": "multiple_choice",
-      "text": "You will hear a woman talking to a friend about her recent move to a city. How does the woman feel about it?",
-      "options": [
-        "pleased about a surprising health benefit",
-        "glad that she has met friendly people",
-        "satisfied with her local area"
-      ],
-      "correct": "pleased about a surprising health benefit"
-    }
-  ]
-},
-{
-  "id": 9,
-  "text": "Part 3. Listen and fill in the gaps. ATTENTION Don't write numbers in letters!",
-  "type": "listening",
-  "audio": "/static/exam/Preliminary1_test2_audio3.mp3",
-  "subquestions": [
-    {
-      "id": "9.1",
-      "type": "write-in-blank",
-      "text": "Kelly did a degree in (14) ____ at university.",
-      "correct": "art"
-    },
-    {
-      "id": "9.2",
-      "type": "write-in-blank",
-      "text": "Kelly really enjoys going to work because of the (15) ____ at the company.",
-      "correct": "people"
-    },
-    {
-      "id": "9.3",
-      "type": "write-in-blank",
-      "text": "Kelly's department is responsible for creating (16) ____ in cartoons.",
-      "correct": "animals"
-    },
-    {
-      "id": "9.4",
-      "type": "write-in-blank",
-      "text": "At the moment Kelly is trying to develop (17) ____ skills.",
-      "correct": "acting"
-    },
-    {
-      "id": "9.5",
-      "type": "write-in-blank",
-      "text": "It takes Kelly's company (18) ____ to make a full-length cartoon film.",
-      "correct": "8 months"
-    },
-    {
-      "id": "9.6",
-      "type": "write-in-blank",
-      "text": "Kelly's next project will be some cartoons for a (19) ____.",
-      "correct": "website"
-    }
-  ]
-},
-{
-  "id": 10,
-  "text": "Part 4 You will hear an interview with a girl called Rosie Banks, who swims in international competitions.",
-  "type": "listening",
-  "audio": "/static/exam/Preliminary1_test2_audio4.mp3",
-  "subquestions": [
-    {
-      "id": "10.20",
-      "type": "multiple_choice",
-      "text": "Rosie swam a lot when she was very young because...",
-      "options": [
-        "her father thought it was an important skill",
-        "she wanted to be like her brother",
-        "there were free classes at her local pool"
-      ],
-      "correct": "she wanted to be like her brother"
-    },
-    {
-      "id": "10.21",
-      "type": "multiple_choice",
-      "text": "What did Rosie dislike about doing serious swimming training?",
-      "options": [
-        "being away from her friends",
-        "the long journey from home",
-        "missing some school lessons"
-      ],
-      "correct": "missing some school lessons"
-    },
-    {
-      "id": "10.22",
-      "type": "multiple_choice",
-      "text": "When Rosie won the Swim Stars International competition she was...",
-      "options": [
-        "surprised by the public interest",
-        "amazed that she had done so well",
-        "excited about meeting other famous sportspeople"
-      ],
-      "correct": "surprised by the public interest"
-    },
-    {
-      "id": "10.23",
-      "type": "multiple_choice",
-      "text": "Rosie says she needs more help with the cost of...",
-      "options": [
-        "transport to competitions",
-        "the kit she needs",
-        "her accommodation while she’s abroad"
-      ],
-      "correct": "her accommodation while she’s abroad"
-    },
-    {
-      "id": "10.24",
-      "type": "multiple_choice",
-      "text": "What has Rosie changed since she got a new coach?",
-      "options": [
-        "her swimming style",
-        "what she eats",
-        "her fitness routine"
-      ],
-      "correct": "her swimming style"
-    },
-    {
-      "id": "10.25",
-      "type": "multiple_choice",
-      "text": "What is Rosie planning to do in Spain?",
-      "options": [
-        "take part in some races",
-        "train with different people",
-        "have some time to relax"
-      ],
-      "correct": "train with different people"
-    }
-  ]
-},
-  {
-    "id": 11,
-    "type": "picture",
-    "text": "Why is Anne texting?",
-    "images": [
-      "/static/exam/photos/PETR1.png"
-    ],
-    "subquestions": [
-      {
-        "id": "11.1",
-        "type": "multiple_choice",
-        "text": "Why is Anne texting?",
-        "options": [
-          "to ask Eric if he can do her a favour",
-          "to remind Eric about what they have agreed",
-          "to give Eric an update regarding their arrangement"
-        ],
-        "correct": "to give Eric an update regarding their arrangement"
-      }
-    ]
-  },
-  {
-    "id": 12,
-    "type": "picture",
-    "text": "What does the notice say about the careers talk?",
-    "images": [
-      "/static/exam/photos/PETR2.png"
-    ],
-    "subquestions": [
-      {
-        "id": "12.1",
-        "type": "multiple_choice",
-        "text": "What does the notice say about the careers talk?",
-        "options": [
-          "Students of any year group are able to come to the careers talk",
-          "Students should go to the talk if they need help applying for a job",
-          "Students must register quickly because places at the event are limited"
-        ],
-        "correct": "Students must register quickly because places at the event are limited"
-      }
-    ]
-  },
-  {
-    "id": 13,
-    "type": "picture",
-    "text": "What does the notice say about using the recycling centre?",
-    "images": [
-      "/static/exam/photos/PETR3.png"
-    ],
-    "subquestions": [
-      {
-        "id": "13.1",
-        "type": "multiple_choice",
-        "text": "What does the notice say about using the recycling centre?",
-        "options": [
-          "Recycling centre staff will clean items for recycling",
-          "Certain items need to be washed before they are recycled",
-          "All items can be placed in the same recycling bin"
-        ],
-        "correct": "Certain items need to be washed before they are recycled"
-      }
-    ]
-  },
-  {
-    "id": 14,
-    "type": "picture",
-    "text": "Why is Gabriel texting Nora?",
-    "images": [
-      "/static/exam/photos/PETR4.png"
-    ],
-    "subquestions": [
-      {
-        "id": "14.1",
-        "type": "multiple_choice",
-        "text": "Why is Gabriel texting Nora?",
-        "options": [
-          "Gabriel has got a ticket for Nora to go to the special dance event",
-          "Gabriel is informing Nora that she needs to remember to bring headphones",
-          "Gabriel wants Nora to suggest who may be interested in going to the disco"
-        ],
-        "correct": "Gabriel wants Nora to suggest who may be interested in going to the disco"
-      }
-    ]
-  },
-  {
-    "id": 15,
-    "type": "picture",
-    "text": "What does the notice say about ingredients?",
-    "images": [
-      "/static/exam/photos/PETR5.png"
-    ],
-    "subquestions": [
-      {
-        "id": "15.1",
-        "type": "multiple_choice",
-        "text": "What does the notice say about ingredients?",
-        "options": [
-          "Our staff can let you know about what we've used to make our dishes",
-          "Read the information on our menu if you need to avoid eating certain ingredients",
-          "Tell your waiter if you'd prefer something different from what's on the menu"
-        ],
-        "correct": "Our staff can let you know about what we've used to make our dishes"
-      }
-    ]
-  },
-  {
-  "id": 16,
-  "type": "reading",
-  "text": "<h1>Curriculum Vitaes: Tips that can Help</h1>\n<p>Six out of ten CV’s which are prepared by Information Technology professionals fail to meet the basic standards and are turned down without even being read fully, according to a recruitment company. As a consequence, thousands of candidates are excluding themselves from attractive job opportunities.</p>\n<p>Although the company handles over 60,000 CV’s per year, it estimates that at least 60% would not be admitted if they were sent directly to potential clients due to basic errors.</p>\n<p>The company Marketing Director said, “Sadly it’s often the most highly qualified candidates whose CV’s are so poorly constructed that they are literally dead on arrival. Attractive job opportunities in the IT industry often generate intense competition and there is often little to choose between the candidates”.</p>\n<p>“Advice on the presentation format of CV’s in relation to the requirements that they are being submitted for should be an Industry standard so as to add real value to the candidates that you are representing and indeed to fulfil your professional obligations to your clients”.</p>\n<p>“Writing a CV can be extremely difficult and too often a CV turns out to be a generic overview including a lot of information that is irrelevant. People should remember that an employer typically spends between 15 and 30 seconds scanning each CV and you have that one chance to make an impression”.</p>\n<p>“A good CV is more than just documentation of your career path; it is a marketing tool designed to present your professional career experience according to the new job specification. It should also include details of past professional successes that effectively demonstrate your ability to undertake the job responsibilities outlined”.</p>",
-  "subquestions": [
-    {
-      "id": "16.1",
-      "type": "multiple_choice",
-      "text": "Recruitment companies say that potential clients ...",
-      "options": [
-        "make basic mistakes",
-        "only get 60% of CV’s",
-        "reject CV’s with mistakes"
-      ],
-      "correct": "reject CV’s with mistakes"
-    },
-    {
-      "id": "16.2",
-      "type": "multiple_choice",
-      "text": "The Marketing Director said that the best candidates ...",
-      "options": [
-        "are the most affected",
-        "do not send CV’s",
-        "write the best CV’s"
-      ],
-      "correct": "are the most affected"
-    },
-    {
-      "id": "16.3",
-      "type": "multiple_choice",
-      "text": "The Marketing Director suggests that candidates ought to pay attention to ...",
-      "options": [
-        "CV’s presentation",
-        "other companies",
-        "other competitors"
-      ],
-      "correct": "CV’s presentation"
-    },
-    {
-      "id": "16.4",
-      "type": "multiple_choice",
-      "text": "The Marketing Director says that very often CV’s include ...",
-      "options": [
-        "necessary details",
-        "unimportant information",
-        "very little information"
-      ],
-      "correct": "unimportant information"
-    },
-    {
-      "id": "16.5",
-      "type": "multiple_choice",
-      "text": "Candidates should remember that employers ...",
-      "options": [
-        "are typical people",
-        "are very busy people",
-        "make an impression on people"
-      ],
-      "correct": "are very busy people"
-    },
-    {
-      "id": "16.6",
-      "type": "multiple_choice",
-      "text": "A good curriculum should show ...",
-      "options": [
-        "the new job specifications",
-        "your marketing tools",
-        "your overall skills"
-      ],
-      "correct": "your overall skills"
-    }
-  ]
-}
+
 ]
             
 
@@ -2099,6 +1650,119 @@ def get_vocabulary(unit_number):
     
     return jsonify(data)
 
+exam_data = {}
+
+# Path to the directory with random photos
+PHOTO_DIR = os.path.join('static', 'exam-files', 'speaking')
+
+@app.route('/api/start-speaking-exam/<ID>', methods=['POST'])
+def start_speaking_exam(ID):
+    """
+    Запускает экзамен:
+     - Если для ID уже есть запись — возвращает 400.
+     - Иначе выбирает случайное фото, сохраняет статус = 'started', photo = filename.
+    """
+    # Проверяем, не запускали ли уже
+    if ID in exam_data:
+        return jsonify({"message": "Exam already started"}), 400
+
+    # Убедимся, что папка с фото существует
+    if not os.path.isdir(PHOTO_DIR):
+        return jsonify({"error": "Photo directory not found"}), 500
+
+    # Получаем список файлов
+    photos = [
+        f for f in os.listdir(PHOTO_DIR)
+        if os.path.isfile(os.path.join(PHOTO_DIR, f))
+    ]
+    if not photos:
+        return jsonify({"error": "No photos available"}), 500
+
+    # Выбираем случайное фото и сохраняем запись
+    chosen = random.choice(photos)
+    exam_data[ID] = {
+        "status": "started",
+        "photo": chosen
+    }
+
+    return jsonify({
+        "message": "Exam started",
+        "photo_assigned": chosen
+    })
+
+@app.route('/api/get-status-sp-exam/<ID>', methods=['GET'])
+def get_status_sp_exam(ID):
+    """
+    Возвращает статус экзамена для данного ID:
+     - 'started', если запущен;
+     - 'not started', если не найдена запись.
+    """
+    entry = exam_data.get(ID)
+    if not entry:
+        return jsonify({"status": "not started"})
+    return jsonify({"status": entry["status"]})
+
+@app.route('/api/get-sp-details/<ID>', methods=['GET'])
+def get_sp_details(ID):
+    entry = exam_data.get(ID)
+    if not entry:
+        return jsonify({"error": "Exam not started"}), 404
+
+    photo_file = entry.get("photo")
+    if not photo_file:
+        return jsonify({"error": "Photo not assigned"}), 500
+
+    # Отправляем файл без кеширования
+    response = make_response(
+        send_from_directory(PHOTO_DIR, photo_file, as_attachment=False)
+    )
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
+    
+@app.route('/api/speaking-exam-end/<ID>', methods=['POST'])
+def speaking_exam_end(ID):
+    """
+    Завершает экзамен, сохраняет score (20,40,60,80 или 100) и выставляет статус = 'completed'
+    """
+    data = request.get_json() or {}
+    score = data.get('score')
+    if ID not in exam_data:
+        return jsonify({"error": "Exam not started"}), 404
+    if score not in (20, 40, 60, 80, 100):
+        return jsonify({"error": "Invalid score"}), 400
+
+    exam_data[ID]['status'] = 'completed'
+    exam_data[ID]['score'] = score
+    return jsonify({"message": "Exam ended", "score": score})
+    
+UPLOAD_DIR = os.path.join('static', 'speaking-files')
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+@app.route('/api/upload-speaking/<ID>', methods=['POST'])
+def upload_speaking(ID):
+    if ID not in exam_data:
+        return jsonify({"error": "Exam not started"}), 404
+
+    file = request.files.get('file')
+    if not file:
+        return jsonify({"error": "No file provided"}), 400
+
+    filename = f"{ID}.webm"
+    path = os.path.join(UPLOAD_DIR, filename)
+    file.save(path)
+
+    # сохраняем путь или флаг, если нужно
+    exam_data[ID]['audio'] = filename
+    return jsonify({"message": "File uploaded"}), 200
+
+@app.route('/api/get-score-sp-exam/<ID>', methods=['GET'])
+def get_score_sp_exam(ID):
+    time.sleep(4)
+    entry = exam_data.get(ID)
+    if not entry or 'score' not in entry:
+        # если оценка ещё не назначена, вернём 0
+        return jsonify({"score": 0})
+    return jsonify({"score": entry['score']})
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

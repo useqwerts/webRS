@@ -481,6 +481,7 @@ body.dark-theme .content {
 }
 
 .exam-results-card {
+  margin: 10px;
   margin-top: 32px;
   background: linear-gradient(145deg, #f9b233, #fca311);
   border-radius: 24px;
@@ -589,14 +590,26 @@ body.dark-theme .content {
   height: 14px;
   overflow: hidden;
   margin-top: 4px;
+  display: flex;
 }
 
 .progress-bar {
   height: 100%;
-  background-color: white;
   transition: width 0.4s ease;
-  border-radius: 10px 0 0 10px;
 }
+
+.main-bar {
+  background-color: white;
+  border-radius: 10px 0 0 10px;
+  flex-shrink: 0;
+}
+
+.speaking-bar {
+  background-color: black;
+  border-radius: 0 10px 10px 0;
+  flex-shrink: 0;
+}
+
 
 .skeleton-table {
   display: flex;
@@ -715,6 +728,39 @@ body.dark-theme .content {
   flex-shrink: 0;
 }
 
+
+.skeleton-speaking {
+  width: 80px;
+  height: 24px;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.15) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.2s infinite ease-in-out;
+}
+
+.user-speaking-score {
+  display: inline-block;
+  padding: 6px 14px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  color: #ffffffcc;
+  font-weight: 600;
+  font-size: 14px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  user-select: none;
+  line-height: 1.2;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+  cursor: default;
+}
+
+
+
 /* Общий контейнер плеера */
 .custom-audio-player {
     display: flex;
@@ -816,6 +862,29 @@ body.dark-theme .content {
     box-shadow: 0 4px 10px rgba(0, 122, 255, 0.25);
 }
 
+.exam-audio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5em 1em;
+}
+
+.exam-audio-title {
+  position: absolute;
+  top: 16px;   /* совпадает с внутренним отступом */
+  left: 20px;  /* совпадает с внутренним отступом */
+  padding: 4px 10px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffffcc;
+  backdrop-filter: blur(4px);
+  line-height: 1;
+  user-select: none;
+}
+
+
 .exam-audio-players {
     width: 335px;
     /* background: #1a1f2b; */
@@ -912,7 +981,23 @@ body.dark-theme .content {
   margin-bottom: 24px;
 }
 
+.exam-audio-files {
+    height: 155px;
+    max-width: 100%;
+    max-height: 300px;
+    overflow: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* Скрытие scrollbars в Chrome, Edge, Safari */
+.exam-audio-files::-webkit-scrollbar {
+  display: none;
+}
+
+
 .exam-audio-card {
+  position: relative; /* важно! */
   width: 900px;
   flex: 1;
   min-width: 280px;
@@ -3280,6 +3365,7 @@ body.dark-theme .content {
 }
 
 .write-in-blank-input {
+  min-width: 80px; 
   margin: 6px;
   padding: 10px 14px;
   font-size: 16px;
@@ -3443,4 +3529,245 @@ input:not(:checked) + .slider .toggle-text.on {
 
 input:not(:checked) + .slider .toggle-text.off {
     opacity: 1;
+}
+
+.cards-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.exam-speaking-card {
+  width: 280px;
+  background: rgb(36, 39, 52);
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 6px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.exam-speaking-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.card-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffffcc;
+}
+
+.card-date {
+  font-size: 0.875rem;
+  color: #ffffff99;
+}
+
+.card-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.card-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-not-started { background: rgba(255,255,255,0.06); color: #ffffff99; }
+.status-started     { background: #FFD70033; color: #FFD700; } /* пример */
+.status-completed   { background: #4CAF5033; color: #4CAF50; }
+
+.card-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  margin-left: 4px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.card-actions button:hover {
+  background: rgba(255,255,255,0.1);
+}
+.card-actions i {
+  font-size: 1rem;
+  color: #ffffffcc;
+}
+
+/* Контейнер кастомного селекта - компактный, округлый, минимальная высота */
+.custom-select {
+  position: relative;
+  background: #121212;
+  border-radius: 12px;
+  padding: 6px 12px;
+  min-width: 140px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #ddd;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6); /* лёгкая тень */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 32px; /* компактная высота */
+  transition: box-shadow 0.25s ease, color 0.25s ease;
+}
+
+/* Стрелка - SVG */
+.custom-select .arrow {
+  width: 12px;
+  height: 12px;
+  fill: #aaa;
+  transition: transform 0.3s ease, fill 0.3s ease;
+  pointer-events: none;
+}
+
+/* Вращение стрелки при открытии */
+.custom-select.active .arrow {
+  transform: rotate(180deg);
+  fill: #fff;
+}
+
+/* Hover эффект */
+.custom-select:hover {
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+}
+
+/* Список опций - компактный, минимальная тень */
+.select-options {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 6px 0;
+  z-index: 2000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  scrollbar-width: thin;
+  scrollbar-color: #666 transparent;
+}
+
+/* Показать опции */
+.select-options.visible {
+  display: block;
+}
+
+/* Элементы списка - компактные, минимальный отступ */
+.select-options li {
+  padding: 8px 14px;
+  margin: 0 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* При наведении */
+.select-options li:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.2);
+}
+
+/* Последний элемент — небольшой отступ снизу */
+.select-options li:last-child {
+  margin-bottom: 4px;
+}
+
+/* Кнопка - компактная и скромная */
+#assign-score-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: #222;
+  color: #eee;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  transition: background 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease;
+  user-select: none;
+  height: 34px;
+}
+
+/* Hover и active эффекты */
+#assign-score-btn:hover {
+  background: #333;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+#assign-score-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.score-assignment {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  font-weight: 600;
+  color: #e0e0e0;
+  line-height: 1.2;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.score-assignment:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.audio-player-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 10px 10px 10px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.12); /* чуть светлее фон для контраста */
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* чуть более тёмный и размыт */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* светлее рамка */
+    font-size: 15px; /* чуть крупнее для лучшей читаемости */
+    font-weight: 600;
+    color: #f0f0f0; /* светлее текст */
+    line-height: 1.3; /* чуть больше расстояния между строк */
+    user-select: none;
+    transition: all 0.3s ease;
+    /* Добавим немного внутреннего отступа справа, если кнопка рядом */
+    padding-right: 20px;
+}
+
+.audio-player-section h3 {
+    margin: 0;
+    padding-right: 15px;
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 16px;
+    color: #ffffffdd;
 }

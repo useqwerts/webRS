@@ -202,9 +202,10 @@
 
 
           <div class="exam-audio-card">
-            <div class="exam-audio-header">
-              <button class="load-audio-btn" onclick="loadAudioExamQuestions()">Load files</button>
-            </div>
+  <div class="exam-audio-header">
+    <span class="exam-audio-title">Exam files</span>
+    <button class="load-audio-btn" onclick="loadAudioExamQuestions()">Load files</button>
+  </div>
             <div id="exam-audio-files" class="exam-audio-files"></div>
           </div>
         </div>
@@ -220,6 +221,36 @@
             </button>
           </div>
         </div>
+		<div class="exam-audio-card">
+		  <div class="exam-audio-header">
+    <span class="exam-audio-title">Speaking Exam</span>
+  </div>
+		<div id="speaking-cards-container" class="cards-wrapper">
+			<!-- Здесь динамически будут появляться .exam-speaking-card -->
+		</div>
+</div>
+<template id="exam-speaking-card-tpl">
+  <div class="exam-speaking-card" data-id="">
+    <div class="card-header">
+      <span class="card-name">Name</span>
+      <span class="card-date">01 Jan, 10:00 AM</span>
+    </div>
+    <div class="card-body">
+      <span class="card-status status-not-started">Not started</span>
+      <div class="card-actions">
+        <!-- кнопка «глазок» -->
+        <button class="btn-view-photo" title="View photo">
+          <i class="fas fa-eye"></i>
+        </button>
+        <!-- иконка старта экзамена вместо «удалить» -->
+        <button class="btn-start-exam" title="Start speaking exam">
+          <i class="fas fa-play"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
       </section>
 	  <section id="battle" class="section"> 
 	  	    <div class="random-card">

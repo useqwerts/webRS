@@ -137,7 +137,7 @@ loadExamResults();
 async function loadExamResults() {
   const container = document.getElementById("results-table-container");
 
-  // Показываем скелетон-загрузку
+  // Показываем скелетон-загрузку с местом для speaking score
   container.innerHTML = `
     <div class="skeleton-table">
       ${Array.from({ length: 5 }).map(() => `
@@ -145,6 +145,7 @@ async function loadExamResults() {
           <div class="skeleton skeleton-avatar"></div>
           <div class="skeleton skeleton-name"></div>
           <div class="skeleton skeleton-score"></div>
+          <div class="skeleton skeleton-speaking"></div>
           <div class="skeleton skeleton-bar"></div>
         </div>
       `).join('')}
@@ -152,7 +153,6 @@ async function loadExamResults() {
   `;
 
   try {
-    // Получаем имя пользователя из результатов
     const response = await fetch('/api/get_exam_results');
     if (!response.ok) {
       container.innerHTML = `<p style="color:white;">Failed to load results.</p>`;
@@ -160,7 +160,6 @@ async function loadExamResults() {
     }
 
     const results = await response.json();
-    container.innerHTML = ""; // Очищаем скелетон
 
     if (!results || Object.keys(results).length === 0) {
       container.innerHTML = `
@@ -172,54 +171,108 @@ async function loadExamResults() {
       return;
     }
 
+    // Загружаем speaking scores параллельно для всех пользователей
+    const usernames = Object.keys(results);
+    const speakingScoresPromises = usernames.map(async (username) => {
+      try {
+        const spResp = await fetch(`/api/get-score-sp-exam/${username}`);
+        if (spResp.ok) {
+          const spJson = await spResp.json();
+          return spJson.score || 0;
+        }
+      } catch (e) {
+        console.warn(`Failed to load speaking score for ${username}`, e);
+      }
+      return 0;
+    });
+
+    const speakingScores = await Promise.all(speakingScoresPromises);
+
+    // Теперь можно очистить контейнер (прячем скелетон только после получения speaking)
+    container.innerHTML = "";
+
     showToastNotification('Exam results loaded successfully!', 'success');
 
-    // Отображаем результаты
-    for (const [username, userData] of Object.entries(results)) {
+    usernames.forEach((username, index) => {
+      const userData = results[username];
+      const speakingScore = speakingScores[index];
+
       const userRow = document.createElement("div");
       userRow.className = "user-result-row";
 
-      const avatarRes = await fetch(`/get_avatar/${username}`);
-      const avatarData = await avatarRes.json();
-      const avatarUrl = avatarData.avatar_url;
+      // Загружаем аватар (можно оптимизировать, но так пока)
+      // Можно использовать Promise.all для аватаров, но здесь для простоты - await по одному
+      // Можно улучшить потом
+      // Чтобы не тормозить UI, аватар можно подгружать после вставки строки
+      // Но сейчас сделаем синхронно
+      userRow.innerHTML = `<div class="loading-avatar-placeholder"></div>`; // чтобы была разметка пока
 
-      const percentage = userData.correct_percentage.toFixed(0);
+      container.appendChild(userRow); // добавляем, чтобы не тормозить
 
-      const avatarHTML = avatarUrl
-        ? `<img src="${avatarUrl}" class="avatar-img" alt="avatar" />`
-        : `<div class="avatar-placeholder">${username.charAt(0).toUpperCase()}</div>`;
+      (async () => {
+        const avatarRes = await fetch(`/get_avatar/${username}`);
+        const avatarData = await avatarRes.json();
+        const avatarUrl = avatarData.avatar_url;
 
-      userRow.innerHTML = `
-        <div class="result-left">
-          ${avatarHTML}
-          <div class="user-info">
-            <div class="user-name">${username}</div>
-            <div class="user-score">${userData.correct} / ${userData.total_questions}</div>
-          </div>
-        </div>
-        <div class="result-right">
-          <div class="progress-wrapper">
-            <div class="progress-container">
-              <div class="progress-bar" style="width: ${percentage}%;"></div>
+        const percentage = userData.correct_percentage.toFixed(0);
+
+        const mainScorePercent = (percentage * 0.75).toFixed(2);
+        const speakingScorePercent = (speakingScore * 0.25).toFixed(2);
+
+        const avatarHTML = avatarUrl
+          ? `<img src="${avatarUrl}" class="avatar-img" alt="avatar" />`
+          : `<div class="avatar-placeholder">${username.charAt(0).toUpperCase()}</div>`;
+
+        userRow.innerHTML = `
+          <div class="result-left">
+            ${avatarHTML}
+            <div class="user-info">
+              <div class="user-name">${username}</div>
+              <div class="user-score">${userData.correct} / ${userData.total_questions}</div>
+              <div class="user-speaking-score" style="backdrop-filter: blur(6px); background: rgba(255 255 255 / 0.1); border-radius: 8px; padding: 2px 6px; margin-top: 4px; font-weight: 600; color: white;">
+                Speaking: ${speakingScore}%
+              </div>
             </div>
-            <span class="progress-label">Score ${percentage}%</span>
           </div>
-        </div>
-      `;
+          <div class="result-right">
+            <div class="progress-wrapper">
+              <div class="progress-container">
+                <div class="progress-bar main-bar" style="width: ${mainScorePercent}%;"></div>
+                <div class="progress-bar speaking-bar" style="width: ${speakingScorePercent}%;"></div>
+              </div>
+              <span class="progress-label">Score ${(parseFloat(mainScorePercent) + parseFloat(speakingScorePercent)).toFixed(0)}%</span>
+            </div>
+          </div>
+        `;
 
-      // Добавляем обработчик клика с передачей имени пользователя
-      userRow.addEventListener("click", () => {
-        openUserDetailedReview(username, userData);
-      });
-
-      container.appendChild(userRow);
-    }
-
+        userRow.addEventListener("click", () => {
+          openUserDetailedReview(username, userData);
+        });
+      })();
+    });
   } catch (error) {
     console.error("Error loading exam results:", error);
     container.innerHTML = `<p style="color:white;">An error occurred while loading results.</p>`;
   }
 }
+
+
+
+
+function adjustInputWidths() {
+  document.querySelectorAll('.write-in-blank-input').forEach(input => {
+    const span = document.createElement('span');
+    span.style.visibility = 'hidden';
+    span.style.whiteSpace = 'pre';
+    span.style.font = getComputedStyle(input).font;
+    span.style.padding = getComputedStyle(input).padding;
+    span.textContent = input.value || input.placeholder || '';
+    document.body.appendChild(span);
+    input.style.width = `${span.offsetWidth + 10}px`;
+    document.body.removeChild(span);
+  });
+}
+
 
 async function openUserDetailedReview(username, userData) {
   document.querySelector('.detailed-questions-review')?.remove();
@@ -415,6 +468,7 @@ async function openUserDetailedReview(username, userData) {
 
   questionsHtml += '</div>';
   modal.innerHTML = headerHtml + questionsHtml;
+  adjustInputWidths();
 
   modal.querySelectorAll('.listening-audio').forEach(card => {
     setupCustomPlayer(card);
@@ -471,6 +525,46 @@ function openMediaViewer(imgElement) {
   document.addEventListener('keydown', handleKeydown);
   viewer.addEventListener('remove', () => document.removeEventListener('keydown', handleKeydown));
 }
+
+function openMediaSpeaking(imgElement) {
+  const imgSrc = imgElement.src;
+
+  const viewer = document.createElement('div');
+  viewer.className = 'media-viewer';
+  viewer.innerHTML = `
+    <button class="close-btn"><i class="fas fa-times"></i></button>
+    <img src="${imgSrc}" alt="Speaking photo">
+  `;
+
+  Object.assign(viewer.style, {
+    position: 'fixed',
+    top: 0, left: 0, width: '100%', height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10000
+  });
+
+  const img = viewer.querySelector('img');
+  Object.assign(img.style, {
+    maxWidth: '90%',
+    maxHeight: '90%',
+    borderRadius: '8px',
+    boxShadow: '0 0 15px rgba(255, 255, 255, 0.2)'
+  });
+
+  viewer.querySelector('.close-btn').onclick = () => viewer.remove();
+  document.body.appendChild(viewer);
+
+  document.addEventListener('keydown', function escHandler(e) {
+    if (e.key === 'Escape') {
+      viewer.remove();
+      document.removeEventListener('keydown', escHandler);
+    }
+  });
+}
+
 
 function renderAnswerInput(result, userAnswer, isCorrect) {
   const { question_type, question_id, correct_answer, options } = result;
@@ -1435,3 +1529,294 @@ async function pasteText() {
         console.error('Ошибка вставки через Clipboard API:', err);
     }
 }
+
+async function openUserSpeakingReview(userId, userData) {
+  // Удаляем старую модалку, если есть
+  document.querySelector('.detailed-questions-review')?.remove();
+
+  // Создаём контейнер модалки
+  const modal = document.createElement('div');
+  modal.className = 'detailed-questions-review';
+  document.body.appendChild(modal);
+
+  // Лоадер
+  const loader = document.createElement('div');
+  loader.id = 'loading-animation';
+  loader.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);';
+  modal.appendChild(loader);
+  loader.innerHTML = '<div class="spinner"></div>';
+
+  // Шапка
+  const headerHtml = `
+    <div class="detailed-questions-reviewHeader">
+      <span class="back-btn" onclick="detailedQuestionReviewClose(this.closest('.detailed-questions-review'))">
+        <i class="fas fa-arrow-left"></i> Back
+      </span>
+      <h2><i class="fas fa-user"></i> Speaking Exam: ${userId}</h2>
+    </div>
+  `;
+
+  // Получаем фото
+  let photoBlobUrl = null, photoError = null;
+  try {
+    const resp = await fetch(`/api/get-sp-details/${userId}`);
+    if (!resp.ok) throw new Error('Photo not found');
+    const blob = await resp.blob();
+    photoBlobUrl = URL.createObjectURL(blob);
+  } catch (e) {
+    photoError = e.message;
+  }
+
+  // Убираем лоадер
+  loader.remove();
+
+  // Формируем тело
+  let bodyHtml = '<div class="speaking-review-body">';
+  if (photoError) {
+    bodyHtml += `<p class="error">Error: ${photoError}</p>`;
+  } else {
+    bodyHtml += `
+      <div class="photo-container">
+        <img src="${photoBlobUrl}" alt="Speaking exam photo" class="photo-thumb" />
+      </div>
+    `;
+  }
+
+  // Блок кастомного селектора оценки и кнопка рядом
+  bodyHtml += `
+    <div class="score-assignment">
+      <label>Assign Score:</label>
+      <div class="custom-select" tabindex="0">
+        <span class="selected">Select Score</span>
+        <ul class="select-options">
+          <li data-value="20">20%</li>
+          <li data-value="40">40%</li>
+          <li data-value="60">60%</li>
+          <li data-value="80">80%</li>
+          <li data-value="100">100%</li>
+        </ul>
+      </div>
+      <button id="assign-score-btn">Assign</button>
+    </div>
+  `;
+  bodyHtml += '</div>';
+
+  modal.innerHTML = headerHtml + bodyHtml;
+
+  // Интеграция media viewer по клику на фото
+  const imgEl = modal.querySelector('.photo-thumb');
+  if (imgEl) {
+    imgEl.addEventListener('click', () => openMediaSpeaking(imgEl));
+  }
+
+  // Аудио
+  const audioUrl = `/static/speaking-files/${userId}.webm`;
+
+  try {
+    const res = await fetch(audioUrl, { method: 'GET' });
+    if (res.ok) {
+      const audioPlayerHTML = `
+        <div class="audio-player-section">
+          <h3>Recorded Audio</h3>
+          <div class="custom-audio-player">
+            <button class="custom-play-btn"><i class="fas fa-play"></i></button>
+            <div class="custom-audio-waves"><div class="progress"></div></div>
+            <div class="custom-time-display">0:00</div>
+          </div>
+          <audio src="${audioUrl}" preload="metadata" style="display: none;"></audio>
+        </div>
+      `;
+
+      const reviewBody = modal.querySelector('.speaking-review-body');
+      reviewBody.insertAdjacentHTML('beforeend', audioPlayerHTML);
+
+      const audio = reviewBody.querySelector('audio');
+      const playBtn = reviewBody.querySelector('.custom-play-btn');
+      const timeDisplay = reviewBody.querySelector('.custom-time-display');
+      const progressBar = reviewBody.querySelector('.progress');
+
+      playBtn.onclick = () => {
+        if (audio.paused) {
+          audio.play();
+          playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+          audio.pause();
+          playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+      };
+
+      audio.addEventListener('timeupdate', () => {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = percent + '%';
+        const minutes = Math.floor(audio.currentTime / 60);
+        const seconds = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+        timeDisplay.textContent = `${minutes}:${seconds}`;
+      });
+
+      audio.addEventListener('ended', () => {
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      });
+    }
+  } catch (err) {
+    console.error('Failed to load audio file:', err);
+  }
+
+  // Кастомный select: логика выбора и закрытия списка
+  const customSelect = modal.querySelector('.custom-select');
+  const selectedSpan = customSelect.querySelector('.selected');
+  const optionsList = customSelect.querySelector('.select-options');
+  let selectedValue = null;
+
+  customSelect.addEventListener('click', (e) => {
+    e.stopPropagation();
+    optionsList.classList.toggle('visible');
+  });
+
+  optionsList.querySelectorAll('li').forEach(option => {
+    option.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectedValue = parseInt(option.dataset.value, 10);
+      selectedSpan.textContent = option.textContent;
+      optionsList.classList.remove('visible');
+    });
+  });
+
+  document.addEventListener('click', () => {
+    optionsList.classList.remove('visible');
+  });
+
+  // Обработчик кнопки Assign
+  modal.querySelector('#assign-score-btn').addEventListener('click', async () => {
+    if (!selectedValue) {
+      showToastNotification('Please select a score first.', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/speaking-exam-end/${userId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score: selectedValue })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to assign');
+
+      const statusEl = document.querySelector(`.exam-speaking-card[data-id="${userId}"] .card-status`);
+      if (statusEl) {
+        statusEl.textContent = 'Completed';
+        statusEl.className = 'card-status status-completed';
+      }
+
+      showToastNotification(`Score assigned: ${json.score}%`, 'success');
+      modal.remove();
+    } catch (err) {
+      showToastNotification(err.message, 'error');
+    }
+  });
+}
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('speaking-cards-container');
+  const tpl = document.getElementById('exam-speaking-card-tpl');
+
+  fetch('/api/users')
+    .then(r => r.json())
+    .then(data => {
+      let users = [];
+
+      if (Array.isArray(data)) {
+        users = data;
+      } else if (Array.isArray(data.users)) {
+        users = data.users;
+      } else if (data && typeof data === 'object') {
+        users = Object.keys(data).map(name => ({ id: name, name }));
+      }
+
+      if (!users.length) {
+        console.warn('No users found or wrong response format', data);
+        showToastNotification("No users found or wrong response format", 'warning');
+        return;
+      }
+
+      users.forEach(u => {
+        const clone = tpl.content.cloneNode(true);
+        const card = clone.querySelector('.exam-speaking-card');
+        card.dataset.id = u.id;
+
+        // Name
+        card.querySelector('.card-name').textContent = u.name;
+
+        // Проверка и отображение длительности аудио (вместо даты)
+        const dateEl = card.querySelector('.card-date');
+        const audioUrl = `/static/speaking-files/${u.id}.webm`;
+
+        fetch(audioUrl)
+          .then(res => {
+            if (!res.ok) throw new Error('Audio not found');
+            return res.blob();
+          })
+          .then(blob => {
+            return new Promise((resolve) => {
+              const audio = document.createElement('audio');
+              audio.src = URL.createObjectURL(blob);
+              audio.addEventListener('loadedmetadata', () => {
+                const minutes = Math.floor(audio.duration / 60);
+                const seconds = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+                dateEl.textContent = `${minutes}m ${seconds}s speech`;
+                resolve();
+              });
+            });
+          })
+          .catch(() => {
+            dateEl.textContent = 'No audio';
+          });
+
+        // Status
+        const statusEl = card.querySelector('.card-status');
+        fetch(`/api/get-status-sp-exam/${u.id}`)
+          .then(r => r.json())
+          .then(d => {
+            const st = d.status || 'not started';
+            statusEl.textContent = st.charAt(0).toUpperCase() + st.slice(1);
+            statusEl.className = 'card-status status-' + st.replace(' ', '-');
+          })
+          .catch(() => {
+            statusEl.textContent = 'Error';
+            statusEl.className = 'card-status';
+            showToastNotification(`Failed to fetch status for ${u.name}`, 'error');
+          });
+
+        // View-photo button → open image endpoint directly
+        card.querySelector('.btn-view-photo').addEventListener('click', () => {
+          openUserSpeakingReview(u.id, u);
+        });
+
+        // Start-exam button
+        card.querySelector('.btn-start-exam').addEventListener('click', () => {
+          fetch(`/api/start-speaking-exam/${u.id}`, { method: 'POST' })
+            .then(r => r.json())
+            .then(j => {
+              if (j.message === 'Exam started') {
+                statusEl.textContent = 'Started';
+                statusEl.className = 'card-status status-started';
+                showToastNotification(`<b>Exam started for ${u.name}</b> <span>Good luck!</span>`, 'success', 4000);
+              } else {
+                showToastNotification("Failed: " + j.message, 'error');
+              }
+            })
+            .catch((e) => {
+              showToastNotification("Error starting exam: " + e.message, 'error');
+            });
+        });
+
+        container.appendChild(clone);
+      });
+    })
+    .catch(e => {
+      console.error('Error fetching users:', e);
+      showToastNotification("Error fetching users: " + e.message, 'error');
+    });
+});
