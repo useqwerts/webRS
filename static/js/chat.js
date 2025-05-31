@@ -5897,21 +5897,19 @@ function submitHomeworkAnswers() {
 
 // ---- speaking-exam-modal.js ----
 async function openSpeakingExamModal() {
-	await toggleRulesModal('open');
+  await toggleRulesModal('open');
   const userId = getCurrentUser();
   if (!userId) return showToastNotification('User not logged in', 'error');
 
-  // Show overlay with skeleton animation
-  document.querySelector('.detailed-questions-review')?.remove();
+  document.querySelector('.detailed-questions-review-speaking')?.remove();
 
   const overlay = document.createElement('div');
-  overlay.className = 'detailed-questions-review speaking-exam';
+  overlay.className = 'detailed-questions-review-speaking speaking-exam';
   const modal = document.createElement('div');
   modal.className = 'speaking-exam-modal';
   overlay.appendChild(modal);
   document.getElementById('speaking-exam-details').appendChild(overlay);
 
-  // Temporary skeleton content
   modal.innerHTML = `
     <div class="speaking-header">
       <div>
@@ -5931,7 +5929,6 @@ async function openSpeakingExamModal() {
     </div>
   `;
 
-  // Fetch exam status
   let stJson;
   try {
     const stRes = await fetch(`/api/get-status-sp-exam/${userId}`);
@@ -5945,8 +5942,7 @@ async function openSpeakingExamModal() {
     overlay.remove();
     return showToastNotification('Exam not started or completed', 'error');
   }
-  
-  // Default parameters
+
   initExamSecurity(true);
   let score = 100;
   let progressText = 'Done 0 of 1 parts';
@@ -5967,46 +5963,58 @@ async function openSpeakingExamModal() {
     `;
   }
 
-  // Load score and grade if completed
-  if (isCompleted) {
-    try {
-		initExamSecurity(false);
-      const scoreRes = await fetch(`/api/get-score-sp-exam/${userId}`);
-      const scoreData = await scoreRes.json();
-      score = scoreData.score || 100;
-      progressText = 'Done 1 of 1 parts';
-      progressBarWidth = `${score}%`;
-      percentageText = `<span class="percentage">${score}%</span>`;
-      finishBtnDisabled = 'disabled';
-      recordBtnDisabled = 'disabled';
+if (isCompleted) {
+  try {
+    initExamSecurity(false);
+    const scoreRes = await fetch(`/api/get-score-sp-exam/${userId}`);
+    const scoreData = await scoreRes.json();
+    score = scoreData.score || 100;
+    progressText = 'Done 1 of 1 parts';
+    progressBarWidth = `${score}%`;
+    percentageText = `<span class="percentage">${score}%</span>`;
+    finishBtnDisabled = 'disabled';
+    recordBtnDisabled = 'disabled';
 
-      let grade = 'A+';
-      let gradeClass = 'grade-a-plus';
-      if (score >= 90) {
-        grade = 'A+';
-        gradeClass = 'grade-a-plus';
-      } else if (score >= 80) {
-        grade = 'A';
-        gradeClass = 'grade-a';
-      } else if (score >= 70) {
-        grade = 'B';
-        gradeClass = 'grade-b';
-      } else if (score >= 60) {
-        grade = 'C';
-        gradeClass = 'grade-c';
-      } else {
-        grade = 'D';
-        gradeClass = 'grade-d';
-      }
-      gradeIcon = `<span class="grade-icon ${gradeClass}"><i class="fas fa-check-circle"></i> ${grade}</span>`;
+    let grade = 'A+';
+    let gradeClass = 'grade-a-plus';
+
+    if (score >= 90) {
+      grade = 'A+';
+      gradeClass = 'grade-a-plus';
+    } else if (score >= 80) {
+      grade = 'A';
+      gradeClass = 'grade-a';
+    } else if (score >= 70) {
+      grade = 'B';
+      gradeClass = 'grade-b';
+    } else if (score >= 60) {
+      grade = 'C';
+      gradeClass = 'grade-c';
+    } else {
+      grade = 'D';
+      gradeClass = 'grade-d';
     }
-	catch (err) {
-		initExamSecurity(false);
-      showToastNotification('Failed to fetch score', 'error');
-    }
+
+    // Маппинг grade к иконкам FontAwesome (или любым другим)
+    const gradeIconsMap = {
+      'A+': 'fas fa-star',           // Звезда для A+
+      'A': 'fas fa-thumbs-up',       // Палец вверх для A
+      'B': 'fas fa-check-circle',    // Галочка в круге для B
+      'C': 'fas fa-exclamation-circle', // Восклицательный знак для C
+      'D': 'fas fa-times-circle',    // Крестик в круге для D
+    };
+
+    const iconClass = gradeIconsMap[grade] || 'fas fa-check-circle';
+
+    gradeIcon = `<span class="grade-icon ${gradeClass}"><i class="${iconClass}"></i> ${grade}</span>`;
+
+  } catch (err) {
+    initExamSecurity(false);
+    showToastNotification('Failed to fetch score', 'error');
   }
+}
 
-  // Update modal content
+
   modal.innerHTML = `
     <div class="speaking-header">
       <div>
@@ -6028,7 +6036,6 @@ async function openSpeakingExamModal() {
 
   const body = modal.querySelector('.speaking-body');
 
-  // Load photo with skeleton
   try {
     const resp = await fetch(`/api/get-sp-details/${userId}`);
     const blob = await resp.blob();
@@ -6043,45 +6050,61 @@ async function openSpeakingExamModal() {
     body.innerHTML = `<p>Photo not available</p>`;
   }
 
-  // Record button
-  let recorder = null;
-  let audioChunks = [];
+  // === Новый улучшенный блок микрофона ===
+let recorder = null;
+let audioChunks = [];
+let microphone_on = null;
 
-  const recordBtn = document.createElement('button');
-  recordBtn.className = 'record-btn';
-  recordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
-  if (isCompleted) recordBtn.disabled = true;
-  body.appendChild(recordBtn);
+const recordBtn = document.createElement('button');
+recordBtn.className = 'record-btn';
+recordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+if (isCompleted) recordBtn.disabled = true;
+body.appendChild(recordBtn);
 
-  if (!isCompleted) {
-    recordBtn.addEventListener('click', async () => {
-      if (!navigator.mediaDevices?.getUserMedia) {
-        return showToastNotification('Audio recording not supported', 'error');
-      }
-
-      if (recorder && recorder.state === 'recording') {
-        recorder.stop();
-        return;
-      }
-
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioChunks = [];
-        recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
-
-        recorder.ondataavailable = e => audioChunks.push(e.data);
-        recorder.onstop = () => {
-          stream.getTracks().forEach(t => t.stop());
-          recordBtn.className = 'record-btn';
-        };
-
-        recorder.start();
-        recordBtn.className = 'record-btn recording';
-      } catch {
-        showToastNotification('Could not start recording', 'error');
-      }
-    });
+const startRecording = async () => {
+  // если запись уже идёт — не останавливаем, если был первый запуск
+  if (recorder && recorder.state === 'recording') {
+    if (microphone_on === true) {
+      showToastNotification('Recording already started. Cannot stop.', 'info');
+      return;
+    } else {
+      recorder.stop(); // до первого успешного запуска можно остановить
+      return;
+    }
   }
+
+  if (!navigator.mediaDevices?.getUserMedia) {
+    return showToastNotification('Audio recording not supported', 'error');
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+
+    recorder.ondataavailable = e => audioChunks.push(e.data);
+    recorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      recordBtn.classList.remove('recording');
+    };
+
+    recorder.start();
+    recordBtn.classList.add('recording');
+    microphone_on = true; // ✅ Успешный запуск микрофона — теперь его нельзя отключить
+  } catch (err) {
+    microphone_on = false; // ❌ Ошибка при запуске — можно пробовать снова
+    showToastNotification('Could not start recording', 'error');
+  }
+};
+
+if (!isCompleted) {
+  recordBtn.addEventListener('click', startRecording);
+  recordBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startRecording();
+  }, { passive: false });
+}
+
 
   async function convertToMP3(chunks) {
     return new Promise((resolve, reject) => {
@@ -6128,7 +6151,7 @@ async function openSpeakingExamModal() {
   if (!isCompleted) {
     modal.querySelector('.finish-btn').addEventListener('click', async () => {
       if (recorder && recorder.state === 'recording') {
-		initExamSecurity(false);
+        initExamSecurity(false);
         recorder.stop();
         await new Promise(res => recorder.addEventListener('stop', res, { once: true }));
       }
@@ -6157,21 +6180,10 @@ async function openSpeakingExamModal() {
           autoplay: true,
           path: '/static/animations/Speaking-Loading.json'
         });
-
-        animation.addEventListener('error', (e) => {
-          console.error('Lottie animation failed to load:', e);
-          showToastNotification('Failed to load animation', 'error');
-        });
-
-        animation.addEventListener('DOMLoaded', () => {
-          console.log('Lottie animation loaded successfully');
-        });
       } catch (err) {
-        console.error('Error initializing Lottie animation:', err);
-        showToastNotification('Error loading animation', 'error');
         animationContainer.remove();
         finishButton.style.display = 'flex';
-        return;
+        return showToastNotification('Error loading animation', 'error');
       }
 
       try {
@@ -6186,7 +6198,6 @@ async function openSpeakingExamModal() {
         const { score = 100 } = await scoreRes.json();
 
         modal.querySelector('.progress-info').textContent = 'Done 1 of 1 parts';
-        modal.querySelector('.bar').style.width = `${score}%`;
         modal.querySelector('.speaking-progress-container').innerHTML = `
           <div class="speaking-progress">
             <div class="bar" style="width: ${score}%;"></div>
@@ -6207,7 +6218,7 @@ async function openSpeakingExamModal() {
         });
 
         showToastNotification('Speaking exam submitted', 'success');
-		initExamSecurity(false);
+        initExamSecurity(false);
       } catch (err) {
         if (animation) animation.destroy();
         animationContainer.remove();
@@ -6221,7 +6232,6 @@ async function openSpeakingExamModal() {
     });
   }
 }
-
 
 
 // Привязываем к кнопке Speaking где нужно
