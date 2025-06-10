@@ -1,172 +1,188 @@
 {
-    "Aziz": {
-        "correct": 0,
-        "incorrect": 1,
-        "skipped": 19,
-        "total_questions": 20,
-        "correct_percentage": 0.0,
+    "Elbek": {
+        "correct": 7,
+        "incorrect": 8,
+        "skipped": 7,
+        "total_questions": 22,
+        "correct_percentage": 31.818181818181817,
         "rewarded": false,
         "coins": 0,
-        "time_finished": "2025-05-31 16:30:55",
+        "time_finished": "2025-06-07 15:23:18",
         "results": [
             {
-                "question_type": "write-in-blank",
-                "question_id": "1.14",
-                "question": "Bus leaves at: (14) ____ a.m.",
-                "user_answer": "8.30",
-                "correct_answer": "8.15",
-                "is_correct": false
+                "question_type": "multiple_choice",
+                "question_id": "1.1",
+                "question": "Layla qanday turdagi qahramon?",
+                "user_answer": "Marksman",
+                "correct_answer": "Marksman",
+                "is_correct": true
             },
             {
-                "question_type": "write-in-blank",
-                "question_id": "1.15",
-                "question": "Meet before trip at: hotel (15) ____",
-                "user_answer": null,
-                "correct_answer": "entrance",
-                "is_correct": false
-            },
-            {
-                "question_type": "write-in-blank",
-                "question_id": "1.16",
-                "question": "First stop: ruin of a (16) ____",
-                "user_answer": null,
-                "correct_answer": "palace",
-                "is_correct": false
-            },
-            {
-                "question_type": "write-in-blank",
-                "question_id": "1.17",
-                "question": "Lunch at: The (17) ____ Restaurant",
-                "user_answer": null,
-                "correct_answer": "Wakizi",
-                "is_correct": false
-            },
-            {
-                "question_type": "write-in-blank",
-                "question_id": "1.18",
-                "question": "Afternoon activity: (18) ____ or beach volleyball",
-                "user_answer": null,
-                "correct_answer": "diving",
-                "is_correct": false
-            },
-            {
-                "question_type": "write-in-blank",
-                "question_id": "1.19",
-                "question": "Bring: (19) ____",
-                "user_answer": null,
-                "correct_answer": "sun cream",
+                "question_type": "multiple_choice",
+                "question_id": "1.2",
+                "question": "Balmondning passiv qobiliyati nima qiladi?",
+                "user_answer": "Dushmanni sekinlashtiradi",
+                "correct_answer": "Qon tiklaydi",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
+                "question_id": "1.3",
+                "question": "Ling devorga chiqishi uchun qanday resursdan foydalanadi?",
+                "user_answer": "Lightness points",
+                "correct_answer": "Lightness points",
+                "is_correct": true
+            },
+            {
+                "question_type": "box-choose",
                 "question_id": "2.1",
-                "question": "Which adjective would better describe Whittier?",
-                "user_answer": null,
-                "correct_answer": "remote",
-                "is_correct": false
+                "question": "Akai ko\u2018pincha jamoada ____ rolini bajaradi.",
+                "user_answer": "tank",
+                "correct_answer": "tank",
+                "is_correct": true
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "box-choose",
                 "question_id": "2.2",
-                "question": "If you are going to Whittier through the tunnel...",
-                "user_answer": null,
-                "correct_answer": "you can't use the tunnel while other people are leaving.",
+                "question": "Zilongning ____ qobiliyati uni juda tez harakatlantiradi.",
+                "user_answer": "jungler",
+                "correct_answer": "ultimat",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "box-choose",
                 "question_id": "2.3",
-                "question": "Most people in Whittier work in...",
-                "user_answer": null,
-                "correct_answer": "the shipping industry",
+                "question": "Jungler odatda birinchi navbatda ____ ustida ishlaydi.",
+                "user_answer": "turret",
+                "correct_answer": "damage",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "box-choose",
                 "question_id": "2.4",
-                "question": "According to the text,...",
-                "user_answer": null,
-                "correct_answer": "the town's church is in the Begich Towers.",
+                "question": "Layla uzoqdan ____ ni yo\u2018q qilishi mumkin.",
+                "user_answer": "combo",
+                "correct_answer": "turret",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "box-choose",
                 "question_id": "2.5",
-                "question": "The towers were built...",
-                "user_answer": null,
-                "correct_answer": "to accommodate an expanding population.",
-                "is_correct": false
+                "question": "Alucard o\u2018zining hujumidan so\u2018ng HP ni ____ qiladi.",
+                "user_answer": "regen",
+                "correct_answer": "regen",
+                "is_correct": true
             },
             {
-                "question_type": "multiple_choice",
-                "question_id": "2.6",
-                "question": "Which of these can you NOT find in Begich Towers?",
-                "user_answer": null,
-                "correct_answer": "a hospital",
-                "is_correct": false
-            },
-            {
-                "question_type": "multiple_choice",
+                "question_type": "write-in-blank",
                 "question_id": "3.1",
-                "question": "_____ kept on working after being badly hurt.",
-                "user_answer": null,
-                "correct_answer": "Roy Kinnear",
+                "question": "Karina assassin turidagi qahramon bo\u2018lib, uning ultimat zarbasi dushmanga katta ____ yetkazadi.",
+                "user_answer": "uron",
+                "correct_answer": "zarar",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "write-in-blank",
                 "question_id": "3.2",
-                "question": "_____ had a father who was a well-known actor and sportsman.",
-                "user_answer": null,
-                "correct_answer": "Brandon Lee",
+                "question": "Tigrealning kuchli tomoni \u2013 dushmanlarni bir joyga ____ olishidir.",
+                "user_answer": "yigadi",
+                "correct_answer": "tortib",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "write-in-blank",
                 "question_id": "3.3",
-                "question": "_____ was famous for his interest in animals and the environment.",
+                "question": "MLBB o\u2018yinida 'Retribution' odatda ____ qahramonlar tomonidan ishlatiladi.",
                 "user_answer": null,
-                "correct_answer": "Steve Irwin",
+                "correct_answer": "jungler",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
+                "question_type": "write-in-blank",
                 "question_id": "3.4",
-                "question": "_____ died in a tragic accident that affected other actors.",
-                "user_answer": null,
-                "correct_answer": "Vic Morrow",
+                "question": "Claude o\u2018zining ultimatini faollashtirganda atrofdagi barcha dushmanga ____ yetkazadi.",
+                "user_answer": "otafi",
+                "correct_answer": "zarar",
                 "is_correct": false
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "3.5",
-                "question": "_____ officially died almost a week after his accident.",
-                "user_answer": null,
-                "correct_answer": "Jon-Erik Hexum",
-                "is_correct": false
+                "question_id": "4.1",
+                "question": "Ling qahramoni qaysi joylashuvda eng samarali o\u2018ynaladi?",
+                "user_answer": "Jungle",
+                "correct_answer": "Jungle",
+                "is_correct": true
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "3.6",
-                "question": "_____ died as a result of his careless behavior with a dangerous object.",
-                "user_answer": null,
-                "correct_answer": "Jon-Erik Hexum",
-                "is_correct": false
+                "question_id": "4.2",
+                "question": "Kimning ultisi bir necha raqibni bir joyga tortib, zarar yetkazadi?",
+                "user_answer": "Tigreal",
+                "correct_answer": "Tigreal",
+                "is_correct": true
             },
             {
                 "question_type": "multiple_choice",
-                "question_id": "3.7",
-                "question": "_____ had an accident while he was filming in the sea.",
-                "user_answer": null,
-                "correct_answer": "Steve Irwin",
+                "question_id": "4.3",
+                "question": "Xavier qanday tipdagi qahramon hisoblanadi?",
+                "user_answer": "Mage",
+                "correct_answer": "Mage",
+                "is_correct": true
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "5.1",
+                "question": "Lunox qahramoni odatda ____ tipidagi zararni yetkazadi. ____",
+                "user_answer": "mage",
+                "correct_answer": "burst",
                 "is_correct": false
             },
             {
-                "question_type": "multiple_choice",
-                "question_id": "3.8",
-                "question": "_____ was killed in an accident that showed behaviors against the law.",
+                "question_type": "box-choose",
+                "question_id": "5.2",
+                "question": "Alice uzoq janggilarda uzoq yashashga qodir, chunki u yuqori ____ darajasiga ega. ____",
                 "user_answer": null,
-                "correct_answer": "Vic Morrow",
+                "correct_answer": "sustain",
+                "is_correct": false
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "5.3",
+                "question": "Zilong ko\u2018pincha ____ strategiyasidan foydalanib minoralarni tezda yo\u2018q qiladi. ____",
+                "user_answer": null,
+                "correct_answer": "split push",
+                "is_correct": false
+            },
+            {
+                "question_type": "box-choose",
+                "question_id": "5.4",
+                "question": "Ruby o\u2018zining zarbalari bilan sog\u2018lig\u2018ini tiklashi uchun unga ____ kerak. ____",
+                "user_answer": null,
+                "correct_answer": "lifesteal",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "6.1",
+                "question": "Hayabusa o\u2018zining ultimate skilli bilan bir nuqtada portlashlar orqali zarba beradi. Bu unga qanday ustunlik beradi? ____",
+                "user_answer": null,
+                "correct_answer": "assassination",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "6.2",
+                "question": "Kadita ko\u2018p hollarda o\u2018zining suv kuchiga asoslangan hujumlaridan foydalanadi. Bu qanday rolga mos keladi? ____",
+                "user_answer": null,
+                "correct_answer": "mage",
+                "is_correct": false
+            },
+            {
+                "question_type": "write-in-blank",
+                "question_id": "6.3",
+                "question": "Kaja dushmanlarni o\u2018ziga tortib, ularni jamoasi oldiga olib kelishi mumkin. Bu qanday effekt? ____",
+                "user_answer": null,
+                "correct_answer": "crowd control",
                 "is_correct": false
             }
         ]

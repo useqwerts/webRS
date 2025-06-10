@@ -2,11 +2,11 @@ from flask import Flask, render_template, request, jsonify, send_from_directory,
 from flask_socketio import SocketIO, emit
 import os
 import json
-import platform
 import time
 import requests 
 import random
 from datetime import datetime , timedelta
+from user_agents import parse
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
@@ -15,6 +15,7 @@ from flask import send_from_directory, make_response
 # Initialize app and socket
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
+app.config['DEBUG'] = True
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'txt', 'pdf','mp3','wav'}
 socketio = SocketIO(app)
@@ -30,7 +31,7 @@ messages = []  # Store messages locally
 
 API_KEY_EXPIRATION = 10
 
-exam_duration = 90 * 60  # 30 minutes in seconds
+exam_duration = 20 * 60  # 30 minutes in seconds
 exam_start_time = None  # Global variable to store exam start time
 exam_started = False  # Флаг начала экзамена
 exam_end_time = None
@@ -38,7 +39,6 @@ exam_end_time = None
 
 USER_DATA_FILE = "users.json"
 MESSAGE_DATA_FILE = "messages.json"
-banned_users = []
 exam_passed = []
 
 AVATAR_FOLDER = "static/avatars"
@@ -330,37 +330,6 @@ def get_avatar(username):
     
     # Если аватарки нет, возвращаем None
     return jsonify({"avatar_url": None})
-
-
-@socketio.on('ban_user')
-def handle_ban_user(username):
-    if username:
-        if username not in banned_users:
-            banned_users.append(username)
-            emit('user_banned', {'success': True, 'username': username}, broadcast=True)  # Сообщение всем клиентам
-            print(f'User {username} has been banned')
-        else:
-            emit('user_banned', {'success': False, 'message': 'User is already banned'}, to=request.sid)  # Только отправителю
-    else:
-        emit('user_banned', {'success': False, 'message': 'Username is required'}, to=request.sid)  # Только отправителю
-
-@app.route('/api/check-ban-status', methods=['POST'])
-def check_ban_status():
-    try:
-        data = request.get_json()
-        username = data.get('username')
-
-        if not username:
-            return jsonify({'error': 'Username is required'}), 400
-
-        if username in banned_users:  # Проверяем, есть ли пользователь в списке
-            return jsonify({'banned': True}), 200
-        else:
-            return jsonify({'banned': False}), 200
-
-    except Exception as e:
-        print(f"Error checking ban status: {e}")
-        return jsonify({'error': 'An error occurred'}), 500
         
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -480,181 +449,193 @@ active_sessions = {}  # Track active sessions by username
 
 current_version = "2025-01-10-v1"
 
-exam_questions = [
-{
-  "id": 1,
-  "text": "Section 1. Listen and complete the information about the day trip.",
-  "type": "listening",
-  "audio": "/static/exam-files/Preliminary1_test3_audio3.mp3",
+exam_questions = [ 
+
+ {
+    "id": 1,
+    "type": "multiple_choice",
+    "text": "Quyidagi testda MLBB qahramonlari haqida to‘g‘ri javobni tanlang.",
+    "subquestions": [
+      {
+        "id": "1.1",
+        "type": "multiple_choice",
+        "text": "Layla qanday turdagi qahramon?",
+        "options": ["Tank", "Marksman", "Assassin"],
+        "correct": "Marksman"
+      },
+      {
+        "id": "1.2",
+        "type": "multiple_choice",
+        "text": "Balmondning passiv qobiliyati nima qiladi?",
+        "options": ["Yoqadi", "Qon tiklaydi", "Dushmanni sekinlashtiradi"],
+        "correct": "Qon tiklaydi"
+      },
+      {
+        "id": "1.3",
+        "type": "multiple_choice",
+        "text": "Ling devorga chiqishi uchun qanday resursdan foydalanadi?",
+        "options": ["HP", "Mana", "Lightness points"],
+        "correct": "Lightness points"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "type": "box-choose",
+    "text": "Bo‘sh joylarga quyidagi so‘zlardan mosini tanlang.",
+    "options": ["ultimat", "regen", "jungler", "damage", "turret", "combo", "tank"],
+    "subquestions": [
+      {
+        "id": "2.1",
+        "type": "box-choose",
+        "text": "Akai ko‘pincha jamoada ____ rolini bajaradi.",
+        "correct": "tank"
+      },
+      {
+        "id": "2.2",
+        "type": "box-choose",
+        "text": "Zilongning ____ qobiliyati uni juda tez harakatlantiradi.",
+        "correct": "ultimat"
+      },
+      {
+        "id": "2.3",
+        "type": "box-choose",
+        "text": "Jungler odatda birinchi navbatda ____ ustida ishlaydi.",
+        "correct": "damage"
+      },
+      {
+        "id": "2.4",
+        "type": "box-choose",
+        "text": "Layla uzoqdan ____ ni yo‘q qilishi mumkin.",
+        "correct": "turret"
+      },
+      {
+        "id": "2.5",
+        "type": "box-choose",
+        "text": "Alucard o‘zining hujumidan so‘ng HP ni ____ qiladi.",
+        "correct": "regen"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "type": "write-in-blank",
+    "text": "Bo‘sh joyni to‘ldiring.",
+    "subquestions": [
+      {
+        "id": "3.1",
+        "type": "write-in-blank",
+        "text": "Karina assassin turidagi qahramon bo‘lib, uning ultimat zarbasi dushmanga katta ____ yetkazadi.",
+        "correct": "zarar"
+      },
+      {
+        "id": "3.2",
+        "type": "write-in-blank",
+        "text": "Tigrealning kuchli tomoni – dushmanlarni bir joyga ____ olishidir.",
+        "correct": "tortib"
+      },
+      {
+        "id": "3.3",
+        "type": "write-in-blank",
+        "text": "MLBB o‘yinida 'Retribution' odatda ____ qahramonlar tomonidan ishlatiladi.",
+        "correct": "jungler"
+      },
+      {
+        "id": "3.4",
+        "type": "write-in-blank",
+        "text": "Claude o‘zining ultimatini faollashtirganda atrofdagi barcha dushmanga ____ yetkazadi.",
+        "correct": "zarar"
+      }
+    ]
+  },
+  {
+  "id": 4,
+  "type": "multiple_choice",
+  "text": "Mobile Legends: Bang Bang o‘yinidagi strategiya va qahramon rollari haqida savollar.",
   "subquestions": [
     {
-      "id": "1.14",
-      "type": "write-in-blank",
-      "text": "Bus leaves at: (14) ____ a.m.",
-      "correct": "8.15"
+      "id": "4.1",
+      "type": "multiple_choice",
+      "text": "Ling qahramoni qaysi joylashuvda eng samarali o‘ynaladi?",
+      "options": ["EXP Lane", "Gold Lane", "Jungle", "Roam"],
+      "correct": "Jungle"
     },
     {
-      "id": "1.15",
-      "type": "write-in-blank",
-      "text": "Meet before trip at: hotel (15) ____",
-      "correct": "entrance"
+      "id": "4.2",
+      "type": "multiple_choice",
+      "text": "Kimning ultisi bir necha raqibni bir joyga tortib, zarar yetkazadi?",
+      "options": ["Minotaur", "Tigreal", "Grock", "Franco"],
+      "correct": "Tigreal"
     },
     {
-      "id": "1.16",
-      "type": "write-in-blank",
-      "text": "First stop: ruin of a (16) ____",
-      "correct": "palace"
-    },
-    {
-      "id": "1.17",
-      "type": "write-in-blank",
-      "text": "Lunch at: The (17) ____ Restaurant",
-      "correct": "Wakizi"
-    },
-    {
-      "id": "1.18",
-      "type": "write-in-blank",
-      "text": "Afternoon activity: (18) ____ or beach volleyball",
-      "correct": "diving"
-    },
-    {
-      "id": "1.19",
-      "type": "write-in-blank",
-      "text": "Bring: (19) ____",
-      "correct": "sun cream"
+      "id": "4.3",
+      "type": "multiple_choice",
+      "text": "Xavier qanday tipdagi qahramon hisoblanadi?",
+      "options": ["Tank", "Marksman", "Mage", "Assassin"],
+      "correct": "Mage"
     }
   ]
 },
-    {
-  "id": 2,
-  "type": "reading",
-  "text": "<h1>A Town that Lives in One Building</h1>\n<p>Located in the beautiful state of Alaska, a little town called Whittier is tucked away in a picturesque area surrounded by mountains and the ocean. This hidden gem is hard to reach: the only ways to and from Whittier are either by ferry or through a one-lane tunnel that cuts through the mountains. This tunnel is unique because it is shared by both vehicles and trains, necessitating a precisely managed schedule to accommodate both modes of transportation and both directions of traffic.</p>\n\n<p>Whittier’s economy thrives on its port, the town’s main source of employment, where cargo ships drop off their containers for rail transportation across Alaska. The town also has a grocery store, a museum, two hotels, and various other job opportunities for all its citizens: police officers, municipal workers, educators at the local school, and marina staff. Tourism has grown over the last few years to become an alternative source of income, drawing visitors to attractions such as the Anton Anderson Memorial Tunnel, glacier jet ski tours, and scenic boat excursions that offer breathtaking views of marine wildlife and icebergs.</p>\n\n<p>But the most fascinating aspect of Whittier is perhaps the fact that nearly all of its 200-odd residents live under the same roof. The Begich Towers, a 14-story building, is more than just an apartment complex; it’s a self-contained town! The harsh winter weather helps to explain the convenience of this unusual way of living. Whittier’s winter months are known for their heavy snowfalls and fierce winds. By having all the necessary facilities and services in one building, the residents don’t have to brave the cold weather every time they need to run an errand or go to church. Not even the children need to step outside to attend school, which is in an adjacent building connected through a tunnel. It’s an ingenious solution that makes life in such an extreme climate much more manageable.</p>\n\n<p>However, the origins of Whittier’s unique living situation date back to the early last century when the area was chosen for a military base. Shielded by towering mountains and situated by a bay with unfreezing waters, this location offered an ideal strategic position. Initially, wooden camps housed the soldiers, but as the need for more permanent structures grew with the increasing population, two significant buildings were erected: the once largest building in Alaska, the Buckner Building, and the Begich Towers. The construction of the tunnel in the 1940s, intended to provide railway access, marked Whittier’s transformation into an essential cargo and passenger port. After the military left in the 1960s, the Buckner Building was abandoned, and the Begich Towers became the main residential and communal space for the town’s inhabitants.</p>\n\n<p>Nowadays, Whittier’s residents just need to hop on the elevator to go grocery shopping, visit the police station, or eat ‘out’—though in this case, ‘eat in’ might be more accurate. There’s even a health clinic, which is far from being a hospital but more than enough for minor ailments. In essence, everything the residents may need is a few steps away from their homes. Living in Begich Towers offers a sense of community and convenience that is hard to find elsewhere. The close proximity of homes and businesses fosters a strong bond among the residents. Whether they’re sharing a cup of coffee at the café on the ground floor or attending a community meeting, the people of Whittier have created a unique and supportive environment.</p>\n\n<p>Whittier might be small, but it’s a remarkable example of adaptability and community spirit. Its single-building town, surrounded by Alaska’s breathtaking landscape, is a testament to human ingenuity and resilience.</p>",
+{
+  "id": 5,
+  "type": "box-choose",
+  "text": "Bo‘sh joylarni to‘ldiring. Quyidagi savollarda mos variantni tanlang.",
+  "options": ["sustain", "burst", "crowd control", "flicker", "mage", "split push", "lifesteal"],
   "subquestions": [
     {
-      "id": "2.1",
-      "type": "multiple_choice",
-      "text": "Which adjective would better describe Whittier?",
-      "options": ["remote", "reachable", "mountainous"],
-      "correct": "remote"
+      "id": "5.1",
+      "type": "box-choose",
+      "text": "Lunox qahramoni odatda ____ tipidagi zararni yetkazadi. ____",
+      "correct": "burst"
     },
     {
-      "id": "2.2",
-      "type": "multiple_choice",
-      "text": "If you are going to Whittier through the tunnel...",
-      "options": [
-        "your only option is to take a train.",
-        "you can't use the tunnel while other people are leaving.",
-        "you can go by car at any time."
-      ],
-      "correct": "you can't use the tunnel while other people are leaving."
+      "id": "5.2",
+      "type": "box-choose",
+      "text": "Alice uzoq janggilarda uzoq yashashga qodir, chunki u yuqori ____ darajasiga ega. ____",
+      "correct": "sustain"
     },
     {
-      "id": "2.3",
-      "type": "multiple_choice",
-      "text": "Most people in Whittier work in...",
-      "options": ["the shipping industry", "tourism", "services"],
-      "correct": "the shipping industry"
+      "id": "5.3",
+      "type": "box-choose",
+      "text": "Zilong ko‘pincha ____ strategiyasidan foydalanib minoralarni tezda yo‘q qiladi. ____",
+      "correct": "split push"
     },
     {
-      "id": "2.4",
-      "type": "multiple_choice",
-      "text": "According to the text,...",
-      "options": [
-        "having a town in one building is not ideal.",
-        "the school is in the same building.",
-        "the town's church is in the Begich Towers."
-      ],
-      "correct": "the town's church is in the Begich Towers."
-    },
-    {
-      "id": "2.5",
-      "type": "multiple_choice",
-      "text": "The towers were built...",
-      "options": [
-        "to protect the soldiers from the weather.",
-        "to accommodate an expanding population.",
-        "to mark Whittier's transformation."
-      ],
-      "correct": "to accommodate an expanding population."
-    },
-    {
-      "id": "2.6",
-      "type": "multiple_choice",
-      "text": "Which of these can you NOT find in Begich Towers?",
-      "options": ["a restaurant", "a hospital", "a supermarket"],
-      "correct": "a hospital"
+      "id": "5.4",
+      "type": "box-choose",
+      "text": "Ruby o‘zining zarbalari bilan sog‘lig‘ini tiklashi uchun unga ____ kerak. ____",
+      "correct": "lifesteal"
     }
   ]
 },
 {
-  "id": 3,
-  "type": "reading",
-  "text": "<h1>Actors who died on set</h1>\n\n<p><strong>Brandon Lee</strong><br>Brandon Lee, son of the famous martial artist and actor Bruce Lee, died in 1993, while filming “The Crow”. He was acting as the main character in a scene where his character gets shot, but no one knew that a small piece of a real bullet got stuck in the gun. When the gun was fired, the piece of the bullet came out and hit Brandon in the stomach. Even though doctors tried to help him, Lee passed away later that day. This accident made people think more about how to keep actors safe on movie sets.</p>\n\n<p><strong>Vic Morrow</strong><br>Vic Morrow’s death happened during the filming of “Twilight Zone: The Movie” in 1982. He portrayed a character in the Vietnam War. In this scene, Morrow was carrying two child actors across a river while being chased by a helicopter. During filming, explosives were used, causing the helicopter to crash in the river. As a result, Morrow and the two young actors lost their lives immediately and six passengers onboard were injured. During the investigation, the film director was found guilty of having children working near explosives illegally.</p>\n\n<p><strong>Jon-Erik Hexum</strong><br>The accidental death of Jon-Erik Hexum occurred on the TV show “Cover Up” in 1984. During a break from filming, the actor was playing with a gun used in one of the scenes pointing it at his head and pulled the trigger as a joke. Even though the gun did not have real bullets, the force was strong enough to hurt him badly. A piece of bone from his head went into his brain. He was taken to the hospital immediately, but despite emergency surgery, he was pronounced brain dead six days later.</p>\n\n<p><strong>Roy Kinnear</strong><br>Roy Kinnear’s tragic accident took place while he was filming “The Return of the Musketeers” in 1989. During a scene with horse riding, Kinnear fell from his horse and broke a bone near one of his hips. Despite the severity of his injury, Kinnear was determined to continue filming and completed his scenes. However, his health conditions got worse and ended up affecting his heart. Sadly, Kinnear passed away from a heart attack caused by these complications.</p>\n\n<p><strong>Steve Irwin</strong><br>Steve Irwin, known as “The Crocodile Hunter,” was working on a documentary called “Ocean’s Deadliest” in 2006 off the coast of Queensland, Australia when tragedy struck. While filming a segment about dangerous fish, Irwin approached a stingray – a type of flat fish with long, sharp tails – in shallow water. The stingray felt it was in danger and attacked the man. The fish had used its sharp tail to poke Steve Irwin in the chest, and the pointy part went into his heart. His crew and emergency services tried to save him, but Irwin didn’t survive. His sudden death shocked the world and left millions of fans upset for the loss of a man who was truly passionate about the natural world.</p>",
+  "id": 6,
+  "type": "write-in-blank",
+  "text": "Quyidagi savollarga qisqa javob yozing. Bo‘sh joyga to‘g‘ri so‘zni kiriting.",
   "subquestions": [
     {
-      "id": "3.1",
-      "type": "multiple_choice",
-      "text": "_____ kept on working after being badly hurt.",
-      "options": ["Brandon Lee", "Vic Morrow", "Jon-Erik Hexum", "Roy Kinnear", "Steve Irwin"],
-      "correct": "Roy Kinnear"
+      "id": "6.1",
+      "type": "write-in-blank",
+      "text": "Hayabusa o‘zining ultimate skilli bilan bir nuqtada portlashlar orqali zarba beradi. Bu unga qanday ustunlik beradi? ____",
+      "correct": "assassination"
     },
     {
-      "id": "3.2",
-      "type": "multiple_choice",
-      "text": "_____ had a father who was a well-known actor and sportsman.",
-      "options": ["Brandon Lee", "Vic Morrow", "Jon-Erik Hexum", "Roy Kinnear", "Steve Irwin"],
-      "correct": "Brandon Lee"
+      "id": "6.2",
+      "type": "write-in-blank",
+      "text": "Kadita ko‘p hollarda o‘zining suv kuchiga asoslangan hujumlaridan foydalanadi. Bu qanday rolga mos keladi? ____",
+      "correct": "mage"
     },
     {
-      "id": "3.3",
-      "type": "multiple_choice",
-      "text": "_____ was famous for his interest in animals and the environment.",
-      "options": ["Brandon Lee", "Vic Morrow", "Jon-Erik Hexum", "Roy Kinnear", "Steve Irwin"],
-      "correct": "Steve Irwin"
-    },
-    {
-      "id": "3.4",
-      "type": "multiple_choice",
-      "text": "_____ died in a tragic accident that affected other actors.",
-      "options": ["Brandon Lee", "Vic Morrow", "Jon-Erik Hexum", "Roy Kinnear", "Steve Irwin"],
-      "correct": "Vic Morrow"
-    },
-    {
-      "id": "3.5",
-      "type": "multiple_choice",
-      "text": "_____ officially died almost a week after his accident.",
-      "options": ["Brandon Lee", "Vic Morrow", "Jon-Erik Hexum", "Roy Kinnear", "Steve Irwin"],
-      "correct": "Jon-Erik Hexum"
-    },
-    {
-      "id": "3.6",
-      "type": "multiple_choice",
-      "text": "_____ died as a result of his careless behavior with a dangerous object.",
-      "options": ["Brandon Lee", "Vic Morrow", "Jon-Erik Hexum", "Roy Kinnear", "Steve Irwin"],
-      "correct": "Jon-Erik Hexum"
-    },
-    {
-      "id": "3.7",
-      "type": "multiple_choice",
-      "text": "_____ had an accident while he was filming in the sea.",
-      "options": ["Brandon Lee", "Vic Morrow", "Jon-Erik Hexum", "Roy Kinnear", "Steve Irwin"],
-      "correct": "Steve Irwin"
-    },
-    {
-      "id": "3.8",
-      "type": "multiple_choice",
-      "text": "_____ was killed in an accident that showed behaviors against the law.",
-      "options": ["Brandon Lee", "Vic Morrow", "Jon-Erik Hexum", "Roy Kinnear", "Steve Irwin"],
-      "correct": "Vic Morrow"
+      "id": "6.3",
+      "type": "write-in-blank",
+      "text": "Kaja dushmanlarni o‘ziga tortib, ularni jamoasi oldiga olib kelishi mumkin. Bu qanday effekt? ____",
+      "correct": "crowd control"
     }
   ]
 }
 
-
 ]
-            
-
-
+           
 # Путь к файлу с балансами
 BALANCE_FILE = 'balance.json'
 
@@ -1372,7 +1353,7 @@ def get_tracks():
 
 @app.route('/')
 def login():
-    return render_template('login.html')
+    return render_template('loginv2.html')
     
 ACCEPTED_USERS_FILE = "accepted_users.json"
 
@@ -1394,44 +1375,194 @@ def save_accepted_users(users):
 # Load Accepted_users at startup
 Accepted_users = load_accepted_users()
 
+# File to store banned users
+BANNED_USERS_FILE = 'banned_users.json'
+
+def save_banned_users(banned_users):
+    with open(BANNED_USERS_FILE, 'w') as f:
+        json.dump(banned_users, f, indent=2)
+
+def load_banned_users():
+    if os.path.exists(BANNED_USERS_FILE):
+        with open(BANNED_USERS_FILE, 'r') as f:
+            try:
+                banned_users = json.load(f)
+            except json.JSONDecodeError:
+                print("Error reading banned_users.json — invalid JSON format")
+                return {}
+
+            current_time = datetime.now()
+            users_to_remove = []
+            for username, data in banned_users.items():
+                try:
+                    ban_end = datetime.fromisoformat(data['ban_end_date'])
+                    if current_time > ban_end:
+                        users_to_remove.append(username)
+                except Exception as e:
+                    print(f"Error processing ban end date for user {username}: {e}")
+
+            for username in users_to_remove:
+                del banned_users[username]
+
+            if users_to_remove:
+                save_banned_users(banned_users)
+
+            return banned_users
+    return {}
+
+@app.route('/ban-user/<username>', methods=['POST'])
+def ban_user(username):
+    banned_users = load_banned_users()
+    
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'message': 'No JSON data provided', 'status': 'error'}), 400
+        
+        duration_days = int(data.get('duration_days', 7))  # Default 7 days
+        reason = data.get('reason', 'No reason provided')
+        offensive_item = data.get('offensive_item')
+        
+        ban_end_date = datetime.now() + timedelta(days=duration_days)
+        
+        banned_users[username] = {
+            'ban_end_date': ban_end_date.isoformat(),
+            'reason': reason,
+            'banned_at': datetime.now().isoformat(),
+            'offensive_item': offensive_item
+        }
+        
+        save_banned_users(banned_users)
+
+        # Удаляем все активные сессии пользователя из active_sessions
+        if username in active_sessions:
+            del active_sessions[username]
+
+        # Если текущий запрос от забаненного пользователя, удаляем его сессию
+        if 'username' in session and session['username'] == username:
+            session.pop('username', None)
+
+        return jsonify({'message': f'User {username} banned until {ban_end_date.isoformat()}', 'status': 'success'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Failed to ban user: {str(e)}', 'status': 'error'}), 400
+
+
+# Get ban details for a user
+@app.route('/ban-details/<username>', methods=['GET'])
+def ban_details(username):
+    banned_users = load_banned_users()
+    
+    if username in banned_users:
+        details = banned_users[username]
+        
+        # Format dates into human-readable strings
+        def format_date(date_str):
+            try:
+                dt = datetime.fromisoformat(date_str)
+                return dt.strftime('%B %d, %Y at %I:%M %p')
+            except Exception:
+                return date_str  # fallback to original if parsing fails
+        
+        return jsonify({
+            'username': username,
+            'ban_end_date': format_date(details['ban_end_date']),
+            'reason': details['reason'],
+            'banned_at': format_date(details['banned_at']),
+            'offensive_item': details.get('offensive_item')
+        }), 200
+    
+    return jsonify({'message': f'User {username} is not banned', 'status': 'error'}), 404
+    
+@app.route('/banned-users', methods=['GET'])
+def get_banned_users():
+    banned_users = load_banned_users()
+    return jsonify({
+        'status': 'success',
+        'users': [
+            {
+                'username': username,
+                'ban_end_date': details['ban_end_date'],
+                'reason': details['reason'],
+                'banned_at': details['banned_at'],
+                'offensive_item': details.get('offensive_item')
+            } for username, details in banned_users.items()
+        ]
+    }), 200
+
+# Reactivate a banned user
+@app.route('/banned-user-reactivate/<username>', methods=['POST'])
+def reactivate_user(username):
+    banned_users = load_banned_users()
+    
+    if username in banned_users:
+        del banned_users[username]
+        save_banned_users(banned_users)
+        return jsonify({'message': f'User {username} reactivated', 'status': 'success'}), 200
+    return jsonify({'message': f'User {username} is not banned', 'status': 'error'}), 404
+
 @app.route('/login', methods=['GET', 'POST'])
 def handle_login():
+    banned_users = load_banned_users()
+    current_time = datetime.now()
+
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        data = request.get_json()
+        username = data.get('username') if data else None
+        password = data.get('password') if data else None
+        
+        time.sleep(2)
 
-        # Check if the user is banned
+        if not username or not password:
+            return render_template('loginv2.html', error="Please provide username and password.")
+
         if username in banned_users:
-            return render_template('login.html', error="Your account is banned.")
-
-        # Check if the user has accepted the Terms and Conditions
-        if username not in Accepted_users:
-            return render_template('login.html', error="You must accept the Terms and Conditions to proceed.")
-
-        # Validate username and password
-        if username in loggedUsers and loggedUsers[username] == password:
-            # Collect device information
-            device_info = {
-                'User-Agent': request.headers.get('User-Agent'),
-                'IP-Address': request.headers.get('X-Forwarded-For', request.remote_addr),
-                'Language': request.headers.get('Accept-Language'),
-                'Platform': platform.system(),
-                'OS': platform.version(),
-                'Device-Type': 'Mobile' if 'Mobi' in request.headers.get('User-Agent') else 'Desktop'
+            ban_end_date = datetime.fromisoformat(banned_users[username]['ban_end_date'])
+            banned_at_dt = datetime.fromisoformat(banned_users[username]['banned_at'])
+            
+            ban_notice = {
+                'title': f'Banned for {int((ban_end_date - banned_at_dt).days)} Day{"s" if (ban_end_date - banned_at_dt).days > 1 else ""}',
+                'reviewed_date': banned_at_dt.strftime('%Y-%m-%d %H:%M:%S'),  # форматируем дату в строку
+                'reason': banned_users[username]['reason'],
+                'offensive_item': banned_users[username].get('offensive_item'),
+                'expired': current_time > ban_end_date,
+                'username': username
             }
 
-            # Manage active sessions
+            return render_template('loginv2.html', ban_notice=ban_notice)
+
+        if username in loggedUsers and loggedUsers[username] == password:
+            user_agent_str = request.headers.get('User-Agent', '')
+            user_agent = parse(user_agent_str)
+
+            device_info = {
+                'Timestamp': datetime.utcnow().isoformat(),
+                'User-Agent': user_agent_str,
+                'IP-Address': request.headers.get('X-Forwarded-For', request.remote_addr),
+                'Language': request.headers.get('Accept-Language', ''),
+                'Device-Type': (
+                    'Mobile' if user_agent.is_mobile else
+                    'Tablet' if user_agent.is_tablet else
+                    'PC' if user_agent.is_pc else
+                    'Other'
+                ),
+                'Browser': f"{user_agent.browser.family} {user_agent.browser.version_string}",
+                'OS': f"{user_agent.os.family} {user_agent.os.version_string}",
+                'Platform': user_agent.device.family
+            }
+
             if username in active_sessions:
                 active_sessions[username].append(device_info)
             else:
                 active_sessions[username] = [device_info]
 
             session['username'] = username
-            return redirect(url_for('chat'))
+            return '', 200
         else:
-            return render_template('login.html', error="Invalid username or password")
+            return render_template('loginv2.html', error="Invalid username or password")
 
-    return render_template('login.html')
+    # Handle GET requests
+    return render_template('loginv2.html')
+
     
 @app.route('/accept_terms', methods=['POST'])
 def accept_terms():
@@ -1751,40 +1882,80 @@ exam_data = {}
 # Path to the directory with random photos
 PHOTO_DIR = os.path.join('static', 'exam-files', 'speaking')
 
+
 @app.route('/api/start-speaking-exam/<ID>', methods=['POST'])
 def start_speaking_exam(ID):
-    """
-    Запускает экзамен:
-     - Если для ID уже есть запись — возвращает 400.
-     - Иначе выбирает случайное фото, сохраняет статус = 'started', photo = filename.
-    """
-    # Проверяем, не запускали ли уже
-    if ID in exam_data:
-        return jsonify({"message": "Exam already started"}), 400
+    print(f"\n📥 [LOG] Request to start exam for ID = {ID}")
 
-    # Убедимся, что папка с фото существует
-    if not os.path.isdir(PHOTO_DIR):
-        return jsonify({"error": "Photo directory not found"}), 500
+    try:
+        if ID in exam_data:
+            print(f"⚠️ Exam already started for ID = {ID}")
+            return jsonify({"message": "Exam already started"}), 400
 
-    # Получаем список файлов
-    photos = [
-        f for f in os.listdir(PHOTO_DIR)
-        if os.path.isfile(os.path.join(PHOTO_DIR, f))
-    ]
-    if not photos:
-        return jsonify({"error": "No photos available"}), 500
+        print(f"📁 Checking directory: {PHOTO_DIR}")
+        if not os.path.isdir(PHOTO_DIR):
+            print("❌ Photo directory does not exist.")
+            return jsonify({"error": "Photo directory not found"}), 500
 
-    # Выбираем случайное фото и сохраняем запись
-    chosen = random.choice(photos)
-    exam_data[ID] = {
-        "status": "started",
-        "photo": chosen
-    }
+        files_in_dir = os.listdir(PHOTO_DIR)
+        print(f"📂 Files in directory: {files_in_dir}")
 
-    return jsonify({
-        "message": "Exam started",
-        "photo_assigned": chosen
-    })
+        valid_photos = []
+        allowed_extensions = ('.jpg', '.jpeg', '.png')
+
+        for filename in files_in_dir:
+            if filename.lower().endswith(allowed_extensions):
+                photo_path = os.path.join(PHOTO_DIR, filename)
+                base_name = os.path.splitext(filename)[0]
+                json_filename = base_name + '.json'
+                json_path = os.path.join(PHOTO_DIR, json_filename)
+
+                if os.path.isfile(photo_path) and os.path.isfile(json_path):
+                    valid_photos.append(filename)
+
+        print(f"✅ Valid image+JSON pairs: {valid_photos}")
+
+        if not valid_photos:
+            print("❌ No valid image+JSON pairs found.")
+            return jsonify({"error": "No valid photo/question pairs found"}), 500
+
+        chosen_photo = random.choice(valid_photos)
+        base_name = os.path.splitext(chosen_photo)[0]
+        json_path = os.path.join(PHOTO_DIR, base_name + '.json')
+
+        print(f"🎯 Selected image: {chosen_photo}")
+        print(f"📄 Expected JSON file: {json_path}")
+
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                questions = json.load(f)
+            print(f"✅ Questions loaded: {questions}")
+        except json.JSONDecodeError:
+            print("❌ Invalid JSON format.")
+            traceback.print_exc()
+            return jsonify({"error": "Invalid JSON format in questions file"}), 500
+        except Exception as e:
+            print(f"❌ Error reading questions file: {str(e)}")
+            traceback.print_exc()
+            return jsonify({"error": f"Error reading questions file: {str(e)}"}), 500
+
+        exam_data[ID] = {
+            "status": "started",
+            "photo": chosen_photo,
+            "questions": questions
+        }
+
+        print(f"📝 Exam started for ID = {ID}")
+        return jsonify({
+            "message": "Exam started",
+            "photo_assigned": chosen_photo,
+            "questions": questions
+        })
+
+    except Exception as e:
+        print(f"💥 Unexpected error: {str(e)}")
+        traceback.print_exc()
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 @app.route('/api/get-status-sp-exam/<ID>', methods=['GET'])
 def get_status_sp_exam(ID):
@@ -1800,6 +1971,12 @@ def get_status_sp_exam(ID):
 
 @app.route('/api/get-sp-details/<ID>', methods=['GET'])
 def get_sp_details(ID):
+    """
+    Возвращает детали экзамена:
+     - Если запись для ID не существует — возвращает 404.
+     - Если фото не назначено — возвращает 500.
+     - Возвращает фото и вопросы в заголовках ответа.
+    """
     entry = exam_data.get(ID)
     if not entry:
         return jsonify({"error": "Exam not started"}), 404
@@ -1808,11 +1985,19 @@ def get_sp_details(ID):
     if not photo_file:
         return jsonify({"error": "Photo not assigned"}), 500
 
+    questions_data = entry.get("questions", {})
+    questions = questions_data.get("questions", [])  # Extract the array from the dict
+    if not questions:
+        return jsonify({"error": "No questions assigned"}), 500
+
     # Отправляем файл без кеширования
     response = make_response(
         send_from_directory(PHOTO_DIR, photo_file, as_attachment=False)
     )
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    print(f"Setting X-Questions header: {questions}")  # Debug log
+    response.headers['X-Questions'] = json.dumps(questions, ensure_ascii=False)
+
     return response
     
 @app.route('/api/speaking-exam-end/<ID>', methods=['POST'])

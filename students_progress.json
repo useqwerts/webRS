@@ -8,5 +8,17 @@
         "progress": 0.0,
         "start_date": "2025-03-01",
         "study_days": "odd"
+    },
+    "Elbek": {
+        "progress": 0.0
+    },
+    "Abdulmalik": {
+        "progress": 0.0
+    },
+    "Zakariyo": {
+        "progress": 0.0
+    },
+    "Muhammadali": {
+        "progress": 0.0
     }
 }

@@ -2,4 +2,5 @@ flask
 flask-socketio
 flask-cors
 werkzeug
-eventlet  # Для WebSocket (можно заменить на gevent)
+eventlet
+user-agents

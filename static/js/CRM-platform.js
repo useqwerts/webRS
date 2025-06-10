@@ -2,6 +2,8 @@ const socket = io();
 
 document.addEventListener('DOMContentLoaded', () => {
 	
+	
+	
 let remainingTime = null;
 let lastFetchTime = 0;
 const FETCH_INTERVAL = 20 * 60 * 1000;
@@ -1530,6 +1532,263 @@ async function pasteText() {
     }
 }
 
+// DOMContentLoaded event listener
+document.addEventListener("DOMContentLoaded", () => {
+  const moderationBody = document.getElementById("moderation-body");
+  const pageInfo = document.getElementById("moderation-page-info");
+  const totalEntries = document.getElementById("moderation-total-entries");
+  const prevPageBtn = document.getElementById("moderation-prev-page");
+  const nextPageBtn = document.getElementById("moderation-next-page");
+  const accordionBody = document.querySelector(".accordion-body");
+  const accordionConfirmBtn = document.getElementById("accordion-ban-confirm");
+  const accordionHeader = document.querySelector(".accordion-header");
+
+  const recordsPerPageModeration = 5;
+  let activePageModeration = 1;
+  let restrictedUsers = [];
+  let isFetchingModeration = false;
+
+  // Show skeleton loading for moderation table
+  function showSkeletonLoading() {
+    moderationBody.innerHTML = `
+      <tr>
+        <td class="tdModeration">
+          <div class="avatar-container-moderation">
+            <div class="skeleton-loading-avatar-moderation"></div>
+            <div class="skeleton-loading-text-moderation"></div>
+          </div>
+        </td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-button-moderation"></div></td>
+      </tr>
+      <tr>
+        <td class="tdModeration">
+          <div class="avatar-container-moderation">
+            <div class="skeleton-loading-avatar-moderation"></div>
+            <div class="skeleton-loading-text-moderation"></div>
+          </div>
+        </td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-button-moderation"></div></td>
+      </tr>
+    `;
+  }
+
+  // Toggle accordion with animation
+  function toggleAccordion() {
+    const chevron = accordionHeader.querySelector("i");
+    if (accordionBody.classList.contains("active")) {
+      accordionBody.classList.add("collapsing");
+      setTimeout(() => {
+        accordionBody.classList.remove("active", "collapsing");
+        chevron.classList.remove("fa-chevron-up");
+        chevron.classList.add("fa-chevron-down");
+      }, 300); // Match the transition duration
+    } else {
+      accordionBody.classList.add("active", "expanding");
+      chevron.classList.remove("fa-chevron-down");
+      chevron.classList.add("fa-chevron-up");
+      setTimeout(() => {
+        accordionBody.classList.remove("expanding");
+      }, 300); // Match the transition duration
+    }
+  }
+
+  // Fetch banned users from API endpoint
+  async function fetchRestrictedUsers() {
+    if (isFetchingModeration) return;
+    isFetchingModeration = true;
+    showSkeletonLoading();
+
+    try {
+      const response = await fetch("/banned-users", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        restrictedUsers = data.users;
+        await renderModerationTable();
+      } else {
+        showToastNotification("Failed to load restricted users.", "error");
+      }
+    } catch (err) {
+      console.error("Error fetching restricted users:", err);
+      showToastNotification("Failed to load restricted users. Please check your connection.", "error");
+    } finally {
+      isFetchingModeration = false;
+    }
+  }
+
+  // Render the moderation table with pagination
+  async function renderModerationTable() {
+    moderationBody.innerHTML = "";
+    const start = (activePageModeration - 1) * recordsPerPageModeration;
+    const end = start + recordsPerPageModeration;
+    const paginatedUsers = restrictedUsers.slice(start, end);
+
+    if (paginatedUsers.length === 0 && activePageModeration === 1) {
+      moderationBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No restricted users found.</td></tr>`;
+    } else {
+      for (const user of paginatedUsers) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="tdModeration">
+            <div class="avatar-container-moderation">
+              <i class="fas fa-user"></i>
+              <span>${user.username}</span>
+            </div>
+          </td>
+          <td class="tdModeration">${new Date(user.ban_end_date).toLocaleString()}</td>
+          <td class="tdModeration">${user.reason || "No reason provided"}</td>
+          <td class="tdModeration">${user.offensive_item || "N/A"}</td>
+          <td class="tdModeration">
+            <button class="edit-button" data-username="${user.username}">
+              <i class="fas fa-unlock"></i> Unban
+            </button>
+          </td>
+        `;
+        moderationBody.appendChild(tr);
+      }
+    }
+
+    // Update pagination info
+    const totalEntriesCount = restrictedUsers.length;
+    pageInfo.textContent = `${start + 1} to ${Math.min(end, totalEntriesCount)}`;
+    totalEntries.textContent = totalEntriesCount;
+    prevPageBtn.disabled = activePageModeration === 1;
+    nextPageBtn.disabled = end >= totalEntriesCount;
+  }
+
+  // Handle unban button clicks
+  moderationBody.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("edit-button")) {
+      const username = e.target.getAttribute("data-username");
+      if (!username) {
+        showToastNotification("No user selected for unblocking.", "error");
+        return;
+      }
+
+      try {
+        const response = await fetch(`/banned-user-reactivate/${username}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+          showToastNotification(`User ${username} unbanned successfully.`, "success");
+          await fetchRestrictedUsers();
+        } else {
+          showToastNotification(data.message, "error");
+        }
+      } catch (err) {
+        console.error("Error unbanning user:", err);
+        showToastNotification("Failed to unban user. Please try again.", "error");
+      }
+    }
+  });
+
+  // Handle release update button clicks (scoped to moderation body)
+  moderationBody.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("release-update-btn")) {
+      try {
+        const response = await fetch('/release-update', { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+          showToastNotification(`Released successfully.`, "success");
+        }
+      } catch (err) {
+        console.error('Error releasing update:', err);
+      }
+    }
+  });
+
+  // Handle ban submission from accordion
+  accordionConfirmBtn.addEventListener("click", async () => {
+    const username = document.getElementById("accordion-ban-username").value.trim();
+    const duration = document.getElementById("accordion-ban-duration").value;
+    const reason = document.getElementById("accordion-ban-reason").value.trim();
+    const offensiveItem = document.getElementById("accordion-ban-offensive-item").value.trim();
+
+    if (!username || !duration || !reason) {
+      showToastNotification("Please provide username, duration, and reason.", "error");
+      return;
+    }
+
+    if (isNaN(duration) || duration <= 0) {
+      showToastNotification("Please enter a valid duration in days.", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/ban-user/${username}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          duration_days: parseInt(duration),
+          reason,
+          offensive_item: offensiveItem || undefined,
+        }),
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        showToastNotification(`User ${username} banned successfully.`, "success");
+        // Collapse the accordion after successful ban
+        accordionBody.classList.add("collapsing");
+        setTimeout(() => {
+          accordionBody.classList.remove("active", "collapsing");
+          const chevron = accordionHeader.querySelector("i");
+          chevron.classList.remove("fa-chevron-up");
+          chevron.classList.add("fa-chevron-down");
+          document.getElementById("accordion-ban-username").value = "";
+          document.getElementById("accordion-ban-duration").value = "";
+          document.getElementById("accordion-ban-reason").value = "";
+          document.getElementById("accordion-ban-offensive-item").value = "";
+        }, 300); // Match the transition duration
+        await fetchRestrictedUsers();
+      } else {
+        showToastNotification(data.message, "error");
+      }
+    } catch (err) {
+      console.error("Error banning user:", err);
+      showToastNotification("Failed to ban user. Please try again.", "error");
+    }
+  });
+
+  // Pagination controls
+  prevPageBtn.addEventListener("click", () => {
+    if (activePageModeration > 1) {
+      activePageModeration--;
+      renderModerationTable();
+    }
+  });
+
+  nextPageBtn.addEventListener("click", () => {
+    if (activePageModeration * recordsPerPageModeration < restrictedUsers.length) {
+      activePageModeration++;
+      renderModerationTable();
+    }
+  });
+
+  // Add event listener for nav item to fetch data when moderation section is shown
+  document.querySelector('.nav-item[onclick*="moderation"]').addEventListener("click", () => {
+    fetchRestrictedUsers();
+  });
+
+  // Initial fetch if moderation section is active
+  if (document.getElementById("moderation").classList.contains("active")) {
+    fetchRestrictedUsers();
+  }
+
+  // Add click event to accordion header
+  accordionHeader.addEventListener("click", toggleAccordion);
+});
+
+// openUserSpeakingReview function
 async function openUserSpeakingReview(userId, userData) {
   // Удаляем старую модалку, если есть
   document.querySelector('.detailed-questions-review')?.remove();
@@ -1556,15 +1815,24 @@ async function openUserSpeakingReview(userId, userData) {
     </div>
   `;
 
-  // Получаем фото
-  let photoBlobUrl = null, photoError = null;
+  // Получаем фото и вопросы
+  let photoBlobUrl = null, photoError = null, questions = [];
   try {
     const resp = await fetch(`/api/get-sp-details/${userId}`);
     if (!resp.ok) throw new Error('Photo not found');
     const blob = await resp.blob();
     photoBlobUrl = URL.createObjectURL(blob);
+    const questionsHeader = resp.headers.get('X-Questions');
+    console.log('X-Questions header:', questionsHeader); // Debug log
+    if (questionsHeader) {
+      questions = JSON.parse(questionsHeader);
+      console.log('Parsed questions:', questions); // Debug log
+    } else {
+      console.warn('X-Questions header is missing');
+    }
   } catch (e) {
     photoError = e.message;
+    console.error('Error fetching details:', e);
   }
 
   // Убираем лоадер
@@ -1596,9 +1864,31 @@ async function openUserSpeakingReview(userId, userData) {
           <li data-value="100">100%</li>
         </ul>
       </div>
-      <button id="assign-score-btn">Assign</button>
+      <button id="assign-score-btn">Assign</button> <!-- Removed release-update-btn class -->
     </div>
   `;
+
+  // Добавляем аккордеон для вопросов с вашим стилем
+  if (questions.length > 0) {
+    bodyHtml += `
+      <div class="questions-accordion">
+        ${questions.map((question, index) => `
+          <div class="accordion">
+            <div class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active')">
+              <span>Question ${index + 1}</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-body">
+              <p>${question}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    bodyHtml += '<p>No questions available.</p>';
+  }
+
   bodyHtml += '</div>';
 
   modal.innerHTML = headerHtml + bodyHtml;
@@ -1717,7 +2007,6 @@ async function openUserSpeakingReview(userId, userData) {
 
 
 
-
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('speaking-cards-container');
   const tpl = document.getElementById('exam-speaking-card-tpl');
@@ -1819,4 +2108,266 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error fetching users:', e);
       showToastNotification("Error fetching users: " + e.message, 'error');
     });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const moderationBody = document.getElementById("moderation-body");
+  const pageInfo = document.getElementById("moderation-page-info");
+  const totalEntries = document.getElementById("moderation-total-entries");
+  const prevPageBtn = document.getElementById("moderation-prev-page");
+  const nextPageBtn = document.getElementById("moderation-next-page");
+
+  const recordsPerPageModeration = 5;
+  let activePageModeration = 1;
+  let restrictedUsers = [];
+  let isFetchingModeration = false;
+
+  // Show skeleton loading for moderation table
+  function showSkeletonLoading() {
+    moderationBody.innerHTML = `
+      <tr>
+        <td class="tdModeration">
+          <div class="avatar-container-moderation">
+            <div class="skeleton-loading-avatar-moderation"></div>
+            <div class="skeleton-loading-text-moderation"></div>
+          </div>
+        </td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-button-moderation"></div></td>
+      </tr>
+      <tr>
+        <td class="tdModeration">
+          <div class="avatar-container-moderation">
+            <div class="skeleton-loading-avatar-moderation"></div>
+            <div class="skeleton-loading-text-moderation"></div>
+          </div>
+        </td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+        <td class="tdModeration"><div class="skeleton-loading-button-moderation"></div></td>
+      </tr>
+    `;
+  }
+
+  // Toggle accordion with animation
+  function toggleAccordion(element) {
+    const accordionBody = element.nextElementSibling;
+    const chevron = element.querySelector("i");
+    if (accordionBody.classList.contains("active")) {
+      accordionBody.classList.add("collapsing");
+      setTimeout(() => {
+        accordionBody.classList.remove("active", "collapsing");
+        chevron.classList.remove("fa-chevron-up");
+        chevron.classList.add("fa-chevron-down");
+      }, 300); // Match the transition duration
+    } else {
+      accordionBody.classList.add("active", "expanding");
+      chevron.classList.remove("fa-chevron-down");
+      chevron.classList.add("fa-chevron-up");
+      setTimeout(() => {
+        accordionBody.classList.remove("expanding");
+      }, 300); // Match the transition duration
+    }
+  }
+
+  // Fetch banned users from API endpoint
+  async function fetchRestrictedUsers() {
+    if (isFetchingModeration) return;
+    isFetchingModeration = true;
+    showSkeletonLoading();
+
+    try {
+      const response = await fetch("/banned-users", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        restrictedUsers = data.users;
+        await renderModerationTable();
+      } else {
+        showToastNotification("Failed to load restricted users.", "error");
+      }
+    } catch (err) {
+      console.error("Error fetching restricted users:", err);
+      showToastNotification("Failed to load restricted users. Please check your connection.", "error");
+    } finally {
+      isFetchingModeration = false;
+    }
+  }
+
+  // Render the moderation table with pagination
+  async function renderModerationTable() {
+    moderationBody.innerHTML = "";
+    const start = (activePageModeration - 1) * recordsPerPageModeration;
+    const end = start + recordsPerPageModeration;
+    const paginatedUsers = restrictedUsers.slice(start, end);
+
+    if (paginatedUsers.length === 0 && activePageModeration === 1) {
+      moderationBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No restricted users found.</td></tr>`;
+    } else {
+      for (const user of paginatedUsers) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="tdModeration">
+            <div class="avatar-container-moderation">
+              <i class="fas fa-user"></i>
+              <span>${user.username}</span>
+            </div>
+          </td>
+          <td class="tdModeration">${new Date(user.ban_end_date).toLocaleString()}</td>
+          <td class="tdModeration">${user.reason || "No reason provided"}</td>
+          <td class="tdModeration">${user.offensive_item || "N/A"}</td>
+          <td class="tdModeration">
+            <button class="edit-button" data-username="${user.username}">
+              <i class="fas fa-unlock"></i> Unban
+            </button>
+          </td>
+        `;
+        moderationBody.appendChild(tr);
+      }
+    }
+
+    // Update pagination info
+    const totalEntriesCount = restrictedUsers.length;
+    pageInfo.textContent = `${start + 1} to ${Math.min(end, totalEntriesCount)}`;
+    totalEntries.textContent = totalEntriesCount;
+    prevPageBtn.disabled = activePageModeration === 1;
+    nextPageBtn.disabled = end >= totalEntriesCount;
+
+    // Reattach event listeners for accordion headers after rendering
+    document.querySelectorAll(".accordion-header").forEach(header => {
+      header.addEventListener("click", () => toggleAccordion(header));
+    });
+  }
+
+  // Handle unban button clicks
+  moderationBody.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("edit-button")) {
+      const username = e.target.getAttribute("data-username");
+      if (!username) {
+        showToastNotification("No user selected for unblocking.", "error");
+        return;
+      }
+
+      try {
+        const response = await fetch(`/banned-user-reactivate/${username}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await response.json();
+        if (data.status === "success") {
+          showToastNotification(`User ${username} unbanned successfully.`, "success");
+          await fetchRestrictedUsers();
+        } else {
+          showToastNotification(data.message, "error");
+        }
+      } catch (err) {
+        console.error("Error unbanning user:", err);
+        showToastNotification("Failed to unban user. Please try again.", "error");
+      }
+    }
+  });
+
+  // Handle release update button clicks (scoped to moderation body)
+  moderationBody.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("release-update-btn")) {
+      try {
+        const response = await fetch('/release-update', { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+          showToastNotification(`Released successfully.`, "success");
+        }
+      } catch (err) {
+        console.error('Error releasing update:', err);
+      }
+    }
+  });
+
+  // Handle ban submission from accordion
+  accordionConfirmBtn.addEventListener("click", async () => {
+    const username = document.getElementById("accordion-ban-username").value.trim();
+    const duration = document.getElementById("accordion-ban-duration").value;
+    const reason = document.getElementById("accordion-ban-reason").value.trim();
+    const offensiveItem = document.getElementById("accordion-ban-offensive-item").value.trim();
+
+    if (!username || !duration || !reason) {
+      showToastNotification("Please provide username, duration, and reason.", "error");
+      return;
+    }
+
+    if (isNaN(duration) || duration <= 0) {
+      showToastNotification("Please enter a valid duration in days.", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/ban-user/${username}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          duration_days: parseInt(duration),
+          reason,
+          offensive_item: offensiveItem || undefined,
+        }),
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        showToastNotification(`User ${username} banned successfully.`, "success");
+        // Collapse the accordion after successful ban
+        accordionBody.classList.add("collapsing");
+        setTimeout(() => {
+          accordionBody.classList.remove("active", "collapsing");
+          const chevron = accordionHeader.querySelector("i");
+          chevron.classList.remove("fa-chevron-up");
+          chevron.classList.add("fa-chevron-down");
+          document.getElementById("accordion-ban-username").value = "";
+          document.getElementById("accordion-ban-duration").value = "";
+          document.getElementById("accordion-ban-reason").value = "";
+          document.getElementById("accordion-ban-offensive-item").value = "";
+        }, 300); // Match the transition duration
+        await fetchRestrictedUsers();
+      } else {
+        showToastNotification(data.message, "error");
+      }
+    } catch (err) {
+      console.error("Error banning user:", err);
+      showToastNotification("Failed to ban user. Please try again.", "error");
+    }
+  });
+
+  // Pagination controls
+  prevPageBtn.addEventListener("click", () => {
+    if (activePageModeration > 1) {
+      activePageModeration--;
+      renderModerationTable();
+    }
+  });
+
+  nextPageBtn.addEventListener("click", () => {
+    if (activePageModeration * recordsPerPageModeration < restrictedUsers.length) {
+      activePageModeration++;
+      renderModerationTable();
+    }
+  });
+
+  // Add event listener for nav item to fetch data when moderation section is shown
+  document.querySelector('.nav-item[onclick*="moderation"]').addEventListener("click", () => {
+    fetchRestrictedUsers();
+  });
+
+  // Initial fetch if moderation section is active
+  if (document.getElementById("moderation").classList.contains("active")) {
+    fetchRestrictedUsers();
+  }
+
+  // Delegate click event to moderation body for accordion headers
+  moderationBody.addEventListener("click", (e) => {
+    if (e.target.classList.contains("accordion-header")) {
+      toggleAccordion(e.target);
+    }
+  });
 });

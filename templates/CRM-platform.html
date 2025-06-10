@@ -88,6 +88,10 @@
             <i class="fa-solid fa-gear icon"></i>
             <span class="text">Settings</span>
         </a>
+		  <a href="#" class="nav-item" onclick="showSection(this, 'moderation')">
+    <i class="fa-solid fa-gavel icon"></i>
+    <span class="text">Moderation</span>
+  </a>
         </nav>
     </aside>
 
@@ -269,6 +273,74 @@
         <random-teams-button onclick="generateTeams()">Generate Teams</random-teams-button>
     </div>
 	  </section>
+	  
+<section id="moderation" class="section">
+  <div class="moderation-card">
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion()">
+        <span>Ban Users</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="accordion-body">
+        <label>Username</label>
+        <input type="text" id="accordion-ban-username" placeholder="Enter username" required />
+        <label>Days</label>
+        <input type="number" id="accordion-ban-duration" placeholder="Ban duration (days)" min="1" required />
+        <label>Reason (optional)</label>
+        <input type="text" id="accordion-ban-reason" placeholder="Reason for ban" />
+        <label>Offensive Item (optional)</label>
+        <input type="text" id="accordion-ban-offensive-item" placeholder="Offensive item" />
+        <button id="accordion-ban-confirm" class="btn btn-blue">Confirm</button>
+      </div>
+    </div>
+    <table class="moderation-table">
+      <thead>
+        <tr>
+          <th class="thModeration"><i class="fas fa-user"></i> User</th>
+          <th class="thModeration">Ban End Date</th>
+          <th class="thModeration">Reason</th>
+          <th class="thModeration">Offensive Item</th>
+          <th class="thModeration">Action</th>
+        </tr>
+      </thead>
+      <tbody id="moderation-body">
+        <!-- Skeleton Loading Placeholder -->
+        <tr>
+          <td class="tdModeration">
+            <div class="avatar-container-moderation">
+              <div class="skeleton-loading-avatar-moderation"></div>
+              <div class="skeleton-loading-text-moderation"></div>
+            </div>
+          </td>
+          <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+          <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+          <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+          <td class="tdModeration"><div class="skeleton-loading-button-moderation"></div></td>
+        </tr>
+        <tr>
+          <td class="tdModeration">
+            <div class="avatar-container-moderation">
+              <div class="skeleton-loading-avatar-moderation"></div>
+              <div class="skeleton-loading-text-moderation"></div>
+            </div>
+          </td>
+          <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+          <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+          <td class="tdModeration"><div class="skeleton-loading-text-moderation"></div></td>
+          <td class="tdModeration"><div class="skeleton-loading-button-moderation"></div></td>
+        </tr>
+      </tbody>
+	  <button class="release-update-btn">Release Update</button>
+    </table>
+    <div class="pagination-moderation">
+      <div>Showing <span id="moderation-page-info">1 to 5</span> of <span id="moderation-total-entries">0</span> entries</div>
+      <div>
+        <button id="moderation-prev-page" disabled>Previous</button>
+        <button id="moderation-next-page">Next</button>
+      </div>
+    </div>
+  </div>
+</section>
 	  
 	  <section id="settings" class="section">
 	  <div class="settings-card">

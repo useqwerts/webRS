@@ -1,0 +1,729 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --toast-enter-duration: 0.5s;
+  --toast-exit-duration: 0.4s;
+  --toast-easing-in: cubic-bezier(0.22, 1, 0.36, 1);
+  --toast-easing-out: ease-in;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.login-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 100%;
+  max-width: 475px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.login-icon {
+  font-size: 28px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff4500, #ff8c00);
+  padding: 12px;
+  border-radius: 50%;
+  margin-right: 12px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  background: #fff;
+  border-radius: 10px;
+  z-index: -1;
+}
+
+.login-icon::after {
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  font-size: 16px;
+  color: #007bff;
+  z-index: 1;
+}
+.login-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #1d1d1d;
+}
+
+.login-header p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  margin-left: auto;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #666;
+}
+
+form label {
+  display: block;
+  font-weight: 600;
+  margin: 12px 0 4px;
+  color: #333;
+}
+
+form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+#login-button {
+  width: 100%;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  padding: 12px;
+  margin-top: 20px;
+  border: none;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+#login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+#login-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+#login-button:hover::before {
+  left: 100%;
+}
+
+#reactivate-btn {
+  composes: btn btn-blue;
+  margin-top: 10px;
+}
+
+/* === Ban Notice Styles === */
+.ban-notice {
+  background: #2c2c2c;
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.ban-notice h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.ban-notice p {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #ccc;
+}
+
+.ban-notice .ban-details {
+  background: #3c3c3c;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  text-align: left;
+}
+
+.ban-notice .ban-details p {
+  margin: 5px 0;
+}
+
+.ban-notice label {
+  margin-right: 10px;
+}
+
+.ban-notice button {
+  margin-top: 15px;
+  width: auto;
+  display: inline-block;
+}
+
+.ban-notice .btn-red {
+  margin-left: 10px;
+}
+
+.account-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.account-container.active {
+  transform: translateX(0);
+}
+
+.account-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.account-icon {
+  font-size: 28px;
+  color: #007bff;
+  background: #e6f0fa;
+  padding: 12px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.account-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #1d1d1d;
+}
+
+.account-header p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.account-content p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+#account-list {
+  flex-grow: 1;
+  margin-bottom: 20px;
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: background 0.2s ease;
+}
+
+.account-item:hover {
+  background: #f5f7fa;
+}
+
+.account-item i {
+  margin-right: 12px;
+  color: #007bff;
+}
+
+.account-item span {
+  flex-grow: 1;
+}
+
+.account-item button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.account-item button:hover {
+  color: #0056b3;
+}
+
+#add-account-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+  color: white;
+  padding: 12px;
+  border: none;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+#add-account-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+#add-account-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+#add-account-btn:hover::before {
+  left: 100%;
+}
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+
+#close-modal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+#close-modal:hover {
+  color: #666;
+}
+
+#manage-account-list {
+  margin: 20px 0;
+}
+
+#delete-all-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+  color: white;
+  padding: 12px;
+  border: none;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+#delete-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+#delete-all-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+#delete-all-btn:hover::before {
+  left: 100%;
+}
+
+#manage-accounts-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #ff6b01 0%, #d44f00 100%);
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 107, 1, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+#manage-accounts-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 1, 0.4);
+}
+
+#manage-accounts-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+#manage-accounts-btn:hover::before {
+  left: 100%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.fa-3d {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.login-header h2,
+.account-header h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+
+.login-header p,
+.account-header p {
+  font-size: 14px;
+  background: #e6f0fa;
+  color: #004085;
+  padding: 4px 10px;
+  border-radius: 10px;
+  display: inline-block;
+  margin: 10px 17px 12px;
+}
+
+/* === Политики === */
+.policy-text {
+  font-size: 13px;
+  color: #555;
+  background: #e8f0fe;
+  padding: 6px 10px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.policy-text a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+#global-lottie-loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+#global-lottie-animation {
+  width: 300px;
+  height: 300px;
+}
+
+/* 1. Container stays the same... */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* 2. Single enter/exit animation on each toast */
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  width: 320px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid transparent;
+  opacity: 0;
+  transform: translateY(-20px) scale(0.9);
+  animation:
+    toastEnter var(--toast-enter-duration) var(--toast-easing-in) forwards,
+    toastExit var(--toast-exit-duration) var(--toast-easing-out) var(--hide-delay) forwards;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  margin-right: 12px;
+}
+
+.toast-message {
+  flex: 1;
+  color: #333;
+  font-family: sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.toast-close {
+  margin-left: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #555;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.toast-close:hover {
+  opacity: 1;
+}
+
+/* Цвета под каждый тип */
+.toast.success {
+  background-color: #e6ffed;
+  border-color: #b8eac9;
+}
+.toast.success .toast-icon {
+  background-color: #2ecc71;
+}
+
+.toast.info {
+  background-color: #e6f4ff;
+  border-color: #b2d9f3;
+}
+.toast.info .toast-icon {
+  background-color: #3498db;
+}
+
+.toast.warning {
+  background-color: #fff8e1;
+  border-color: #f7e0a0;
+}
+.toast.warning .toast-icon {
+  background-color: #f39c12;
+}
+
+.toast.error {
+  background-color: #ffe5e5;
+  border-color: #f5bdbd;
+}
+.toast.error .toast-icon {
+  background-color: #e74c3c;
+}
+
+
+/* 3. “Springy” enter: pop in, overshoot a bit, settle */
+@keyframes toastEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 4. Smooth exit: shrink & fade out while sliding up */
+@keyframes toastExit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+  }
+}
+
+  /* 3. Фоны под каждый тип */
+  .toast.error {
+    background: linear-gradient(135deg, #ffe5e5, #fff5f5);
+  }
+  .toast.warning {
+    background: linear-gradient(135deg, #fff8e1, #fffcf3);
+  }
+  .toast.success {
+    background: linear-gradient(135deg, #e6ffed, #f2fff4);
+  }
+  .toast.info {
+    background: linear-gradient(135deg, #e6f4ff, #f5fbff);
+  }
+
+  /* 4. Иконка слева */
+  .toast-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 18px;
+    color: #fff;
+  }
+  .toast.error .toast-icon   { background: #e74c3c; }
+  .toast.warning .toast-icon { background: #f39c12; }
+  .toast.success .toast-icon { background: #27ae60; }
+  .toast.info .toast-icon    { background: #2980b9; }
+  
+  @keyframes shake {
+  0%,100% { transform: translateX(0) }
+  25%,75% { transform: translateX(-4px) }
+  50%      { transform: translateX(4px) }
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1) }
+  50%      { transform: scale(1.1) }
+}
+
+.toast.error   .toast-icon { animation: shake 0.8s ease-in-out; }
+.toast.success .toast-icon { animation: pulse 2s ease-in-out infinite; }
+.toast.warning .toast-icon { animation: shake 0.8s ease-in-out; }
+.toast.info    .toast-icon { animation: shake 0.8s ease-in-out }
+
+
+  /* 5. Текст */
+  .toast-message {
+    flex: 1;
+    font-family: sans-serif;
+    color: #333;
+    line-height: 1.4;
+  }
+  .toast-message b {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+  .toast-message span {
+    font-size: 13px;
+  }
+  
+  
+
+  /* 6. Крестик закрытия */
+  .toast-close {
+    margin-left: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #555;
+    opacity: 0.6;
+    transition: opacity .2s;
+  }
+  .toast-close:hover {
+    opacity: 1;
+  }
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+

@@ -739,6 +739,11 @@
             "amount": -100,
             "description": "Check single answer",
             "time": "2025-05-12T14:30:41.113865"
+        },
+        {
+            "amount": 150,
+            "description": "Exam between 80 and 100",
+            "time": "2025-06-01T10:11:02.281044"
         }
     ],
     "Zakariyo": [
@@ -943,6 +948,11 @@
             "amount": -100,
             "description": "Check single answer",
             "time": "2025-03-27T17:17:36.502577"
+        },
+        {
+            "amount": 150,
+            "description": "Exam between 80 and 100",
+            "time": "2025-06-07T10:09:05.381327"
         }
     ],
     "Muhammadali": [
@@ -1020,6 +1030,11 @@
             "amount": -100,
             "description": "Check single answer",
             "time": "2025-03-17T01:37:05.497462"
+        },
+        {
+            "amount": 150,
+            "description": "Exam between 80 and 100",
+            "time": "2025-06-07T10:06:59.196998"
         }
     ],
     "Elbek": [
