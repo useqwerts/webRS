@@ -668,24 +668,85 @@ socket.on('unblockUser', (data) => {
 
 const blockStates = new Map(); // { username: { isBlocked, timerInterval, blockEndTime } }
 
+// Функция для форматирования времени в формате MM:SS
+function formatTimeBlock(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Функция для запуска таймера блокировки
+function startBlockTimer(username, duration, userState, timerElement) {
+  let timeLeft = duration;
+  timerElement.textContent = formatTimeBlock(timeLeft);
+
+  userState.timerInterval = setInterval(() => {
+    timeLeft--;
+    timerElement.textContent = formatTimeBlock(timeLeft);
+
+    // Если время истекло, разблокируем пользователя
+    if (timeLeft <= 0) {
+      clearInterval(userState.timerInterval);
+      userState.timerInterval = null;
+      unblockUsername(username);
+      blockStates.delete(username);
+      try {
+        localStorage.removeItem(`blockEndTime_${username}`);
+      } catch (err) {
+        console.error(`Failed to remove blockEndTime from localStorage for ${username}: ${err.message}`);
+      }
+    }
+  }, 1000);
+
+  blockStates.set(username, userState);
+}
+
 // Функция для блокировки пользователя по username
 function blockUser(username, duration) {
-  // Получаем текущего пользователя (предполагается, что эта функция существует)
+  // Проверяем валидность duration
+  if (!Number.isInteger(duration) || duration <= 0) {
+    console.log(`Invalid duration: ${duration}. Duration must be a positive integer.`);
+    return;
+  }
+
+  // Получаем текущего пользователя
   const currentUser = getCurrentUser();
   if (username !== currentUser) {
-    console.log(`Block not applied. Banned username (${username}) does not match current user (${currentUser}).`);
     return;
   }
 
-  // Проверяем, заблокирован ли уже пользователь
+  // Инициализируем или получаем состояние блокировки
   const userState = blockStates.get(username) || { isBlocked: false, timerInterval: null, blockEndTime: null };
+
+  // Показываем экран блокировки
+  blockScreen.classList.remove('hidden');
+  blockScreen.classList.add('visible');
+
+  // Если пользователь уже заблокирован, сбрасываем таймер с задержкой
   if (userState.isBlocked) {
-    console.log(`User ${username} is already blocked.`);
+    clearInterval(userState.timerInterval);
+    userState.timerInterval = null;
+    timerElement.textContent = '00:00'; // Сбрасываем таймер до 00:00
+    timerElement.classList.add('timer-pulse'); // Добавляем анимацию пульсации
+
+    // Задержка 1 секунда перед установкой нового времени
+    setTimeout(() => {
+      timerElement.classList.remove('timer-pulse'); // Удаляем анимацию
+      const blockEndTime = Date.now() + duration * 1000;
+      userState.isBlocked = true;
+      userState.blockEndTime = blockEndTime;
+      try {
+        localStorage.setItem(`blockEndTime_${username}`, blockEndTime);
+      } catch (err) {
+       // console.error(`Failed to save blockEndTime to localStorage for ${username}: ${err.message}`);
+      }
+      startBlockTimer(username, duration, userState, timerElement);
+    }, 3000);
     return;
   }
 
-  // Запускаем специальную музыку
-  //playSpecialMusic();
+  // Запускаем специальную музыку (закомментировано, как в оригинале)
+  // playSpecialMusic();
 
   // Блокируем взаимодействие с элементами страницы
   document.body.style.pointerEvents = 'none';
@@ -695,34 +756,14 @@ function blockUser(username, duration) {
   userState.isBlocked = true;
   const blockEndTime = Date.now() + duration * 1000;
   userState.blockEndTime = blockEndTime;
-  blockStates.set(username, userState);
+  try {
+    localStorage.setItem(`blockEndTime_${username}`, blockEndTime);
+  } catch (err) {
+    console.error(`Failed to save blockEndTime to localStorage for ${username}: ${err.message}`);
+  }
 
-  // Сохраняем время окончания блокировки в localStorage для конкретного пользователя
-  localStorage.setItem(`blockEndTime_${username}`, blockEndTime);
-
-  let timeLeft = duration;
-  // Показываем экран блокировки
-  blockScreen.classList.remove("hidden");
-  blockScreen.classList.add("visible");
-  timerElement.textContent = formatTime(timeLeft);
-
-  // Таймер обратного отсчёта
-  userState.timerInterval = setInterval(() => {
-    timeLeft--;
-    timerElement.textContent = formatTime(timeLeft);
-
-    // Если время истекло, разблокируем пользователя
-    if (timeLeft <= 0) {
-      clearInterval(userState.timerInterval);
-      userState.timerInterval = null;
-      unblockUsername(username);
-      blockStates.delete(username); // Удаляем состояние после разблокировки
-      localStorage.removeItem(`blockEndTime_${username}`);
-    }
-  }, 1000);
-
-  // Обновляем состояние в Map
-  blockStates.set(username, userState);
+  // Запускаем таймер
+  startBlockTimer(username, duration, userState, timerElement);
 }
 
 function unblockUser() {
@@ -5896,13 +5937,149 @@ function submitHomeworkAnswers() {
 }
 
 // ---- speaking-exam-modal.js ----
+function showRecordingStatus(show = true) {
+  const overlay = document.querySelector('.microphone-overlay');
+  if (!overlay) return;
+
+  // Удалим старую строку, если она есть
+  const existingLine = overlay.querySelector('.recording-info-line');
+  if (existingLine) existingLine.remove();
+
+  if (show) {
+    // Создаем и вставляем строку записи после кнопки микрофона
+    const line = document.createElement('div');
+    line.className = 'recording-info-line';
+    line.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Now your voice is recording.';
+
+    // Вставить строку после кнопки, если она есть
+    const recordBtn = overlay.querySelector('.record-btn');
+    if (recordBtn) {
+      recordBtn.insertAdjacentElement('afterend', line);
+    } else {
+      overlay.appendChild(line);
+    }
+  }
+}
+
+
+// Основная функция
+const API_BASE = '/api';
+const EXAM_STATUS = {
+  STARTED: 'started',
+  COMPLETED: 'completed',
+};
+const TOAST_TYPES = {
+  ERROR: 'error',
+  SUCCESS: 'success',
+};
+
+const getModalSkeletonHTML = () => `
+  <div class="speaking-header">
+    <div>
+      <div class="title"><div class="speaking-exam-skeleton skeleton-header-title"></div></div>
+      <div class="progress-info"><div class="speaking-exam-skeleton" style="width: 100px; height: 16px; margin-top: 6px; border-radius: 6px;"></div></div>
+      <div class="speaking-progress-container" style="margin-top: 12px;">
+        <div class="speaking-progress">
+          <div class="bar" style="width: 0%;"></div>
+        </div>
+        <div class="speaking-exam-skeleton" style="width: 40px; height: 16px; border-radius: 6px;"></div>
+      </div>
+    </div>
+    <div style="width: 100px; height: 40px;"><div class="speaking-exam-skeleton" style="width: 100%; height: 100%; border-radius: 12px;"></div></div>
+  </div>
+  <div class="speaking-body">
+    <div class="speaking-exam-skeleton skeleton-body-photo"></div>
+  </div>
+`;
+
+const getModalContentHTML = ({ gradeIcon, progressText, progressBarWidth, percentageText, closeButtonHtml, recordBtnDisabled }) => `
+  <div class="speaking-header">
+    <div>
+      <div class="title" id="speaking-modal-title">${gradeIcon}Final Exam</div>
+      <div class="progress-info">${progressText}</div>
+      <div class="speaking-progress-container">
+        <div class="speaking-progress">
+          <div class="bar" style="width: ${progressBarWidth};"></div>
+        </div>
+        ${percentageText}
+      </div>
+    </div>
+    ${closeButtonHtml}
+  </div>
+  <div class="speaking-body">
+    <div class="microphone-overlay">
+      <button class="record-btn" aria-label="Start or stop recording" ${recordBtnDisabled}>
+        <i class="fas fa-microphone fancy-icon"></i>
+        <span class="sr-only">Start or stop recording</span>
+      </button>
+    </div>
+    <div class="photo-container">
+      <div class="speaking-exam-skeleton skeleton-body-photo"></div>
+    </div>
+  </div>
+`;
+
+async function fetchWithTimeout(url, options = {}, timeout = 10000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (err) {
+    clearTimeout(id);
+    throw err.name === 'AbortError' ? new Error('Request timed out') : err;
+  }
+}
+
+// Утилитная функция для конвертации WebM → MP3
+async function convertToMP3(chunks) {
+  return new Promise((resolve, reject) => {
+    if (!window.lamejs) {
+      return reject(new Error('lamejs library not loaded'));
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const arrayBuffer = reader.result;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const decoded = await audioCtx.decodeAudioData(arrayBuffer);
+        const channelData = decoded.getChannelData(0);
+        const sampleRate = decoded.sampleRate;
+
+        const mp3encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
+        const samplesPerFrame = 1152;
+        const mp3Data = [];
+
+        for (let i = 0; i < channelData.length; i += samplesPerFrame) {
+          const frame = channelData.subarray(i, i + samplesPerFrame);
+          const int16 = new Int16Array(frame.length);
+          for (let j = 0; j < frame.length; j++) {
+            int16[j] = Math.max(-32768, Math.min(32767, frame[j] * 32767));
+          }
+          const mp3buf = mp3encoder.encodeBuffer(int16);
+          if (mp3buf.length) mp3Data.push(mp3buf);
+        }
+        const tail = mp3encoder.flush();
+        if (tail.length) mp3Data.push(tail);
+
+        resolve(new Blob(mp3Data, { type: 'audio/mp3' }));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    reader.onerror = () => reject(new Error('FileReader error'));
+    reader.readAsArrayBuffer(new Blob(chunks, { type: 'audio/webm' }));
+  });
+}
+
 async function openSpeakingExamModal() {
   await toggleRulesModal('open');
   const userId = getCurrentUser();
-  if (!userId) return showToastNotification('User not logged in', 'error');
+  if (!userId) return showToastNotification('User not logged in', TOAST_TYPES.ERROR);
 
   document.querySelector('.detailed-questions-review-speaking')?.remove();
-
   const overlay = document.createElement('div');
   overlay.className = 'detailed-questions-review-speaking speaking-exam';
   const modal = document.createElement('div');
@@ -5910,329 +6087,233 @@ async function openSpeakingExamModal() {
   overlay.appendChild(modal);
   document.getElementById('speaking-exam-details').appendChild(overlay);
 
-  modal.innerHTML = `
-    <div class="speaking-header">
-      <div>
-        <div class="title"><div class="speaking-exam-skeleton skeleton-header-title"></div></div>
-        <div class="progress-info"><div class="speaking-exam-skeleton" style="width: 100px; height: 16px; margin-top: 6px; border-radius: 6px;"></div></div>
-        <div class="speaking-progress-container" style="margin-top: 12px;">
-          <div class="speaking-progress">
-            <div class="bar" style="width: 0%;"></div>
-          </div>
-          <div class="speaking-exam-skeleton" style="width: 40px; height: 16px; border-radius: 6px;"></div>
-        </div>
-      </div>
-      <div style="width: 100px; height: 40px;"><div class="speaking-exam-skeleton" style="width: 100%; height: 100%; border-radius: 12px;"></div></div>
-    </div>
-    <div class="speaking-body">
-      <div class="speaking-exam-skeleton skeleton-body-photo"></div>
-    </div>
-  `;
+  modal.innerHTML = getModalSkeletonHTML();
 
+  // --- статус экзамена ---
   let stJson;
   try {
-    const stRes = await fetch(`/api/get-status-sp-exam/${userId}`);
+    const stRes = await fetchWithTimeout(`${API_BASE}/get-status-sp-exam/${userId}`);
+    if (!stRes.ok) throw new Error('Failed to fetch exam status');
     stJson = await stRes.json();
-  } catch {
+  } catch (err) {
     overlay.remove();
-    return showToastNotification('Failed to fetch exam status', 'error');
+    return showToastNotification(`Failed to fetch exam status: ${err.message}`, TOAST_TYPES.ERROR);
   }
-
-  if (stJson.status !== 'started' && stJson.status !== 'completed') {
+  if (stJson.status !== EXAM_STATUS.STARTED && stJson.status !== EXAM_STATUS.COMPLETED) {
     overlay.remove();
-    return showToastNotification('Exam not started or completed', 'error');
+    return showToastNotification('Exam not started or completed', TOAST_TYPES.ERROR);
   }
 
   initExamSecurity(true);
-  let score = 100;
-  let progressText = 'Done 0 of 1 parts';
-  let progressBarWidth = '0%';
-  let percentageText = '';
-  let gradeIcon = '';
-  let isCompleted = stJson.status === 'completed';
+  const isCompleted = stJson.status === EXAM_STATUS.COMPLETED;
 
-  let finishBtnDisabled = '';
-  let recordBtnDisabled = '';
-
-  let closeButtonHtml = `
-    <button class="finish-btn"><i class="fas fa-flag-checkered"></i> Finish Test</button>
-  `;
+  // --- финальная разметка ---
+  let gradeIcon = '', progressText = 'Done 0 of 1 parts', progressBarWidth = '0%', percentageText = '';
+  let closeButtonHtml = `<button class="finish-btn" aria-label="Finish test">Finish</button>`;
   if (isCompleted) {
-    closeButtonHtml = `
-      <button class="finish-btn close-btn"><i class="fas fa-times"></i></button>
-    `;
-  }
+    // получили результат
+    try {
+      initExamSecurity(false);
+      const scoreRes = await fetchWithTimeout(`${API_BASE}/get-score-sp-exam/${userId}`);
+      if (!scoreRes.ok) throw new Error('Failed to fetch score');
+      const { score = 100 } = await scoreRes.json();
+      progressText = 'Done 1 of 1 parts';
+      progressBarWidth = `${score}%`;
+      percentageText = `<span class="percentage">${score}%</span>`;
+      closeButtonHtml = `<button class="finish-btn close-btn" aria-label="Close modal"><i class="fas fa-times"></i></button>`;
 
-if (isCompleted) {
-  try {
-    initExamSecurity(false);
-    const scoreRes = await fetch(`/api/get-score-sp-exam/${userId}`);
-    const scoreData = await scoreRes.json();
-    score = scoreData.score || 100;
-    progressText = 'Done 1 of 1 parts';
-    progressBarWidth = `${score}%`;
-    percentageText = `<span class="percentage">${score}%</span>`;
-    finishBtnDisabled = 'disabled';
-    recordBtnDisabled = 'disabled';
-
-    let grade = 'A+';
-    let gradeClass = 'grade-a-plus';
-
-    if (score >= 90) {
-      grade = 'A+';
-      gradeClass = 'grade-a-plus';
-    } else if (score >= 80) {
-      grade = 'A';
-      gradeClass = 'grade-a';
-    } else if (score >= 70) {
-      grade = 'B';
-      gradeClass = 'grade-b';
-    } else if (score >= 60) {
-      grade = 'C';
-      gradeClass = 'grade-c';
-    } else {
-      grade = 'D';
-      gradeClass = 'grade-d';
-    }
-
-    // Маппинг grade к иконкам FontAwesome (или любым другим)
-    const gradeIconsMap = {
-      'A+': 'fas fa-star',           // Звезда для A+
-      'A': 'fas fa-thumbs-up',       // Палец вверх для A
-      'B': 'fas fa-check-circle',    // Галочка в круге для B
-      'C': 'fas fa-exclamation-circle', // Восклицательный знак для C
-      'D': 'fas fa-times-circle',    // Крестик в круге для D
-    };
-
-    const iconClass = gradeIconsMap[grade] || 'fas fa-check-circle';
-
-    gradeIcon = `<span class="grade-icon ${gradeClass}"><i class="${iconClass}"></i> ${grade}</span>`;
-
-  } catch (err) {
-    initExamSecurity(false);
-    showToastNotification('Failed to fetch score', 'error');
-  }
-}
-
-
-  modal.innerHTML = `
-    <div class="speaking-header">
-      <div>
-        <div class="title">${gradeIcon}Final Exam</div>
-        <div class="progress-info">${progressText}</div>
-        <div class="speaking-progress-container">
-          <div class="speaking-progress">
-            <div class="bar" style="width: ${progressBarWidth};"></div>
-          </div>
-          ${percentageText}
-        </div>
-      </div>
-      ${closeButtonHtml}
-    </div>
-    <div class="speaking-body">
-      <div class="speaking-exam-skeleton skeleton-body-photo"></div>
-    </div>
-  `;
-
-  const body = modal.querySelector('.speaking-body');
-
-  try {
-    const resp = await fetch(`/api/get-sp-details/${userId}`);
-    const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    body.innerHTML = `<div class="photo-container"><img src="${url}" alt="Exam photo"></div>`;
-    const imgEl = body.querySelector('img');
-    if (imgEl) {
-      imgEl.addEventListener('load', () => imgEl.classList.add('loaded'));
-      imgEl.addEventListener('click', () => openMediaViewer(imgEl));
-    }
-  } catch {
-    body.innerHTML = `<p>Photo not available</p>`;
-  }
-
-  // === Новый улучшенный блок микрофона ===
-let recorder = null;
-let audioChunks = [];
-let microphone_on = null;
-
-const recordBtn = document.createElement('button');
-recordBtn.className = 'record-btn';
-recordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
-if (isCompleted) recordBtn.disabled = true;
-body.appendChild(recordBtn);
-
-const startRecording = async () => {
-  // если запись уже идёт — не останавливаем, если был первый запуск
-  if (recorder && recorder.state === 'recording') {
-    if (microphone_on === true) {
-      showToastNotification('Recording already started. Cannot stop.', 'info');
-      return;
-    } else {
-      recorder.stop(); // до первого успешного запуска можно остановить
-      return;
-    }
-  }
-
-  if (!navigator.mediaDevices?.getUserMedia) {
-    return showToastNotification('Audio recording not supported', 'error');
-  }
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioChunks = [];
-    recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
-
-    recorder.ondataavailable = e => audioChunks.push(e.data);
-    recorder.onstop = () => {
-      stream.getTracks().forEach(t => t.stop());
-      recordBtn.classList.remove('recording');
-    };
-
-    recorder.start();
-    recordBtn.classList.add('recording');
-    microphone_on = true; // ✅ Успешный запуск микрофона — теперь его нельзя отключить
-  } catch (err) {
-    microphone_on = false; // ❌ Ошибка при запуске — можно пробовать снова
-    showToastNotification('Could not start recording', 'error');
-  }
-};
-
-if (!isCompleted) {
-  recordBtn.addEventListener('click', startRecording);
-  recordBtn.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    startRecording();
-  }, { passive: false });
-}
-
-
-  async function convertToMP3(chunks) {
-    return new Promise((resolve, reject) => {
-      if (!window.lamejs) {
-        return reject(new Error('lamejs library not loaded. Please check the CDN or network connection.'));
-      }
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const arrayBuffer = reader.result;
-          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-          const channelData = audioBuffer.getChannelData(0);
-          const sampleRate = audioBuffer.sampleRate;
-
-          const mp3encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
-          const mp3Data = [];
-          const sampleBlockSize = 1152;
-
-          for (let i = 0; i < channelData.length; i += sampleBlockSize) {
-            const block = channelData.subarray(i, i + sampleBlockSize);
-            const samples = new Int16Array(sampleBlockSize);
-            for (let j = 0; j < block.length; j++) {
-              samples[j] = block[j] * 32767;
-            }
-            const mp3buf = mp3encoder.encodeBuffer(samples);
-            if (mp3buf.length > 0) mp3Data.push(mp3buf);
-          }
-          const mp3end = mp3encoder.flush();
-          if (mp3end.length > 0) mp3Data.push(mp3end);
-
-          const mp3Blob = new Blob(mp3Data, { type: 'audio/mp3' });
-          resolve(mp3Blob);
-        } catch (err) {
-          reject(new Error(`MP3 conversion failed: ${err.message}`));
-        }
+      const gradeMap = {
+        'A+': { icon: 'fas fa-star', class: 'grade-a-plus' },
+        'A':  { icon: 'fas fa-thumbs-up', class: 'grade-a' },
+        'B':  { icon: 'fas fa-check-circle', class: 'grade-b' },
+        'C':  { icon: 'fas fa-exclamation-circle', class: 'grade-c' },
+        'D':  { icon: 'fas fa-times-circle', class: 'grade-d' },
       };
-      reader.onerror = () => reject(new Error('Failed to read audio data'));
-      reader.readAsArrayBuffer(new Blob(chunks, { type: 'audio/webm' }));
-    });
+      let grade = score >= 90 ? 'A+' : score >= 80 ? 'A' : score >= 70 ? 'B' : score >= 60 ? 'C' : 'D';
+      const { icon, class: gradeClass } = gradeMap[grade];
+      gradeIcon = `<span class="grade-icon ${gradeClass}" aria-label="Grade ${grade}"><i class="${icon}"></i> ${grade}</span>`;
+    } catch (err) {
+      initExamSecurity(false);
+      showToastNotification(`Failed to fetch score: ${err.message}`, TOAST_TYPES.ERROR);
+    }
   }
+
+  modal.innerHTML = getModalContentHTML({
+    gradeIcon,
+    progressText,
+    progressBarWidth,
+    percentageText,
+    closeButtonHtml,
+    recordBtnDisabled: isCompleted ? 'disabled' : ''
+  });
+
+  const header = modal.querySelector('.speaking-header');
+  const body   = modal.querySelector('.speaking-body');
+  const recordBtn = modal.querySelector('.record-btn');
+  const finishBtn = modal.querySelector('.finish-btn');
+
+  let recorder = null;
+  let audioChunks = [];
+
+  function showRecordingStatus(isRecording) {
+    const overlayEl = modal.querySelector('.microphone-overlay');
+    let info = overlayEl.querySelector('.recording-info-line');
+    if (info) info.remove();
+    if (isRecording) {
+      info = document.createElement('div');
+      info.className = 'recording-info-line';
+      info.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Now your voice is recording.';
+      recordBtn.insertAdjacentElement('afterend', info);
+    }
+  }
+
+  // === Image load ===
+  (async () => {
+    try {
+      const resp = await fetchWithTimeout(`${API_BASE}/get-sp-details/${userId}`);
+      if (!resp.ok) throw new Error();
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = 'Exam photo';
+      img.classList.add('loaded');
+      img.onclick = () => openMediaViewer(img);
+      img.onload = () => URL.revokeObjectURL(url);
+      body.querySelector('.skeleton-body-photo').replaceWith(img);
+    } catch {
+      body.querySelector('.skeleton-body-photo').outerHTML = '<p>Photo not available</p>';
+    }
+  })();
+
+  // === Recording ===
+  const startRecording = async () => {
+    if (recorder?.state === 'recording') {
+      return showToastNotification('Recording already in progress', TOAST_TYPES.ERROR);
+    }
+    if (!navigator.mediaDevices?.getUserMedia) {
+      return showToastNotification('Audio recording not supported', TOAST_TYPES.ERROR);
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunks = [];
+      recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+      recorder.ondataavailable = e => audioChunks.push(e.data);
+      recorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        recordBtn.classList.remove('recording');
+        showRecordingStatus(false);
+      };
+      recorder.start();
+      recordBtn.classList.add('recording');
+      showRecordingStatus(true);
+    } catch {
+      showToastNotification('Could not start recording', TOAST_TYPES.ERROR);
+    }
+  };
 
   if (!isCompleted) {
-    modal.querySelector('.finish-btn').addEventListener('click', async () => {
-      if (recorder && recorder.state === 'recording') {
+    recordBtn.onclick = startRecording;
+    recordBtn.ontouchstart = e => { e.preventDefault(); startRecording(); };
+    await startRecording();
+    recordBtn.focus();
+  } else {
+    const closeBtn = modal.querySelector('.close-btn');
+if (closeBtn) {
+  closeBtn.onclick = () => overlay.remove();
+}
+    document.addEventListener('keydown', e => e.key === 'Escape' && overlay.remove(), { once: true });
+  }
+
+  // === Finish & upload ===
+  if (!isCompleted) {
+    finishBtn.onclick = async () => {
+      if (!confirm('Are you sure you want to submit the exam?')) return;
+      if (recorder?.state === 'recording') {
         initExamSecurity(false);
         recorder.stop();
         await new Promise(res => recorder.addEventListener('stop', res, { once: true }));
       }
+      if (!audioChunks.length) return showToastNotification('No recording made', TOAST_TYPES.ERROR);
 
-      if (!audioChunks.length) {
-        return showToastNotification('No recording made', 'error');
-      }
-
+      // Lottie animation
       const animationContainer = document.createElement('div');
       animationContainer.className = 'lottie-container speaking-exam';
       const animationBox = document.createElement('div');
       animationBox.className = 'lottie-box';
       animationContainer.appendChild(animationBox);
-      modal.appendChild(animationContainer);
-
-      const header = modal.querySelector('.speaking-header');
-      const finishButton = modal.querySelector('.finish-btn');
-      finishButton.style.display = 'none';
-
+      document.body.appendChild(animationContainer);
+      finishBtn.style.display = 'none';
       let animation = null;
       try {
         animation = lottie.loadAnimation({
           container: animationBox,
           renderer: 'svg',
-          loop: true,
-          autoplay: true,
-          path: '/static/animations/Speaking-Loading.json'
+          loop:   true,
+          autoplay:true,
+          path:   '/static/animations/Speaking-Loading.json'
         });
-      } catch (err) {
+      } catch {
         animationContainer.remove();
-        finishButton.style.display = 'flex';
-        return showToastNotification('Error loading animation', 'error');
+        finishBtn.style.display = 'flex';
+        return showToastNotification('Error loading animation', TOAST_TYPES.ERROR);
       }
 
       try {
+        // конвертация
         const mp3Blob = await convertToMP3(audioChunks);
         const fd = new FormData();
         fd.append('file', mp3Blob, `${userId}.mp3`);
 
-        const up = await fetch(`/api/upload-speaking/${userId}`, { method: 'POST', body: fd });
+        const up = await fetchWithTimeout(`${API_BASE}/upload-speaking/${userId}`, {
+          method: 'POST',
+          body: fd
+        });
         if (!up.ok) throw new Error('Upload failed');
 
-        const scoreRes = await fetch(`/api/get-score-sp-exam/${userId}`);
+        // получить счёт
+        const scoreRes = await fetchWithTimeout(`${API_BASE}/get-score-sp-exam/${userId}`);
+        if (!scoreRes.ok) throw new Error('Failed to fetch score');
         const { score = 100 } = await scoreRes.json();
 
-        modal.querySelector('.progress-info').textContent = 'Done 1 of 1 parts';
-        modal.querySelector('.speaking-progress-container').innerHTML = `
+        header.querySelector('.progress-info').textContent = 'Done 1 of 1 parts';
+        header.querySelector('.speaking-progress-container').innerHTML = `
           <div class="speaking-progress">
             <div class="bar" style="width: ${score}%;"></div>
           </div>
           <span class="percentage">${score}%</span>
         `;
 
-        if (animation) animation.destroy();
+        animation.destroy();
         animationContainer.remove();
 
-        const newCloseButton = document.createElement('div');
-        newCloseButton.className = 'finish-btn close-btn';
-        newCloseButton.innerHTML = '<i class="fas fa-times"></i>';
-        header.replaceChild(newCloseButton, finishButton);
+        const closeBtnNew = document.createElement('button');
+        closeBtnNew.className = 'finish-btn close-btn';
+        closeBtnNew.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtnNew.setAttribute('aria-label','Close modal');
+        header.replaceChild(closeBtnNew, finishBtn);
+        closeBtnNew.onclick = () => overlay.remove();
 
-        newCloseButton.addEventListener('click', () => {
-          overlay.remove();
-        });
-
-        showToastNotification('Speaking exam submitted', 'success');
+        showToastNotification('Speaking exam submitted', TOAST_TYPES.SUCCESS);
         initExamSecurity(false);
-      } catch (err) {
-        if (animation) animation.destroy();
-        animationContainer.remove();
-        finishButton.style.display = 'flex';
-        showToastNotification(`Error: ${err.message}`, 'error');
-      }
-    });
-  } else {
-    modal.querySelector('.close-btn').addEventListener('click', () => {
-      overlay.remove();
-    });
-  }
-}
 
+      } catch (err) {
+        animation?.destroy();
+        animationContainer.remove();
+        finishBtn.style.display = 'flex';
+        showToastNotification(`Error: ${err.message}`, TOAST_TYPES.ERROR);
+      }
+    };
+  }
+
+  overlay.addEventListener('remove', () => {
+    if (recorder?.state === 'recording') {
+      recorder.stop();
+      initExamSecurity(false);
+    }
+    document.querySelector('.lottie-container')?.remove();
+  });
+}
 
 // Привязываем к кнопке Speaking где нужно
 document.querySelectorAll('.btn-view-photo').forEach(btn => {

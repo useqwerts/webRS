@@ -4003,3 +4003,49 @@ input:not(:checked) + .slider .toggle-text.off {
   box-shadow: 0 6px 18px rgba(40, 167, 69, 0.5);
 }
 
+/* Suggested CSS for accordion-speaking-exam */
+.accordion-speaking-exam {
+  margin-bottom: 20px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  background: #242734;
+  color: #e0e7ff;
+  font-weight: 600;
+  user-select: none;
+}
+
+.accordion-speaking-exam-header {
+  padding: 14px 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e293b;
+  transition: background 0.3s ease;
+  font-size: 1.1rem;
+  border-radius: 16px 16px 0 0;
+}
+
+.accordion-speaking-exam-header:hover {
+  background: #3b82f6;
+  color: white;
+}
+
+.accordion-speaking-exam-body {
+  background: #121826;
+  padding: 20px 24px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease;
+  border-radius: 0 0 16px 16px;
+  font-weight: 400;
+  color: #cbd5e1;
+}
+
+.accordion-speaking-exam-body.active {
+  max-height: 600px; /* Adjust based on content */
+  opacity: 1;
+  transition: max-height 0.35s ease-in, opacity 0.35s ease;
+}

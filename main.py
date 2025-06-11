@@ -451,185 +451,133 @@ current_version = "2025-01-10-v1"
 
 exam_questions = [ 
 
- {
-    "id": 1,
-    "type": "multiple_choice",
-    "text": "Quyidagi testda MLBB qahramonlari haqida to‘g‘ri javobni tanlang.",
-    "subquestions": [
-      {
-        "id": "1.1",
-        "type": "multiple_choice",
-        "text": "Layla qanday turdagi qahramon?",
-        "options": ["Tank", "Marksman", "Assassin"],
-        "correct": "Marksman"
-      },
-      {
-        "id": "1.2",
-        "type": "multiple_choice",
-        "text": "Balmondning passiv qobiliyati nima qiladi?",
-        "options": ["Yoqadi", "Qon tiklaydi", "Dushmanni sekinlashtiradi"],
-        "correct": "Qon tiklaydi"
-      },
-      {
-        "id": "1.3",
-        "type": "multiple_choice",
-        "text": "Ling devorga chiqishi uchun qanday resursdan foydalanadi?",
-        "options": ["HP", "Mana", "Lightness points"],
-        "correct": "Lightness points"
-      }
-    ]
-  },
   {
-    "id": 2,
-    "type": "box-choose",
-    "text": "Bo‘sh joylarga quyidagi so‘zlardan mosini tanlang.",
-    "options": ["ultimat", "regen", "jungler", "damage", "turret", "combo", "tank"],
-    "subquestions": [
-      {
-        "id": "2.1",
-        "type": "box-choose",
-        "text": "Akai ko‘pincha jamoada ____ rolini bajaradi.",
-        "correct": "tank"
-      },
-      {
-        "id": "2.2",
-        "type": "box-choose",
-        "text": "Zilongning ____ qobiliyati uni juda tez harakatlantiradi.",
-        "correct": "ultimat"
-      },
-      {
-        "id": "2.3",
-        "type": "box-choose",
-        "text": "Jungler odatda birinchi navbatda ____ ustida ishlaydi.",
-        "correct": "damage"
-      },
-      {
-        "id": "2.4",
-        "type": "box-choose",
-        "text": "Layla uzoqdan ____ ni yo‘q qilishi mumkin.",
-        "correct": "turret"
-      },
-      {
-        "id": "2.5",
-        "type": "box-choose",
-        "text": "Alucard o‘zining hujumidan so‘ng HP ni ____ qiladi.",
-        "correct": "regen"
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "type": "write-in-blank",
-    "text": "Bo‘sh joyni to‘ldiring.",
-    "subquestions": [
-      {
-        "id": "3.1",
-        "type": "write-in-blank",
-        "text": "Karina assassin turidagi qahramon bo‘lib, uning ultimat zarbasi dushmanga katta ____ yetkazadi.",
-        "correct": "zarar"
-      },
-      {
-        "id": "3.2",
-        "type": "write-in-blank",
-        "text": "Tigrealning kuchli tomoni – dushmanlarni bir joyga ____ olishidir.",
-        "correct": "tortib"
-      },
-      {
-        "id": "3.3",
-        "type": "write-in-blank",
-        "text": "MLBB o‘yinida 'Retribution' odatda ____ qahramonlar tomonidan ishlatiladi.",
-        "correct": "jungler"
-      },
-      {
-        "id": "3.4",
-        "type": "write-in-blank",
-        "text": "Claude o‘zining ultimatini faollashtirganda atrofdagi barcha dushmanga ____ yetkazadi.",
-        "correct": "zarar"
-      }
-    ]
-  },
-  {
-  "id": 4,
-  "type": "multiple_choice",
-  "text": "Mobile Legends: Bang Bang o‘yinidagi strategiya va qahramon rollari haqida savollar.",
+  "id": 1,
+  "text": "Section 1. Are the sentences true or false?",
+  "type": "listening",
+  "audio": "/static/exam-files/LE_listening_A1_Ordering_in_a_cafe.mp3",
   "subquestions": [
     {
-      "id": "4.1",
-      "type": "multiple_choice",
-      "text": "Ling qahramoni qaysi joylashuvda eng samarali o‘ynaladi?",
-      "options": ["EXP Lane", "Gold Lane", "Jungle", "Roam"],
-      "correct": "Jungle"
+      "id": "1.1",
+      "type": "true_false",
+      "text": "Customer 1 orders a large bottle of orange juice",
+      "correct": "False"
     },
     {
-      "id": "4.2",
-      "type": "multiple_choice",
-      "text": "Kimning ultisi bir necha raqibni bir joyga tortib, zarar yetkazadi?",
-      "options": ["Minotaur", "Tigreal", "Grock", "Franco"],
-      "correct": "Tigreal"
+      "id": "1.2",
+      "type": "true_false",
+      "text": "The apple juice costs £3.15",
+      "correct": "False"
     },
     {
-      "id": "4.3",
-      "type": "multiple_choice",
-      "text": "Xavier qanday tipdagi qahramon hisoblanadi?",
-      "options": ["Tank", "Marksman", "Mage", "Assassin"],
-      "correct": "Mage"
+      "id": "1.3",
+      "type": "true_false",
+      "text": "Customer 2 is not going to have their tea and cake inside the café",
+      "correct": "True"
+    },
+    {
+      "id": "1.4",
+      "type": "true_false",
+      "text": "Customer 2 pays with a twenty pound note",
+      "correct": "False"
+    },
+    {
+      "id": "1.5",
+      "type": "true_false",
+      "text": "Customer 3 orders something to drink",
+      "correct": "False"
+    },
+    {
+      "id": "1.6",
+      "type": "true_false",
+      "text": "The cookie costs 85p",
+      "correct": "False"
     }
   ]
 },
-{
-  "id": 5,
-  "type": "box-choose",
-  "text": "Bo‘sh joylarni to‘ldiring. Quyidagi savollarda mos variantni tanlang.",
-  "options": ["sustain", "burst", "crowd control", "flicker", "mage", "split push", "lifesteal"],
-  "subquestions": [
     {
-      "id": "5.1",
-      "type": "box-choose",
-      "text": "Lunox qahramoni odatda ____ tipidagi zararni yetkazadi. ____",
-      "correct": "burst"
-    },
-    {
-      "id": "5.2",
-      "type": "box-choose",
-      "text": "Alice uzoq janggilarda uzoq yashashga qodir, chunki u yuqori ____ darajasiga ega. ____",
-      "correct": "sustain"
-    },
-    {
-      "id": "5.3",
-      "type": "box-choose",
-      "text": "Zilong ko‘pincha ____ strategiyasidan foydalanib minoralarni tezda yo‘q qiladi. ____",
-      "correct": "split push"
-    },
-    {
-      "id": "5.4",
-      "type": "box-choose",
-      "text": "Ruby o‘zining zarbalari bilan sog‘lig‘ini tiklashi uchun unga ____ kerak. ____",
-      "correct": "lifesteal"
-    }
-  ]
+ "id": 2,
+  "type": "reading",
+  "text": "<h1>FINAL EXAM INSTRUCTIONS</h1>\n\n<h2>Poster 1</h2>\n<ul>\n  <li>Doors close 5 minutes before the exam begins.</li>\n  <li>Show your student ID card to examiner when you enter the room.</li>\n  <li>No phones, no books.</li>\n</ul>\n\n<h2>Poster 2</h2>\n<p><strong>BEFORE THE EXAM</strong></p>\n<ul>\n  <li>Have your ID card ready.</li>\n  <li>Listen to the instructions.</li>\n  <li>Arrive 10 minutes before exam.</li>\n</ul>\n<p><strong>IN THE EXAM</strong></p>\n<ul>\n  <li>Mobile phones switched off and put away.</li>\n  <li>ID card visible on the desk.</li>\n  <li>No talking.</li>\n  <li>No food or drinks in exam room.</li>\n</ul>\n\n<h2>Poster 3</h2>\n<ul>\n  <li>Follow the examiner's instructions.</li>\n  <li>If you have a question, raise your hand.</li>\n  <li>No mobile phones, books or bags in the exam.</li>\n  <li>Please use a blue or black pen.</li>\n</ul>",
+    "subquestions": [
+        {
+            "id": "2.1",
+            "type": "multiple_choice",
+            "text": "No talking.",
+            "options": ["You can talk.", "You can't talk."],
+            "correct": "You can't talk."
+        },
+        {
+            "id": "2.2",
+            "type": "multiple_choice",
+            "text": "ID card visible on desk.",
+            "options": ["You can see the ID card.", "You can't see the ID card."],
+            "correct": "You can see the ID card."
+        },
+        {
+            "id": "2.3",
+            "type": "multiple_choice",
+            "text": "Mobile phones switched off and put away.",
+            "options": ["Don't have your mobile phone on the table.", "It's OK to have your mobile phone on the table."],
+            "correct": "Don't have your mobile phone on the table."
+        },
+        {
+            "id": "2.4",
+            "type": "multiple_choice",
+            "text": "Doors close five minutes before the exam.",
+            "options": ["You must arrive early.", "You can be five minutes late."],
+            "correct": "You must arrive early."
+        },
+        {
+            "id": "2.5",
+            "type": "multiple_choice",
+            "text": "If you have a question, raise your hand.",
+            "options": ["You can ask questions.", "You can't ask questions."],
+            "correct": "You can ask questions."
+        }
+    ]
 },
 {
-  "id": 6,
-  "type": "write-in-blank",
-  "text": "Quyidagi savollarga qisqa javob yozing. Bo‘sh joyga to‘g‘ri so‘zni kiriting.",
+  "id": 3,
+  "text": "Section 3. Are the sentences true or false?",
+  "type": "listening",
+  "audio": "/static/exam-files/Elon.mp3",
   "subquestions": [
     {
-      "id": "6.1",
-      "type": "write-in-blank",
-      "text": "Hayabusa o‘zining ultimate skilli bilan bir nuqtada portlashlar orqali zarba beradi. Bu unga qanday ustunlik beradi? ____",
-      "correct": "assassination"
+      "id": "3.1",
+      "type": "true_false",
+      "text": "Elon Musk is the co-founder and CEO of Tesla.",
+      "correct": "True"
     },
     {
-      "id": "6.2",
-      "type": "write-in-blank",
-      "text": "Kadita ko‘p hollarda o‘zining suv kuchiga asoslangan hujumlaridan foydalanadi. Bu qanday rolga mos keladi? ____",
-      "correct": "mage"
+      "id": "3.2",
+      "type": "true_false",
+      "text": "Elon and his brother rented a large apartment when starting their first company.",
+      "correct": "False"
     },
     {
-      "id": "6.3",
-      "type": "write-in-blank",
-      "text": "Kaja dushmanlarni o‘ziga tortib, ularni jamoasi oldiga olib kelishi mumkin. Bu qanday effekt? ____",
-      "correct": "crowd control"
+      "id": "3.3",
+      "type": "true_false",
+      "text": "Elon Musk said if something is important, you should try even if you might fail.",
+      "correct": "True"
+    },
+    {
+      "id": "3.4",
+      "type": "true_false",
+      "text": "Critics told Elon Musk he couldn’t succeed, and he said they were right.",
+      "correct": "False"
+    },
+    {
+      "id": "3.5",
+      "type": "true_false",
+      "text": "Elon Musk encouraged people to take risks while they are young.",
+      "correct": "True"
+    },
+    {
+      "id": "3.6",
+      "type": "true_false",
+      "text": "Elon said he expected his company to succeed from the beginning.",
+      "correct": "False"
     }
   ]
 }
@@ -1625,6 +1573,18 @@ def get_sessions_api():
 def chat():
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    # Load banned users
+    banned_users = load_banned_users()
+    
+    # Check if the username is banned
+    username = session.get('username', '')
+    if username in banned_users:
+        ban_end_date = datetime.fromisoformat(banned_users[username]['ban_end_date'])
+        if ban_end_date > datetime.now():  # Check if ban is still active
+            session.pop('username', None)  # Clear session for banned user
+            return redirect(url_for('login'))
+    
     return render_template('index.html', username=session.get('username', ''))
     
 @app.route('/logout', methods=['POST'])

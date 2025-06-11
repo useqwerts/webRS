@@ -1788,7 +1788,6 @@ document.addEventListener("DOMContentLoaded", () => {
   accordionHeader.addEventListener("click", toggleAccordion);
 });
 
-// openUserSpeakingReview function
 async function openUserSpeakingReview(userId, userData) {
   // Удаляем старую модалку, если есть
   document.querySelector('.detailed-questions-review')?.remove();
@@ -1864,21 +1863,21 @@ async function openUserSpeakingReview(userId, userData) {
           <li data-value="100">100%</li>
         </ul>
       </div>
-      <button id="assign-score-btn">Assign</button> <!-- Removed release-update-btn class -->
+      <button id="assign-score-btn">Assign</button>
     </div>
   `;
 
-  // Добавляем аккордеон для вопросов с вашим стилем
+  // Добавляем аккордеон для вопросов с новым стилем accordion-speaking-exam
   if (questions.length > 0) {
     bodyHtml += `
       <div class="questions-accordion">
         ${questions.map((question, index) => `
-          <div class="accordion">
-            <div class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active')">
+          <div class="accordion-speaking-exam">
+            <div class="accordion-speaking-exam-header" onclick="this.nextElementSibling.classList.toggle('active')">
               <span>Question ${index + 1}</span>
               <i class="fas fa-chevron-down"></i>
             </div>
-            <div class="accordion-body">
+            <div class="accordion-speaking-exam-body">
               <p>${question}</p>
             </div>
           </div>
