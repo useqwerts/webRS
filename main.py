@@ -1265,6 +1265,10 @@ def submit_exam():
 def handle_submitted_exam():
     emit('update-results', broadcast=True)  # broadcast=True => всем
 
+@app.route("/app")
+def app_remake():
+    return render_template("app.html")
+
 @app.route("/chatCRM")
 def crm():
     return render_template("chatCRM.html")
@@ -1624,23 +1628,26 @@ def upload():
         return jsonify({'error': 'No selected file'}), 400
 
     if file and allowed_file(file.filename):
-        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        filename = f"{timestamp}_{file.filename}"
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # Use original filename or generate a unique name without timestamp prefix
+        filename = secure_filename(file.filename)  # Use original filename with security
+        # Optionally, add a unique identifier to avoid overwriting (e.g., UUID)
+        import uuid
+        unique_filename = f"{uuid.uuid4()}_{filename}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         file.save(filepath)
 
         # Broadcast file info
         message = {
             'type': 'file',
-            'filename': filename,
-            'url': f'/uploads/{filename}',
+            'filename': file.filename,  # Use original filename for display
+            'url': f'/uploads/{unique_filename}',  # Use unique filename for storage
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'username': session.get('username', 'Anonymous')
         }
         messages.append(message)
         socketio.emit('new_message', message)
 
-        return jsonify({'success': True, 'url': f'/uploads/{filename}'})
+        return jsonify({'success': True, 'url': f'/uploads/{unique_filename}'})
 
     return jsonify({'error': 'Invalid file type'}), 400
 

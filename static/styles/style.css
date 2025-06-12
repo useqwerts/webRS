@@ -2429,7 +2429,7 @@ h2 {
 
 .timer-text {
     font-size: 16px;
-    font-weight: bold;
+    font-weight: bolder;
     color: #ffffff;
     background: rgba(0, 0, 0, 0.4); /* тёмный прозрачный фон */
     padding: 7px 20px;
